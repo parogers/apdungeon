@@ -1,0 +1,81 @@
+{"frames" : {
+"shield1" : {
+    "frame" : {"x":1, "y":1, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"sword1" : {
+    "frame" : {"x":19, "y":1, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"shield2" : {
+    "frame" : {"x":1, "y":10, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"sword2" : {
+    "frame" : {"x":19, "y":10, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"shield3" : {
+    "frame" : {"x":1, "y":19, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"sword3" : {
+    "frame" : {"x":19, "y":19, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"staff1" : {
+    "frame" : {"x":1, "y":28, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"staff2" : {
+    "frame" : {"x":10, "y":28, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"staff3" : {
+    "frame" : {"x":19, "y":28, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"bow1" : {
+    "frame" : {"x":28, "y":28, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"bow2" : {
+    "frame" : {"x":37, "y":28, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"bow3" : {
+    "frame" : {"x":1, "y":37, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+}}, "meta" : {
+   "app" : "tpack.py conversion",
+   "version" : "1",
+   "image" : "Weapons.png",
+   "format" : "RGBA8888",
+   "size" : {"W" : 46, "h" : 46},
+   "scale" : "1"
+}}

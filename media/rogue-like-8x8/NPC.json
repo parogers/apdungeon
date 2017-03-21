@@ -1,0 +1,153 @@
+{"frames" : {
+"npc1_south_1" : {
+    "frame" : {"x":0, "y":0, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc1_south_2" : {
+    "frame" : {"x":9, "y":0, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc1_south_3" : {
+    "frame" : {"x":18, "y":0, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc1_north_1" : {
+    "frame" : {"x":27, "y":0, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc1_north_2" : {
+    "frame" : {"x":36, "y":0, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc1_north_3" : {
+    "frame" : {"x":45, "y":0, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc2_south_1" : {
+    "frame" : {"x":0, "y":9, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc2_south_2" : {
+    "frame" : {"x":9, "y":9, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc2_south_3" : {
+    "frame" : {"x":18, "y":9, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc2_north_1" : {
+    "frame" : {"x":27, "y":9, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc2_north_2" : {
+    "frame" : {"x":36, "y":9, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc2_north_3" : {
+    "frame" : {"x":45, "y":9, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc3_south_1" : {
+    "frame" : {"x":0, "y":18, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc3_south_2" : {
+    "frame" : {"x":9, "y":18, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc3_south_3" : {
+    "frame" : {"x":18, "y":18, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc3_north_1" : {
+    "frame" : {"x":27, "y":18, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc3_north_2" : {
+    "frame" : {"x":36, "y":18, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc3_north_3" : {
+    "frame" : {"x":45, "y":18, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc4_south_1" : {
+    "frame" : {"x":0, "y":27, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc4_south_2" : {
+    "frame" : {"x":9, "y":27, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc4_south_3" : {
+    "frame" : {"x":18, "y":27, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc4_north_1" : {
+    "frame" : {"x":27, "y":27, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc4_north_2" : {
+    "frame" : {"x":36, "y":27, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"npc4_north_3" : {
+    "frame" : {"x":45, "y":27, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+}}, "meta" : {
+   "app" : "tpack.py conversion",
+   "version" : "1",
+   "image" : "NPC.png",
+   "format" : "RGBA8888",
+   "size" : {"W" : 53, "h" : 35},
+   "scale" : "1"
+}}

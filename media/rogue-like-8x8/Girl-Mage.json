@@ -1,0 +1,171 @@
+{"frames" : {
+"mage1_south_1" : {
+    "frame" : {"x":0, "y":0, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_south_2" : {
+    "frame" : {"x":9, "y":0, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_south_3" : {
+    "frame" : {"x":18, "y":0, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_north_1" : {
+    "frame" : {"x":0, "y":12, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_north_2" : {
+    "frame" : {"x":9, "y":12, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_north_3" : {
+    "frame" : {"x":18, "y":12, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_dying_1" : {
+    "frame" : {"x":0, "y":24, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_dying_2" : {
+    "frame" : {"x":9, "y":24, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage1_dying_3" : {
+    "frame" : {"x":18, "y":24, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_south_1" : {
+    "frame" : {"x":0, "y":36, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_south_2" : {
+    "frame" : {"x":9, "y":36, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_south_3" : {
+    "frame" : {"x":18, "y":36, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_north_1" : {
+    "frame" : {"x":0, "y":48, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_north_2" : {
+    "frame" : {"x":9, "y":48, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_north_3" : {
+    "frame" : {"x":18, "y":48, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_dying_1" : {
+    "frame" : {"x":0, "y":60, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_dying_2" : {
+    "frame" : {"x":9, "y":60, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage2_dying_3" : {
+    "frame" : {"x":18, "y":60, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_south_1" : {
+    "frame" : {"x":0, "y":72, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_south_2" : {
+    "frame" : {"x":9, "y":72, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_south_3" : {
+    "frame" : {"x":18, "y":72, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_north_1" : {
+    "frame" : {"x":0, "y":84, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_north_2" : {
+    "frame" : {"x":9, "y":84, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_north_3" : {
+    "frame" : {"x":18, "y":84, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_dying_1" : {
+    "frame" : {"x":0, "y":96, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_dying_2" : {
+    "frame" : {"x":9, "y":96, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+},"mage3_dying_3" : {
+    "frame" : {"x":18, "y":96, "w":8, "h":11},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":11},
+    "sourceSize" : {"w":8, "h":11}
+}}, "meta" : {
+   "app" : "tpack.py conversion",
+   "version" : "1",
+   "image" : "Girl-Mage.png",
+   "format" : "RGBA8888",
+   "size" : {"W" : 26, "h" : 107},
+   "scale" : "1"
+}}

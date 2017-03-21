@@ -1,0 +1,14 @@
+#canvas {
+    border: solid 1px;
+    margin: 0;
+    padding: 0;
+}
+
+#canvas_area {
+    width: 800px;
+    float: left;
+}
+
+#control_area {
+    clear: both;
+}
