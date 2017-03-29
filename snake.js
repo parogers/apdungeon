@@ -17,6 +17,10 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var SNAKE_IDLE = 0;
+var SNAKE_ATTACKING = 1;
+var SNAKE_HURT = 2;
+
 function Snake()
 {
     this.sprite = null;
@@ -24,20 +28,48 @@ function Snake()
     this.frame = 0;
     this.facing = 1;
     this.travel = 100;
-}
-
-Snake.prototype.spawn = function(stage)
-{
     this.sprite = new PIXI.Sprite();
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0.5, 6.5/8);
     this.sprite.texture = getTextures(ENEMIES)[this.frames[0]];
-    return this.sprite;
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = SNAKE_IDLE;
 }
 
 Snake.prototype.update = function(dt)
 {
+    if (this.state === SNAKE_IDLE) this.update_idle(dt);
+    else if (this.state === SNAKE_ATTACKING) this.update_attacking(dt);
+    else if (this.state === SNAKE_HURT) this.update_hurt(dt);
+}
+
+Snake.prototype.update_idle = function(dt)
+{
+    this.frame += 2*dt;
+    var f = this.frames[(this.frame%this.frames.length)|0];
+    this.sprite.texture = getTextures(ENEMIES)[f];
+
+    // Turn left/right searching for the player
+    this.facing = Math.sign(Math.cos(this.frame/10));
+    this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
+
+    // Start attacking the player when they're close enough, and when
+    // the snake is facing them.
+    if (Math.abs(player.sprite.x - this.sprite.x) < renderer.width/3 &&
+	this.facing*(player.sprite.x - this.sprite.x) > 0) 
+    {
+	this.state = SNAKE_ATTACKING;
+    }
+
+}
+
+Snake.prototype.update_attacking = function(dt)
+{
     var dx = 0, dy = 0;
+
+    // Move towards the player for a bit. Note the snake moves in "steps"
+    // so it will occasionally overshot the player before moving back again.
     if (this.travel > 0) {
 	dx = 100*dt*this.facing;
 	this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
@@ -48,24 +80,47 @@ Snake.prototype.update = function(dt)
 	this.travel = 100;
     }
 
+    // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
     if (Math.abs(dist) > 10) {
 	dy = dt*20*Math.sign(dist);
     }
 
-    var tile = bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
 	this.sprite.x += dx;
     }
 
-    var tile2 = bg.getTileAt(this.sprite.x, this.sprite.y+dy);
+    var tile2 = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile2.solid) {
 	if (tile.solid) this.sprite.y += 3*dy;
 	else this.sprite.y += dy;
     }
 
-    this.frame += 3*dt;
+    this.frame += 4*dt;
     var f = this.frames[(this.frame%this.frames.length)|0];
     this.sprite.texture = getTextures(ENEMIES)[f];
 }
 
+Snake.prototype.update_hurt = function(dt)
+{
+    // The snake keeps its eyes closed while hurt
+    this.sprite.texture = getTextures(ENEMIES)[this.frames[1]];
+    // Slide backwards from the hit
+    if (this.knockedTimer > 0) {
+	this.sprite.x += this.knocked*dt;
+	this.knockedTimer -= dt;
+    } else {
+	// Resume/start attacking
+	this.state = SNAKE_ATTACKING;
+	this.travel = 0;
+    }
+}
+
+Snake.prototype.handleHit = function(srcx, srcy, dmg)
+{
+    sounds[SNAKE_HURT_SND].play();
+    this.knocked = Math.sign(this.sprite.x-srcx)*500;
+    this.knockedTimer = 0.1;
+    this.state = SNAKE_HURT;
+}

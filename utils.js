@@ -41,3 +41,17 @@ function randomChoice(lst)
     var n = (Math.random() * lst.length)|0;
     return lst[n];
 }
+
+function createGrid(rows, cols, value)
+{
+    var grid = [];
+    grid.rows = rows;
+    grid.cols = cols;
+    for (var row = 0; row < rows; row++) {
+	grid[row] = [];
+	for (var col = 0; col < cols; col++) {
+	    grid[row][col] = value;
+	}
+    }
+    return grid;
+}

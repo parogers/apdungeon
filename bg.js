@@ -22,7 +22,7 @@ Tileset.prototype.getTile = function(name)
     return this.tiles[name] || this.wall;
 }
 
-function TiledBackground(tileWidth, tileHeight, grid)
+function TiledBackground(tileWidth, tileHeight, textures, grid)
 {
     /* Create a texture large enough to hold all the tiles, plus a little extra
      * for the first row, in case it contains wall tiles. (taller) */
@@ -30,12 +30,12 @@ function TiledBackground(tileWidth, tileHeight, grid)
 	grid[0].length*tileWidth, 
 	(grid.length+1)*tileHeight);
     var cnt = new PIXI.Container();
-    this.solid = create_grid(grid.rows, grid.cols);
+    this.solid = createGrid(grid.rows, grid.cols);
     for (var row = 0; row < grid.length; row++) 
     {
 	for (var col = 0; col < grid[0].length; col++) 
 	{
-	    var sprite = new PIXI.Sprite(tex[grid[row][col]]);
+	    var sprite = new PIXI.Sprite(textures[grid[row][col]]);
 	    sprite.x = col*tileWidth;
 	    sprite.y = (row+1)*tileHeight-(sprite.texture.height-tileHeight);
 	    cnt.addChild(sprite);
