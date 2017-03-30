@@ -47,7 +47,6 @@ function generateLevel()
 	if (Math.random() < 0.5) {
 	    grid[0][randint(pos+1, nextpos-1)] = "gate_wall_1";
 	}
-
 	pos = nextpos;
 
 	var w = 1;
@@ -71,8 +70,6 @@ function generateLevel()
 	TILE_WIDTH, TILE_HEIGHT, 
 	getTextures(MAPTILES),
 	grid);
-    bg.zpos = -1;
-
     var level = new Level(bg);
     return level;
 }

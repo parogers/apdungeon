@@ -17,67 +17,6 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function SwordWeaponSlot(player)
-{
-    // Setup the weapon sprite (texture will come later)
-    this.sprite = new PIXI.Sprite(getTextures(WEAPONS)["sword2"]);
-    //this.weaponSprite.anchor.set(6.5/8, 4/8.); // bow
-    this.sprite.anchor.set(4.5/8, 4.5/8); // sword
-    //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
-    this.sprite.scale.set(SCALE);
-    // Sprite position (relative to the player) and rotation
-    this.sprite.x = 2.25*SCALE;
-    this.sprite.y = -3.3*SCALE;
-    this.sprite.rotation = -Math.PI/4;
-    this.player = player;
-}
-
-SwordWeaponSlot.prototype.update = function(dt)
-{
-    /* Have the bow rock back and forth as the player moves. */
-    /*this.weaponSprite.x = 4.25*SCALE;
-      this.weaponSprite.y = -0.5*SCALE;
-      this.weaponSprite.rotation = Math.PI/6 + 
-      (Math.PI/40)*Math.cos(10*this.frame);*/
-
-    /* Sword placement */
-
-    /* Staff placement */
-    /*this.weaponSprite.x = 3.4*SCALE;
-      this.weaponSprite.y = -4*SCALE;
-      this.weaponSprite.rotation = 0;*/
-}
-
-SwordWeaponSlot.prototype.startAttack = function()
-{
-    sounds[ATTACK_SWORD_SND].play();
-    this.sprite.rotation = 0;
-    this.sprite.x = 3.5*SCALE;
-
-    var lst = level.checkHit(
-	{
-	    x: this.player.sprite.x + this.player.facing*30,
-	    y: this.player.sprite.y - 3.3*SCALE
-	},
-	{
-	    x: this.player.sprite.x + this.player.facing*5,
-	    y: this.player.sprite.y - 3.3*SCALE
-	});
-    if (lst) {
-	for (var n = 0; n < lst.length; n++) {
-	    if (lst[n].handleHit)
-		lst[n].handleHit(this.player.sprite.x, 
-				 this.player.sprite.y, 1);
-	}
-    }
-}
-
-SwordWeaponSlot.prototype.stopAttack = function()
-{
-    this.sprite.x = 3.5*SCALE;
-    this.sprite.rotation = -Math.PI/4;
-}
-
 function Player()
 {
     this.sprite = null;
@@ -107,7 +46,7 @@ function Player()
     this.waterSprite.visible = false;
     this.waterSprite.texture = getTextures(MAPTILES)["treading_water"];
     this.sprite.addChild(this.waterSprite);
-    this.weaponSlot = new SwordWeaponSlot(this);
+    this.weaponSlot = new BowWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
 }
 

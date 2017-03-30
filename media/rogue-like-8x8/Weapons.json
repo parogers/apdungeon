@@ -71,6 +71,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
+},"arrow" : {
+    "frame" : {"x":10, "y":37, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
 }}, "meta" : {
    "app" : "tpack.py conversion",
    "version" : "1",

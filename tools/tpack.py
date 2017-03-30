@@ -178,7 +178,7 @@ def get_desc(row, col):
         ("1", None,   "2",  "3",  "dead"),
         ("1", "idle", "2",  "3",  "dead"), # crab
         ("1", None,   "2",  "3",  "dead"),
-        ("1", "idle", "2",  "3",  "dead"), # scorpion
+        ("1", "2",    "3",  "4",  "dead"), # scorpion
         ("1", None,   None, None, "dead"),
         ("1", "2",    None, None, "dead"), # rat
         ("1", None,   None, None, "dead"),
@@ -224,7 +224,7 @@ def get_desc(row, col):
         ["shield2", None, "sword2", None, None],
         ["shield3", None, "sword3", None, None],
         ["staff1",  "staff2", "staff3", "bow1", "bow2"],
-        ["bow3", None, None, None, None],
+        ["bow3", "arrow", None, None, None],
     ]
     return meta[row][col]
 

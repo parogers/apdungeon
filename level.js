@@ -17,10 +17,21 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+BACKGROUND_POS = 0;
+FLOOR_POS = 1;
+
 function compareDepth(s1, s2) {
     var z1 = s1.zpos || s1.y;
     var z2 = s2.zpos || s2.y;
     return z1-z2;
+}
+
+function Camera()
+{
+    this.x = 0;
+    this.y = 0;
+    this.width = 0;
+    this.height = 0;
 }
 
 function Level(bg)
@@ -30,8 +41,11 @@ function Level(bg)
     this.stage = null;
     // The background sprite (TiledBackground)
     this.bg = bg;
+    this.bg.zpos = BACKGROUND_POS;
     // List of enemies, interactable objects etc and the player
     this.things = [];
+    this.stage = new PIXI.Container();
+    this.stage.addChild(this.bg.sprite);
 }
 
 Level.prototype.update = function(dt)
@@ -53,16 +67,34 @@ Level.prototype.render = function()
     renderer.render(this.stage);
 }
 
-Level.prototype.checkHit = function(pt, pt2)
+Level.prototype.checkHit = function(pt, pt2, ignore)
+{
+    var thing = null;
+    for (var n = 0; n < this.things.length; n++) 
+    {
+	thing = this.things[n];
+	if (thing !== ignore && thing.sprite && thing.sprite.containsPoint) 
+	{
+	    if (thing.sprite.containsPoint(pt) || pt2 && 
+		thing.sprite.containsPoint(pt2))
+	    {
+		return thing;
+	    } 
+	}
+    }
+    return null;
+}
+
+Level.prototype.checkHitMany = function(pt, pt2, ignore)
 {
     var hit = null;
     var thing = null;
     for (var n = 0; n < this.things.length; n++) 
     {
 	thing = this.things[n];
-	if (thing.sprite && thing.sprite.containsPoint) 
+	if (thing !== ignore && thing.sprite && thing.sprite.containsPoint) 
 	{
-	    if (thing.sprite.containsPoint(pt) || pt2 !== undefined && 
+	    if (thing.sprite.containsPoint(pt) || pt2 && 
 		thing.sprite.containsPoint(pt2))
 	    {
 		if (hit === null) hit = [];
@@ -73,14 +105,25 @@ Level.prototype.checkHit = function(pt, pt2)
     return hit;
 }
 
-Level.prototype.stageLevel = function(stage)
+// Add a 'thing' to the level and it's sprite to the stage
+Level.prototype.addThing = function(thing)
 {
-    //stage.children = [];
-    for (var n = 0; n < this.things.length; n++) {
-	if (this.things[n].sprite) {
-	    stage.addChild(this.things[n].sprite);
-	}
+    this.things.push(thing);
+    if (thing.sprite) {
+	this.stage.addChild(thing.sprite);
     }
-    stage.addChild(this.bg.sprite);
-    this.stage = stage;
+}
+
+// Remove a 'thing' remove the level and it's sprite from the stage
+Level.prototype.removeThing = function(thing)
+{
+    var i = this.things.indexOf(thing);
+    if (i >= 0) {
+	this.things[i] = this.things[this.things.length-1];
+	this.things.pop();
+    }
+
+    if (thing.sprite) {
+	this.stage.removeChild(thing.sprite);
+    }
 }

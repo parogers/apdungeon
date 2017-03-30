@@ -27,6 +27,7 @@ GAME_MUSIC = "media/music/A Journey Awaits2.ogg"
 ATTACK_SWORD_SND = "media/effects/attack_sword2.wav"
 HIT_SND = "media/effects/hit.wav"
 SNAKE_HURT_SND = "media/effects/snake_hurt.wav"
+DEAD_SND = "media/effects/dead.wav"
 
 SCALE = 5;
 
@@ -40,14 +41,6 @@ var level = null;
 var renderer = null;
 var stage = null;
 var progress = null;
-
-function Camera()
-{
-    this.x = 0;
-    this.y = 0;
-    this.width = 0;
-    this.height = 0;
-}
 
 function getTextures(res)
 {
@@ -135,6 +128,7 @@ function graphicsLoaded()
     sounds.load([
 	ATTACK_SWORD_SND,
 	SNAKE_HURT_SND,
+	DEAD_SND,
 	GAME_MUSIC
     ]);
 }
@@ -161,23 +155,21 @@ function setup()
     /* Generate the level */
     level = generateLevel();
 
-    snake = new Snake();
+    snake = new Scorpion();
     snake.sprite.x = 100;
     snake.sprite.y = 200;
-    level.things.push(snake);
+    level.addThing(snake);
 
     /* Add some demo stuff */
     player = new Player();
     player.sprite.x = 450;
     player.sprite.y = 200;
-    level.things.push(player);
+    level.addThing(player);
 
     var npc = new Scenery(getTextures(NPC)["npc1_south_1"]);
     npc.sprite.x = 200;
     npc.sprite.y = 160;
-    level.things.push(npc);
-
-    level.stageLevel(stage);
+    level.addThing(npc);
 
     music = sounds[GAME_MUSIC];
     music.loop = true;

@@ -20,18 +20,20 @@
 var SNAKE_IDLE = 0;
 var SNAKE_ATTACKING = 1;
 var SNAKE_HURT = 2;
+var SNAKE_DEAD = 3;
 
 function Snake()
 {
-    this.sprite = null;
     this.frames = ["snake_south_1", "snake_south_2"];
+    this.deadFrame = "snake_south_dead";
+    this.health = 3;
     this.frame = 0;
     this.facing = 1;
     this.travel = 100;
     this.sprite = new PIXI.Sprite();
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0.5, 6.5/8);
-    this.sprite.texture = getTextures(ENEMIES)[this.frames[0]];
+    //this.sprite.texture = getTextures(ENEMIES)[this.frames[0]];
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_IDLE;
@@ -42,6 +44,9 @@ Snake.prototype.update = function(dt)
     if (this.state === SNAKE_IDLE) this.update_idle(dt);
     else if (this.state === SNAKE_ATTACKING) this.update_attacking(dt);
     else if (this.state === SNAKE_HURT) this.update_hurt(dt);
+    else if (this.state === SNAKE_DEAD) {
+	this.sprite.texture = getTextures(ENEMIES)[this.deadFrame];
+    }
 }
 
 Snake.prototype.update_idle = function(dt)
@@ -61,7 +66,6 @@ Snake.prototype.update_idle = function(dt)
     {
 	this.state = SNAKE_ATTACKING;
     }
-
 }
 
 Snake.prototype.update_attacking = function(dt)
@@ -119,8 +123,65 @@ Snake.prototype.update_hurt = function(dt)
 
 Snake.prototype.handleHit = function(srcx, srcy, dmg)
 {
-    sounds[SNAKE_HURT_SND].play();
-    this.knocked = Math.sign(this.sprite.x-srcx)*500;
-    this.knockedTimer = 0.1;
-    this.state = SNAKE_HURT;
+    if (this.state === SNAKE_DEAD) return false;
+    this.health -= 1;
+    if (this.health <= 0) {
+	sounds[DEAD_SND].play();
+	this.state = SNAKE_DEAD;
+    } else {
+	sounds[SNAKE_HURT_SND].play();
+	this.knocked = Math.sign(this.sprite.x-srcx)*500;
+	this.knockedTimer = 0.1;
+	this.state = SNAKE_HURT;
+    }
+    var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
+	randomChoice(["blood1", "blood2", "blood3"])
+    ]);
+    sprite.scale.set(SCALE);
+    sprite.x = this.sprite.x;
+    sprite.y = this.sprite.y-1;
+    sprite.zpos = FLOOR_POS;
+    sprite.anchor.set(0.5, 0.5);
+    level.stage.addChild(sprite);
+    return true;
 }
+
+/* Other snake-like things */
+
+function Rat()
+{
+    Snake.call(this);
+    this.frames = ["rat_south_1", "rat_south_2"];
+    this.deadFrame = "rat_south_dead";
+    this.health = 1;
+    this.frame = 0;
+    this.facing = 1;
+    this.travel = 100;
+    this.sprite = new PIXI.Sprite();
+    this.sprite.scale.set(SCALE);
+    this.sprite.anchor.set(0.5, 6.5/8);
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = SNAKE_IDLE;
+}
+
+Rat.prototype = Object.create(Snake.prototype);
+
+function Scorpion()
+{
+    Snake.call(this);
+    this.frames = ["scorpion_south_1", "scorpion_south_2"];
+    this.deadFrame = "scorpion_south_dead";
+    this.health = 3;
+    this.frame = 0;
+    this.facing = 1;
+    this.travel = 100;
+    this.sprite = new PIXI.Sprite();
+    this.sprite.scale.set(SCALE);
+    this.sprite.anchor.set(0.5, 6.5/8);
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = SNAKE_IDLE;
+}
+
+Scorpion.prototype = Object.create(Snake.prototype);
