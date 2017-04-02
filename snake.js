@@ -41,15 +41,16 @@ function Snake()
 
 Snake.prototype.update = function(dt)
 {
-    if (this.state === SNAKE_IDLE) this.update_idle(dt);
-    else if (this.state === SNAKE_ATTACKING) this.update_attacking(dt);
-    else if (this.state === SNAKE_HURT) this.update_hurt(dt);
+    if (this.state === SNAKE_IDLE) this.updateIdle(dt);
+    else if (this.state === SNAKE_ATTACKING) this.updateAttacking(dt);
+    else if (this.state === SNAKE_HURT) this.updateHurt(dt);
     else if (this.state === SNAKE_DEAD) {
-	this.sprite.texture = getTextures(ENEMIES)[this.deadFrame];
+	//this.sprite.texture = getTextures(ENEMIES)[this.deadFrame];
+	level.removeThing(this);
     }
 }
 
-Snake.prototype.update_idle = function(dt)
+Snake.prototype.updateIdle = function(dt)
 {
     this.frame += 2*dt;
     var f = this.frames[(this.frame%this.frames.length)|0];
@@ -64,11 +65,11 @@ Snake.prototype.update_idle = function(dt)
     if (Math.abs(player.sprite.x - this.sprite.x) < renderer.width/3 &&
 	this.facing*(player.sprite.x - this.sprite.x) > 0) 
     {
-	this.state = SNAKE_ATTACKING;
+	//this.state = SNAKE_ATTACKING;
     }
 }
 
-Snake.prototype.update_attacking = function(dt)
+Snake.prototype.updateAttacking = function(dt)
 {
     var dx = 0, dy = 0;
 
@@ -91,12 +92,12 @@ Snake.prototype.update_attacking = function(dt)
     }
 
     var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
-    if (!tile.solid) {
+    if (!tile.solid && !tile.water) {
 	this.sprite.x += dx;
     }
 
     var tile2 = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
-    if (!tile2.solid) {
+    if (!tile2.solid && !tile2.water) {
 	if (tile.solid) this.sprite.y += 3*dy;
 	else this.sprite.y += dy;
     }
@@ -106,13 +107,17 @@ Snake.prototype.update_attacking = function(dt)
     this.sprite.texture = getTextures(ENEMIES)[f];
 }
 
-Snake.prototype.update_hurt = function(dt)
+Snake.prototype.updateHurt = function(dt)
 {
     // The snake keeps its eyes closed while hurt
     this.sprite.texture = getTextures(ENEMIES)[this.frames[1]];
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
-	this.sprite.x += this.knocked*dt;
+	var dx = this.knocked*dt;
+	var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+	if (!tile.solid && !tile.water) {
+	    this.sprite.x += dx;
+	}
 	this.knockedTimer -= dt;
     } else {
 	// Resume/start attacking
@@ -128,6 +133,22 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.health <= 0) {
 	sounds[DEAD_SND].play();
 	this.state = SNAKE_DEAD;
+
+	/*for (var n = 0; n < 5; n++) {
+	    var coin = new GroundItem(
+		getTextures(GROUND_ITEMS)["coin"],
+		this.sprite.x, this.sprite.y);
+	    coin.velx = randUniform(20,150)*Math.sign(this.sprite.x-srcx);
+	    coin.velh = -randUniform(100,350);
+	    level.addThing(coin);
+	}*/
+	var coin = new GroundItem(
+	    getTextures(GROUND_ITEMS)["coin"],
+	    this.sprite.x, this.sprite.y);
+	coin.velx = 50*Math.sign(this.sprite.x-srcx);
+	coin.velh = -200;
+	level.addThing(coin);
+
     } else {
 	sounds[SNAKE_HURT_SND].play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*500;

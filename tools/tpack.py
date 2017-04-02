@@ -273,3 +273,25 @@ out += FOOTER % {
     "h" : img.size[1]}
 open("Tileset.json", "w").write(out)
 
+###
+
+def get_desc(row, col):
+    meta = [
+        ["helmet1", "helmet2", "helmet3", "chest1", "chest2", "chest3"],
+        ["pants1", "pants2", "pants3", "sword1", "sword2", "sword3"],
+        ["shield1", "shield2", "shield3", "", "", ""],
+        ["", "", "", "", "", ""],
+        ["", "", "", "bow1", "bow2", "bow3"],
+        ["arrow1", "arrow2", "arrow2", "", "", ""],
+        ["mhat1", "mhat2", "mhat3", "robe1", "robe2", "robe3"],
+        ["", "", "", "staff1", "staff2", "staff3"],
+        ["disc1", "disc2", "disc3", "", "", ""],
+        ["boots1", "boots2", "boots3", "", "", ""],
+        ["amulet1", "amulet2", "amulet3", "ring1", "ring2", "ring3"],
+        ["", "", "", "", "", ""],
+        ["small_magic", "small_health", "large_magic", "large_health", "", ""],
+        ["coin", "mushroom", "heart", "", "", ""],
+    ]
+    return meta[row][col]
+
+save_json_sheet("GroundItems.png", (8, 8), get_desc, outer_pad=1)

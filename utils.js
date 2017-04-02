@@ -35,6 +35,11 @@ function randint(a, b)
     return (a + (b-a+1)*Math.random())|0;
 }
 
+function randUniform(a, b)
+{
+    return (a + (b-a+1)*Math.random());
+}
+
 /* Returns a random element selected uniformly from the given list */
 function randomChoice(lst)
 {

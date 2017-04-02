@@ -67,39 +67,71 @@ Level.prototype.render = function()
     renderer.render(this.stage);
 }
 
-Level.prototype.checkHit = function(pt, pt2, ignore)
+Level.prototype.checkHitNEW = function(hitbox, ignore)
 {
     var thing = null;
     for (var n = 0; n < this.things.length; n++) 
     {
 	thing = this.things[n];
-	if (thing !== ignore && thing.sprite && thing.sprite.containsPoint) 
+	if (thing !== ignore && thing.sprite && thing.hitbox && 
+	    Math.abs(hitbox.x - thing.sprite.x) < hitbox.w + thing.hitbox.w && 
+	    Math.abs(hitbox.y - thing.sprite.y) < hitbox.h + thing.hitbox.h)
 	{
-	    if (thing.sprite.containsPoint(pt) || pt2 && 
-		thing.sprite.containsPoint(pt2))
-	    {
-		return thing;
-	    } 
+	    return thing;
 	}
     }
     return null;
 }
 
-Level.prototype.checkHitMany = function(pt, pt2, ignore)
+Level.prototype.checkHit = function(pts, ignore)
 {
-    var hit = null;
     var thing = null;
     for (var n = 0; n < this.things.length; n++) 
     {
 	thing = this.things[n];
 	if (thing !== ignore && thing.sprite && thing.sprite.containsPoint) 
 	{
-	    if (thing.sprite.containsPoint(pt) || pt2 && 
-		thing.sprite.containsPoint(pt2))
-	    {
-		if (hit === null) hit = [];
-		hit.push(this.things[n]);
-	    } 
+	    if (pts.length === undefined) {
+		// Single point passed in
+		if (thing.sprite.containsPoint(pts)) {
+		    return thing;
+		} 
+	    } else {
+		// List of points passed in
+		for (var i = 0; i < pts.length; i++) {
+		    if (thing.sprite.containsPoint(pts[i])) {
+			return thing;
+		    } 
+		}
+	    }
+	}
+    }
+    return null;
+}
+
+Level.prototype.checkHitMany = function(pts, ignore)
+{
+    var hit = [];
+    var thing = null;
+    for (var n = 0; n < this.things.length; n++) 
+    {
+	thing = this.things[n];
+	if (thing !== ignore && thing.sprite && thing.sprite.containsPoint) 
+	{
+	    if (pts.length === undefined) {
+		// Single point passed in
+		if (thing.sprite.containsPoint(pts)) {
+		    hit.push(thing);
+		} 
+	    } else {
+		// List of points passed in
+		for (var i = 0; i < pts.length; i++) {
+		    if (thing.sprite.containsPoint(pts[i])) {
+			hit.push(thing);
+			break;
+		    } 
+		}
+	    }
 	}
     }
     return hit;

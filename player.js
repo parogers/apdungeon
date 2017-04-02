@@ -48,6 +48,8 @@ function Player()
     this.sprite.addChild(this.waterSprite);
     this.weaponSlot = new BowWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
+    // Define the hitbox
+    this.hitbox = new Hitbox(0, 0, 8*SCALE, 8*SCALE);
 }
 
 Player.prototype.update = function(dt)
@@ -114,7 +116,14 @@ Player.prototype.update = function(dt)
     }
 
     var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
-    this.waterSprite.visible = (tile.name === "water");
+
+    // Make a splashy sound when we enter water
+    if (tile.name === "water") {
+	if (!this.waterSprite.visible) sounds[SPLASH_SND].play();
+	this.waterSprite.visible = true;
+    } else {
+	this.waterSprite.visible = false;
+    }
 
     if (this.weaponSlot) 
     {

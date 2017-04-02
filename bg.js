@@ -9,6 +9,7 @@ function Tileset()
     var wall = new Tile("wall", true);
     var floor = new Tile("floor", false);
     var water = new Tile("water", false);
+    water.water = true;
     this.tiles = {
 	"smooth_floor_m" : floor,
 	"smooth_wall_m" : wall,

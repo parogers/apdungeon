@@ -22,12 +22,15 @@ NPC = "media/rogue-like-8x8/NPC.json"
 MAPTILES = "media/rogue-like-8x8/Tileset.json"
 ENEMIES = "media/rogue-like-8x8/Enemies.json"
 WEAPONS = "media/rogue-like-8x8/Weapons.json"
+GROUND_ITEMS = "media/rogue-like-8x8/GroundItems.json"
 
 GAME_MUSIC = "media/music/A Journey Awaits2.ogg"
 ATTACK_SWORD_SND = "media/effects/attack_sword2.wav"
 HIT_SND = "media/effects/hit.wav"
 SNAKE_HURT_SND = "media/effects/snake_hurt.wav"
 DEAD_SND = "media/effects/dead.wav"
+SPLASH_SND = "media/effects/splash.wav"
+ARROW_DING_SND = "media/effects/arrow_ding.wav"
 
 SCALE = 5;
 
@@ -81,6 +84,7 @@ function loaded()
 	.add(MAPTILES)
 	.add(ENEMIES)
 	.add(WEAPONS)
+	.add(GROUND_ITEMS)
 	//.add({name: "hit", url: "media/hit.wav"})
 	.on("progress", progresscb)
 	.load(graphicsLoaded);
@@ -94,7 +98,7 @@ function gameLoop()
     var now = (new Date()).getTime()/1000.0;
     var dt = 0;
     if (lastTime) {
-	var dt = now - lastTime;
+	var dt = Math.min(1.0/30, now - lastTime);
     }
     lastTime = now;
 
@@ -129,6 +133,8 @@ function graphicsLoaded()
 	ATTACK_SWORD_SND,
 	SNAKE_HURT_SND,
 	DEAD_SND,
+	ARROW_DING_SND,
+	SPLASH_SND,
 	GAME_MUSIC
     ]);
 }
@@ -154,11 +160,6 @@ function setup()
 
     /* Generate the level */
     level = generateLevel();
-
-    snake = new Scorpion();
-    snake.sprite.x = 100;
-    snake.sprite.y = 200;
-    level.addThing(snake);
 
     /* Add some demo stuff */
     player = new Player();

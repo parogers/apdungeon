@@ -37,18 +37,19 @@ function SwordWeaponSlot(player)
     this.sprite.x = 2.5*SCALE;
     this.sprite.y = -4*SCALE;
     this.sprite.rotation = -Math.PI/3;
+    this.attackCooldown = 0;
     this.player = player;
 }
 
 SwordWeaponSlot.prototype.update = function(dt)
 {
-    /* Have the bow rock back and forth as the player moves. */
-    /*this.weaponSprite.x = 4.25*SCALE;
-      this.weaponSprite.y = -0.5*SCALE;
-      this.weaponSprite.rotation = Math.PI/6 + 
-      (Math.PI/40)*Math.cos(10*this.frame);*/
-
-    /* Sword placement */
+    if (this.attackCooldown > 0) {
+	this.attackCooldown -= dt;
+	if (this.attackCooldown <= 0) {
+	    this.sprite.x = 2.5*SCALE;
+	    this.sprite.rotation = -Math.PI/3;
+	}
+    }
 
     /* Staff placement */
     /*this.weaponSprite.x = 3.4*SCALE;
@@ -58,19 +59,26 @@ SwordWeaponSlot.prototype.update = function(dt)
 
 SwordWeaponSlot.prototype.startAttack = function()
 {
+    if (this.attackCooldown > 0) return;
+
     sounds[ATTACK_SWORD_SND].play();
     this.sprite.rotation = 0;
     this.sprite.x = 3.5*SCALE;
 
-    var lst = level.checkHitMany(
+    var lst = level.checkHitMany([
 	{
 	    x: this.player.sprite.x + this.player.facing*35,
-	    y: this.player.sprite.y - 3.3*SCALE
+	    y: this.player.sprite.y + this.sprite.y
 	},
 	{
 	    x: this.player.sprite.x + this.player.facing*5,
-	    y: this.player.sprite.y - 3.3*SCALE
-	});
+	    y: this.player.sprite.y + this.sprite.y
+	},
+	{
+	    x: this.player.sprite.x + this.player.facing*25,
+	    y: this.player.sprite.y + this.sprite.y-10
+	}], this.player);
+
     if (lst) {
 	for (var n = 0; n < lst.length; n++) {
 	    if (lst[n].handleHit)
@@ -78,12 +86,11 @@ SwordWeaponSlot.prototype.startAttack = function()
 				 this.player.sprite.y, 1);
 	}
     }
+    this.attackCooldown = 0.15;
 }
 
 SwordWeaponSlot.prototype.stopAttack = function()
 {
-    this.sprite.x = 2.5*SCALE;
-    this.sprite.rotation = -Math.PI/3;
 }
 
 /*******/
@@ -99,12 +106,12 @@ function BowWeaponSlot(player)
     this.sprite.scale.set(SCALE);
     // Sprite position (relative to the player) and rotation
     this.player = player;
-    this.attackTimer = 0;
+    this.attackCooldown = 0;
 }
 
 BowWeaponSlot.prototype.update = function(dt)
 {
-    if (this.attackTimer <= 0) {
+    if (this.attackCooldown <= 0) {
 	/* Have the bow rock back and forth as the player moves. */
 	this.sprite.rotation = Math.PI/5 + 
 	    (Math.PI/40)*Math.cos(10*this.player.frame);
@@ -114,7 +121,7 @@ BowWeaponSlot.prototype.update = function(dt)
 	this.sprite.rotation = 0;
 	this.sprite.x = 3*SCALE;
 	this.sprite.y = -3.25*SCALE;
-	this.attackTimer -= dt;
+	this.attackCooldown -= dt;
     }
     /* Staff placement */
     /*this.weaponSprite.x = 3.4*SCALE;
@@ -124,13 +131,14 @@ BowWeaponSlot.prototype.update = function(dt)
 
 BowWeaponSlot.prototype.startAttack = function()
 {
+    if (this.attackCooldown > 0) return;
     sounds[ATTACK_SWORD_SND].play();
-    this.attackTimer = 1;
+    this.attackCooldown = 0.2;
 
     var arrow = new Arrow(
 	this.player.sprite.x,
 	this.player.sprite.y+this.sprite.y,
-	this.player.facing*400, 0,
+	this.player.facing*500, 0,
 	Math.abs(this.sprite.y));
     level.things.push(arrow);
     level.stage.addChild(arrow.sprite);
@@ -174,13 +182,15 @@ Arrow.prototype.update = function(dt)
 	    this.velx *= -0.25;
 	    this.vely = 0;
 	    this.state = ARROW_FALLING;
+	    sounds[ARROW_DING_SND].volume = 0.4;
+	    sounds[ARROW_DING_SND].play();
 	    return;
 	}
 	// Now check if we've hit an enemy
 	var other = level.checkHit({
 	    x: this.sprite.x,
 	    y: this.sprite.y
-	}, null, this);
+	}, this.player);
 	if (other && other.handleHit) {
 	    var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
 	    console.log(ret);

@@ -71,5 +71,13 @@ function generateLevel()
 	getTextures(MAPTILES),
 	grid);
     var level = new Level(bg);
+
+    for (var n = 0; n < 10; n++) {
+	snake = new Scorpion();
+	snake.sprite.x = 100+150*n;
+	snake.sprite.y = 180+50*Math.sin(n*5);
+	level.addThing(snake);
+    }
+
     return level;
 }
