@@ -46,7 +46,7 @@ function Player()
     this.waterSprite.visible = false;
     this.waterSprite.texture = getTextures(MAPTILES)["treading_water"];
     this.sprite.addChild(this.waterSprite);
-    this.weaponSlot = new BowWeaponSlot(this);
+    this.weaponSlot = new SwordWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
     // Define the hitbox
     this.hitbox = new Hitbox(0, 0, 8*SCALE, 8*SCALE);
@@ -61,8 +61,7 @@ Player.prototype.update = function(dt)
 
     if (dirx) {
 	// Handle walking left/right by mirroring the sprite
-	this.sprite.scale.x = Math.abs(
-	    this.sprite.scale.x)*dirx;
+	this.sprite.scale.x = Math.abs(this.sprite.scale.x)*dirx;
 	this.velx = dirx * this.maxSpeed;
 	this.facing = Math.sign(dirx);
     } else {
@@ -92,11 +91,10 @@ Player.prototype.update = function(dt)
 	this.velx = this.velx * (this.maxSpeed/speed);
 	this.vely = this.vely * (this.maxSpeed/speed);
     }
-    var x = this.sprite.x + this.velx*dt;
-    var y = this.sprite.y + this.vely*dt;
     var w = this.spriteChar.texture.width*SCALE*0.75;
 
     if (this.velx) {
+	var x = this.sprite.x + this.velx*dt;
 	var left = level.bg.getTileAt(x-w/2, this.sprite.y);
 	var right = level.bg.getTileAt(x+w/2, this.sprite.y);
 	if (!left.solid && !right.solid) {
@@ -106,6 +104,7 @@ Player.prototype.update = function(dt)
 	}
     }
     if (this.vely) {
+	var y = this.sprite.y + this.vely*dt;
 	var left = level.bg.getTileAt(this.sprite.x-w/2, y);
 	var right = level.bg.getTileAt(this.sprite.x+w/2, y);
 	if (!left.solid && !right.solid) {
@@ -115,9 +114,8 @@ Player.prototype.update = function(dt)
 	}
     }
 
-    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
-
     // Make a splashy sound when we enter water
+    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.name === "water") {
 	if (!this.waterSprite.visible) sounds[SPLASH_SND].play();
 	this.waterSprite.visible = true;
@@ -125,6 +123,7 @@ Player.prototype.update = function(dt)
 	this.waterSprite.visible = false;
     }
 
+    // Handle attacking
     if (this.weaponSlot) 
     {
 	if (controls.primary && !controls.lastPrimary)
@@ -140,6 +139,16 @@ Player.prototype.update = function(dt)
 	if (this.weaponSlot.update) this.weaponSlot.update(dt);
     }
 
+    // Check for collisions with other things
+    var hit = level.checkHitMany(this.sprite.x, this.sprite.y, 
+				 this.hitbox, this);
+    for (var n = 0; n < hit.length; n++) {
+	if (hit[n].handlePlayerCollision) {
+	    hit[n].handlePlayerCollision();
+	}
+    }
+
+    // Update animation
     var imgs = getTextures(FEMALE_MELEE);
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
     this.spriteChar.texture = imgs[frame];

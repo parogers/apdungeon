@@ -39,6 +39,7 @@ function SwordWeaponSlot(player)
     this.sprite.rotation = -Math.PI/3;
     this.attackCooldown = 0;
     this.player = player;
+    this.hitbox = new Hitbox(0, -4*SCALE, 10*SCALE, 6*SCALE);
 }
 
 SwordWeaponSlot.prototype.update = function(dt)
@@ -65,7 +66,12 @@ SwordWeaponSlot.prototype.startAttack = function()
     this.sprite.rotation = 0;
     this.sprite.x = 3.5*SCALE;
 
-    var lst = level.checkHitMany([
+    var lst = level.checkHitMany(
+	this.player.sprite.x + this.player.facing*3*SCALE, 
+	this.player.sprite.y,
+	this.hitbox, this.player);
+
+/*[
 	{
 	    x: this.player.sprite.x + this.player.facing*35,
 	    y: this.player.sprite.y + this.sprite.y
@@ -77,13 +83,12 @@ SwordWeaponSlot.prototype.startAttack = function()
 	{
 	    x: this.player.sprite.x + this.player.facing*25,
 	    y: this.player.sprite.y + this.sprite.y-10
-	}], this.player);
+	}], this.player);*/
 
-    if (lst) {
-	for (var n = 0; n < lst.length; n++) {
-	    if (lst[n].handleHit)
-		lst[n].handleHit(this.player.sprite.x, 
-				 this.player.sprite.y, 1);
+    for (var n = 0; n < lst.length; n++) {
+	if (lst[n].handleHit) {
+	    lst[n].handleHit(this.player.sprite.x, 
+			     this.player.sprite.y, 1);
 	}
     }
     this.attackCooldown = 0.15;
@@ -161,6 +166,7 @@ function Arrow(x, y, velx, vely, height)
     this.height = height;
     this.state = ARROW_FLIGHT;
     this.timer = 0;
+    this.hitbox = new Hitbox(0, 0, 5, 5);
 }
 
 Arrow.prototype.update = function(dt)
@@ -187,10 +193,9 @@ Arrow.prototype.update = function(dt)
 	    return;
 	}
 	// Now check if we've hit an enemy
-	var other = level.checkHit({
-	    x: this.sprite.x,
-	    y: this.sprite.y
-	}, this.player);
+	var other = level.checkHit(
+	    this.sprite.x, this.sprite.y, 
+	    this.hitbox, this.player);
 	if (other && other.handleHit) {
 	    var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
 	    console.log(ret);

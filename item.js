@@ -30,6 +30,7 @@ function GroundItem(img, x, y)
     this.velx = 0;
     this.velh = 0;
     this.bouncy = 0.5;
+    this.hitbox = new Hitbox(0, 0, 5, 5);
 }
 
 GroundItem.prototype.update = function(dt)
@@ -58,4 +59,9 @@ GroundItem.prototype.update = function(dt)
 	}
 	this.sprite.y = this.ypos - this.height;
     }
+}
+
+GroundItem.prototype.handlePlayerCollision = function()
+{
+    level.removeThing(this);
 }

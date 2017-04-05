@@ -37,6 +37,7 @@ function Snake()
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_IDLE;
+    this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
 }
 
 Snake.prototype.update = function(dt)

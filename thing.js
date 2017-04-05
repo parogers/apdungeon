@@ -17,6 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+// A hitbox that defines an area of a thing to test collisions against. Note
+// the (x, y) point is relative to the thing's sprite position, and (w, h)
+// defines a rectangle that is centered on that position.
 function Hitbox(x, y, w, h)
 {
     this.x = x;
@@ -44,5 +47,9 @@ Thing.prototype.update = function(dt)
 }
 
 Thing.prototype.handleHit = function(x, y, dmg)
+{
+}
+
+Thing.prototype.handlePlayerCollision = function()
 {
 }

@@ -67,15 +67,18 @@ Level.prototype.render = function()
     renderer.render(this.stage);
 }
 
-Level.prototype.checkHitNEW = function(hitbox, ignore)
+Level.prototype.checkHit = function(x, y, hitbox, ignore)
 {
+    var xp = x + hitbox.x, yp = y + hitbox.y;
+    var w = hitbox.w, h = hitbox.h;
     var thing = null;
     for (var n = 0; n < this.things.length; n++) 
     {
 	thing = this.things[n];
-	if (thing !== ignore && thing.sprite && thing.hitbox && 
-	    Math.abs(hitbox.x - thing.sprite.x) < hitbox.w + thing.hitbox.w && 
-	    Math.abs(hitbox.y - thing.sprite.y) < hitbox.h + thing.hitbox.h)
+	if (thing !== ignore && thing.sprite && 
+	    thing.hitbox && thing.hitbox !== hitbox && 
+	    Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
+	    Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
 	{
 	    return thing;
 	}
@@ -83,55 +86,21 @@ Level.prototype.checkHitNEW = function(hitbox, ignore)
     return null;
 }
 
-Level.prototype.checkHit = function(pts, ignore)
+Level.prototype.checkHitMany = function(x, y, hitbox, ignore)
 {
+    var xp = x + hitbox.x, yp = y + hitbox.y;
+    var w = hitbox.w, h = hitbox.h;
     var thing = null;
-    for (var n = 0; n < this.things.length; n++) 
-    {
-	thing = this.things[n];
-	if (thing !== ignore && thing.sprite && thing.sprite.containsPoint) 
-	{
-	    if (pts.length === undefined) {
-		// Single point passed in
-		if (thing.sprite.containsPoint(pts)) {
-		    return thing;
-		} 
-	    } else {
-		// List of points passed in
-		for (var i = 0; i < pts.length; i++) {
-		    if (thing.sprite.containsPoint(pts[i])) {
-			return thing;
-		    } 
-		}
-	    }
-	}
-    }
-    return null;
-}
-
-Level.prototype.checkHitMany = function(pts, ignore)
-{
     var hit = [];
-    var thing = null;
     for (var n = 0; n < this.things.length; n++) 
     {
 	thing = this.things[n];
-	if (thing !== ignore && thing.sprite && thing.sprite.containsPoint) 
+	if (thing !== ignore && thing.sprite && 
+	    thing.hitbox && thing.hitbox !== hitbox && 
+	    Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
+	    Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
 	{
-	    if (pts.length === undefined) {
-		// Single point passed in
-		if (thing.sprite.containsPoint(pts)) {
-		    hit.push(thing);
-		} 
-	    } else {
-		// List of points passed in
-		for (var i = 0; i < pts.length; i++) {
-		    if (thing.sprite.containsPoint(pts[i])) {
-			hit.push(thing);
-			break;
-		    } 
-		}
-	    }
+	    hit.push(thing);
 	}
     }
     return hit;

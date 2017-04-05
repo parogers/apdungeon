@@ -99,6 +99,7 @@ function gameLoop()
     var dt = 0;
     if (lastTime) {
 	var dt = Math.min(1.0/30, now - lastTime);
+	//dt /= 4;
     }
     lastTime = now;
 
