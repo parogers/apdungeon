@@ -23,6 +23,7 @@ MAPTILES = "media/rogue-like-8x8/Tileset.json"
 ENEMIES = "media/rogue-like-8x8/Enemies.json"
 WEAPONS = "media/rogue-like-8x8/Weapons.json"
 GROUND_ITEMS = "media/rogue-like-8x8/GroundItems.json"
+UI = "media/rogue-like-8x8/UI.json"
 
 GAME_MUSIC = "media/music/A Journey Awaits2.ogg"
 ATTACK_SWORD_SND = "media/effects/attack_sword2.wav"
@@ -31,6 +32,7 @@ SNAKE_HURT_SND = "media/effects/snake_hurt.wav"
 DEAD_SND = "media/effects/dead.wav"
 SPLASH_SND = "media/effects/splash.wav"
 ARROW_DING_SND = "media/effects/arrow_ding.wav"
+GO_SND = "media/effects/go.wav"
 
 SCALE = 5;
 
@@ -85,6 +87,7 @@ function loaded()
 	.add(ENEMIES)
 	.add(WEAPONS)
 	.add(GROUND_ITEMS)
+	.add(UI)
 	//.add({name: "hit", url: "media/hit.wav"})
 	.on("progress", progresscb)
 	.load(graphicsLoaded);
@@ -136,6 +139,7 @@ function graphicsLoaded()
 	DEAD_SND,
 	ARROW_DING_SND,
 	SPLASH_SND,
+	GO_SND,
 	GAME_MUSIC
     ]);
 }
@@ -167,6 +171,11 @@ function setup()
     player.sprite.x = 450;
     player.sprite.y = 200;
     level.addThing(player);
+
+    //var go = new GoMarker();
+    //go.sprite.x = 500;
+    //go.sprite.y = 60;
+    //level.addThing(go);
 
     var npc = new Scenery(getTextures(NPC)["npc1_south_1"]);
     npc.sprite.x = 200;

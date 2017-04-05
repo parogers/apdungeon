@@ -30,6 +30,7 @@ FRAME_TMP = """"%(name)s" : {
 }"""
 
 def gen_grid(start_pos, tile_size, desc, padding=1):
+    lst = []
     rows = len(desc)
     cols = len(desc[0])
     y = start_pos[1]
@@ -44,9 +45,10 @@ def gen_grid(start_pos, tile_size, desc, padding=1):
                     "y" : y,
                     "w" : tile_size[0], 
                     "h" : tile_size[1]}
-                yield txt
+                lst.append(txt)
             x += tile_size[0]+1
         y += tile_size[1]+1
+    return lst
 
 def save_json_sheet(srcpath, tile_size, get_desc, outer_pad=0, padding=1):
     img = PIL.Image.open(srcpath)
@@ -238,7 +240,7 @@ img = PIL.Image.open(srcpath)
 desc = [
     ("treading_water",)
 ]
-frames = list(gen_grid((116,94), (10,4), desc))
+frames = gen_grid((116,94), (10,4), desc)
 
 desc = [
     ("smooth_wall_l", "smooth_wall_m", "smooth_wall_r"),
@@ -248,7 +250,7 @@ desc = [
     ("gate_wall_1", "gate_wall_2", "gate_wall_3"),
     ("window_wall_1", "wall_behind", "wall_behind2")
 ]
-frames += list(gen_grid((1,1), (8,13), desc))
+frames += gen_grid((1,1), (8,13), desc)
 
 desc = [
     ("smooth_floor_l", "smooth_floor_m", "smooth_floor_r", "door1", "door2", "door3", "door4", "torch", None, None, None),
@@ -258,12 +260,12 @@ desc = [
     (None, None, None, "carpet_l", "carpet_m", "carpet_r", None, None, None, None, None),
     (None, None, None, "carpet_bl", "carpet_bm", "carpet_br", None, None, None, None, None),
 ]
-frames += list(gen_grid((28,1), (8,8), desc))
+frames += gen_grid((28,1), (8,8), desc)
 
 desc = [
     ("bigdoor1", "bigdoor2", "bigdoor3", "bigdoor4"),
 ]
-frames += list(gen_grid((1,86), (24,13), desc))
+frames += gen_grid((1,86), (24,13), desc)
 
 out = HEADER
 out += ",".join(frames)
@@ -295,3 +297,26 @@ def get_desc(row, col):
     return meta[row][col]
 
 save_json_sheet("GroundItems.png", (8, 8), get_desc, outer_pad=1)
+
+###
+
+desc = [
+    ("slot", "empty_slot"),
+]
+frames = gen_grid((1,1), (10, 10), desc)
+
+desc = [
+    ("go1", "go2"),
+]
+frames += gen_grid((86,1), (20, 10), desc)
+
+srcpath = "UI.png"
+img = PIL.Image.open(srcpath)
+
+out = HEADER
+out += ",".join(frames)
+out += FOOTER % {
+    "src" : srcpath, 
+    "w" : img.size[0], 
+    "h" : img.size[1]}
+open("UI.json", "w").write(out)

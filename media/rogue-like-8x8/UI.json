@@ -1,0 +1,33 @@
+{"frames" : {
+"slot" : {
+    "frame" : {"x":1, "y":1, "w":10, "h":10},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":10},
+    "sourceSize" : {"w":10, "h":10}
+},"empty_slot" : {
+    "frame" : {"x":12, "y":1, "w":10, "h":10},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":10},
+    "sourceSize" : {"w":10, "h":10}
+},"go1" : {
+    "frame" : {"x":86, "y":1, "w":20, "h":10},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":20, "h":10},
+    "sourceSize" : {"w":20, "h":10}
+},"go2" : {
+    "frame" : {"x":107, "y":1, "w":20, "h":10},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":20, "h":10},
+    "sourceSize" : {"w":20, "h":10}
+}}, "meta" : {
+   "app" : "tpack.py conversion",
+   "version" : "1",
+   "image" : "UI.png",
+   "format" : "RGBA8888",
+   "size" : {"W" : 128, "h" : 128},
+   "scale" : "1"
+}}
