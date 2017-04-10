@@ -27,15 +27,44 @@ function Hitbox(x, y, w, h)
 
 function Gate()
 {
+    this.frames = [
+	getTextures(MAPTILES)["gate_wall_1"],
+	getTextures(MAPTILES)["gate_wall_2"],
+	getTextures(MAPTILES)["gate_wall_3"]
+    ];
     this.hitbox = new Hitbox(0, 0, 5, 5);
-    var texture = getTextures(MAPTILES)["gate_wall_1"];
+    var texture = this.frames[0];
     this.sprite = new PIXI.Sprite(texture);
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0,0);
+    this.frameNum = 0;
+    this.fps = 2;
+    this.moving = 0;
 }
 
 Gate.prototype.update = function(dt)
 {
+    // The gate is opening or closing
+    if (this.moving !== 0) {
+	var fnum = Math.round(2*this.frameNum);
+	this.frameNum += this.moving*this.fps*dt;
+	if (this.frameNum < 0) {
+	    // Finished closing
+	    this.frameNum = 0;
+	    this.moving = 0;
+	} else if (this.frameNum >= this.frames.length-1) {
+	    // Finished opening
+	    this.frameNum = this.frames.length-1;
+	    this.moving = 0;
+	}
+	// Make a "clicksh" noise as the gate is opening. (we do this every
+	// other frame to make it more obvious, hence the '2' here and above)
+	if (fnum !== Math.round(2*this.frameNum)) {
+	    sounds[GATE_SND].volume = 0.20;
+	    sounds[GATE_SND].play();
+	}
+    }
+    this.sprite.texture = this.frames[Math.round(this.frameNum)|0];
 }
 
 Gate.prototype.handleHit = function(x, y, dmg)

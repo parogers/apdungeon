@@ -34,6 +34,7 @@ SPLASH_SND = "media/effects/splash.wav"
 ARROW_DING_SND = "media/effects/arrow_ding.wav"
 GO_SND = "media/effects/go.wav"
 COIN_SND = "media/effects/coin.wav"
+GATE_SND = "media/effects/gate.wav"
 
 SCALE = 5;
 
@@ -143,6 +144,7 @@ function graphicsLoaded()
 	SPLASH_SND,
 	GO_SND,
 	COIN_SND,
+	GATE_SND,
 	GAME_MUSIC
     ]);
 }
