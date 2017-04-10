@@ -5,6 +5,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":4},
     "sourceSize" : {"w":10, "h":4}
+},"black" : {
+    "frame" : {"x":118, "y":55, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
 },"smooth_wall_l" : {
     "frame" : {"x":1, "y":1, "w":8, "h":13},
     "rotated" : false,

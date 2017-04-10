@@ -17,36 +17,31 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function GoMarker()
+function Hitbox(x, y, w, h)
 {
-    this.frames = ["go1", "go2"];
-    this.sprite = new PIXI.Sprite();
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+}
+
+function Gate()
+{
+    this.hitbox = new Hitbox(0, 0, 5, 5);
+    var texture = getTextures(MAPTILES)["gate_wall_1"];
+    this.sprite = new PIXI.Sprite(texture);
     this.sprite.scale.set(SCALE);
-    this.sprite.anchor.set(0.5,0.5);
-    this.timer = 0;
-    this.dings = 3;
-    this.frameNum = 0;
+    this.sprite.anchor.set(0,0);
 }
 
-GoMarker.prototype.update = function(dt)
-{
-    if (this.dings <= 0) return;
-    var next = this.timer + dt;
-    if (this.timer < 0.3 && next >= 0.3) {
-	if (this.dings-- > 0) sounds[GO_SND].play();
-	this.frameNum = 1;
-    } else if (this.timer < 1 && next >= 1) {
-	this.frameNum = 0;
-	next = 0;
-    }
-    this.timer = next;
-    this.sprite.texture = getTextures(UI)[this.frames[this.frameNum]];
-}
-
-GoMarker.prototype.handleHit = function(x, y, dmg)
+Gate.prototype.update = function(dt)
 {
 }
 
-GoMarker.prototype.handlePlayerCollision = function()
+Gate.prototype.handleHit = function(x, y, dmg)
+{
+}
+
+Gate.prototype.handlePlayerCollision = function()
 {
 }

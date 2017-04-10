@@ -27,6 +27,7 @@ function GroundItem(img, x, y)
     this.height = 0;
     this.sprite.x = x;
     this.ypos = y;
+    this.zpos = y;
     this.velx = 0;
     this.velh = 0;
     this.bouncy = 0.5;
@@ -63,5 +64,8 @@ GroundItem.prototype.update = function(dt)
 
 GroundItem.prototype.handlePlayerCollision = function()
 {
-    level.removeThing(this);
+    if (this.height < 10) {
+	sounds[COIN_SND].play();
+	level.removeThing(this);
+    }
 }

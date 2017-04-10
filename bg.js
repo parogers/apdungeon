@@ -23,7 +23,7 @@ Tileset.prototype.getTile = function(name)
     return this.tiles[name] || this.wall;
 }
 
-function TiledBackground(tileWidth, tileHeight, textures, grid)
+function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
 {
     /* Create a texture large enough to hold all the tiles, plus a little extra
      * for the first row, in case it contains wall tiles. (taller) */
@@ -37,8 +37,10 @@ function TiledBackground(tileWidth, tileHeight, textures, grid)
 	for (var col = 0; col < grid[0].length; col++) 
 	{
 	    var sprite = new PIXI.Sprite(textures[grid[row][col]]);
+	    sprite.anchor.set(0,1);
 	    sprite.x = col*tileWidth;
-	    sprite.y = (row+1)*tileHeight-(sprite.texture.height-tileHeight);
+	    sprite.y = wallHeight + row*tileHeight;
+	    //(row+1)*tileHeight-(sprite.texture.height-tileHeight);
 	    cnt.addChild(sprite);
 	    this.solid[row][col] = (grid[row][col] !== "smooth_floor_m");
 	}
@@ -50,6 +52,7 @@ function TiledBackground(tileWidth, tileHeight, textures, grid)
     this.grid = grid;
     this.tileWidth = tileWidth*SCALE;
     this.tileHeight = tileHeight*SCALE;
+    this.wallHeight = wallHeight*SCALE;
     this.sprite = new PIXI.Sprite();
     this.sprite.texture = renderTexture;
     this.sprite.x = 0;
@@ -79,8 +82,10 @@ TiledBackground.prototype.checkHit = function(x, y, w)
 
 TiledBackground.prototype.getTileAt = function(x, y)
 {
+    // Account for the background offset, and also for the fact that the
+    // first row of tiles are wall tiles. (ie taller)
     var x = x-this.sprite.x;
-    var y = y-(this.sprite.y+this.tileHeight);
+    var y = y-this.sprite.y-(this.wallHeight-this.tileHeight);
     /*if (x < 0 || x > this.sprite.texture.width*SCALE ||
 	y < 0 || y > this.sprite.texture.height*SCALE - this.tileHeight) 
     {
@@ -91,4 +96,9 @@ TiledBackground.prototype.getTileAt = function(x, y)
     if (this.grid[row] && this.grid[row][col])
 	return tileset.getTile(this.grid[row][col]);
     return tileset.wall;
+}
+
+TiledBackground.prototype.getHeight = function()
+{
+    return this.sprite.texture.height*SCALE;
 }

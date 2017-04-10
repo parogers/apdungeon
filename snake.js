@@ -22,13 +22,15 @@ var SNAKE_ATTACKING = 1;
 var SNAKE_HURT = 2;
 var SNAKE_DEAD = 3;
 
-function Snake()
+function Snake(state)
 {
     this.frames = ["snake_south_1", "snake_south_2"];
     this.deadFrame = "snake_south_dead";
+    this.speed = 80;
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
+    this.dead = false;
     this.travel = 100;
     this.sprite = new PIXI.Sprite();
     this.sprite.scale.set(SCALE);
@@ -36,7 +38,7 @@ function Snake()
     //this.sprite.texture = getTextures(ENEMIES)[this.frames[0]];
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = SNAKE_IDLE;
+    this.state = state || SNAKE_IDLE;
     this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
 }
 
@@ -66,7 +68,7 @@ Snake.prototype.updateIdle = function(dt)
     if (Math.abs(player.sprite.x - this.sprite.x) < renderer.width/3 &&
 	this.facing*(player.sprite.x - this.sprite.x) > 0) 
     {
-	//this.state = SNAKE_ATTACKING;
+	this.state = SNAKE_ATTACKING;
     }
 }
 
@@ -77,13 +79,13 @@ Snake.prototype.updateAttacking = function(dt)
     // Move towards the player for a bit. Note the snake moves in "steps"
     // so it will occasionally overshot the player before moving back again.
     if (this.travel > 0) {
-	dx = 100*dt*this.facing;
+	dx = this.speed*dt*this.facing;
 	this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
 	this.travel -= Math.abs(dx);
     } else {
 	if (player.sprite.x < this.sprite.x) this.facing = -1;
 	else this.facing = 1;
-	this.travel = 100;
+	this.travel = randint(80, 100);
     }
 
     // Move up/down towards the player more slowly (and don't overshoot)
@@ -149,6 +151,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 	coin.velx = 50*Math.sign(this.sprite.x-srcx);
 	coin.velh = -200;
 	level.addThing(coin);
+	this.dead = true;
 
     } else {
 	sounds[SNAKE_HURT_SND].play();
@@ -176,6 +179,7 @@ function Rat()
     this.frames = ["rat_south_1", "rat_south_2"];
     this.deadFrame = "rat_south_dead";
     this.health = 1;
+    this.speed = 100;
     this.frame = 0;
     this.facing = 1;
     this.travel = 100;
@@ -195,6 +199,7 @@ function Scorpion()
     this.frames = ["scorpion_south_1", "scorpion_south_2"];
     this.deadFrame = "scorpion_south_dead";
     this.health = 3;
+    this.speed = 60;
     this.frame = 0;
     this.facing = 1;
     this.travel = 100;

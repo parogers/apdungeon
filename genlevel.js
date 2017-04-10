@@ -19,6 +19,7 @@
 
 function generateLevel()
 {
+    var things = [];
     /* Generate the floor */
     var length = 50;
     var grid = createGrid(5, length);
@@ -45,7 +46,12 @@ function generateLevel()
 	if (nextpos >= grid.cols) break;
 
 	if (Math.random() < 0.5) {
-	    grid[0][randint(pos+1, nextpos-1)] = "gate_wall_1";
+	    var gate = new Gate();
+	    var col = randint(pos+1, nextpos-1);
+	    gate.sprite.x = col*TILE_WIDTH*SCALE;
+	    gate.sprite.y = 0;
+	    things.push(gate);
+	    grid[0][col] = null;
 	}
 	pos = nextpos;
 
@@ -66,18 +72,47 @@ function generateLevel()
 	pos += w;
     }
 
-    var bg = new TiledBackground(
-	TILE_WIDTH, TILE_HEIGHT, 
-	getTextures(MAPTILES),
-	grid);
-    var level = new Level(bg);
+/*    var gate = new Gate();
+    var col = 5;
+    gate.sprite.x = col*TILE_WIDTH*SCALE;
+    gate.sprite.y = 0;
+    things.push(gate);
+    grid[0][col] = null;*/
 
+    var bg = new TiledBackground(
+	TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
+	getTextures(MAPTILES), grid);
+
+    var level = new Level(bg);
+    for (var thing of things) {
+	level.addThing(thing);
+    }
+
+    var arena = new Arena();
+    level.arenas.push(arena);
+
+    var round = new Round();
+    round.addMonster(new Snake(SNAKE_ATTACKING), -1);
+    arena.rounds.push(round);
+
+    var round = new Round();
+    round.addMonster(new Snake(SNAKE_ATTACKING), -1);
+    round.addMonster(new Snake(SNAKE_ATTACKING), 1);
+    arena.rounds.push(round);
+
+    var round = new Round();
+    round.addMonster(new Snake(SNAKE_ATTACKING), 1);
+    round.addMonster(new Snake(SNAKE_ATTACKING), 1);
+    round.addMonster(new Snake(SNAKE_ATTACKING), -1);
+    arena.rounds.push(round);
+
+/*
     for (var n = 0; n < 10; n++) {
 	snake = new Scorpion();
 	snake.sprite.x = 100+150*n;
 	snake.sprite.y = 180+50*Math.sin(n*5);
 	level.addThing(snake);
     }
-
+*/
     return level;
 }

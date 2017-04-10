@@ -33,11 +33,13 @@ DEAD_SND = "media/effects/dead.wav"
 SPLASH_SND = "media/effects/splash.wav"
 ARROW_DING_SND = "media/effects/arrow_ding.wav"
 GO_SND = "media/effects/go.wav"
+COIN_SND = "media/effects/coin.wav"
 
 SCALE = 5;
 
 TILE_WIDTH = 8;
 TILE_HEIGHT = 8;
+WALL_HEIGHT = 13;
 
 // Currently playing music
 var music = null;
@@ -59,7 +61,7 @@ function loaded()
 
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST    
 
-    renderer = PIXI.autoDetectRenderer(800, 500);
+    renderer = PIXI.autoDetectRenderer(700, 400);
     div.appendChild(renderer.view);
     stage = new PIXI.Container();
 
@@ -140,6 +142,7 @@ function graphicsLoaded()
 	ARROW_DING_SND,
 	SPLASH_SND,
 	GO_SND,
+	COIN_SND,
 	GAME_MUSIC
     ]);
 }
@@ -172,10 +175,10 @@ function setup()
     player.sprite.y = 200;
     level.addThing(player);
 
-    //var go = new GoMarker();
-    //go.sprite.x = 500;
-    //go.sprite.y = 60;
-    //level.addThing(go);
+    /*var go = new GoMarker();
+    go.sprite.x = 500;
+    go.sprite.y = 100;
+    level.addThing(go);*/
 
     var npc = new Scenery(getTextures(NPC)["npc1_south_1"]);
     npc.sprite.x = 200;

@@ -20,11 +20,9 @@
 BACKGROUND_POS = 0;
 FLOOR_POS = 1;
 
-function compareDepth(s1, s2) {
-    var z1 = s1.zpos || s1.y;
-    var z2 = s2.zpos || s2.y;
-    return z1-z2;
-}
+/**********/
+/* Camera */
+/**********/
 
 function Camera()
 {
@@ -32,6 +30,18 @@ function Camera()
     this.y = 0;
     this.width = 0;
     this.height = 0;
+}
+
+/*********/
+/* Level */
+/*********/
+
+// Helper function for sorting sprites by depth, so sprites in the backround
+// are drawn below sprites in the foreground.
+function compareDepth(s1, s2) {
+    var z1 = s1.zpos || s1.y;
+    var z2 = s2.zpos || s2.y;
+    return z1-z2;
 }
 
 function Level(bg)
@@ -46,16 +56,31 @@ function Level(bg)
     this.things = [];
     this.stage = new PIXI.Container();
     this.stage.addChild(this.bg.sprite);
+    // List of arenas in this level (Arena instances)
+    this.arenas = [];
+    // Current active arena (number)
+    this.arena = -1;
 }
 
 Level.prototype.update = function(dt)
 {
-    //camera.x = player.spriteContainer.x-100;
+    //this.camera.x = player.sprite.x-100;
     this.stage.x = -this.camera.x;
     this.stage.y = -this.camera.y;
     this.camera.width = renderer.width;
     this.camera.height = renderer.height;
-
+    // Update the current arena
+    if (this.arena === -1 || this.arenas[this.arena].done) {
+	if (this.arena < this.arenas.length-1) {
+	    // Advance to the next arena
+	    this.arena++;
+	    this.arenas[this.arena].activate();
+	} else {
+	    // Done the level???
+	}
+    }
+    else this.arenas[this.arena].update(dt);
+    // Update everything in the level
     for (var n = 0; n < this.things.length; n++) {
 	this.things[n].update(dt);
     }

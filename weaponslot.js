@@ -198,7 +198,6 @@ Arrow.prototype.update = function(dt)
 	    this.hitbox, this.player);
 	if (other && other.handleHit) {
 	    var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
-	    console.log(ret);
 	    if (ret === true) {
 		level.removeThing(this);
 	    }

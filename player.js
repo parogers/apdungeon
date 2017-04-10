@@ -46,7 +46,7 @@ function Player()
     this.waterSprite.visible = false;
     this.waterSprite.texture = getTextures(MAPTILES)["treading_water"];
     this.sprite.addChild(this.waterSprite);
-    this.weaponSlot = new SwordWeaponSlot(this);
+    this.weaponSlot = new BowWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
     // Define the hitbox
     this.hitbox = new Hitbox(0, 0, 8*SCALE, 8*SCALE);
