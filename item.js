@@ -26,6 +26,7 @@ function GroundItem(img, x, y)
     this.sprite.scale.set(SCALE);
     this.height = 0;
     this.sprite.x = x;
+    this.sprite.y = y;
     this.ypos = y;
     this.zpos = y;
     this.velx = 0;

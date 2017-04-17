@@ -31,7 +31,7 @@ function Snake(state)
     this.frame = 0;
     this.facing = 1;
     this.dead = false;
-    this.travel = 100;
+    this.travel = 0;
     this.sprite = new PIXI.Sprite();
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0.5, 6.5/8);

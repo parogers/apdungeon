@@ -42,6 +42,25 @@ function Gate()
     this.moving = 0;
 }
 
+Gate.prototype.isOpen = function()
+{
+    return (this.frameNum === 2 && this.moving === 0);
+}
+
+Gate.prototype.startOpening = function()
+{
+    if (this.frameNum < this.frames.length-1) {
+	this.moving = 1;
+    }
+}
+
+Gate.prototype.startClosing = function()
+{
+    if (this.frameNum > 0) {
+	this.moving = -1;
+    }
+}
+
 Gate.prototype.update = function(dt)
 {
     // The gate is opening or closing

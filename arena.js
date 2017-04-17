@@ -35,26 +35,41 @@ function Arena()
     // The rounds to play through (Round instances)
     this.rounds = [];
     this.round = -1;
+    this.finishing = false;
     this.done = false;
+    this.doneDelay = 2;
 }
 
 // Called once per frame while the arena is active
 Arena.prototype.update = function(dt)
 {
+    if (this.done) return;
+    if (this.finishing)
+    {
+	// This arena is finished, but we wait a bit of time befoer displaying
+	// the go marker for the player to advance.
+	if (this.doneDelay > 0) {
+	    this.doneDelay -= dt;
+	    return;
+	}
+	// Display the marker in the upper-right corner
+	var go = new GoMarker();
+	go.sprite.x = level.camera.x+level.camera.width-go.sprite.width/2-10;
+	go.sprite.y = level.camera.y + go.sprite.height/2+10;
+	level.addThing(go);
+	this.done = true;
+	return;
+    }
+
     if (this.round === -1 || this.rounds[this.round].done) 
     {
 	if (this.round < this.rounds.length-1) 
 	{
 	    // Spawn in monsters for the next round
 	    this.round++;
-	    console.log("NEXT ROUND " + this.round);
-	    for (monster of this.rounds[this.round].monsters) {
-		var dir = monster._spawnDirection || -1;
-		level.addThing(monster);
-		monster.sprite.x = level.camera.x + level.camera.width/2 + 
-		    -1*dir*(level.camera.width/2+20);
-		monster.sprite.y = level.bg.getHeight()/2;
-	    }
+	    this.rounds[this.round].activate();
+	} else {
+	    this.finishing = true;
 	}
     } else {
 	this.rounds[this.round].update(dt);
@@ -66,33 +81,133 @@ Arena.prototype.activate = function()
     // Add the "go" sign to the stage
 }
 
-// Types of spawns: from left, from right, from under water, through a gate,
-// drop from above
-function Spawn()
-{
-}
+/*********/
+/* Round */
+/*********/
 
 // Each round will spawn a number of monsters and includes a "win condition"
 // that determines when the round is finished. (and the arena progresses to
 // the next round)
-function Round()
+function Round(delay)
 {
-    this.monsters = [];
+    this.delay = delay || 0;
+    this.spawns = [];
     this.done = false;
+    this.activated = false;
+}
+
+// Called to trigger the spawners in this round
+Round.prototype.activate = function()
+{
 }
 
 Round.prototype.update = function(dt)
 {
-    for (monster of this.monsters) {
-	if (!monster.dead) return;
+    if (!this.activated) 
+    {
+	// Wait a bit before activating the round
+	if (this.delay > 0) {
+	    this.delay -= dt;
+	    return;
+	}
+	// Activate all the spawners in this round
+	for (spawn of this.spawns) {
+	    spawn.activate();
+	}
+	this.activated = true;
     }
+    // Wait for all the monsters to die
     this.done = true;
+    for (spawn of this.spawns) {
+	if (spawn.update) spawn.update(dt);
+	if (!spawn.monster.dead) this.done = false;
+    }
 }
 
-// Add a monster to this round, indicating which direction it should come 
-// from on screen. (-1 == from the right, 1 == from the left)
-Round.prototype.addMonster = function(thing, direction)
+// Add a monster spawner to this round
+Round.prototype.addSpawn = function(spawn)
 {
-    thing._spawnDirection = direction;
-    this.monsters.push(thing);
+    this.spawns.push(spawn);
+}
+
+/*********/
+/* Spawn */
+/*********/
+
+// Spawns are triggered by rounds, and add monsters into the arena to fight
+// with the player. The spawn determines where to place the monster once the
+// round becomes active. Types of spawns: from left, from right, from under 
+// water, through a gate, drop from above
+
+// Spawn from the left/right side of the screen (monster starts off-screen)
+function Spawn(monster, direction, ypos)
+{
+    this.monster = monster;
+    this.direction = direction;
+    this.ypos = ypos;
+}
+
+Spawn.prototype.activate = function()
+{
+    // Start the monster somewhere off screen
+    level.addThing(this.monster);
+    this.monster.sprite.x = level.camera.x + level.camera.width/2 + 
+	-1*this.direction*(level.camera.width/2+20);
+    //this.monster.sprite.y = level.bg.getHeight()/2;
+    this.monster.sprite.y = this.ypos;
+}
+
+// Monster walks in through a gate
+function GateSpawn(monster, gate)
+{
+    this.monster = monster;
+    this.gate = gate;
+    this.spawned = false;
+    this.closeDelay = 0.5;
+}
+
+GateSpawn.prototype.activate = function()
+{
+    // Start the gate opening
+    this.gate.startOpening();
+}
+
+GateSpawn.prototype.update = function(dt)
+{
+    // Wait for the gate to finish opening
+    if (!this.spawned && this.gate.isOpen())
+    {
+	// Spawn in the monster, overtop the opened gate
+	this.spawned = true;
+	level.addThing(this.monster);
+	this.monster.sprite.x = this.gate.sprite.x + 
+	    this.gate.sprite.texture.width*SCALE/2;
+	this.monster.sprite.y = this.gate.sprite.y + 
+	    this.gate.sprite.texture.height*SCALE;
+    } 
+    else if (this.spawned && this.closeDelay > 0)
+    {
+	// Wait a bit before closing the gate again
+	this.closeDelay -= dt;
+	if (this.closeDelay <= 0) {
+	    this.gate.startClosing();
+	}
+    }
+}
+
+// Monster drops from above to the given location (casting a shadow on the
+// way down, etc.)
+function DropSpawn(monster, x, y)
+{
+    this.monster = monster;
+    this.xpos = x;
+    this.ypos = y;
+}
+
+// Monster spawns under water, then rises with bubbles etc
+function WaterSpawn(monster, x, y)
+{
+    this.monster = monster;
+    this.xpos = x;
+    this.ypos = y;
 }

@@ -62,7 +62,7 @@ function loaded()
 
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST    
 
-    renderer = PIXI.autoDetectRenderer(700, 400);
+    renderer = PIXI.autoDetectRenderer(600, 400);
     div.appendChild(renderer.view);
     stage = new PIXI.Container();
 

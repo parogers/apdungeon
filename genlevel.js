@@ -45,7 +45,7 @@ function generateLevel()
 	nextpos = pos + randint(5, 10);
 	if (nextpos >= grid.cols) break;
 
-	if (Math.random() < 0.5) {
+	if (Math.random() < 0.5 && pos > 0) {
 	    var gate = new Gate();
 	    var col = randint(pos+1, nextpos-1);
 	    gate.sprite.x = col*TILE_WIDTH*SCALE;
@@ -72,12 +72,12 @@ function generateLevel()
 	pos += w;
     }
 
-/*    var gate = new Gate();
-    var col = 5;
+    var gate = new Gate();
+    var col = 4;
     gate.sprite.x = col*TILE_WIDTH*SCALE;
     gate.sprite.y = 0;
     things.push(gate);
-    grid[0][col] = null;*/
+    grid[0][col] = null;
 
     var bg = new TiledBackground(
 	TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
@@ -91,20 +91,27 @@ function generateLevel()
     var arena = new Arena();
     level.arenas.push(arena);
 
-    var round = new Round();
-    round.addMonster(new Snake(SNAKE_ATTACKING), -1);
+    var ypos = level.bg.getHeight()/2;
+
+    var round = new Round(1);
+    round.addSpawn(new GateSpawn(new Snake(SNAKE_ATTACKING), gate));
     arena.rounds.push(round);
 
-    var round = new Round();
-    round.addMonster(new Snake(SNAKE_ATTACKING), -1);
-    round.addMonster(new Snake(SNAKE_ATTACKING), 1);
+    /*var round = new Round(0.5);
+    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
     arena.rounds.push(round);
 
-    var round = new Round();
-    round.addMonster(new Snake(SNAKE_ATTACKING), 1);
-    round.addMonster(new Snake(SNAKE_ATTACKING), 1);
-    round.addMonster(new Snake(SNAKE_ATTACKING), -1);
+    var round = new Round(0.5);
+    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
+    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos));
     arena.rounds.push(round);
+
+    var round = new Round(0.75);
+    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos-50));
+    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos+50));
+    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
+    round.addSpawn(new GateSpawn(new Snake(SNAKE_ATTACKING), gate));
+    arena.rounds.push(round);*/
 
 /*
     for (var n = 0; n < 10; n++) {

@@ -23,6 +23,7 @@ function GoMarker()
     this.sprite = new PIXI.Sprite();
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0.5,0.5);
+    this.sprite.texture = getTextures(UI)[this.frames[0]];
     this.timer = 0;
     this.dings = 3;
     this.frameNum = 0;
