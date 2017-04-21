@@ -27,14 +27,21 @@ function GoMarker()
     this.timer = 0;
     this.dings = 3;
     this.frameNum = 0;
+    this.done = false;
+    this.guiLayer = true;
+
+    this.sprite.x = level.camera.width - 
+	this.sprite.width/2-10;
+    this.sprite.y = this.sprite.height/2+10;
 }
 
 GoMarker.prototype.update = function(dt)
 {
-    if (this.dings <= 0) return;
+    if (this.done) return;
     var next = this.timer + dt;
     if (this.timer < 0.3 && next >= 0.3) {
 	if (this.dings-- > 0) sounds[GO_SND].play();
+	else this.done = true;
 	this.frameNum = 1;
     } else if (this.timer < 1 && next >= 1) {
 	this.frameNum = 0;

@@ -243,6 +243,11 @@ desc = [
 frames = gen_grid((116,94), (10,4), desc)
 
 desc = [
+    ("rippling_water",)
+]
+frames += gen_grid((116,88), (10,6), desc)
+
+desc = [
     ("black",)
 ]
 frames += gen_grid((118,55), (8,8), desc)
@@ -260,7 +265,7 @@ frames += gen_grid((1,1), (8,13), desc)
 desc = [
     ("smooth_floor_l", "smooth_floor_m", "smooth_floor_r", "door1", "door2", "door3", "door4", "torch", None, None, None),
     ("smooth_floor_bl", "smooth_floor_bm", "smooth_floor_br", "blood1", "blood2", "blood3", "blood4", "chest_closed", "chest_open", "skull1", "skull2"),
-    ("water", "green_water", null, "barrel1", "barrel2", "barrel3", "barrel4", "barrel5", "barrel6", "barrel7", "bones"),
+    ("water", "green_water", None, "barrel1", "barrel2", "barrel3", "barrel4", "barrel5", "barrel6", "barrel7", "bones"),
     ("bridge_b", "bridge_t", None, "sack1", "sack2", "sack3", "sack4", "sack5", "sack6", None, "mushroom"),
     (None, None, None, "carpet_l", "carpet_m", "carpet_r", None, None, None, None, None),
     (None, None, None, "carpet_bl", "carpet_bm", "carpet_br", None, None, None, None, None),

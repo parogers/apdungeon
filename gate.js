@@ -17,14 +17,6 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function Hitbox(x, y, w, h)
-{
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-}
-
 function Gate()
 {
     this.frames = [

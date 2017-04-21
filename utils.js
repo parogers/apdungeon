@@ -60,3 +60,13 @@ function createGrid(rows, cols, value)
     }
     return grid;
 }
+
+function createSplashSprite()
+{
+    waterSprite = new PIXI.Sprite();
+    waterSprite.scale.set(SCALE);
+    waterSprite.anchor.set(0.5, 0.5);
+    waterSprite.visible = false;
+    waterSprite.texture = getTextures(MAPTILES)["treading_water"];
+    return waterSprite;
+}

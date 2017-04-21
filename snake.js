@@ -32,9 +32,17 @@ function Snake(state)
     this.facing = 1;
     this.dead = false;
     this.travel = 0;
-    this.sprite = new PIXI.Sprite();
-    this.sprite.scale.set(SCALE);
-    this.sprite.anchor.set(0.5, 6.5/8);
+    // The sprite container holding the snake and splash sprite
+    this.sprite = new PIXI.Container();
+    // The actual snake sprite
+    this.snakeSprite = new PIXI.Sprite();
+    this.snakeSprite.scale.set(SCALE);
+    this.snakeSprite.anchor.set(0.5, 6.5/8);
+    this.sprite.addChild(this.snakeSprite);
+    // Make the splash/water sprite
+    this.waterSprite = createSplashSprite();
+    this.waterSprite.y = -1.25*SCALE;
+    this.sprite.addChild(this.waterSprite);
     //this.sprite.texture = getTextures(ENEMIES)[this.frames[0]];
     this.knocked = 0;
     this.knockedTimer = 0;
@@ -48,7 +56,6 @@ Snake.prototype.update = function(dt)
     else if (this.state === SNAKE_ATTACKING) this.updateAttacking(dt);
     else if (this.state === SNAKE_HURT) this.updateHurt(dt);
     else if (this.state === SNAKE_DEAD) {
-	//this.sprite.texture = getTextures(ENEMIES)[this.deadFrame];
 	level.removeThing(this);
     }
 }
@@ -57,7 +64,7 @@ Snake.prototype.updateIdle = function(dt)
 {
     this.frame += 2*dt;
     var f = this.frames[(this.frame%this.frames.length)|0];
-    this.sprite.texture = getTextures(ENEMIES)[f];
+    this.snakeSprite.texture = getTextures(ENEMIES)[f];
 
     // Turn left/right searching for the player
     this.facing = Math.sign(Math.cos(this.frame/10));
@@ -94,31 +101,39 @@ Snake.prototype.updateAttacking = function(dt)
 	dy = dt*20*Math.sign(dist);
     }
 
+    // Check if the snake can move left/right
     var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
-    if (!tile.solid && !tile.water) {
+    if (!tile.solid) {
 	this.sprite.x += dx;
+	this.waterSprite.visible = tile.water;
     }
 
+    // Now check if it can move up/down. Doing this separately from the check
+    // above means we can "slide" along walls and such.
     var tile2 = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
-    if (!tile2.solid && !tile2.water) {
+    if (!tile2.solid) {
+	// Go a bit faster if we're just moving up/down
 	if (tile.solid) this.sprite.y += 3*dy;
-	else this.sprite.y += dy;
+	else {
+	    this.sprite.y += dy;
+	    this.waterSprite.visible = tile2.water;
+	}
     }
 
     this.frame += 4*dt;
     var f = this.frames[(this.frame%this.frames.length)|0];
-    this.sprite.texture = getTextures(ENEMIES)[f];
+    this.snakeSprite.texture = getTextures(ENEMIES)[f];
 }
 
 Snake.prototype.updateHurt = function(dt)
 {
     // The snake keeps its eyes closed while hurt
-    this.sprite.texture = getTextures(ENEMIES)[this.frames[1]];
+    this.snakeSprite.texture = getTextures(ENEMIES)[this.frames[1]];
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
 	var dx = this.knocked*dt;
 	var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
-	if (!tile.solid && !tile.water) {
+	if (!tile.solid) {
 	    this.sprite.x += dx;
 	}
 	this.knockedTimer -= dt;
@@ -136,15 +151,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.health <= 0) {
 	sounds[DEAD_SND].play();
 	this.state = SNAKE_DEAD;
-
-	/*for (var n = 0; n < 5; n++) {
-	    var coin = new GroundItem(
-		getTextures(GROUND_ITEMS)["coin"],
-		this.sprite.x, this.sprite.y);
-	    coin.velx = randUniform(20,150)*Math.sign(this.sprite.x-srcx);
-	    coin.velh = -randUniform(100,350);
-	    level.addThing(coin);
-	}*/
+	// Drop a reward
 	var coin = new GroundItem(
 	    getTextures(GROUND_ITEMS)["coin"],
 	    this.sprite.x, this.sprite.y);
@@ -159,15 +166,21 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 	this.knockedTimer = 0.1;
 	this.state = SNAKE_HURT;
     }
-    var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
-	randomChoice(["blood1", "blood2", "blood3"])
-    ]);
-    sprite.scale.set(SCALE);
-    sprite.x = this.sprite.x;
-    sprite.y = this.sprite.y-1;
-    sprite.zpos = FLOOR_POS;
-    sprite.anchor.set(0.5, 0.5);
-    level.stage.addChild(sprite);
+
+    // Add some random blood, but only if we're not currently in water
+    // (looks better this way)
+    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    if (!tile.water) {
+	var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
+	    randomChoice(["blood1", "blood2", "blood3"])
+	]);
+	sprite.scale.set(SCALE);
+	sprite.x = this.sprite.x;
+	sprite.y = this.sprite.y-1;
+	sprite.zpos = FLOOR_POS;
+	sprite.anchor.set(0.5, 0.5);
+	level.levelStage.addChild(sprite);
+    }
     return true;
 }
 

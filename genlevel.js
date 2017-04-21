@@ -34,7 +34,8 @@ function generateLevel()
     }
 
     var w = randint(4, 8);
-    var pos = randint(2, grid.cols-2-w);
+    //var pos = randint(2, grid.cols-2-w);
+    var pos = 5; // TODO - change
     for (var row = 1; row < grid.rows; row++)
 	for (var col = pos-randint(0,2); col < pos+w+randint(0,2); col++)
 	    grid[row][col] = "water";
@@ -89,15 +90,19 @@ function generateLevel()
     }
 
     var arena = new Arena();
+    arena.startx = 0;
+    arena.endx = level.camera.width;
     level.arenas.push(arena);
 
     var ypos = level.bg.getHeight()/2;
 
     var round = new Round(1);
-    round.addSpawn(new GateSpawn(new Snake(SNAKE_ATTACKING), gate));
+    round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 150));
+    //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
     arena.rounds.push(round);
 
-    /*var round = new Round(0.5);
+    // TODO - change
+    var round = new Round(0.5);
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
     arena.rounds.push(round);
 
@@ -111,7 +116,18 @@ function generateLevel()
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos+50));
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
     round.addSpawn(new GateSpawn(new Snake(SNAKE_ATTACKING), gate));
-    arena.rounds.push(round);*/
+    arena.rounds.push(round);
+
+    var arena = new Arena();
+    arena.startx = level.camera.width*2;
+    arena.endx = level.camera.width*3;
+    level.arenas.push(arena);
+
+    var ypos = level.bg.getHeight()/2;
+
+    var round = new Round(1);
+    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
+    arena.rounds.push(round);
 
 /*
     for (var n = 0; n < 10; n++) {

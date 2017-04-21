@@ -145,8 +145,9 @@ BowWeaponSlot.prototype.startAttack = function()
 	this.player.sprite.y+this.sprite.y,
 	this.player.facing*500, 0,
 	Math.abs(this.sprite.y));
-    level.things.push(arrow);
-    level.stage.addChild(arrow.sprite);
+    //level.things.push(arrow);
+    //level.stage.addChild(arrow.sprite);
+    level.addThing(arrow);
 }
 
 BowWeaponSlot.prototype.stopAttack = function()

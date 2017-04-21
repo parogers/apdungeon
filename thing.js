@@ -17,17 +17,6 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-// A hitbox that defines an area of a thing to test collisions against. Note
-// the (x, y) point is relative to the thing's sprite position, and (w, h)
-// defines a rectangle that is centered on that position.
-function Hitbox(x, y, w, h)
-{
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-}
-
 /* Template code for defining a 'thing' in a level. Generally things have 
  * sprites associated with them, and can be interacted with by the player.
  * Note there's no need to subclass because this code doesn't contain any

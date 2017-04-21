@@ -39,12 +39,8 @@ function Player()
     this.spriteChar.anchor.set(0.5, 1);
     this.sprite.addChild(this.spriteChar);
     // Setup the sprite for when the player is treading water
-    this.waterSprite = new PIXI.Sprite();
-    this.waterSprite.scale.set(SCALE);
-    this.waterSprite.anchor.set(0.5, 0.5);
+    this.waterSprite = createSplashSprite();
     this.waterSprite.y = -1.5*SCALE;
-    this.waterSprite.visible = false;
-    this.waterSprite.texture = getTextures(MAPTILES)["treading_water"];
     this.sprite.addChild(this.waterSprite);
     this.weaponSlot = new BowWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
@@ -93,11 +89,15 @@ Player.prototype.update = function(dt)
     }
     var w = this.spriteChar.texture.width*SCALE*0.75;
 
+    // Handle left/right movement
     if (this.velx) {
 	var x = this.sprite.x + this.velx*dt;
 	var left = level.bg.getTileAt(x-w/2, this.sprite.y);
 	var right = level.bg.getTileAt(x+w/2, this.sprite.y);
-	if (!left.solid && !right.solid) {
+	// Keep the player visible to the camera
+	if (!left.solid && !right.solid && 
+	    x-10 >= level.camera.x && 
+	    x+10 <= level.camera.x + level.camera.width) {
 	    this.sprite.x = x;
 	} else {
 	    this.velx = 0;
@@ -116,7 +116,7 @@ Player.prototype.update = function(dt)
 
     // Make a splashy sound when we enter water
     var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
-    if (tile.name === "water") {
+    if (tile.water) {
 	if (!this.waterSprite.visible) sounds[SPLASH_SND].play();
 	this.waterSprite.visible = true;
     } else {

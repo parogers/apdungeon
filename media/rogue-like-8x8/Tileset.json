@@ -5,6 +5,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":4},
     "sourceSize" : {"w":10, "h":4}
+},"rippling_water" : {
+    "frame" : {"x":116, "y":88, "w":10, "h":6},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":6},
+    "sourceSize" : {"w":10, "h":6}
 },"black" : {
     "frame" : {"x":118, "y":55, "w":8, "h":8},
     "rotated" : false,

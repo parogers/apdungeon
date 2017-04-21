@@ -65,7 +65,9 @@ GroundItem.prototype.update = function(dt)
 
 GroundItem.prototype.handlePlayerCollision = function()
 {
-    if (this.height < 10) {
+    // The player takes the item if it's falling down (or resting) and close
+    // enough to the ground.
+    if (this.height < 10 && this.velh <= 0) {
 	sounds[COIN_SND].play();
 	level.removeThing(this);
     }

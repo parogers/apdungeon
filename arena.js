@@ -52,11 +52,6 @@ Arena.prototype.update = function(dt)
 	    this.doneDelay -= dt;
 	    return;
 	}
-	// Display the marker in the upper-right corner
-	var go = new GoMarker();
-	go.sprite.x = level.camera.x+level.camera.width-go.sprite.width/2-10;
-	go.sprite.y = level.camera.y + go.sprite.height/2+10;
-	level.addThing(go);
 	this.done = true;
 	return;
     }
@@ -210,4 +205,30 @@ function WaterSpawn(monster, x, y)
     this.monster = monster;
     this.xpos = x;
     this.ypos = y;
+    var img = getTextures(MAPTILES)["rippling_water"];
+    this.water = new Scenery(img);
+    this.water.sprite.anchor.set(0.5, 0.7);
+    this.water.sprite.x = x;
+    this.water.sprite.y = y;
+    this.spawnDelay = 1;
+}
+
+WaterSpawn.prototype.activate = function()
+{
+    // Show the water rippling right away
+    level.addThing(this.water)
+}
+
+WaterSpawn.prototype.update = function(dt)
+{
+    // Wait for a bit of time before spawning the monster
+    if (this.spawnDelay > 0) {
+	this.spawnDelay -= dt;
+	if (this.spawnDelay <= 0) {
+	    level.removeThing(this.water);
+	    level.addThing(this.monster);
+	    this.monster.sprite.x = this.xpos;
+	    this.monster.sprite.y = this.ypos;
+	}
+    }
 }
