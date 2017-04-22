@@ -243,9 +243,10 @@ desc = [
 frames = gen_grid((116,94), (10,4), desc)
 
 desc = [
+    ("shadow",),
     ("rippling_water",)
 ]
-frames += gen_grid((116,88), (10,6), desc)
+frames += gen_grid((116,84), (10,5), desc)
 
 desc = [
     ("black",)

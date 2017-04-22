@@ -24,8 +24,7 @@ var SNAKE_DEAD = 3;
 
 function Snake(state)
 {
-    this.frames = ["snake_south_1", "snake_south_2"];
-    this.deadFrame = "snake_south_dead";
+    this.frames = loadFrames(ENEMIES, "snake_south_1", "snake_south_2");
     this.speed = 80;
     this.health = 3;
     this.frame = 0;
@@ -63,8 +62,7 @@ Snake.prototype.update = function(dt)
 Snake.prototype.updateIdle = function(dt)
 {
     this.frame += 2*dt;
-    var f = this.frames[(this.frame%this.frames.length)|0];
-    this.snakeSprite.texture = getTextures(ENEMIES)[f];
+    this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 
     // Turn left/right searching for the player
     this.facing = Math.sign(Math.cos(this.frame/10));
@@ -121,14 +119,13 @@ Snake.prototype.updateAttacking = function(dt)
     }
 
     this.frame += 4*dt;
-    var f = this.frames[(this.frame%this.frames.length)|0];
-    this.snakeSprite.texture = getTextures(ENEMIES)[f];
+    this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
 
 Snake.prototype.updateHurt = function(dt)
 {
     // The snake keeps its eyes closed while hurt
-    this.snakeSprite.texture = getTextures(ENEMIES)[this.frames[1]];
+    this.snakeSprite.texture = this.frames[1];
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
 	var dx = this.knocked*dt;
@@ -189,8 +186,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 function Rat()
 {
     Snake.call(this);
-    this.frames = ["rat_south_1", "rat_south_2"];
-    this.deadFrame = "rat_south_dead";
+    this.frames = loadFrames(ENEMIES, "rat_south_1", "rat_south_2");
     this.health = 1;
     this.speed = 100;
     this.frame = 0;
@@ -209,8 +205,7 @@ Rat.prototype = Object.create(Snake.prototype);
 function Scorpion()
 {
     Snake.call(this);
-    this.frames = ["scorpion_south_1", "scorpion_south_2"];
-    this.deadFrame = "scorpion_south_dead";
+    this.frames = loadFrames(ENEMIES, "scorpion_south_1", "scorpion_south_2");
     this.health = 3;
     this.speed = 60;
     this.frame = 0;

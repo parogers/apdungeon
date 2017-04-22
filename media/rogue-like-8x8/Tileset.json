@@ -5,12 +5,18 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":4},
     "sourceSize" : {"w":10, "h":4}
-},"rippling_water" : {
-    "frame" : {"x":116, "y":88, "w":10, "h":6},
+},"shadow" : {
+    "frame" : {"x":116, "y":84, "w":10, "h":5},
     "rotated" : false,
     "trimmed" : false,
-    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":6},
-    "sourceSize" : {"w":10, "h":6}
+    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":5},
+    "sourceSize" : {"w":10, "h":5}
+},"rippling_water" : {
+    "frame" : {"x":116, "y":90, "w":10, "h":5},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":5},
+    "sourceSize" : {"w":10, "h":5}
 },"black" : {
     "frame" : {"x":118, "y":55, "w":8, "h":8},
     "rotated" : false,

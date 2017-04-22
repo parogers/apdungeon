@@ -50,11 +50,6 @@ var renderer = null;
 var stage = null;
 var progress = null;
 
-function getTextures(res)
-{
-    return PIXI.loader.resources[res].textures;
-}
-
 function loaded()
 {
     var div = document.getElementById("canvas_area");

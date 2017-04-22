@@ -28,8 +28,9 @@ function Player()
     this.count = 0;
     this.facing = 1;
     this.maxSpeed = 200; // pixels/second
-    this.southFrames = ["melee1_south_1", "melee1_south_2", "melee1_south_3"];
-    this.frames = this.southFrames;
+    this.frames = loadFrames(
+	FEMALE_MELEE, 
+	"melee1_south_1", "melee1_south_2", "melee1_south_3");
     /* Setup a PIXI container to hold the player sprite, and any other 
      * equipment they're carrying. */
     this.sprite = new PIXI.Container();
@@ -42,6 +43,13 @@ function Player()
     this.waterSprite = createSplashSprite();
     this.waterSprite.y = -1.5*SCALE;
     this.sprite.addChild(this.waterSprite);
+
+    /*shadowSprite = new PIXI.Sprite();
+    shadowSprite.scale.set(SCALE);
+    shadowSprite.anchor.set(0.5, 0.5);
+    shadowSprite.visible = false;
+    shadowSprite.texture = getTextures(MAPTILES)["treading_water"];*/
+
     this.weaponSlot = new BowWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
     // Define the hitbox
@@ -65,8 +73,6 @@ Player.prototype.update = function(dt)
     } 
 
     if (diry) {
-	//if (diry > 0) this.frames = this.southFrames;
-	//else this.frames = this.northFrames;
 	this.vely = diry * this.maxSpeed;
     } else {
 	this.vely *= 0.75;
@@ -149,7 +155,6 @@ Player.prototype.update = function(dt)
     }
 
     // Update animation
-    var imgs = getTextures(FEMALE_MELEE);
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
-    this.spriteChar.texture = imgs[frame];
+    this.spriteChar.texture = frame;
 }

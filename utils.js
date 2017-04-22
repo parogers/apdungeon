@@ -29,24 +29,27 @@ var requestAnimFrame =
 	    window.setTimeout(callback, 1000 / 60);
 	};
 
-/* Returns a random number integer between a & b (inclusive) */
+// Returns a random number integer between a & b (inclusive)
 function randint(a, b)
 {
     return (a + (b-a+1)*Math.random())|0;
 }
 
+// Returns a random number selected uniformly over the interval [a, b)
 function randUniform(a, b)
 {
     return (a + (b-a+1)*Math.random());
 }
 
-/* Returns a random element selected uniformly from the given list */
+// Returns a random element selected uniformly from the given list
 function randomChoice(lst)
 {
     var n = (Math.random() * lst.length)|0;
     return lst[n];
 }
 
+// Returns a matrix (ie n[row][col]) of the given value. Also the number of
+// rows and columns (rows, cols) are available as attributes.
 function createGrid(rows, cols, value)
 {
     var grid = [];
@@ -61,6 +64,7 @@ function createGrid(rows, cols, value)
     return grid;
 }
 
+// Returns a sprite used for monsters/player treading water
 function createSplashSprite()
 {
     waterSprite = new PIXI.Sprite();
@@ -69,4 +73,20 @@ function createSplashSprite()
     waterSprite.visible = false;
     waterSprite.texture = getTextures(MAPTILES)["treading_water"];
     return waterSprite;
+}
+
+// Helper function for returning a texture set given the resource string
+function getTextures(res)
+{
+    return PIXI.loader.resources[res].textures;
+}
+
+function loadFrames()
+{
+    var frames = [];
+    var res = arguments[0];
+    for (var n = 1; n < arguments.length; n++) {
+	frames.push(getTextures(res)[arguments[n]]);
+    }
+    return frames;
 }
