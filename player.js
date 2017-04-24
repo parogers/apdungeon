@@ -28,7 +28,7 @@ function Player()
     this.count = 0;
     this.facing = 1;
     this.maxSpeed = 200; // pixels/second
-    this.frames = loadFrames(
+    this.frames = getFrames(
 	FEMALE_MELEE, 
 	"melee1_south_1", "melee1_south_2", "melee1_south_3");
     /* Setup a PIXI container to hold the player sprite, and any other 

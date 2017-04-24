@@ -28,7 +28,10 @@ function GroundItem(img, x, y)
     this.sprite.x = x;
     this.sprite.y = y;
     this.ypos = y;
-    this.zpos = y;
+    // Make the render depth fixed here, otherwise as the item bounces it
+    // will seem like it's moving back into the scene. (ie disappears behind
+    // other sprites)
+    this.sprite.zpos = y;
     this.velx = 0;
     this.velh = 0;
     this.bouncy = 0.5;
@@ -37,7 +40,8 @@ function GroundItem(img, x, y)
 
 GroundItem.prototype.update = function(dt)
 {
-    if (this.velh !== 0) {
+    if (this.velh !== 0) 
+    {
 	// Move the item left/right having it bounce off walls too. Note we
 	// check the "floor" position of the item instead of the sprite pos.
 	var dx = this.velx*dt;

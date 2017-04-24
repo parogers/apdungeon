@@ -206,11 +206,11 @@ def get_desc(row, col):
         ("1", "idle", "2",  "3",  "dead"),
         ("1", "idle", "2",  "3",  "dead"), # mould
         ("1", "2",    "3",  "dead", None),
-        ("1", "2",    "3",  "dead", None), # skeleton
+        ("1", "2",    "3",  "dead", "attack"), # skeleton
         ("1", "2",    "3",  "dead", None),
-        ("1", "2",    "3",  "dead", None), # skeleton
+        ("1", "2",    "3",  "dead", "attack"), # skeleton
         ("1", "2",    "3",  "dead", None),
-        ("1", "2",    "3",  "dead", None), # skeleton
+        ("1", "2",    "3",  "dead", "attack"), # skeleton
     )
 
     if (not extra[row][col]):

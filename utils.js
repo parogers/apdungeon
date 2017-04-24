@@ -81,7 +81,12 @@ function getTextures(res)
     return PIXI.loader.resources[res].textures;
 }
 
-function loadFrames()
+function getFrame(res, name)
+{
+    return getTextures(res)[name];
+}
+
+function getFrames()
 {
     var frames = [];
     var res = arguments[0];

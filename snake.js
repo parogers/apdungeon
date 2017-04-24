@@ -24,7 +24,7 @@ var SNAKE_DEAD = 3;
 
 function Snake(state)
 {
-    this.frames = loadFrames(ENEMIES, "snake_south_1", "snake_south_2");
+    this.frames = getFrames(ENEMIES, "snake_south_1", "snake_south_2");
     this.speed = 80;
     this.health = 3;
     this.frame = 0;
@@ -42,7 +42,6 @@ function Snake(state)
     this.waterSprite = createSplashSprite();
     this.waterSprite.y = -1.25*SCALE;
     this.sprite.addChild(this.waterSprite);
-    //this.sprite.texture = getTextures(ENEMIES)[this.frames[0]];
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || SNAKE_IDLE;
@@ -117,7 +116,6 @@ Snake.prototype.updateAttacking = function(dt)
 	    this.waterSprite.visible = tile2.water;
 	}
     }
-
     this.frame += 4*dt;
     this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
@@ -150,7 +148,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 	this.state = SNAKE_DEAD;
 	// Drop a reward
 	var coin = new GroundItem(
-	    getTextures(GROUND_ITEMS)["coin"],
+	    getFrame(GROUND_ITEMS, "coin"),
 	    this.sprite.x, this.sprite.y);
 	coin.velx = 50*Math.sign(this.sprite.x-srcx);
 	coin.velh = -200;
@@ -168,9 +166,9 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     // (looks better this way)
     var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
-	var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
-	    randomChoice(["blood1", "blood2", "blood3"])
-	]);
+	var sprite = new PIXI.Sprite(
+	    getFrame(MAPTILES, randomChoice(["blood1", "blood2", "blood3"]))
+	);
 	sprite.scale.set(SCALE);
 	sprite.x = this.sprite.x;
 	sprite.y = this.sprite.y-1;
@@ -186,7 +184,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 function Rat()
 {
     Snake.call(this);
-    this.frames = loadFrames(ENEMIES, "rat_south_1", "rat_south_2");
+    this.frames = getFrames(ENEMIES, "rat_south_1", "rat_south_2");
     this.health = 1;
     this.speed = 100;
     this.frame = 0;
@@ -205,9 +203,9 @@ Rat.prototype = Object.create(Snake.prototype);
 function Scorpion()
 {
     Snake.call(this);
-    this.frames = loadFrames(ENEMIES, "scorpion_south_1", "scorpion_south_2");
-    this.health = 3;
-    this.speed = 60;
+    this.frames = getFrames(ENEMIES, "scorpion_south_1", "scorpion_south_2");
+    this.health = 4;
+    this.speed = 50;
     this.frame = 0;
     this.facing = 1;
     this.travel = 100;

@@ -97,7 +97,7 @@ function generateLevel()
     var ypos = level.bg.getHeight()/2;
 
     var round = new Round(1);
-    round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 150));
+    round.addSpawn(new Spawn(new Goblin(), -1, 150));
     //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
     arena.rounds.push(round);
 
@@ -115,7 +115,7 @@ function generateLevel()
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos-50));
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos+50));
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-    round.addSpawn(new GateSpawn(new Snake(SNAKE_ATTACKING), gate));
+    round.addSpawn(new GateSpawn(new Goblin(), gate));
     arena.rounds.push(round);
 
     var arena = new Arena();

@@ -719,6 +719,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
+},"skelton_warrior_south_attack" : {
+    "frame" : {"x":36, "y":261, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
 },"skelton_ranger_north_1" : {
     "frame" : {"x":0, "y":270, "w":8, "h":8},
     "rotated" : false,
@@ -767,6 +773,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
+},"skelton_ranger_south_attack" : {
+    "frame" : {"x":36, "y":279, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
 },"skeleton_mage_north_1" : {
     "frame" : {"x":0, "y":288, "w":8, "h":8},
     "rotated" : false,
@@ -811,6 +823,12 @@
     "sourceSize" : {"w":8, "h":8}
 },"skeleton_mage_south_dead" : {
     "frame" : {"x":27, "y":297, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"skeleton_mage_south_attack" : {
+    "frame" : {"x":36, "y":297, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},

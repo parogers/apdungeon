@@ -28,7 +28,7 @@ ARROW_DISAPPEAR = 2;
 function SwordWeaponSlot(player)
 {
     // Setup the weapon sprite (texture will come later)
-    this.sprite = new PIXI.Sprite(getTextures(WEAPONS)["sword2"]);
+    this.sprite = new PIXI.Sprite(getFrame(WEAPONS, "sword2"));
     //this.weaponSprite.anchor.set(6.5/8, 4/8.); // bow
     this.sprite.anchor.set(4./8, 3.9/8); // sword
     //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
@@ -105,7 +105,7 @@ SwordWeaponSlot.prototype.stopAttack = function()
 function BowWeaponSlot(player)
 {
     // Setup the weapon sprite (texture will come later)
-    this.sprite = new PIXI.Sprite(getTextures(WEAPONS)["bow1"]);
+    this.sprite = new PIXI.Sprite(getFrame(WEAPONS, "bow1"));
     this.sprite.anchor.set(6.5/8, 4/8.); // bow
     //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
     this.sprite.scale.set(SCALE);
@@ -156,7 +156,7 @@ BowWeaponSlot.prototype.stopAttack = function()
 
 function Arrow(x, y, velx, vely, height)
 {
-    this.sprite = new PIXI.Sprite(getTextures(WEAPONS)["arrow"]);
+    this.sprite = new PIXI.Sprite(getFrame(WEAPONS, "arrow"));
     this.sprite.anchor.set(0.5, 0.5);
     this.sprite.scale.x = Math.sign(velx)*SCALE;
     this.sprite.scale.y = SCALE;
