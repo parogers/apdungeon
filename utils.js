@@ -75,6 +75,17 @@ function createSplashSprite()
     return waterSprite;
 }
 
+function createBloodSpatter()
+{
+    var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
+	randomChoice(["blood1", "blood2", "blood3"])
+    ]);
+    sprite.scale.set(SCALE);
+    sprite.zpos = FLOOR_POS;
+    sprite.anchor.set(0.5, 0.5);
+    return sprite;
+}
+
 // Helper function for returning a texture set given the resource string
 function getTextures(res)
 {
@@ -95,3 +106,4 @@ function getFrames()
     }
     return frames;
 }
+

@@ -157,7 +157,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 
     } else {
 	sounds[SNAKE_HURT_SND].play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*500;
+	this.knocked = Math.sign(this.sprite.x-srcx)*300;
 	this.knockedTimer = 0.1;
 	this.state = SNAKE_HURT;
     }
@@ -166,14 +166,9 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     // (looks better this way)
     var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
-	var sprite = new PIXI.Sprite(
-	    getFrame(MAPTILES, randomChoice(["blood1", "blood2", "blood3"]))
-	);
-	sprite.scale.set(SCALE);
+	var sprite = createBloodSpatter();
 	sprite.x = this.sprite.x;
 	sprite.y = this.sprite.y-1;
-	sprite.zpos = FLOOR_POS;
-	sprite.anchor.set(0.5, 0.5);
 	level.levelStage.addChild(sprite);
     }
     return true;

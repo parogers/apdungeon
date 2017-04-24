@@ -22,11 +22,13 @@ var GOBLIN_IDLE = 0;
 var GOBLIN_APPROACH = 1;
 // Rushing the player to attack
 var GOBLIN_ATTACKING = 2;
+// Initiates a jump at the player (transitional state)
+var GOBLIN_READY_JUMP = 3;
 // Jumping at the player to attack
-var GOBLIN_JUMPING = 3;
+var GOBLIN_JUMPING = 4;
 // Knocked back
-var GOBLIN_HURT = 4;
-var GOBLIN_DEAD = 5;
+var GOBLIN_HURT = 5;
+var GOBLIN_DEAD = 6;
 
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
 var GOBLIN_GRAVITY = 1000;
@@ -37,10 +39,13 @@ function Goblin(state)
 {
     this.idleFrame = getFrame(ENEMIES, "goblin_south_1");
     this.frames = getFrames(ENEMIES, "goblin_south_2", "goblin_south_3");
-    this.speed = 100;
+    this.speed = 80;
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
+    // The horizontal and vertical jumping speeds
+    this.jumpVerSpeed = 250;
+    this.jumpHorSpeed = 120;
     this.dead = false;
     // How high we're off the ground (when jumping)
     this.height = 0;
@@ -52,6 +57,9 @@ function Goblin(state)
     this.approachDist = 150;
     // At what distance to the player we should do our jump attack
     this.jumpDist = 100;
+    // When in the approach state, used to determine when to jump at the player
+    this.jumpTimeout = 1.5;
+    this.jumpTimer = 0;
     // The sprite container holding the monster and splash sprite
     this.sprite = new PIXI.Container();
     // The actual goblin sprite
@@ -72,6 +80,7 @@ function Goblin(state)
 Goblin.prototype.update = function(dt)
 {
     if (this.state === GOBLIN_ATTACKING) this.updateAttacking(dt);
+    if (this.state === GOBLIN_READY_JUMP) this.updateReadyJump(dt);
     if (this.state === GOBLIN_JUMPING) this.updateJumping(dt);
     if (this.state === GOBLIN_APPROACH) this.updateApproach(dt);
     else if (this.state === GOBLIN_HURT) this.updateHurt(dt);
@@ -80,18 +89,37 @@ Goblin.prototype.update = function(dt)
     }
 }
 
+Goblin.prototype.updateReadyJump = function(dt)
+{
+    // Jump at the player
+    this.sprite.zpos = this.sprite.y;
+    this.height = 0;
+    this.jumpStartY = this.sprite.y;
+    this.velh = this.jumpVerSpeed;
+    this.waterSprite.visible = false;
+    this.state = GOBLIN_JUMPING;
+}
+
 Goblin.prototype.updateJumping = function(dt)
 {
     this.velh -= GOBLIN_GRAVITY*dt;
     this.height += this.velh*dt;
     if (this.height <= 0) {
-	// Hit the ground
-	// ...
+	// Hit the ground. Go back to carefully approaching the player. Also
+	// we snap the Y-position to the ground to avoid cumulative rounding
+	// errors if we jump repeatedly.
+	this.sprite.y = this.jumpStartY;
 	this.state = GOBLIN_APPROACH;
 	return;
     }
     this.sprite.y = this.jumpStartY - this.height;
-    this.sprite.x += this.facing*150*dt;
+
+    // Check if we can move where we want to
+    var x = this.sprite.x + this.facing*this.jumpHorSpeed*dt;
+    var tile = level.bg.getTileAt(x, this.jumpStartY);
+    if (!tile.solid) {
+	this.sprite.x = x;
+    }
 }
 
 Goblin.prototype.updateAttacking = function(dt)
@@ -115,13 +143,7 @@ Goblin.prototype.updateAttacking = function(dt)
     }
 
     if (Math.abs(this.sprite.x - player.sprite.x) < this.jumpDist) {
-	// Jump at the player
-	this.state = GOBLIN_JUMPING;
-	this.sprite.zpos = this.sprite.y;
-	this.height = 0;
-	this.jumpStartY = this.sprite.y;
-	this.velh = 250;
-	this.waterSprite.visible = false;
+	this.state = GOBLIN_READY_JUMP;
 	return;
     }
 
@@ -175,6 +197,13 @@ Goblin.prototype.updateApproach = function(dt)
 	return;
     }
 
+    this.jumpTimer += dt;
+    if (this.jumpTimer > this.jumpTimeout) {
+	this.jumpTimer = 0;
+	this.state = GOBLIN_READY_JUMP;
+	return;
+    }
+
     // Add a bit of variation to the target position, so the goblin kind of
     // waivers back and forth making it a bit harder to hit.
     var dx = 0;
@@ -213,6 +242,8 @@ Goblin.prototype.updateHurt = function(dt)
     } else {
 	// Resume/start attacking
 	this.state = GOBLIN_APPROACH;
+	// Also increase the rate of jumping at the player (when approaching)
+	this.jumpTimeout *= 0.5;
     }
 }
 
@@ -234,7 +265,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 
     } else {
 	sounds[SNAKE_HURT_SND].play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*500;
+	this.knocked = Math.sign(this.sprite.x-srcx)*300;
 	this.knockedTimer = 0.1;
 	this.state = GOBLIN_HURT;
     }
@@ -243,14 +274,9 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
     // (looks better this way)
     var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
-	var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
-	    randomChoice(["blood1", "blood2", "blood3"])
-	]);
-	sprite.scale.set(SCALE);
+	var sprite = createBloodSpatter();
 	sprite.x = this.sprite.x;
 	sprite.y = this.sprite.y-1;
-	sprite.zpos = FLOOR_POS;
-	sprite.anchor.set(0.5, 0.5);
 	level.levelStage.addChild(sprite);
     }
     return true;
