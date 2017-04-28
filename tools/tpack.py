@@ -171,8 +171,8 @@ def get_desc(row, col):
         "plant",
         "boar",
         "mould",
-        "skelton_warrior",
-        "skelton_ranger",
+        "skeleton_warrior",
+        "skeleton_ranger",
         "skeleton_mage",
     ]
 

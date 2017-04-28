@@ -168,7 +168,7 @@ function setup()
 
     /* Add some demo stuff */
     player = new Player();
-    player.sprite.x = 450;
+    player.sprite.x = 250;
     player.sprite.y = 200;
     level.addThing(player);
 

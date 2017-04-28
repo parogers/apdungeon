@@ -671,109 +671,109 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_north_1" : {
+},"skeleton_warrior_north_1" : {
     "frame" : {"x":0, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_north_2" : {
+},"skeleton_warrior_north_2" : {
     "frame" : {"x":9, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_north_3" : {
+},"skeleton_warrior_north_3" : {
     "frame" : {"x":18, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_north_dead" : {
+},"skeleton_warrior_north_dead" : {
     "frame" : {"x":27, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_south_1" : {
+},"skeleton_warrior_south_1" : {
     "frame" : {"x":0, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_south_2" : {
+},"skeleton_warrior_south_2" : {
     "frame" : {"x":9, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_south_3" : {
+},"skeleton_warrior_south_3" : {
     "frame" : {"x":18, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_south_dead" : {
+},"skeleton_warrior_south_dead" : {
     "frame" : {"x":27, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_warrior_south_attack" : {
+},"skeleton_warrior_south_attack" : {
     "frame" : {"x":36, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_north_1" : {
+},"skeleton_ranger_north_1" : {
     "frame" : {"x":0, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_north_2" : {
+},"skeleton_ranger_north_2" : {
     "frame" : {"x":9, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_north_3" : {
+},"skeleton_ranger_north_3" : {
     "frame" : {"x":18, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_north_dead" : {
+},"skeleton_ranger_north_dead" : {
     "frame" : {"x":27, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_south_1" : {
+},"skeleton_ranger_south_1" : {
     "frame" : {"x":0, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_south_2" : {
+},"skeleton_ranger_south_2" : {
     "frame" : {"x":9, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_south_3" : {
+},"skeleton_ranger_south_3" : {
     "frame" : {"x":18, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_south_dead" : {
+},"skeleton_ranger_south_dead" : {
     "frame" : {"x":27, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skelton_ranger_south_attack" : {
+},"skeleton_ranger_south_attack" : {
     "frame" : {"x":36, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,

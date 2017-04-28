@@ -17,49 +17,33 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-var GOBLIN_IDLE = 0;
-// Approaching the player, but keeping a distance away
-var GOBLIN_APPROACH = 1;
-// Rushing the player to attack
-var GOBLIN_ATTACKING = 2;
-// Initiates a jump at the player (transitional state)
-var GOBLIN_START_JUMP = 3;
-// Jumping at the player to attack
-var GOBLIN_JUMPING = 4;
+var SKEL_WARRIOR_IDLE = 0;
+// Slowly approaching the player
+var SKEL_WARRIOR_START_APPROACH = 1;
+var SKEL_WARRIOR_APPROACH = 2;
+// Actually attacking the player
+var SKEL_WARRIOR_START_ATTACK = 3;
+var SKEL_WARRIOR_ATTACKING = 4;
 // Knocked back
-var GOBLIN_HURT = 5;
-var GOBLIN_DEAD = 6;
-
-// The goblin's vertical acceleration when falling (after jumping) pixels/s/s
-var GOBLIN_GRAVITY = 1000;
+var SKEL_WARRIOR_HURT = 5;
+var SKEL_WARRIOR_DEAD = 6;
 
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
-function Goblin(state)
+function SkelWarrior(state)
 {
-    this.idleFrame = getFrame(ENEMIES, "goblin_south_1");
-    this.frames = getFrames(ENEMIES, "goblin_south_2", "goblin_south_3");
-    this.speed = 80;
+    this.idleFrame = getFrame(ENEMIES, "skeleton_warrior_south_1");
+    this.frames = getFrames(
+	ENEMIES, "skeleton_warrior_south_2", "skeleton_warrior_south_3");
+    this.speed = 100;
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
-    // The horizontal and vertical jumping speeds
-    this.jumpVerSpeed = 250;
-    this.jumpHorSpeed = 120;
     this.dead = false;
-    // How high we're off the ground (when jumping)
-    this.height = 0;
-    // Our Y-position when we started jumping
-    this.jumpStartY = 0;
-    // Our current vertical velocity (when jumping)
-    this.velh = 0;
     // When approaching the player, how far to keep distance
     this.approachDist = 150;
-    // At what distance to the player we should do our jump attack
-    this.jumpDist = 100;
-    // When in the approach state, used to determine when to jump at the player
-    this.jumpTimeout = 1.5;
-    this.jumpTimer = 0;
+    this.timer = null;
+    this.counter = 0;
     // The sprite container holding the monster and splash sprite
     this.sprite = new PIXI.Container();
     // The actual goblin sprite
@@ -69,68 +53,42 @@ function Goblin(state)
     this.sprite.addChild(this.goblinSprite);
     // Make the splash/water sprite
     this.waterSprite = createSplashSprite();
-    this.waterSprite.y = -0.75*SCALE;
+    this.waterSprite.y = -0.5*SCALE;
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = state || GOBLIN_APPROACH;
-    this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
+    this.state = state || SKEL_WARRIOR_START_APPROACH;
+    this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 8*SCALE);
 }
 
-Goblin.prototype.update = function(dt)
+SkelWarrior.prototype.update = function(dt)
 {
     switch(this.state)
     {
-    case GOBLIN_ATTACKING:
+    case SKEL_WARRIOR_ATTACKING:
 	this.updateAttacking(dt);
 	break;
-    case GOBLIN_START_JUMP:
-	// Jump at the player
-	this.sprite.zpos = this.sprite.y;
-	this.height = 0;
-	this.jumpStartY = this.sprite.y;
-	this.velh = this.jumpVerSpeed;
-	this.waterSprite.visible = false;
-	this.state = GOBLIN_JUMPING;
+
+    case SKEL_WARRIOR_START_APPROACH:
+	this.timer = null;
+	this.state = SKEL_WARRIOR_APPROACH;
 	break;
-    case GOBLIN_JUMPING:
-	this.updateJumping(dt);
-	break;
-    case GOBLIN_APPROACH:
+
+    case SKEL_WARRIOR_APPROACH:
 	this.updateApproach(dt);
 	break;
-    case GOBLIN_HURT:
+
+    case SKEL_WARRIOR_HURT:
 	this.updateHurt(dt);
 	break;
-    case GOBLIN_DEAD:
+
+    case SKEL_WARRIOR_DEAD:
 	level.removeThing(this);
 	break;
     }
 }
 
-Goblin.prototype.updateJumping = function(dt)
-{
-    this.velh -= GOBLIN_GRAVITY*dt;
-    this.height += this.velh*dt;
-    if (this.height <= 0) {
-	// Hit the ground. Go back to carefully approaching the player. Also
-	// we snap the Y-position to the ground to avoid cumulative rounding
-	// errors if we jump repeatedly.
-	this.sprite.y = this.jumpStartY;
-	this.state = GOBLIN_APPROACH;
-	return;
-    }
-    this.sprite.y = this.jumpStartY - this.height;
-
-    // Check if we can move where we want to
-    var x = this.sprite.x + this.facing*this.jumpHorSpeed*dt;
-    var tile = level.bg.getTileAt(x, this.jumpStartY);
-    if (!tile.solid) {
-	this.sprite.x = x;
-    }
-}
-
-Goblin.prototype.updateAttacking = function(dt)
+SkelWarrior.prototype.updateAttacking = function(dt)
 {
     // Rush towards the player
     var dx = 0, dy = 0;
@@ -143,22 +101,18 @@ Goblin.prototype.updateAttacking = function(dt)
     }
     this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
 
-    // Go back to a careful approach if the player is facing us (note the
-    // goblin always faces the player)
-    if (player.facing*this.facing < 0) {
-	this.state = GOBLIN_APPROACH;
-	return;
-    }
-
-    if (Math.abs(this.sprite.x - player.sprite.x) < this.jumpDist) {
-	this.state = GOBLIN_START_JUMP;
+    if (Math.abs(this.sprite.x - player.sprite.x) < 5*SCALE)
+    {
+	// Hit the player
+	// ...
+	this.state = SKEL_WARRIOR_START_APPROACH;
 	return;
     }
 
     // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
-    if (Math.abs(dist) > 5) {
-	dy = dt*20*Math.sign(dist);
+    if (Math.abs(dist) > 2) {
+	dy = dt*this.speed*Math.sign(dist);
     }
 
     // Check if we can move left/right
@@ -183,7 +137,7 @@ Goblin.prototype.updateAttacking = function(dt)
     this.goblinSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
 
-Goblin.prototype.updateApproach = function(dt)
+SkelWarrior.prototype.updateApproach = function(dt)
 {
     // Move towards the player, but try to keep a fixed distance away. 
     // Initially the target is set to the player's position, plus/minus
@@ -200,36 +154,58 @@ Goblin.prototype.updateApproach = function(dt)
 
     // Rush the player for an attack, if they're facing away from us
     // (note the goblin always faces the player)
-    if (player.facing*this.facing > 0) {
-	this.state = GOBLIN_ATTACKING;
+    /*if (player.facing*this.facing > 0) {
+	this.state = SKEL_WARRIOR_ATTACKING;
 	return;
-    }
+    }*/
 
-    this.jumpTimer += dt;
-    if (this.jumpTimer > this.jumpTimeout) {
-	this.jumpTimer = 0;
-	this.state = GOBLIN_START_JUMP;
-	return;
+    if (this.timer === null) 
+    {
+	var dist = Math.abs(this.sprite.x-player.sprite.x);
+	if (dist >= this.approachDist*0.9 && dist <= this.approachDist*1.1) {
+	    this.timer = 1.5;
+	}
+    } else {
+	// Attack the player after a while
+	this.timer -= dt;
+	if (this.timer <= 0) {
+	    this.state = SKEL_WARRIOR_ATTACKING;
+	    return;
+	}
     }
 
     // Add a bit of variation to the target position, so the goblin kind of
     // waivers back and forth making it a bit harder to hit.
     var dx = 0;
     var dy = 0;
-    targetx += 15*Math.cos(this.frame/4);
+    targetx += 20*Math.cos(this.frame/6);
     if (Math.abs(this.sprite.x-targetx) > 2) {
-	dx = this.speed*dt*Math.sign(targetx - this.sprite.x);
+	dx = dt*Math.sign(targetx - this.sprite.x);
     }
 
-    // Move up/down towards the player more slowly (and don't overshoot)
-    var dist = (player.sprite.y+50*Math.sin(this.frame/2)) - this.sprite.y;
-    if (Math.abs(dist) > 2) {
-	dy = dt*30*Math.sign(dist);
+    // Move more slowly when going backwards
+    var speed = this.speed;
+    if (this.facing*dx < 0) speed = this.speed/1.5;
+
+    // Move up/down towards the player as well. Raising sine to a higher power
+    // makes the vertical oscillations more "tight". (ie less smooth)
+    var targety = player.sprite.y + 35*Math.pow(Math.sin(this.frame/4), 2)-20;
+    var dist = targety - this.sprite.y;
+    if (Math.abs(dist) > 1) {
+	dy = dt*Math.sign(dist);
     }
-    // Check if we can move where we want to
-    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y+dy);
+    dx *= speed;
+    dy *= speed;
+    // Check if we can move horizontally (checked separately from vertical 
+    // movement to prevent us from getting stuck)
+    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
 	this.sprite.x += dx;
+	this.waterSprite.visible = tile.water;
+    }
+    // Handle vertical movement
+    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
+    if (!tile.solid) {
 	this.sprite.y += dy;
 	this.waterSprite.visible = tile.water;
     }
@@ -237,7 +213,7 @@ Goblin.prototype.updateApproach = function(dt)
     this.goblinSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
 
-Goblin.prototype.updateHurt = function(dt)
+SkelWarrior.prototype.updateHurt = function(dt)
 {
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
@@ -248,20 +224,17 @@ Goblin.prototype.updateHurt = function(dt)
 	}
 	this.knockedTimer -= dt;
     } else {
-	// Resume/start attacking
-	this.state = GOBLIN_APPROACH;
-	// Also increase the rate of jumping at the player (when approaching)
-	this.jumpTimeout *= 0.5;
+	this.state = SKEL_WARRIOR_APPROACH;
     }
 }
 
-Goblin.prototype.handleHit = function(srcx, srcy, dmg)
+SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 {
-    if (this.state === GOBLIN_DEAD) return false;
+    if (this.state === SKEL_WARRIOR_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
 	sounds[DEAD_SND].play();
-	this.state = GOBLIN_DEAD;
+	this.state = SKEL_WARRIOR_DEAD;
 	// Drop a reward
 	var coin = new GroundItem(
 	    getTextures(GROUND_ITEMS)["coin"],
@@ -275,17 +248,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 	sounds[SNAKE_HURT_SND].play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*300;
 	this.knockedTimer = 0.1;
-	this.state = GOBLIN_HURT;
-    }
-
-    // Add some random blood, but only if we're not currently in water
-    // (looks better this way)
-    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
-    if (!tile.water) {
-	var sprite = createBloodSpatter();
-	sprite.x = this.sprite.x;
-	sprite.y = this.sprite.y-1;
-	level.levelStage.addChild(sprite);
+	this.state = SKEL_WARRIOR_HURT;
     }
     return true;
 }
