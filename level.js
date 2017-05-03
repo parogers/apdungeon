@@ -19,6 +19,7 @@
 
 BACKGROUND_POS = 0;
 FLOOR_POS = 1;
+FRONT_POS = 10000;
 
 /**********/
 /* Hitbox */
@@ -188,7 +189,7 @@ Level.prototype.update = function(dt)
     this.levelStage.y = -this.camera.y;
     // Update everything in the level
     for (var n = 0; n < this.things.length; n++) {
-	this.things[n].update(dt);
+	if (this.things[n].update) this.things[n].update(dt);
     }
 }
 

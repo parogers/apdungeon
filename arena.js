@@ -197,6 +197,50 @@ function DropSpawn(monster, x, y)
     this.monster = monster;
     this.xpos = x;
     this.ypos = y;
+    this.done = false;
+    // Shadow to display on the floor, as the monster is falling
+    this.shadow = new Scenery(getFrame(MAPTILES, "shadow"));
+    this.shadow.sprite.zpos = FLOOR_POS;
+    this.shadow.sprite.anchor.set(0.5, 0.5);
+    this.shadow.sprite.x = x;
+    this.shadow.sprite.y = y;
+    // The monster as it's falling
+    var img = this.monster.dropFrame || this.monster.frames[0];
+    this.falling = new Scenery(img);
+    this.timer = 1;
+    this.fallSpeed = 200;
+}
+
+DropSpawn.prototype.activate = function()
+{
+    level.addThing(this.shadow);
+    this.falling.sprite.zpos = FRONT_POS;
+    this.falling.sprite.x = this.xpos;
+    this.falling.sprite.y = level.camera.y - 20;
+}
+
+DropSpawn.prototype.update = function(dt)
+{
+    if (this.done) return;
+    // Wait a bit before dropping the monster
+    if (this.timer > 0) 
+    {
+	this.timer -= dt;
+	if (this.timer <= 0) {
+	    level.addThing(this.falling);
+	}
+	return;
+    }
+    this.falling.sprite.y += this.fallSpeed*dt;
+    if (this.falling.sprite.y > this.ypos) 
+    {
+	level.removeThing(this.shadow);
+	level.removeThing(this.falling);
+	level.addThing(this.monster);
+	this.monster.sprite.x = this.xpos;
+	this.monster.sprite.y = this.ypos;
+	this.done = true;
+    }
 }
 
 // Monster spawns under water, then rises with bubbles etc

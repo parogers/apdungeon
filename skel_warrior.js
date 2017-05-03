@@ -22,8 +22,8 @@ var SKEL_WARRIOR_IDLE = 0;
 var SKEL_WARRIOR_START_APPROACH = 1;
 var SKEL_WARRIOR_APPROACH = 2;
 // Actually attacking the player
-var SKEL_WARRIOR_START_ATTACK = 3;
-var SKEL_WARRIOR_ATTACKING = 4;
+var SKEL_WARRIOR_ATTACKING = 3;
+var SKEL_WARRIOR_POST_ATTACK = 4;
 // Knocked back
 var SKEL_WARRIOR_HURT = 5;
 var SKEL_WARRIOR_DEAD = 6;
@@ -69,6 +69,13 @@ SkelWarrior.prototype.update = function(dt)
 	this.updateAttacking(dt);
 	break;
 
+    case SKEL_WARRIOR_POST_ATTACK:
+	this.timer -= dt;
+	if (this.timer <= 0) {
+	    this.state = SKEL_WARRIOR_START_APPROACH;
+	}
+	break;
+
     case SKEL_WARRIOR_START_APPROACH:
 	this.timer = null;
 	this.state = SKEL_WARRIOR_APPROACH;
@@ -90,13 +97,19 @@ SkelWarrior.prototype.update = function(dt)
 
 SkelWarrior.prototype.updateAttacking = function(dt)
 {
+    // Pause before attacking
+    if (this.timer > 0) {
+	this.timer -= dt;
+	return;
+    }
+
     // Rush towards the player
     var dx = 0, dy = 0;
     if (player.sprite.x > this.sprite.x) {
-	dx = 2*this.speed*dt;
+	dx = 2.5*this.speed*dt;
 	this.facing = 1;
     } else {
-	dx = -2*this.speed*dt;
+	dx = -2.5*this.speed*dt;
 	this.facing = -1;
     }
     this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
@@ -105,7 +118,8 @@ SkelWarrior.prototype.updateAttacking = function(dt)
     {
 	// Hit the player
 	// ...
-	this.state = SKEL_WARRIOR_START_APPROACH;
+	this.timer = 0.25;
+	this.state = SKEL_WARRIOR_POST_ATTACK;
 	return;
     }
 
@@ -170,6 +184,7 @@ SkelWarrior.prototype.updateApproach = function(dt)
 	this.timer -= dt;
 	if (this.timer <= 0) {
 	    this.state = SKEL_WARRIOR_ATTACKING;
+	    this.timer = 0.4;
 	    return;
 	}
     }

@@ -102,8 +102,9 @@ function getFrames()
     var frames = [];
     var res = arguments[0];
     for (var n = 1; n < arguments.length; n++) {
-	frames.push(getTextures(res)[arguments[n]]);
+	var frame = getTextures(res)[arguments[n]];
+	if (!frame) console.log("ERROR: missing frame " + arguments[n]);
+	frames.push(frame);
     }
     return frames;
 }
-

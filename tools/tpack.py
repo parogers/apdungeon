@@ -155,7 +155,7 @@ def get_desc(row, col):
 save_json_sheet("NPC.png", (8, 8), get_desc)
 
 def get_desc(row, col):
-    direction = ["north", "south"][row%2]
+    direction = ["", "south"][row%2]
     names = [
         "crab",
         "scorpion",
@@ -205,8 +205,8 @@ def get_desc(row, col):
         ("1", "idle", "2",  "3",  "dead"), # boar
         ("1", "idle", "2",  "3",  "dead"),
         ("1", "idle", "2",  "3",  "dead"), # mould
-        ("1", "2",    "3",  "dead", None),
-        ("1", "2",    "3",  "dead", "attack"), # skeleton
+        ("attack_1", "attack_2",    None,  "dead", None),
+        ("1", "2",    "3",  "dead", "attack"), # skeleton warrior
         ("1", "2",    "3",  "dead", None),
         ("1", "2",    "3",  "dead", "attack"), # skeleton
         ("1", "2",    "3",  "dead", None),
@@ -216,7 +216,10 @@ def get_desc(row, col):
     if (not extra[row][col]):
         return None
 
-    return names[row//2] + "_" + direction + "_" + extra[row][col]
+    if (direction):
+        direction += "_"
+
+    return names[row//2] + "_" + direction + extra[row][col]
     
 save_json_sheet("Enemies.png", (8, 8), get_desc)
 

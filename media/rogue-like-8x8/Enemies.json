@@ -1,23 +1,23 @@
 {"frames" : {
-"crab_north_1" : {
+"crab_1" : {
     "frame" : {"x":0, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_north_2" : {
+},"crab_2" : {
     "frame" : {"x":18, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_north_3" : {
+},"crab_3" : {
     "frame" : {"x":27, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_north_dead" : {
+},"crab_dead" : {
     "frame" : {"x":36, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -53,25 +53,25 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_north_1" : {
+},"scorpion_1" : {
     "frame" : {"x":0, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_north_2" : {
+},"scorpion_2" : {
     "frame" : {"x":18, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_north_3" : {
+},"scorpion_3" : {
     "frame" : {"x":27, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_north_dead" : {
+},"scorpion_dead" : {
     "frame" : {"x":36, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -107,13 +107,13 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"rat_north_1" : {
+},"rat_1" : {
     "frame" : {"x":0, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"rat_north_dead" : {
+},"rat_dead" : {
     "frame" : {"x":36, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -137,13 +137,13 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"snake_north_1" : {
+},"snake_1" : {
     "frame" : {"x":0, "y":54, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"snake_north_dead" : {
+},"snake_dead" : {
     "frame" : {"x":36, "y":54, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -167,31 +167,31 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_north_1" : {
+},"flame_1" : {
     "frame" : {"x":0, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_north_idle" : {
+},"flame_idle" : {
     "frame" : {"x":9, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_north_2" : {
+},"flame_2" : {
     "frame" : {"x":18, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_north_3" : {
+},"flame_3" : {
     "frame" : {"x":27, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_north_dead" : {
+},"flame_dead" : {
     "frame" : {"x":36, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -227,31 +227,31 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_north_1" : {
+},"goblin_1" : {
     "frame" : {"x":0, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_north_idle" : {
+},"goblin_idle" : {
     "frame" : {"x":9, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_north_2" : {
+},"goblin_2" : {
     "frame" : {"x":18, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_north_3" : {
+},"goblin_3" : {
     "frame" : {"x":27, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_north_dead" : {
+},"goblin_dead" : {
     "frame" : {"x":36, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -287,31 +287,31 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_north_1" : {
+},"mushroom_1" : {
     "frame" : {"x":0, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_north_idle" : {
+},"mushroom_idle" : {
     "frame" : {"x":9, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_north_2" : {
+},"mushroom_2" : {
     "frame" : {"x":18, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_north_3" : {
+},"mushroom_3" : {
     "frame" : {"x":27, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_north_dead" : {
+},"mushroom_dead" : {
     "frame" : {"x":36, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -347,19 +347,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_north_1" : {
+},"ghost_1" : {
     "frame" : {"x":0, "y":126, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_north_2" : {
+},"ghost_2" : {
     "frame" : {"x":9, "y":126, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_north_dead" : {
+},"ghost_dead" : {
     "frame" : {"x":36, "y":126, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -383,19 +383,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_north_1" : {
+},"eye_1" : {
     "frame" : {"x":0, "y":144, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_north_2" : {
+},"eye_2" : {
     "frame" : {"x":9, "y":144, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_north_dead" : {
+},"eye_dead" : {
     "frame" : {"x":36, "y":144, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -419,19 +419,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_north_1" : {
+},"slime_1" : {
     "frame" : {"x":0, "y":162, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_north_2" : {
+},"slime_2" : {
     "frame" : {"x":9, "y":162, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_north_dead" : {
+},"slime_dead" : {
     "frame" : {"x":36, "y":162, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -455,19 +455,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_north_1" : {
+},"bat_1" : {
     "frame" : {"x":0, "y":180, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_north_2" : {
+},"bat_2" : {
     "frame" : {"x":9, "y":180, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_north_dead" : {
+},"bat_dead" : {
     "frame" : {"x":36, "y":180, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -491,31 +491,31 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_north_1" : {
+},"plant_1" : {
     "frame" : {"x":0, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_north_idle" : {
+},"plant_idle" : {
     "frame" : {"x":9, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_north_2" : {
+},"plant_2" : {
     "frame" : {"x":18, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_north_3" : {
+},"plant_3" : {
     "frame" : {"x":27, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_north_dead" : {
+},"plant_dead" : {
     "frame" : {"x":36, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -551,31 +551,31 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_north_1" : {
+},"boar_1" : {
     "frame" : {"x":0, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_north_idle" : {
+},"boar_idle" : {
     "frame" : {"x":9, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_north_2" : {
+},"boar_2" : {
     "frame" : {"x":18, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_north_3" : {
+},"boar_3" : {
     "frame" : {"x":27, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_north_dead" : {
+},"boar_dead" : {
     "frame" : {"x":36, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -611,31 +611,31 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_north_1" : {
+},"mould_1" : {
     "frame" : {"x":0, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_north_idle" : {
+},"mould_idle" : {
     "frame" : {"x":9, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_north_2" : {
+},"mould_2" : {
     "frame" : {"x":18, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_north_3" : {
+},"mould_3" : {
     "frame" : {"x":27, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_north_dead" : {
+},"mould_dead" : {
     "frame" : {"x":36, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -671,25 +671,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_north_1" : {
+},"skeleton_warrior_attack_1" : {
     "frame" : {"x":0, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_north_2" : {
+},"skeleton_warrior_attack_2" : {
     "frame" : {"x":9, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_north_3" : {
-    "frame" : {"x":18, "y":252, "w":8, "h":8},
-    "rotated" : false,
-    "trimmed" : false,
-    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
-    "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_north_dead" : {
+},"skeleton_warrior_dead" : {
     "frame" : {"x":27, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -725,25 +719,25 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_north_1" : {
+},"skeleton_ranger_1" : {
     "frame" : {"x":0, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_north_2" : {
+},"skeleton_ranger_2" : {
     "frame" : {"x":9, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_north_3" : {
+},"skeleton_ranger_3" : {
     "frame" : {"x":18, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_north_dead" : {
+},"skeleton_ranger_dead" : {
     "frame" : {"x":27, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -779,25 +773,25 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_north_1" : {
+},"skeleton_mage_1" : {
     "frame" : {"x":0, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_north_2" : {
+},"skeleton_mage_2" : {
     "frame" : {"x":9, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_north_3" : {
+},"skeleton_mage_3" : {
     "frame" : {"x":18, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_north_dead" : {
+},"skeleton_mage_dead" : {
     "frame" : {"x":27, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
