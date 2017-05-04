@@ -207,7 +207,7 @@ function DropSpawn(monster, x, y)
     // The monster as it's falling
     var img = this.monster.dropFrame || this.monster.frames[0];
     this.falling = new Scenery(img);
-    this.timer = 1;
+    this.timer = 0.5;
     this.fallSpeed = 200;
 }
 
@@ -227,13 +227,17 @@ DropSpawn.prototype.update = function(dt)
     {
 	this.timer -= dt;
 	if (this.timer <= 0) {
+	    // Start the drop
 	    level.addThing(this.falling);
+	    sounds[DROP_SND].volume = 0.25;
+	    sounds[DROP_SND].play();
 	}
 	return;
     }
     this.falling.sprite.y += this.fallSpeed*dt;
     if (this.falling.sprite.y > this.ypos) 
     {
+	// Hit the ground - spawn in the monster
 	level.removeThing(this.shadow);
 	level.removeThing(this.falling);
 	level.addThing(this.monster);
