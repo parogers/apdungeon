@@ -75,7 +75,7 @@ var LEVEL = {
 function Level(bg)
 {
     this.camera = new Camera();
-    this.player = null;
+    //this.player = null;
     this.stage = null;
     this.goMarker = null;
     this.state = LEVEL.NEXT_ARENA;

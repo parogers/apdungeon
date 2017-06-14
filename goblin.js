@@ -263,12 +263,9 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 	sounds[DEAD_SND].play();
 	this.state = GOBLIN_DEAD;
 	// Drop a reward
-	var coin = new GroundItem(
-	    getTextures(GROUND_ITEMS)["coin"],
-	    this.sprite.x, this.sprite.y);
+	var coin = spawnItem(Item.COIN, this.sprite.x, this.sprite.y);
 	coin.velx = 50*Math.sign(this.sprite.x-srcx);
 	coin.velh = -200;
-	level.addThing(coin);
 	this.dead = true;
 
     } else {

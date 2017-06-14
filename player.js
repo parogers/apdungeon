@@ -28,9 +28,7 @@ function Player()
     this.count = 0;
     this.facing = 1;
     this.maxSpeed = 200; // pixels/second
-    this.frames = getFrames(
-	FEMALE_MELEE, 
-	"melee1_south_1", "melee1_south_2", "melee1_south_3");
+    this.setCharFrames(FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
      * equipment they're carrying. */
     this.sprite = new PIXI.Container();
@@ -54,6 +52,8 @@ function Player()
     this.sprite.addChild(this.weaponSlot.sprite);
     // Define the hitbox
     this.hitbox = new Hitbox(0, 0, 8*SCALE, 8*SCALE);
+
+    this.armour = Item.NONE;
 }
 
 Player.prototype.update = function(dt)
@@ -158,3 +158,43 @@ Player.prototype.update = function(dt)
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
     this.spriteChar.texture = frame;
 }
+
+Player.prototype.setCharFrames = function(res, name)
+{
+    this.frames = getFrames(
+	res, name + "_south_1", name + "_south_2", name + "_south_3");
+}
+
+Player.prototype.setArmour = function(item)
+{
+    var img = "melee1";
+    if (item === Item.LEATHER_ARMOUR) img = "melee2";
+    else if (item == Item.STEEL_ARMOUR) img = "melee3";
+    this.setCharFrames(FEMALE_MELEE, img);
+    this.armour = item;
+}
+
+Player.prototype.handleTakeItem = function(item)
+{
+    switch (item) {
+    case Item.LEATHER_ARMOUR:
+	if (this.armour == Item.NONE) {
+	    this.setArmour(item);
+	    sounds[POWERUP2_SND].play();
+	    return true;
+	}
+	break;
+
+    case Item.STEEL_ARMOUR:
+	if (this.armour == Item.NONE || this.armour == Item.LEATHER_ARMOUR) {
+	    this.setArmour(item);
+	    sounds[POWERUP2_SND].play();
+	    return true;
+	}
+	break;
+    }
+    sounds[COIN_SND].play();
+    return true;
+}
+
+

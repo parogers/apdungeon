@@ -41,4 +41,3 @@ Features:
 * Enemies: snake, slime, goblin, eye, skeleton warrior, skeleton archer
 * Score
 * Basic inventory management
-* 

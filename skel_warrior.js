@@ -126,7 +126,7 @@ SkelWarrior.prototype.updateAttacking = function(dt)
     // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
     if (Math.abs(dist) > 2) {
-	dy = dt*this.speed*Math.sign(dist);
+	dy = dt*this.speed*Math.sign(dist)/2.0;
     }
 
     // Check if we can move left/right
@@ -251,12 +251,9 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 	sounds[DEAD_SND].play();
 	this.state = SKEL_WARRIOR_DEAD;
 	// Drop a reward
-	var coin = new GroundItem(
-	    getTextures(GROUND_ITEMS)["coin"],
-	    this.sprite.x, this.sprite.y);
+	var coin = spawnItem(Item.LEATHER_ARMOUR, this.sprite.x, this.sprite.y);
 	coin.velx = 50*Math.sign(this.sprite.x-srcx);
 	coin.velh = -200;
-	level.addThing(coin);
 	this.dead = true;
 
     } else {

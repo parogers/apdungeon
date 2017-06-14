@@ -19,7 +19,11 @@
 
 ITEM_GRAVITY = 600;
 
-function GroundItem(img, x, y)
+/**************/
+/* GroundItem */
+/**************/
+
+function GroundItem(img, x, y, item)
 {
     this.sprite = new PIXI.Sprite(img);
     this.sprite.anchor.set(0.5, 0.6);
@@ -28,6 +32,7 @@ function GroundItem(img, x, y)
     this.sprite.x = x;
     this.sprite.y = y;
     this.ypos = y;
+    this.item = item;
     // Make the render depth fixed here, otherwise as the item bounces it
     // will seem like it's moving back into the scene. (ie disappears behind
     // other sprites)
@@ -71,8 +76,43 @@ GroundItem.prototype.handlePlayerCollision = function()
 {
     // The player takes the item if it's falling down (or resting) and close
     // enough to the ground.
-    if (this.height < 10 && this.velh <= 0) {
-	sounds[COIN_SND].play();
-	level.removeThing(this);
+    if (this.height < 10 && this.velh <= 0) 
+    {
+	console.log("TOUCH " + this.item);
+	if (this.item && player.handleTakeItem(this.item)) {
+	    level.removeThing(this);
+	}
     }
 }
+
+/* Spawn in the given item, at the given location */
+function spawnItem(item, x, y)
+{
+    var imgName = ItemImages[item];
+    var img = getFrame(GROUND_ITEMS, imgName);
+    var gnd = new GroundItem(img, x, y, item);
+    level.addThing(gnd);
+    return gnd;
+}
+
+/*********/
+/* Items */
+/*********/
+
+var Item = {
+    NONE: 0,
+    LEATHER_ARMOUR: 1,
+    STEEL_ARMOUR: 2,
+    COIN: 3,
+    HEALTH: 4
+};
+
+var ItemImages = [
+    null,
+    "helmet1",
+    "helmet2",
+    "coin",
+    "small_health"
+];
+
+

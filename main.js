@@ -36,6 +36,8 @@ GO_SND = "media/effects/go.wav"
 COIN_SND = "media/effects/coin.wav"
 GATE_SND = "media/effects/gate.wav"
 DROP_SND = "media/effects/drop.wav"
+POWERUP1_SND = "media/effects/powerup1.wav"
+POWERUP2_SND = "media/effects/powerup2.wav"
 
 SCALE = 5;
 
@@ -62,7 +64,7 @@ function loaded()
     div.appendChild(renderer.view);
     stage = new PIXI.Container();
 
-    progress = new ProgressBar(200, 20, "Loading images...");
+    progress = new ProgressBar(200, 20, "LOADING IMAGES...");
     progress.sprite.x = 100;
     progress.sprite.y = 100;
     stage.addChild(progress.sprite);
@@ -125,7 +127,7 @@ function graphicsLoaded()
 	console.log("Failed to load audio file: " + source);
     };
     // Show and update the new progress bar for loading audio
-    progress.setText("Loading audio...");
+    progress.setText("LOADING AUDIO...");
     sounds.onProgress = function(percent) {
 	progress.update(percent/100.0);
 	requestAnimFrame(function() {
@@ -142,6 +144,8 @@ function graphicsLoaded()
 	COIN_SND,
 	GATE_SND,
 	DROP_SND,
+	POWERUP1_SND,
+	POWERUP2_SND,
 	GAME_MUSIC
     ]);
 }
@@ -179,10 +183,19 @@ function setup()
     go.sprite.y = 100;
     level.addThing(go);*/
 
-    var npc = new Scenery(getTextures(NPC)["npc1_south_1"]);
+    /*var npc = new Scenery(getTextures(NPC)["npc1_south_1"]);
     npc.sprite.x = 200;
     npc.sprite.y = 160;
-    level.addThing(npc);
+    level.addThing(npc);*/
+
+/*    var text = "SOMETHING HERE";
+    textSprite = new PIXI.Text(
+	text, {fontFamily: 'Courier New', 
+	       fontSize: 20, 
+	       fill: 0xffffff,
+	       fontWeight: 'bold',
+	       align: 'center'});
+    level.guiStage.addChild(textSprite)*/
 
     music = sounds[GAME_MUSIC];
     music.loop = true;
