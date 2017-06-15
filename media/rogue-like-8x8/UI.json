@@ -1,16 +1,16 @@
 {"frames" : {
-"slot" : {
-    "frame" : {"x":1, "y":1, "w":10, "h":10},
+"button_x" : {
+    "frame" : {"x":1, "y":12, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
-    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":10},
-    "sourceSize" : {"w":10, "h":10}
-},"empty_slot" : {
-    "frame" : {"x":12, "y":1, "w":10, "h":10},
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"button_a" : {
+    "frame" : {"x":10, "y":12, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
-    "spriteSourceSize" : {"x":0, "y":0, "w":10, "h":10},
-    "sourceSize" : {"w":10, "h":10}
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
 },"go1" : {
     "frame" : {"x":86, "y":1, "w":20, "h":10},
     "rotated" : false,

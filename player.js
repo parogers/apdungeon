@@ -51,7 +51,7 @@ function Player()
     this.weaponSlot = new BowWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
     // Define the hitbox
-    this.hitbox = new Hitbox(0, 0, 8*SCALE, 8*SCALE);
+    this.hitbox = new Hitbox(0, 0, 8*SCALE, 12*SCALE);
 
     this.armour = Item.NONE;
 }
@@ -196,5 +196,3 @@ Player.prototype.handleTakeItem = function(item)
     sounds[COIN_SND].play();
     return true;
 }
-
-

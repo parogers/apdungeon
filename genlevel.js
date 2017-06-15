@@ -34,8 +34,8 @@ function generateLevel()
     }
 
     var w = randint(4, 8);
-    //var pos = randint(2, grid.cols-2-w);
-    var pos = 5; // TODO - change
+    var pos = randint(2, grid.cols-2-w);
+    //var pos = 5; // TODO - change
     for (var row = 1; row < grid.rows; row++)
 	for (var col = pos-randint(0,2); col < pos+w+randint(0,2); col++)
 	    grid[row][col] = "water";
@@ -90,14 +90,14 @@ function generateLevel()
     }
 
     var arena = new Arena();
-    arena.startx = 0;
-    arena.endx = level.camera.width;
+    arena.startx = level.camera.width;
+    arena.endx = level.camera.width*2;
     level.arenas.push(arena);
 
     var ypos = level.bg.getHeight()/2;
 
     var round = new Round(1);
-    round.addSpawn(new DropSpawn(new SkelWarrior(), 100, 175));
+    round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
     //round.addSpawn(new Spawn(new SkelWarrior(), -1, 150));
     //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
     arena.rounds.push(round);
@@ -116,7 +116,7 @@ function generateLevel()
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos-50));
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos+50));
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-    round.addSpawn(new GateSpawn(new Goblin(), gate));
+    //round.addSpawn(new GateSpawn(new Goblin(), gate));
     arena.rounds.push(round);
 
     var arena = new Arena();

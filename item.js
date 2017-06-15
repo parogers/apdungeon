@@ -76,9 +76,8 @@ GroundItem.prototype.handlePlayerCollision = function()
 {
     // The player takes the item if it's falling down (or resting) and close
     // enough to the ground.
-    if (this.height < 10 && this.velh <= 0) 
+    if (this.height < 1 && this.velh >= 0) 
     {
-	console.log("TOUCH " + this.item);
 	if (this.item && player.handleTakeItem(this.item)) {
 	    level.removeThing(this);
 	}

@@ -320,6 +320,11 @@ desc = [
 frames = gen_grid((1,1), (10, 10), desc)
 
 desc = [
+    ("button_x", "button_a"),
+]
+frames = gen_grid((1,12), (8, 8), desc)
+
+desc = [
     ("go1", "go2"),
 ]
 frames += gen_grid((86,1), (20, 10), desc)

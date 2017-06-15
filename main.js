@@ -16,6 +16,7 @@
  * 
  * See LICENSE.txt for the full text of the license.
  */
+
 MALE_MELEE = "media/rogue-like-8x8/Male-Melee.json"
 FEMALE_MELEE = "media/rogue-like-8x8/Girl-Melee.json"
 NPC = "media/rogue-like-8x8/NPC.json"
@@ -38,6 +39,7 @@ GATE_SND = "media/effects/gate.wav"
 DROP_SND = "media/effects/drop.wav"
 POWERUP1_SND = "media/effects/powerup1.wav"
 POWERUP2_SND = "media/effects/powerup2.wav"
+CHEST_SND = "media/effects/chest_open.wav"
 
 SCALE = 5;
 
@@ -146,6 +148,7 @@ function graphicsLoaded()
 	DROP_SND,
 	POWERUP1_SND,
 	POWERUP2_SND,
+	CHEST_SND,
 	GAME_MUSIC
     ]);
 }
@@ -187,6 +190,12 @@ function setup()
     npc.sprite.x = 200;
     npc.sprite.y = 160;
     level.addThing(npc);*/
+
+    var items = [Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.LEATHER_ARMOUR];
+    var chest = new Chest(items);
+    chest.sprite.x = 150;
+    chest.sprite.y = 180;
+    level.addThing(chest);
 
 /*    var text = "SOMETHING HERE";
     textSprite = new PIXI.Text(
