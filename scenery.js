@@ -22,9 +22,20 @@ function Scenery(img)
     this.sprite = new PIXI.Sprite(img);
     this.sprite.anchor.set(0.5, 1);
     this.sprite.scale.set(SCALE);
+    this.timer = 0;
+    this.velx = 0;
+    this.vely = 0;
 }
 
 Scenery.prototype.update = function(dt)
 {
+    this.sprite.x += this.velx*dt;
+    this.sprite.y += this.vely*dt;
+    if (this.timer > 0) {
+	this.timer -= dt;
+	if (this.timer <= 0) {
+	    level.removeThing(this);
+	}
+    }
 }
 

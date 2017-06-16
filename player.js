@@ -27,6 +27,8 @@ function Player()
     this.frame = 0;
     this.count = 0;
     this.facing = 1;
+    this.health = 5;
+    this.maxHealth = 5;
     this.maxSpeed = 200; // pixels/second
     this.setCharFrames(FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
@@ -174,21 +176,35 @@ Player.prototype.setArmour = function(item)
     this.armour = item;
 }
 
+Player.prototype.upgradeArmour = function(item)
+{
+    /*var img = getFrame(UI, "small_slot");
+    console.log(img);
+    var msg = new Scenery(img);
+    //msg.timer = 1;
+    //msg.vely = -100;
+    msg.sprite.x = 100;
+    msg.sprite.y = 100;
+    level.addThing(msg);*/
+    this.setArmour(item);
+    sounds[POWERUP2_SND].play();
+}
+
 Player.prototype.handleTakeItem = function(item)
 {
     switch (item) {
     case Item.LEATHER_ARMOUR:
-	if (this.armour == Item.NONE) {
-	    this.setArmour(item);
-	    sounds[POWERUP2_SND].play();
+	if (this.armour == Item.NONE) 
+	{
+	    this.upgradeArmour(item);
 	    return true;
 	}
 	break;
 
     case Item.STEEL_ARMOUR:
-	if (this.armour == Item.NONE || this.armour == Item.LEATHER_ARMOUR) {
-	    this.setArmour(item);
-	    sounds[POWERUP2_SND].play();
+	if (this.armour == Item.NONE || this.armour == Item.LEATHER_ARMOUR) 
+	{
+	    this.upgradeArmour(item);
 	    return true;
 	}
 	break;

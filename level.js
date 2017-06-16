@@ -98,6 +98,11 @@ function Level(bg)
     // Current active arena (number)
     this.arenaNum = 0;
     this.smoothTracking = true;
+
+    this.healthUI = new HealthUI();
+    this.healthUI.sprite.x = 10;
+    this.healthUI.sprite.y = this.bg.sprite.texture.height*SCALE-10;
+    this.addThing(this.healthUI);
 }
 
 Level.prototype.update = function(dt)
@@ -260,11 +265,12 @@ Level.prototype.removeThing = function(thing)
 	this.things.pop();
     }
 
-    if (thing.sprite) {
-	if (thing.guiLayer) {
+    if (thing.sprite && thing.sprite.parent) {
+	/*if (thing.guiLayer) {
 	    this.guiStage.removeChild(thing.sprite);
 	} else {
 	    this.levelStage.removeChild(thing.sprite);
-	}
+	}*/
+	thing.sprite.parent.removeChild(thing.sprite);
     }
 }

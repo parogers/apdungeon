@@ -19,7 +19,6 @@
 
 function Chest(items)
 {
-    this.hitbox = new Hitbox(0, 0, 5, 5);
     var texture = getFrame(MAPTILES, "chest_closed");
     this.sprite = new PIXI.Sprite(texture);
     this.sprite.scale.set(SCALE);
@@ -28,6 +27,8 @@ function Chest(items)
     this.timer = 0;
     this.items = items;
 }
+
+Chest.prototype.hitbox = new Hitbox(0, 0, 5, 5);
 
 Chest.prototype.update = function(dt)
 {
@@ -40,7 +41,7 @@ Chest.prototype.update = function(dt)
 		    item, 
 		    this.sprite.x+5*randUniform(0, 1), 
 		    this.sprite.y+10*randUniform(0.1, 1));
-		gnd.velx = randomChoice([-1, 1])*randUniform(35, 60);
+		gnd.velx = randomChoice([-1, 1])*randUniform(40, 75);
 		gnd.velh = -150*randUniform(0.9, 1);
 	    }
 	}
