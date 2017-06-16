@@ -171,6 +171,11 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     return true;
 }
 
+Snake.prototype.handlePlayerCollision = function()
+{
+    player.takeDamage(1, this);
+}
+
 /* Other snake-like things */
 
 function Rat()

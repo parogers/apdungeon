@@ -135,3 +135,8 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
     }
     return true;
 }
+
+Ghost.prototype.handlePlayerCollision = function()
+{
+    player.takeDamage(1, this);
+}

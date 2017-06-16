@@ -17,6 +17,10 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+// What tint of colour to use when the player takes damage
+var DAMAGE_TINT = 0xFF0000;
+var NO_TINT = 0xFFFFFF;
+
 function Player()
 {
     this.sprite = null;
@@ -50,19 +54,46 @@ function Player()
     shadowSprite.visible = false;
     shadowSprite.texture = getTextures(MAPTILES)["treading_water"];*/
 
+    // Minimum amount of time after taking damage, until the player can be
+    // damaged again.
+    this.damageCooldown = 1;
+    // The timer used for tracking the cooldown
+    this.damageTimer = 0;
+
+    // Knockback timer and speed
+    this.knockedTimer = 0;
+    this.knocked = 0;
+
     this.weaponSlot = new BowWeaponSlot(this);
     this.sprite.addChild(this.weaponSlot.sprite);
     // Define the hitbox
-    this.hitbox = new Hitbox(0, 0, 8*SCALE, 12*SCALE);
+    this.hitbox = new Hitbox(0, -4, 8*SCALE, 6*SCALE);
 
     this.armour = Item.NONE;
 }
 
 Player.prototype.update = function(dt)
 {
-    var dirx = controls.getX();
-    var diry = controls.getY();
+    var dirx = 0;
+    var diry = 0;
 
+    if (this.knockedTimer <= 0) {
+	dirx = controls.getX();
+	diry = controls.getY();
+    } else {
+	this.velx = this.knocked;
+	this.knockedTimer -= dt;
+    }
+
+    if (this.damageTimer > 0) {
+	this.damageTimer -= dt;
+	if (this.damageTimer <= 0 || 
+	    this.damageCooldown-this.damageTimer > 0.1) 
+	{
+	    // Stop flashing red
+	    this.spriteChar.tint = NO_TINT;
+	}
+    }
     this.count += dt;
 
     if (dirx) {
@@ -148,14 +179,14 @@ Player.prototype.update = function(dt)
     }
 
     // Check for collisions with other things
-    var hit = level.checkHitMany(this.sprite.x, this.sprite.y, 
-				 this.hitbox, this);
+    var hit = level.checkHitMany(
+	this.sprite.x, this.sprite.y, 
+	this.hitbox, this);
     for (var n = 0; n < hit.length; n++) {
 	if (hit[n].handlePlayerCollision) {
 	    hit[n].handlePlayerCollision();
 	}
     }
-
     // Update animation
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
     this.spriteChar.texture = frame;
@@ -188,6 +219,19 @@ Player.prototype.upgradeArmour = function(item)
     level.addThing(msg);*/
     this.setArmour(item);
     sounds[POWERUP2_SND].play();
+}
+
+Player.prototype.takeDamage = function(amt, src)
+{
+    if (this.damageTimer <= 0) {
+	// Take damage and have the player flash red for a moment
+	this.health -= amt;
+	this.damageTimer = this.damageCooldown;
+	this.spriteChar.tint = DAMAGE_TINT;
+	// Knock the player back a bit too
+	this.knocked = 500*Math.sign(this.sprite.x - src.sprite.x);
+	this.knockedTimer = 0.1;
+    }
 }
 
 Player.prototype.handleTakeItem = function(item)

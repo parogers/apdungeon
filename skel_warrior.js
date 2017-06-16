@@ -264,3 +264,8 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
     }
     return true;
 }
+
+SkelWarrior.prototype.handlePlayerCollision = function()
+{
+    player.takeDamage(1, this);
+}
