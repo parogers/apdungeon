@@ -104,10 +104,10 @@ function Level(bg)
     this.healthUI.sprite.y = this.bg.sprite.texture.height*SCALE-10;
     this.addThing(this.healthUI);
 
-    var slot = new ItemSlotUI(Item.ARROW, {showCount: true});
-    slot.sprite.x = 30;
-    slot.sprite.y = this.bg.sprite.texture.height*SCALE+15;
-    this.addThing(slot);
+    var inv = new InventoryUI();
+    inv.sprite.x = 30;
+    inv.sprite.y = this.bg.sprite.texture.height*SCALE+15;
+    this.addThing(inv);
 }
 
 Level.prototype.update = function(dt)

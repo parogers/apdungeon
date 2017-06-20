@@ -31,9 +31,17 @@ function Player()
     this.frame = 0;
     this.count = 0;
     this.facing = 1;
+    // Player status
     this.health = 3;
     this.maxHealth = 5;
     this.maxSpeed = 200; // pixels/second
+    // Inventory stuff
+    this.numCoins = 5;
+    this.numArrows = 10;
+    this.armour = Item.NONE;
+    this.bow = Item.NONE;
+    this.sword = Item.NONE;
+
     this.setCharFrames(FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
      * equipment they're carrying. */
@@ -68,8 +76,6 @@ function Player()
     this.sprite.addChild(this.weaponSlot.sprite);
     // Define the hitbox
     this.hitbox = new Hitbox(0, -4, 8*SCALE, 6*SCALE);
-
-    this.armour = Item.NONE;
 }
 
 Player.prototype.update = function(dt)
@@ -259,6 +265,14 @@ Player.prototype.handleTakeItem = function(item)
 	    this.upgradeArmour(item);
 	    return true;
 	}
+	break;
+
+    case Item.ARROW:
+	this.numArrows++;
+	break;
+
+    case Item.COIN:
+	this.numCoins++;
 	break;
 
     case Item.SMALL_HEALTH:

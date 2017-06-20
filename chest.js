@@ -41,7 +41,8 @@ Chest.prototype.update = function(dt)
 		    item, 
 		    this.sprite.x+5*randUniform(0, 1), 
 		    this.sprite.y+10*randUniform(0.1, 1));
-		gnd.velx = randomChoice([-1, 1])*randUniform(40, 75);
+		gnd.velx = randomChoice([-1, 1])*randUniform(30, 60);
+		gnd.velz = -randUniform(-10, 30);
 		gnd.velh = -150*randUniform(0.9, 1);
 	    }
 	}

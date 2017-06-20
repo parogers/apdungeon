@@ -38,6 +38,7 @@ function GroundItem(img, x, y, item)
     // other sprites)
     this.sprite.zpos = y;
     this.velx = 0;
+    this.velz = 0;
     this.velh = 0;
     this.bouncy = 0.5;
     this.hitbox = new Hitbox(0, 0, 5, 5);
@@ -47,6 +48,16 @@ GroundItem.prototype.update = function(dt)
 {
     if (this.velh !== 0) 
     {
+	// First move the item into/out of the scene (Z-axis) and make sure
+	// we don't bump into anything.
+	if (this.velz !== 0) {
+	    var dz = this.velz*dt;
+	    var tile = level.bg.getTileAt(this.sprite.x, this.ypos+dz);
+	    // If we connect with a wall, don't bother bouncing off
+	    if (tile.solid) this.velz = 0;
+	    else this.ypos += dz;
+	}
+
 	// Move the item left/right having it bounce off walls too. Note we
 	// check the "floor" position of the item instead of the sprite pos.
 	var dx = this.velx*dt;
@@ -100,6 +111,7 @@ function spawnItem(item, x, y)
 // The list of takeable items. The values here are used to identify the items
 // as well as referring to images on the GROUND_ITEMS sprite sheet.
 var Item = {
+    NO_ARMOUR: "helmet3",
     LEATHER_ARMOUR: "helmet1",
     STEEL_ARMOUR: "helmet2",
     COIN: "coin",
@@ -107,8 +119,9 @@ var Item = {
     LARGE_HEALTH: "large_health",
     SMALL_BOW: "bow1",
     LARGE_BOW: "bow2",
-    MAGIC_BOW: "bow3",
+    NO_BOW: "bow3",
     ARROW: "arrow1",
+    NO_SWORD: "sword4",
 
     NONE: null
 };

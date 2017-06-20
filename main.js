@@ -195,7 +195,7 @@ function setup()
     npc.sprite.y = 160;
     level.addThing(npc);*/
 
-    var items = [Item.SMALL_HEALTH, Item.LARGE_HEALTH, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.LEATHER_ARMOUR];
+    var items = [Item.SMALL_HEALTH, Item.LARGE_HEALTH, Item.ARROW, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.LEATHER_ARMOUR];
     var chest = new Chest(items);
     chest.sprite.x = 150;
     chest.sprite.y = 180;

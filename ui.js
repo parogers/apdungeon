@@ -96,15 +96,18 @@ HealthUI.prototype.update = function(dt)
     }
 }
 
-/***********/
-/* ArrowUI */
-/***********/
+/**************/
+/* ItemSlotUI */
+/**************/
 
+// A single inventory slot, showing the picture of an item (from the tile
+// sheet GROUND_ITEMS) and optionally a quantity value below.
 function ItemSlotUI(item, args)
 {
     this.sprite = new PIXI.Container();
     this.sprite.scale.set(SCALE);
     this.guiLayer = true;
+    this.baseItem = item;
     this.item = item;
     this.count = 0;
     this.itemSprite = new PIXI.Sprite(getFrame(GROUND_ITEMS, item));
@@ -116,14 +119,84 @@ function ItemSlotUI(item, args)
     this.sprite.addChild(this.slotSprite);
     this.sprite.addChild(this.itemSprite);
 
-    if (args.showCount) 
+    if (args && args.x) this.itemSprite.x += args.x;
+    if (args && args.y) this.itemSprite.y += args.y;
+
+    if (args && args.showCount) 
     {
 	var img = renderText("--");
 	this.textSprite = new PIXI.Sprite(img);
 	this.textSprite.anchor.set(0.5, 0.5);
-	this.textSprite.x = 0;
-	this.textSprite.y = 7;
-	this.textSprite.scale.set(0.5);
+	this.textSprite.x = 0.5;
+	this.textSprite.y = 6.5;
+	this.textSprite.scale.set(0.6);
 	this.sprite.addChild(this.textSprite);
     }
+}
+
+ItemSlotUI.prototype.setCount = function(count)
+{
+    if (this.textSprite && this.count !== count)
+    {
+	this.count = count;
+	if (count === 0) count = "--";
+	else if (count < 9) count = "0" + count;
+	this.textSprite.texture = renderText(""+count);
+    }
+}
+
+ItemSlotUI.prototype.setItem = function(item)
+{
+    // If no item is specified, use the item passed to the constructor instead
+    if (item === Item.NONE) item = this.baseItem;
+    if (this.item !== item) {
+	this.item = item;
+	this.itemSprite.texture = getFrame(GROUND_ITEMS, item);
+    }
+}
+
+/***************/
+/* InventoryUI */
+/***************/
+
+// Show the player inventory as a set of item slots (ItemSlotUI instances)
+function InventoryUI()
+{
+    this.guiLayer = true;
+    this.sprite = new PIXI.Container();
+
+    this.armourSlot = new ItemSlotUI(Item.NO_ARMOUR);
+    this.swordSlot = new ItemSlotUI(Item.NO_SWORD);
+    this.bowSlot = new ItemSlotUI(Item.NO_BOW);
+    this.arrowSlot = new ItemSlotUI(Item.ARROW, {showCount: true});
+    this.coinSlot = new ItemSlotUI(
+	Item.COIN, {
+	    showCount: true,
+	    x: -0.5,
+	    y: 0.5
+	});
+
+    this.slots = [
+	this.armourSlot,
+	this.swordSlot,
+	this.bowSlot,
+	this.arrowSlot,
+	this.coinSlot,
+    ];
+    var x = 0;
+    for (slot of this.slots) {
+	this.sprite.addChild(slot.sprite);
+	slot.sprite.x = x;
+	x += (slot.slotSprite.texture.width+1)*SCALE;
+    }
+}
+
+InventoryUI.prototype.update = function(dt)
+{
+    // TODO - use an event/listener system instead of doing this
+    this.armourSlot.setItem(player.armour);
+    this.swordSlot.setItem(player.sword);
+    this.bowSlot.setItem(player.bow);
+    this.arrowSlot.setCount(player.numArrows);
+    this.coinSlot.setCount(player.numCoins);
 }

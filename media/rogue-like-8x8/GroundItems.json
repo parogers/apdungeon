@@ -89,6 +89,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
+},"sword4" : {
+    "frame" : {"x":46, "y":19, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
 },"bow1" : {
     "frame" : {"x":28, "y":37, "w":8, "h":8},
     "rotated" : false,

@@ -295,7 +295,7 @@ def get_desc(row, col):
     meta = [
         ["helmet1", "helmet2", "helmet3", "chest1", "chest2", "chest3"],
         ["pants1", "pants2", "pants3", "sword1", "sword2", "sword3"],
-        ["shield1", "shield2", "shield3", "", "", ""],
+        ["shield1", "shield2", "shield3", "", "", "sword4"],
         ["", "", "", "", "", ""],
         ["", "", "", "bow1", "bow2", "bow3"],
         ["arrow1", "arrow2", "arrow2", "", "", ""],
