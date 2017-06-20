@@ -22,7 +22,7 @@ function Chest(items)
     var texture = getFrame(MAPTILES, "chest_closed");
     this.sprite = new PIXI.Sprite(texture);
     this.sprite.scale.set(SCALE);
-    this.sprite.anchor.set(0.5, 0.5);
+    this.sprite.anchor.set(0.5, 0.75);
     this.isOpen = false;
     this.timer = 0;
     this.items = items;

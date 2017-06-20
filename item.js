@@ -87,8 +87,7 @@ GroundItem.prototype.handlePlayerCollision = function()
 /* Spawn in the given item, at the given location */
 function spawnItem(item, x, y)
 {
-    var imgName = ItemImages[item];
-    var img = getFrame(GROUND_ITEMS, imgName);
+    var img = getFrame(GROUND_ITEMS, item);
     var gnd = new GroundItem(img, x, y, item);
     level.addThing(gnd);
     return gnd;
@@ -98,20 +97,18 @@ function spawnItem(item, x, y)
 /* Items */
 /*********/
 
+// The list of takeable items. The values here are used to identify the items
+// as well as referring to images on the GROUND_ITEMS sprite sheet.
 var Item = {
-    NONE: 0,
-    LEATHER_ARMOUR: 1,
-    STEEL_ARMOUR: 2,
-    COIN: 3,
-    HEALTH: 4
+    LEATHER_ARMOUR: "helmet1",
+    STEEL_ARMOUR: "helmet2",
+    COIN: "coin",
+    SMALL_HEALTH: "small_health",
+    LARGE_HEALTH: "large_health",
+    SMALL_BOW: "bow1",
+    LARGE_BOW: "bow2",
+    MAGIC_BOW: "bow3",
+    ARROW: "arrow1",
+
+    NONE: null
 };
-
-var ItemImages = [
-    null,
-    "helmet1",
-    "helmet2",
-    "coin",
-    "small_health"
-];
-
-

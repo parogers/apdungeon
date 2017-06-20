@@ -100,9 +100,14 @@ function Level(bg)
     this.smoothTracking = true;
 
     this.healthUI = new HealthUI();
-    this.healthUI.sprite.x = 10;
+    this.healthUI.sprite.x = this.camera.width-1;
     this.healthUI.sprite.y = this.bg.sprite.texture.height*SCALE-10;
     this.addThing(this.healthUI);
+
+    var slot = new ItemSlotUI(Item.ARROW, {showCount: true});
+    slot.sprite.x = 30;
+    slot.sprite.y = this.bg.sprite.texture.height*SCALE+15;
+    this.addThing(slot);
 }
 
 Level.prototype.update = function(dt)

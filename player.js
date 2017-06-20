@@ -31,7 +31,7 @@ function Player()
     this.frame = 0;
     this.count = 0;
     this.facing = 1;
-    this.health = 5;
+    this.health = 3;
     this.maxHealth = 5;
     this.maxSpeed = 200; // pixels/second
     this.setCharFrames(FEMALE_MELEE, "melee1");
@@ -221,6 +221,16 @@ Player.prototype.upgradeArmour = function(item)
     sounds[POWERUP2_SND].play();
 }
 
+Player.prototype.healDamage = function(amt)
+{
+    if (this.health < this.maxHealth) {
+	this.health = Math.min(this.health+amt, this.maxHealth);
+	// Play a sound effect
+	sounds[POWERUP4_SND].volume = 1.25;
+	sounds[POWERUP4_SND].play();
+    }
+}
+
 Player.prototype.takeDamage = function(amt, src)
 {
     if (this.damageTimer <= 0) {
@@ -238,19 +248,25 @@ Player.prototype.handleTakeItem = function(item)
 {
     switch (item) {
     case Item.LEATHER_ARMOUR:
-	if (this.armour == Item.NONE) 
-	{
+	if (this.armour == Item.NONE) {
 	    this.upgradeArmour(item);
 	    return true;
 	}
 	break;
 
     case Item.STEEL_ARMOUR:
-	if (this.armour == Item.NONE || this.armour == Item.LEATHER_ARMOUR) 
-	{
+	if (this.armour == Item.NONE || this.armour == Item.LEATHER_ARMOUR) {
 	    this.upgradeArmour(item);
 	    return true;
 	}
+	break;
+
+    case Item.SMALL_HEALTH:
+	this.healDamage(1);
+	break;
+
+    case Item.LARGE_HEALTH:
+	this.healDamage(this.maxHealth);
 	break;
     }
     sounds[COIN_SND].play();

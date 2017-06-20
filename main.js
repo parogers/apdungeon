@@ -39,6 +39,8 @@ GATE_SND = "media/effects/gate.wav"
 DROP_SND = "media/effects/drop.wav"
 POWERUP1_SND = "media/effects/powerup1.wav"
 POWERUP2_SND = "media/effects/powerup2.wav"
+POWERUP3_SND = "media/effects/powerup3.wav"
+POWERUP4_SND = "media/effects/powerup4.wav"
 CHEST_SND = "media/effects/chest_open.wav"
 
 SCALE = 5;
@@ -148,6 +150,8 @@ function graphicsLoaded()
 	DROP_SND,
 	POWERUP1_SND,
 	POWERUP2_SND,
+	POWERUP3_SND,
+	POWERUP4_SND,
 	CHEST_SND,
 	GAME_MUSIC
     ]);
@@ -191,23 +195,34 @@ function setup()
     npc.sprite.y = 160;
     level.addThing(npc);*/
 
-    var items = [Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.LEATHER_ARMOUR];
+    var items = [Item.SMALL_HEALTH, Item.LARGE_HEALTH, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.LEATHER_ARMOUR];
     var chest = new Chest(items);
     chest.sprite.x = 150;
     chest.sprite.y = 180;
     level.addThing(chest);
 
-/*    var text = "SOMETHING HERE";
+/*    var text = "100";
     textSprite = new PIXI.Text(
 	text, {fontFamily: 'Courier New', 
-	       fontSize: 20, 
+	       fontSize: 10,
 	       fill: 0xffffff,
-	       fontWeight: 'bold',
-	       align: 'center'});
+	       fontWeight: 'bold'
+	      });
+    textSprite.x = 50;
+    textSprite.y = 50;
+    textSprite.scale.set(SCALE*0.25);
     level.guiStage.addChild(textSprite)*/
+
+/*    var test = new Scenery(getFrame(UI, "5"));
+    test.sprite.x = 50;
+    test.sprite.y = 50;
+    test.sprite.scale.set(SCALE*0.75);
+    test.guiLayer = true;
+    level.addThing(test);*/
 
     music = sounds[GAME_MUSIC];
     music.loop = true;
+    music.volume = 0.5;
     music.play();
 
     requestAnimFrame(gameLoop)
