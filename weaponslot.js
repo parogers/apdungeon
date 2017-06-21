@@ -28,7 +28,7 @@ ARROW_DISAPPEAR = 2;
 function SwordWeaponSlot(player)
 {
     // Setup the weapon sprite (texture will come later)
-    this.sprite = new PIXI.Sprite(getFrame(WEAPONS, "sword2"));
+    this.sprite = new PIXI.Sprite();
     //this.weaponSprite.anchor.set(6.5/8, 4/8.); // bow
     this.sprite.anchor.set(4./8, 3.9/8); // sword
     //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
@@ -38,8 +38,12 @@ function SwordWeaponSlot(player)
     this.sprite.y = -4*SCALE;
     this.sprite.rotation = -Math.PI/3;
     this.attackCooldown = 0;
+    this.weaponReach = 3*SCALE;
     this.player = player;
     this.hitbox = new Hitbox(0, -4*SCALE, 10*SCALE, 6*SCALE);
+    // Which weapon texture is currently displayed
+    this.textureName = null;
+    this.setTexture("sword2");
 }
 
 SwordWeaponSlot.prototype.update = function(dt)
@@ -58,6 +62,15 @@ SwordWeaponSlot.prototype.update = function(dt)
       this.weaponSprite.rotation = 0;*/
 }
 
+// Set which sword to display. The sprite is taken from the WEAPONS sheet
+SwordWeaponSlot.prototype.setTexture = function(name)
+{
+    if (this.textureName !== name) {
+	this.sprite.texture = getFrame(WEAPONS, name);
+	this.textureName = name;
+    }
+}
+
 SwordWeaponSlot.prototype.startAttack = function()
 {
     if (this.attackCooldown > 0) return;
@@ -67,28 +80,14 @@ SwordWeaponSlot.prototype.startAttack = function()
     this.sprite.x = 3.5*SCALE;
 
     var lst = level.checkHitMany(
-	this.player.sprite.x + this.player.facing*3*SCALE, 
+	this.player.sprite.x + this.player.facing*this.weaponReach, 
 	this.player.sprite.y,
 	this.hitbox, this.player);
 
-/*[
-	{
-	    x: this.player.sprite.x + this.player.facing*35,
-	    y: this.player.sprite.y + this.sprite.y
-	},
-	{
-	    x: this.player.sprite.x + this.player.facing*5,
-	    y: this.player.sprite.y + this.sprite.y
-	},
-	{
-	    x: this.player.sprite.x + this.player.facing*25,
-	    y: this.player.sprite.y + this.sprite.y-10
-	}], this.player);*/
-
-    for (var n = 0; n < lst.length; n++) {
-	if (lst[n].handleHit) {
-	    lst[n].handleHit(this.player.sprite.x, 
-			     this.player.sprite.y, 1);
+    for (hit of lst) {
+	if (hit.handleHit) {
+	    hit.handleHit(this.player.sprite.x, 
+			  this.player.sprite.y, 1);
 	}
     }
     this.attackCooldown = 0.15;
@@ -105,13 +104,15 @@ SwordWeaponSlot.prototype.stopAttack = function()
 function BowWeaponSlot(player)
 {
     // Setup the weapon sprite (texture will come later)
-    this.sprite = new PIXI.Sprite(getFrame(WEAPONS, "bow1"));
+    this.sprite = new PIXI.Sprite();
     this.sprite.anchor.set(6.5/8, 4/8.); // bow
     //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
     this.sprite.scale.set(SCALE);
     // Sprite position (relative to the player) and rotation
     this.player = player;
     this.attackCooldown = 0;
+    this.textureName = null;
+    this.setTexture("bow1");
 }
 
 BowWeaponSlot.prototype.update = function(dt)
@@ -134,11 +135,24 @@ BowWeaponSlot.prototype.update = function(dt)
       this.weaponSprite.rotation = 0;*/
 }
 
+// Set which bow to display. The sprite is taken from the WEAPONS sheet
+BowWeaponSlot.prototype.setTexture = function(name)
+{
+    if (this.textureName !== name) {
+	this.sprite.texture = getFrame(WEAPONS, name);
+	this.textureName = name;
+    }
+}
+
 BowWeaponSlot.prototype.startAttack = function()
 {
+    // Make sure we have an arrow to fire
+    if (this.player.numArrows <= 0) return;
     if (this.attackCooldown > 0) return;
     sounds[ATTACK_SWORD_SND].play();
     this.attackCooldown = 0.2;
+
+    this.player.numArrows--;
 
     var arrow = new Arrow(
 	this.player.sprite.x,

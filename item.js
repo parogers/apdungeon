@@ -55,7 +55,10 @@ GroundItem.prototype.update = function(dt)
 	    var tile = level.bg.getTileAt(this.sprite.x, this.ypos+dz);
 	    // If we connect with a wall, don't bother bouncing off
 	    if (tile.solid) this.velz = 0;
-	    else this.ypos += dz;
+	    else {
+		this.ypos += dz;
+		this.sprite.zpos += dz;
+	    }
 	}
 
 	// Move the item left/right having it bounce off walls too. Note we
@@ -108,6 +111,9 @@ function spawnItem(item, x, y)
 /* Items */
 /*********/
 
+// TODO - it would be nice to have item properties stored with the item.
+// (eg type of item, size, value, etc) But this is easy for demo purposes.
+
 // The list of takeable items. The values here are used to identify the items
 // as well as referring to images on the GROUND_ITEMS sprite sheet.
 var Item = {
@@ -121,7 +127,52 @@ var Item = {
     LARGE_BOW: "bow2",
     NO_BOW: "bow3",
     ARROW: "arrow1",
+    SMALL_SWORD: "sword1",
+    LARGE_SWORD: "sword2",
+    MAGIC_SWORD: "sword3",
     NO_SWORD: "sword4",
 
     NONE: null
 };
+
+var SwordItems = [Item.SMALL_SWORD, Item.LARGE_SWORD, Item.MAGIC_SWORD];
+var BowItems = [Item.SMALL_BOW, Item.LARGE_BOW];
+var ArmourItems = [Item.LEATHER_ARMOUR, Item.STEEL_ARMOUR];
+
+var HeldItem = {
+    SMALL_BOW: "bow1",
+    LARGE_BOW: "bow2",
+    SMALL_SWORD: "sword1",
+    LARGE_SWORD: "sword2",
+    MAGIC_SWORD: "sword2"
+};
+
+function isArmour(item)
+{
+    return (ArmourItems.indexOf(item) != -1);
+}
+
+function isSword(item)
+{
+    return (SwordItems.indexOf(item) != -1);
+}
+
+function isBow(item)
+{
+    return (BowItems.indexOf(item) != -1);
+}
+
+function isArmourBetter(orig, item)
+{
+    return ArmourItems.indexOf(orig) < ArmourItems.indexOf(item)
+}
+
+function isSwordBetter(orig, item)
+{
+    return SwordItems.indexOf(orig) < SwordItems.indexOf(item)
+}
+
+function isBowBetter(orig, item)
+{
+    return BowItems.indexOf(orig) < BowItems.indexOf(item)
+}

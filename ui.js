@@ -167,7 +167,7 @@ function InventoryUI()
 
     this.armourSlot = new ItemSlotUI(Item.NO_ARMOUR);
     this.swordSlot = new ItemSlotUI(Item.NO_SWORD);
-    this.bowSlot = new ItemSlotUI(Item.NO_BOW);
+    this.bowSlot = new ItemSlotUI(Item.NO_BOW, {x: -0.5});
     this.arrowSlot = new ItemSlotUI(Item.ARROW, {showCount: true});
     this.coinSlot = new ItemSlotUI(
 	Item.COIN, {

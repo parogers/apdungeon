@@ -18,6 +18,7 @@
  */
 
 PRIMARY = 65;
+SWAP = 88;
 ARROW_UP = 38;
 ARROW_LEFT = 37;
 ARROW_RIGHT = 39;
@@ -30,12 +31,14 @@ function GameControls()
     this.left = false;
     this.right = false;
     this.primary = false;
+    this.swap = false;
 
     this.lastUp = false;
     this.lastDown = false;
     this.lastLeft = false;
     this.lastRight = false;
     this.lastPrimary = false;
+    this.lastSwap = false;
 }
 
 GameControls.prototype.getX = function()
@@ -55,6 +58,7 @@ GameControls.prototype.update = function()
     this.lastLeft = this.left;
     this.lastRight = this.right;
     this.lastPrimary = this.primary;
+    this.lastSwap = this.swap;
 }
 
 function attachKeyDown(controls)
@@ -75,6 +79,9 @@ function attachKeyDown(controls)
 	    break;
 	case PRIMARY:
 	    controls.primary = true;
+	    break;
+	case SWAP:
+	    controls.swap = true;
 	    break;
 	}
 	event.stopPropagation();
@@ -99,6 +106,9 @@ function attachKeyUp(controls)
 	    break;
 	case PRIMARY:
 	    controls.primary = false;
+	    break;
+	case SWAP:
+	    controls.swap = false;
 	    break;
 	}
 	event.stopPropagation();

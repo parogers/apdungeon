@@ -41,6 +41,9 @@ function Player()
     this.armour = Item.NONE;
     this.bow = Item.NONE;
     this.sword = Item.NONE;
+    //this.weapon = Item.NONE; // current weapon
+    // Define the hitbox
+    this.hitbox = new Hitbox(0, -4, 6*SCALE, 6*SCALE);
 
     this.setCharFrames(FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
@@ -56,26 +59,27 @@ function Player()
     this.waterSprite.y = -1.5*SCALE;
     this.sprite.addChild(this.waterSprite);
 
-    /*shadowSprite = new PIXI.Sprite();
-    shadowSprite.scale.set(SCALE);
-    shadowSprite.anchor.set(0.5, 0.5);
-    shadowSprite.visible = false;
-    shadowSprite.texture = getTextures(MAPTILES)["treading_water"];*/
-
     // Minimum amount of time after taking damage, until the player can be
     // damaged again.
     this.damageCooldown = 1;
     // The timer used for tracking the cooldown
     this.damageTimer = 0;
 
+    this.weaponSlot = null;
+
     // Knockback timer and speed
     this.knockedTimer = 0;
     this.knocked = 0;
-
-    this.weaponSlot = new BowWeaponSlot(this);
-    this.sprite.addChild(this.weaponSlot.sprite);
-    // Define the hitbox
-    this.hitbox = new Hitbox(0, -4, 8*SCALE, 6*SCALE);
+    // Weapon slots are used to manage the weapon sprite. (ie attack and
+    // running animations, etc) We add both slot sprites to the player sprite,
+    // then use the 'visible' flag to control which is rendered.
+    this.bowWeaponSlot = new BowWeaponSlot(this);
+    this.swordWeaponSlot = new SwordWeaponSlot(this);
+    this.sprite.addChild(this.bowWeaponSlot.sprite);
+    this.sprite.addChild(this.swordWeaponSlot.sprite);
+    this.bowWeaponSlot.sprite.visible = false;
+    this.swordWeaponSlot.sprite.visible = false;
+    //this.setWeapon(Item.SMALL_BOW);
 }
 
 Player.prototype.update = function(dt)
@@ -184,6 +188,10 @@ Player.prototype.update = function(dt)
 	if (this.weaponSlot.update) this.weaponSlot.update(dt);
     }
 
+    if (controls.swap && !controls.lastSwap) {
+	this.swapWeapons();
+    }
+
     // Check for collisions with other things
     var hit = level.checkHitMany(
 	this.sprite.x, this.sprite.y, 
@@ -206,23 +214,53 @@ Player.prototype.setCharFrames = function(res, name)
 
 Player.prototype.setArmour = function(item)
 {
-    var img = "melee1";
-    if (item === Item.LEATHER_ARMOUR) img = "melee2";
-    else if (item == Item.STEEL_ARMOUR) img = "melee3";
-    this.setCharFrames(FEMALE_MELEE, img);
+    // Change the player appearance based on their armour
     this.armour = item;
+    this.updatePlayerAppearance();
+}
+
+Player.prototype.updatePlayerAppearance = function()
+{
+    // Update the player character sprite, based on the armour we're wearing
+    var img = "melee1";
+    if (this.armour === Item.LEATHER_ARMOUR) img = "melee2";
+    else if (this.armour == Item.STEEL_ARMOUR) img = "melee3";
+    this.setCharFrames(FEMALE_MELEE, img);
+    // Update the sword sprite
+    // ...
+    // Update the bow sprite
+    // ...
+    var b = (this.weaponSlot === this.bowWeaponSlot);
+    this.bowWeaponSlot.sprite.visible = b;
+
+    var b = (this.weaponSlot === this.swordWeaponSlot);
+    this.swordWeaponSlot.sprite.visible = b;
+
+    if (this.weaponSlot) this.weaponSlot.update(0);
+}
+
+Player.prototype.upgradeSword = function(item)
+{
+    // Switch over to the sword if we don't have a weapon equipped
+    if (!this.weaponSlot) {
+	this.weaponSlot = this.swordWeaponSlot;
+    }
+    this.sword = item;
+    this.updatePlayerAppearance();
+}
+
+Player.prototype.upgradeBow = function(item)
+{
+    // Switch over to the bow if we don't have a weapon equipped
+    if (!this.weaponSlot) {
+	this.weaponSlot = this.bowWeaponSlot;
+    }
+    this.bow = item;
+    this.updatePlayerAppearance();
 }
 
 Player.prototype.upgradeArmour = function(item)
 {
-    /*var img = getFrame(UI, "small_slot");
-    console.log(img);
-    var msg = new Scenery(img);
-    //msg.timer = 1;
-    //msg.vely = -100;
-    msg.sprite.x = 100;
-    msg.sprite.y = 100;
-    level.addThing(msg);*/
     this.setArmour(item);
     sounds[POWERUP2_SND].play();
 }
@@ -231,7 +269,6 @@ Player.prototype.healDamage = function(amt)
 {
     if (this.health < this.maxHealth) {
 	this.health = Math.min(this.health+amt, this.maxHealth);
-	// Play a sound effect
 	sounds[POWERUP4_SND].volume = 1.25;
 	sounds[POWERUP4_SND].play();
     }
@@ -250,23 +287,36 @@ Player.prototype.takeDamage = function(amt, src)
     }
 }
 
+Player.prototype.swapWeapons = function()
+{
+    if (this.weaponSlot === this.swordWeaponSlot && this.bow) {
+	this.weaponSlot = this.bowWeaponSlot;
+	this.updatePlayerAppearance();
+    } else if (this.weaponSlot === this.bowWeaponSlot && this.sword) {
+	this.weaponSlot = this.swordWeaponSlot;
+	this.updatePlayerAppearance();
+    }
+}
+
 Player.prototype.handleTakeItem = function(item)
 {
+    // Check for an armour upgrade
+    if (isArmour(item) && isArmourBetter(this.armour, item)) {
+	this.upgradeArmour(item);
+	return true;
+    }
+    // Check for a sword upgrade
+    if (isSword(item) && isSwordBetter(this.sword, item)) {
+	this.upgradeSword(item);
+	return true;
+    }
+    // Check for a bow upgrade
+    if (isBow(item) && isBowBetter(this.bow, item)) {
+	this.upgradeBow(item);
+	return true;
+    }
+    // Consumable items
     switch (item) {
-    case Item.LEATHER_ARMOUR:
-	if (this.armour == Item.NONE) {
-	    this.upgradeArmour(item);
-	    return true;
-	}
-	break;
-
-    case Item.STEEL_ARMOUR:
-	if (this.armour == Item.NONE || this.armour == Item.LEATHER_ARMOUR) {
-	    this.upgradeArmour(item);
-	    return true;
-	}
-	break;
-
     case Item.ARROW:
 	this.numArrows++;
 	break;
