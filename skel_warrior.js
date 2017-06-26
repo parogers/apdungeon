@@ -262,6 +262,15 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 	this.knockedTimer = 0.1;
 	this.state = SKEL_WARRIOR_HURT;
     }
+
+    // Add some random dust, but only if we're not currently in water
+    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    if (!tile.water) {
+	var sprite = createBloodSpatter(["dust1", "dust2", "dust3", "dust4"]);
+	sprite.x = this.sprite.x;
+	sprite.y = this.sprite.y-1;
+	level.levelStage.addChild(sprite);
+    }
     return true;
 }
 

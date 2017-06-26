@@ -24,10 +24,13 @@ function renderText(msg)
     var renderTexture = PIXI.RenderTexture.create(
 	(img.width+1)*msg.length, img.height);
     var cnt = new PIXI.Container();
+    var x = 0;
     for (var n = 0; n < msg.length; n++) 
     {
 	var sprite = new PIXI.Sprite(getFrame(UI, msg[n]));
-	sprite.x = n*(img.width+1);
+	sprite.x = x;
+	if (msg[n] === " ") x += (img.width+1)/2;
+	else x += img.width+1;
 	cnt.addChild(sprite);
     }
 
@@ -129,7 +132,7 @@ function ItemSlotUI(item, args)
 	this.textSprite.anchor.set(0.5, 0.5);
 	this.textSprite.x = 0.5;
 	this.textSprite.y = 6.5;
-	this.textSprite.scale.set(0.6);
+	this.textSprite.scale.set(0.75);
 	this.sprite.addChild(this.textSprite);
     }
 }

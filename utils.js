@@ -75,10 +75,10 @@ function createSplashSprite()
     return waterSprite;
 }
 
-function createBloodSpatter()
+function createBloodSpatter(imgs)
 {
     var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
-	randomChoice(["blood1", "blood2", "blood3"])
+	randomChoice(imgs || ["blood1", "blood2", "blood3"])
     ]);
     sprite.scale.set(SCALE);
     sprite.zpos = FLOOR_POS;

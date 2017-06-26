@@ -84,6 +84,11 @@ function loaded()
 	    renderer.render(stage);
 	});
     }
+    // Add a random query string when loading the JSON files below. This avoids
+    // persistent caching problems, where the browser (eg FF) uses the cached
+    // without checking in with the server first.
+    var now = (new Date()).getTime();
+    PIXI.loader.defaultQueryString = "nocache=" + now;
     PIXI.loader
 	.add(MALE_MELEE)
 	.add(FEMALE_MELEE)
@@ -213,9 +218,9 @@ function setup()
     textSprite.scale.set(SCALE*0.25);
     level.guiStage.addChild(textSprite)*/
 
-/*    var test = new Scenery(getFrame(UI, "5"));
-    test.sprite.x = 50;
-    test.sprite.y = 50;
+    /*var test = new Scenery(renderText("HI THERE WORLD!"));
+    test.sprite.x = 150;
+    test.sprite.y = 100;
     test.sprite.scale.set(SCALE*0.75);
     test.guiLayer = true;
     level.addThing(test);*/

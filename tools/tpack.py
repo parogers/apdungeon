@@ -32,11 +32,10 @@ FRAME_TMP = """"%(name)s" : {
 def gen_grid(start_pos, tile_size, desc, padding=1):
     lst = []
     rows = len(desc)
-    cols = len(desc[0])
     y = start_pos[1]
     for row in range(rows):
         x = start_pos[0]
-        for col in range(cols):
+        for col in range(len(desc[row])):
             name = desc[row][col]
             if (name):
                 txt = FRAME_TMP % {
@@ -271,7 +270,7 @@ desc = [
     ("smooth_floor_bl", "smooth_floor_bm", "smooth_floor_br", "blood1", "blood2", "blood3", "blood4", "chest_closed", "chest_open", "skull1", "skull2"),
     ("water", "green_water", None, "barrel1", "barrel2", "barrel3", "barrel4", "barrel5", "barrel6", "barrel7", "bones"),
     ("bridge_b", "bridge_t", None, "sack1", "sack2", "sack3", "sack4", "sack5", "sack6", None, "mushroom"),
-    (None, None, None, "carpet_l", "carpet_m", "carpet_r", None, None, None, None, None),
+    (None, None, None, "carpet_l", "carpet_m", "carpet_r", "dust1", "dust2", ", dust3", "dust4"),
     (None, None, None, "carpet_bl", "carpet_bm", "carpet_br", None, None, None, None, None),
 ]
 frames += gen_grid((28,1), (8,8), desc)
@@ -330,7 +329,8 @@ desc = [
 frames += gen_grid((1,29), (5, 4), desc)
 
 desc = [
-    ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "+"),
+    "0123456789",
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!-+",
 ]
 frames += gen_grid((1,38), (3, 4), desc)
 

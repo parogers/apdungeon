@@ -38,7 +38,7 @@ function SwordWeaponSlot(player)
     this.sprite.y = -4*SCALE;
     this.sprite.rotation = -Math.PI/3;
     this.attackCooldown = 0;
-    this.weaponReach = 3*SCALE;
+    this.weaponReach = 3.25*SCALE;
     this.player = player;
     this.hitbox = new Hitbox(0, -4*SCALE, 10*SCALE, 6*SCALE);
     // Which weapon texture is currently displayed
