@@ -144,12 +144,35 @@ function Spawn(monster, direction, ypos)
 
 Spawn.prototype.activate = function()
 {
-    // Start the monster somewhere off screen
-    level.addThing(this.monster);
+    // Start the monster somewhere off screen either left or right
     this.monster.sprite.x = level.camera.x + level.camera.width/2 + 
 	-1*this.direction*(level.camera.width/2+20);
-    //this.monster.sprite.y = level.bg.getHeight()/2;
-    this.monster.sprite.y = this.ypos;
+    // Make sure the monster isn't being spawned inside of a wall. Here we
+    // move the sprite either up/down until we find a free space.
+    var offset = 0;
+    while(true) 
+    {
+	var north = level.bg.getTileAt(this.monster.sprite.x, this.ypos+offset);
+	var south = level.bg.getTileAt(this.monster.sprite.x, this.ypos-offset);
+	if (!north.solid) {
+	    this.monster.sprite.y = this.ypos + offset;
+	    break;
+	}
+	if (!south.solid) {
+	    this.monster.sprite.y = this.ypos - offset;
+	    break;
+	}
+	if (this.ypos + offset > level.getHeight() && 
+	    this.ypos - offset < 0) {
+	    // This should never happen, but just in case...
+	    console.log("WARNING: can't spawn monster near " + this.ypos + 
+			", despawning...");
+	    this.monster.dead = true;
+	    return;
+	}
+	offset += TILE_HEIGHT*SCALE;
+    }
+    level.addThing(this.monster);
 }
 
 // Monster walks in through a gate
@@ -213,7 +236,6 @@ function DropSpawn(monster, x, y)
 
 DropSpawn.prototype.activate = function()
 {
-    console.log("ACTIVATED");
     level.addThing(this.shadow);
     this.falling.sprite.zpos = FRONT_POS;
     this.falling.sprite.x = this.xpos;

@@ -46,6 +46,7 @@ function generateLevel()
 	nextpos = pos + randint(5, 10);
 	if (nextpos >= grid.cols) break;
 
+	// Add a random gate every now and then
 	if (Math.random() < 0.5 && pos > 0) {
 	    var gate = new Gate();
 	    var col = randint(pos+1, nextpos-1);
@@ -56,13 +57,14 @@ function generateLevel()
 	}
 	pos = nextpos;
 
+	// Add a random outcropping of wall
 	var w = 1;
 	if (Math.random() < 0.5) {
 	    w = randint(2, 4);
 	}
 	if (pos+w >= grid.cols) w = 0;
 
-	var depth = randint(1, 2);
+	var depth = randint(1, 3);
 	for (var col = 0; col < w; col++) {
 	    for (var row = 0; row < depth; row++) {
 		if (row == 0) grid[row][pos+col] = "wall_behind";
@@ -98,18 +100,6 @@ function generateLevel()
     for (var thing of things) {
 	level.addThing(thing);
     }
-
-    var arena = new Arena();
-    arena.startx = level.camera.width/2;
-    arena.endx = arena.startx+level.camera.width;
-    level.arenas.push(arena);
-
-    var round = new Round(1);
-    round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
-    //round.addSpawn(new Spawn(new SkelWarrior(), -1, 150));
-    //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
-    arena.rounds.push(round);
-
 
     var arena = new Arena();
     arena.startx = level.camera.width;
