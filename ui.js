@@ -46,7 +46,6 @@ function HealthUI()
 {
     //var texture = getTextures(GROUND_ITEMS)["coin"];
     this.sprite = new PIXI.Container();
-    this.guiLayer = true;
     this.hearts = [];
     this.fullHeart = getFrame(UI, "full_heart");
     this.emptyHeart = getFrame(UI, "empty_heart");
@@ -109,7 +108,6 @@ function ItemSlotUI(item, args)
 {
     this.sprite = new PIXI.Container();
     this.sprite.scale.set(SCALE);
-    this.guiLayer = true;
     this.baseItem = item;
     this.item = item;
     this.count = 0;
@@ -165,9 +163,7 @@ ItemSlotUI.prototype.setItem = function(item)
 // Show the player inventory as a set of item slots (ItemSlotUI instances)
 function InventoryUI()
 {
-    this.guiLayer = true;
     this.sprite = new PIXI.Container();
-
     this.armourSlot = new ItemSlotUI(Item.NO_ARMOUR);
     this.swordSlot = new ItemSlotUI(Item.NO_SWORD);
     this.bowSlot = new ItemSlotUI(Item.NO_BOW, {x: -0.5});

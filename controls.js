@@ -17,7 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-PRIMARY = 65;
+PRIMARY = 90;
 SWAP = 88;
 ARROW_UP = 38;
 ARROW_LEFT = 37;

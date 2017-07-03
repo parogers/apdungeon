@@ -17,14 +17,17 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function Scenery(img)
+function Scenery()
 {
-    this.sprite = new PIXI.Sprite(img);
+    this.frames = Array.prototype.slice.call(arguments);
+    this.sprite = new PIXI.Sprite(arguments[0]);
     this.sprite.anchor.set(0.5, 1);
     this.sprite.scale.set(SCALE);
     this.timer = 0;
     this.velx = 0;
     this.vely = 0;
+    this.fps = 5;
+    this.frame = 0;
 }
 
 Scenery.prototype.update = function(dt)
@@ -36,6 +39,11 @@ Scenery.prototype.update = function(dt)
 	if (this.timer <= 0) {
 	    level.removeThing(this);
 	}
+    }
+    if (this.frames.length > 1) {
+	this.frame += this.fps*dt;
+	var img = this.frames[(this.frame|0) % this.frames.length];
+	this.sprite.texture = img;
     }
 }
 

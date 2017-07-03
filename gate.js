@@ -20,13 +20,12 @@
 function Gate()
 {
     this.frames = [
-	getTextures(MAPTILES)["gate_wall_1"],
-	getTextures(MAPTILES)["gate_wall_2"],
-	getTextures(MAPTILES)["gate_wall_3"]
+	getFrame(MAPTILES, "gate_wall_1"),
+	getFrame(MAPTILES, "gate_wall_2"),
+	getFrame(MAPTILES, "gate_wall_3")
     ];
     this.hitbox = new Hitbox(0, 0, 5, 5);
-    var texture = this.frames[0];
-    this.sprite = new PIXI.Sprite(texture);
+    this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0,0);
     this.frameNum = 0;
@@ -85,3 +84,24 @@ Gate.prototype.handleHit = function(x, y, dmg)
 Gate.prototype.handlePlayerCollision = function()
 {
 }
+
+/********/
+/* Door */
+/********/
+
+/* A door is basically a gate with different graphics, and an extra sprite
+ * behind it so when the door opens, it shows darkness behind it. */
+function Door()
+{
+    Gate.call(this);
+    this.frames = [
+	getFrame(MAPTILES, "door1"),
+	getFrame(MAPTILES, "door2"),
+	getFrame(MAPTILES, "door3"),
+	getFrame(MAPTILES, "door4")
+    ];
+    this.sprite.anchor.set(0.5,1);
+    this.sprite.texture = this.frames[0];
+}
+
+Door.prototype = Object.create(Gate.prototype);

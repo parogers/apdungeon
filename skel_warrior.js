@@ -269,7 +269,7 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 	var sprite = createBloodSpatter(["dust1", "dust2", "dust3", "dust4"]);
 	sprite.x = this.sprite.x;
 	sprite.y = this.sprite.y-1;
-	level.levelStage.addChild(sprite);
+	level.stage.addChild(sprite);
     }
     return true;
 }

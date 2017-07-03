@@ -19,20 +19,34 @@
 
 function GoMarker()
 {
-    this.frames = ["go1", "go2"];
-    this.sprite = new PIXI.Sprite();
+    this.frames = [
+	getFrame(UI, "go1"), 
+	getFrame(UI, "go2")
+    ];
+    this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.scale.set(SCALE);
-    this.sprite.anchor.set(0.5,0.5);
-    this.sprite.texture = getTextures(UI)[this.frames[0]];
+    this.sprite.anchor.set(1,0);
     this.timer = 0;
     this.dings = 3;
     this.frameNum = 0;
     this.done = false;
-    this.guiLayer = true;
+    this.sprite.visible = false;
+}
 
-    this.sprite.x = level.camera.width - 
-	this.sprite.width/2-10;
-    this.sprite.y = this.sprite.height/2+10;
+GoMarker.prototype.show = function()
+{
+    this.done = false;
+    this.timer = 0;
+    this.dings = 3;
+    this.frameNum = 0;
+    this.sprite.visible = true;
+    this.sprite.texture = this.frames[0];
+}
+
+GoMarker.prototype.hide = function()
+{
+    this.done = true;
+    this.sprite.visible = false;
 }
 
 GoMarker.prototype.update = function(dt)
@@ -48,7 +62,7 @@ GoMarker.prototype.update = function(dt)
 	next = 0;
     }
     this.timer = next;
-    this.sprite.texture = getTextures(UI)[this.frames[this.frameNum]];
+    this.sprite.texture = this.frames[this.frameNum];
 }
 
 GoMarker.prototype.handleHit = function(x, y, dmg)

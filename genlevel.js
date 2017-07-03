@@ -73,6 +73,16 @@ function generateLevel()
 	pos += w;
     }
 
+    // Add a vertical wall to either side of the level
+    for (var row = 0; row < grid.rows-1; row++) {
+	grid[row][0] = "wall_behind2";
+	grid[row][grid.cols-1] = "wall_behind2";
+    }
+    grid[0][0] = "wall_behind";
+    grid[0][grid.cols-1] = "wall_behind";
+    grid[grid.rows-1][0] = "smooth_wall_m";
+    grid[grid.rows-1][grid.cols-1] = "smooth_wall_m";
+
     var gate = new Gate();
     var col = 4;
     gate.sprite.x = col*TILE_WIDTH*SCALE;
@@ -90,11 +100,9 @@ function generateLevel()
     }
 
     var arena = new Arena();
-    arena.startx = level.camera.width;
-    arena.endx = level.camera.width*2;
+    arena.startx = level.camera.width/2;
+    arena.endx = arena.startx+level.camera.width;
     level.arenas.push(arena);
-
-    var ypos = level.bg.getHeight()/2;
 
     var round = new Round(1);
     round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
@@ -102,7 +110,19 @@ function generateLevel()
     //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
     arena.rounds.push(round);
 
-    // TODO - change
+
+    var arena = new Arena();
+    arena.startx = level.camera.width;
+    arena.endx = level.camera.width*2;
+    level.arenas.push(arena);
+
+    var round = new Round(1);
+    round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
+    //round.addSpawn(new Spawn(new SkelWarrior(), -1, 150));
+    //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
+    arena.rounds.push(round);
+
+    var ypos = level.bg.getHeight()/2;
     var round = new Round(0.5);
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
     arena.rounds.push(round);

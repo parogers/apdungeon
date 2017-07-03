@@ -60,7 +60,7 @@ function compareDepth(s1, s2) {
     return z1-z2;
 }
 
-// The various level stages
+// The various level states
 var LEVEL = {
     // Player is within an active arena
     ACTIVE_ARENA: 1,
@@ -77,7 +77,6 @@ function Level(bg)
     this.camera = new Camera();
     //this.player = null;
     this.stage = null;
-    this.goMarker = null;
     this.state = LEVEL.NEXT_ARENA;
     // The background sprite (TiledBackground)
     this.bg = bg;
@@ -86,28 +85,28 @@ function Level(bg)
     this.things = [];
     // The PIXI container for everything we want to draw
     this.stage = new PIXI.Container();
-    // The container holding all sprites in the level
-    this.levelStage = new PIXI.Container();
-    this.levelStage.addChild(this.bg.sprite);
+    this.stage.addChild(this.bg.sprite);
     // The container holding all user interface stuff
-    this.guiStage = new PIXI.Container();
+    /*this.guiStage = new PIXI.Container();
     this.stage.addChild(this.levelStage);
-    this.stage.addChild(this.guiStage);
+    this.stage.addChild(this.guiStage);*/
     // List of arenas in this level (Arena instances)
     this.arenas = [];
     // Current active arena (number)
     this.arenaNum = 0;
     this.smoothTracking = true;
+}
 
-    this.healthUI = new HealthUI();
-    this.healthUI.sprite.x = this.camera.width-1;
-    this.healthUI.sprite.y = this.bg.sprite.texture.height*SCALE-10;
-    this.addThing(this.healthUI);
+// Returns the width of the level in pixels (ie render size)
+Level.prototype.getWidth = function()
+{
+    return this.bg.sprite.texture.width*SCALE;
+}
 
-    var inv = new InventoryUI();
-    inv.sprite.x = 30;
-    inv.sprite.y = this.bg.sprite.texture.height*SCALE+15;
-    this.addThing(inv);
+// Returns the height of the level in pixels (ie render size)
+Level.prototype.getHeight = function()
+{
+    return this.bg.sprite.texture.height*SCALE;
 }
 
 Level.prototype.update = function(dt)
@@ -120,8 +119,7 @@ Level.prototype.update = function(dt)
 	if (arena.done) {
 	    if (this.arenaNum < this.arenas.length-1) {
 		// Show the "go forward" marker
-		this.goMarker = new GoMarker();
-		this.addThing(this.goMarker);
+		screen.goMarker.show();
 		// Advance to the next arena
 		this.arenaNum++;
 		this.state = LEVEL.SHOWING_GO;
@@ -168,9 +166,8 @@ Level.prototype.update = function(dt)
 
 	// Also remove the go marker (if it's done animated) since the player
 	// already knows to move forward by now.
-	if (this.goMarker && this.goMarker.done) {
-	    this.removeThing(this.goMarker);
-	    this.goMarker = null;
+	if (screen.goMarker.sprite.visible && screen.goMarker.done) {
+	    screen.goMarker.hide();
 	}
 
 	// Wait for the player to move into the next arena
@@ -182,9 +179,8 @@ Level.prototype.update = function(dt)
 	    this.state = LEVEL.ACTIVE_ARENA;
 	    // If somehow the go marker is sticking around (maybe the player
 	    // is moving _really_ fast) remove it now, done or not.
-	    if (this.goMarker) {
-		this.removeThing(this.goMarker);
-		this.goMarker = null;
+	    if (screen.goMarker.sprite.visible) {
+		screen.goMarker.hide();
 	    }
 	}
 	break;
@@ -194,19 +190,14 @@ Level.prototype.update = function(dt)
 
     }
 
+    this.stage.children.sort(compareDepth);
     // Position the camera
-    this.levelStage.x = -this.camera.x;
-    this.levelStage.y = -this.camera.y;
+    this.stage.x = -this.camera.x;
+    this.stage.y = -this.camera.y;
     // Update everything in the level
     for (var n = 0; n < this.things.length; n++) {
 	if (this.things[n].update) this.things[n].update(dt);
     }
-}
-
-Level.prototype.render = function()
-{
-    this.levelStage.children.sort(compareDepth);
-    renderer.render(this.stage);
 }
 
 Level.prototype.checkHit = function(x, y, hitbox, ignore)
@@ -253,11 +244,7 @@ Level.prototype.addThing = function(thing)
 {
     this.things.push(thing);
     if (thing.sprite) {
-	if (thing.guiLayer) {
-	    this.guiStage.addChild(thing.sprite);
-	} else {
-	    this.levelStage.addChild(thing.sprite);
-	}
+	this.stage.addChild(thing.sprite);
     }
 }
 
@@ -277,5 +264,66 @@ Level.prototype.removeThing = function(thing)
 	    this.levelStage.removeChild(thing.sprite);
 	}*/
 	thing.sprite.parent.removeChild(thing.sprite);
+    }
+}
+
+/***************/
+/* LevelScreen */
+/***************/
+
+/* A container for holding screen-related stuff for playing a level. This
+ * includes the level itself, PIXI container (staging area for rendering),
+ * and the UI elements. (health bar, etc) */
+function LevelScreen()
+{
+    this.level = null;
+    this.stage = new PIXI.Container();
+
+    this.healthUI = new HealthUI();
+    this.inventoryUI = new InventoryUI();
+    this.goMarker = new GoMarker();
+
+    this.stage.addChild(this.healthUI.sprite);
+    this.stage.addChild(this.inventoryUI.sprite);
+    this.stage.addChild(this.goMarker.sprite);
+}
+
+LevelScreen.prototype.update = function(dt)
+{
+    if (this.level) this.level.update(dt);
+    this.healthUI.update(dt);
+    this.inventoryUI.update(dt);
+    if (this.goMarker.sprite.visible) {
+	this.goMarker.update(dt);
+    }
+}
+
+LevelScreen.prototype.render = function()
+{
+    renderer.render(this.stage);
+}
+
+LevelScreen.prototype.setLevel = function(level)
+{
+    if (this.level) {
+	this.stage.removeChild(this.level.stage);
+    }
+    if (level) {
+	this.stage.addChild(level.stage);
+	// Move the level (container) sprite to the start of the list of
+	// child sprites, so it gets rendered before anything else.
+	// (ie UI elements are drawn on top of the level)
+	this.stage.children.unshift(this.stage.children.pop());
+	this.level = level;
+	// Position the UI just below the level render area
+	this.healthUI.sprite.x = renderer.width-1;
+	this.healthUI.sprite.y = level.getHeight()-10;
+	this.inventoryUI.sprite.x = 30;
+	this.inventoryUI.sprite.y = level.getHeight()+15;
+	// Put the go marker in the top-right corner of the level area
+	this.goMarker.sprite.x = renderer.width - 10;
+	this.goMarker.sprite.y = 10;
+	//this.goMarker.sprite.width/2-10;
+	//this.goMarker.sprite.y = this.goMarker.sprite.height/2+10;
     }
 }

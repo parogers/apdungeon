@@ -25,6 +25,7 @@ ENEMIES = "media/rogue-like-8x8/Enemies.json"
 WEAPONS = "media/rogue-like-8x8/Weapons.json"
 GROUND_ITEMS = "media/rogue-like-8x8/GroundItems.json"
 UI = "media/rogue-like-8x8/UI.json"
+DRAGON = "media/rogue-like-8x8/Dragon.json"
 
 GAME_MUSIC = "media/music/A Journey Awaits2.ogg"
 ATTACK_SWORD_SND = "media/effects/attack_sword2.wav"
@@ -56,6 +57,7 @@ var level = null;
 var renderer = null;
 var stage = null;
 var progress = null;
+var screen = null;
 
 function loaded()
 {
@@ -98,6 +100,7 @@ function loaded()
 	.add(WEAPONS)
 	.add(GROUND_ITEMS)
 	.add(UI)
+	.add(DRAGON)
 	//.add({name: "hit", url: "media/hit.wav"})
 	.on("progress", progresscb)
 	.load(graphicsLoaded);
@@ -123,9 +126,9 @@ function gameLoop()
 	fps = 0;
     }
 
-    level.update(dt);
+    screen.update(dt);
     controls.update();
-    level.render();
+    screen.render();
     requestAnimFrame(gameLoop)
 }
 
@@ -184,6 +187,9 @@ function setup()
     /* Generate the level */
     level = generateLevel();
 
+    screen = new LevelScreen();
+    screen.setLevel(level);
+
     /* Add some demo stuff */
     player = new Player();
     player.sprite.x = 250;
@@ -218,12 +224,23 @@ function setup()
     textSprite.scale.set(SCALE*0.25);
     level.guiStage.addChild(textSprite)*/
 
-    /*var test = new Scenery(renderText("HI THERE WORLD!"));
-    test.sprite.x = 150;
-    test.sprite.y = 100;
-    test.sprite.scale.set(SCALE*0.75);
-    test.guiLayer = true;
+    /*var test = new Scenery(
+	getFrame(MAPTILES, "door1"),
+	getFrame(MAPTILES, "door2"),
+	getFrame(MAPTILES, "door4")
+    );
+    test.sprite.x = 350;
+    test.sprite.y = 200;
+    //test.velx = -150;
+    test.fps = 4;
+    //test.guiLayer = true;
     level.addThing(test);*/
+
+    var door = new Door();
+    //door.startOpening();
+    door.sprite.x = 100;
+    door.sprite.y = 64;
+    level.addThing(door);
 
     music = sounds[GAME_MUSIC];
     music.loop = true;

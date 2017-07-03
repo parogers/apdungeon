@@ -17,19 +17,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_north_1" : {
+},"melee1_lunge_1" : {
     "frame" : {"x":0, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_north_2" : {
+},"melee1_lunge_2" : {
     "frame" : {"x":9, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_north_3" : {
+},"melee1_lunge_3" : {
     "frame" : {"x":18, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -71,19 +71,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_north_1" : {
+},"melee2_lunge_1" : {
     "frame" : {"x":0, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_north_2" : {
+},"melee2_lunge_2" : {
     "frame" : {"x":9, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_north_3" : {
+},"melee2_lunge_3" : {
     "frame" : {"x":18, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -125,19 +125,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_north_1" : {
+},"melee3_lunge_1" : {
     "frame" : {"x":0, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_north_2" : {
+},"melee3_lunge_2" : {
     "frame" : {"x":9, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_north_3" : {
+},"melee3_lunge_3" : {
     "frame" : {"x":18, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
@@ -179,19 +179,19 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_north_1" : {
+},"melee4_lunge_1" : {
     "frame" : {"x":0, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_north_2" : {
+},"melee4_lunge_2" : {
     "frame" : {"x":9, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_north_3" : {
+},"melee4_lunge_3" : {
     "frame" : {"x":18, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,

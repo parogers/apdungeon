@@ -29,6 +29,8 @@ function Player()
     this.accelx = 0;
     this.accely = 0;
     this.frame = 0;
+    this.frames = null;
+    this.lungeFrame = null;
     this.count = 0;
     this.facing = 1;
     // Player status
@@ -201,15 +203,21 @@ Player.prototype.update = function(dt)
 	    hit[n].handlePlayerCollision();
 	}
     }
+
+    //if (this.weaponSlot && this.weaponSlot.attackCooldown > 0) {
+    //this.spriteChar.texture = this.lungeFrame;
+    //} else {
     // Update animation
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
     this.spriteChar.texture = frame;
+    //}
 }
 
 Player.prototype.setCharFrames = function(res, name)
 {
     this.frames = getFrames(
 	res, name + "_south_1", name + "_south_2", name + "_south_3");
+    this.lungeFrame = getFrame(res, name + "_lunge_1");
 }
 
 Player.prototype.setArmour = function(item)

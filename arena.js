@@ -213,10 +213,11 @@ function DropSpawn(monster, x, y)
 
 DropSpawn.prototype.activate = function()
 {
+    console.log("ACTIVATED");
     level.addThing(this.shadow);
     this.falling.sprite.zpos = FRONT_POS;
     this.falling.sprite.x = this.xpos;
-    this.falling.sprite.y = level.camera.y - 20;
+    this.falling.sprite.y = level.camera.y + 20;
 }
 
 DropSpawn.prototype.update = function(dt)

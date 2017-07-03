@@ -19,8 +19,9 @@
 
 function Chest(items)
 {
-    var texture = getFrame(MAPTILES, "chest_closed");
-    this.sprite = new PIXI.Sprite(texture);
+    this.openTexture = getFrame(MAPTILES, "chest_open");
+    this.closedTexture = getFrame(MAPTILES, "chest_closed");
+    this.sprite = new PIXI.Sprite(this.closedTexture);
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0.5, 0.75);
     this.isOpen = false;
@@ -58,7 +59,7 @@ Chest.prototype.handlePlayerCollision = function()
     if (!this.isOpen) {
 	// Open the chest now and start a countdown timer before ejecting 
 	// the contents.
-	this.sprite.texture = getFrame(MAPTILES, "chest_open");
+	this.sprite.texture = this.openTexture;
 	this.isOpen = true;
 	this.timer = 0.25;
 	sounds[CHEST_SND].play();

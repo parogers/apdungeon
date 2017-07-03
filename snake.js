@@ -166,7 +166,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 	var sprite = createBloodSpatter();
 	sprite.x = this.sprite.x;
 	sprite.y = this.sprite.y-1;
-	level.levelStage.addChild(sprite);
+	level.stage.addChild(sprite);
     }
     return true;
 }

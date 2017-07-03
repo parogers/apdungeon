@@ -45,8 +45,8 @@ def gen_grid(start_pos, tile_size, desc, padding=1):
                     "w" : tile_size[0], 
                     "h" : tile_size[1]}
                 lst.append(txt)
-            x += tile_size[0]+1
-        y += tile_size[1]+1
+            x += tile_size[0]+padding
+        y += tile_size[1]+padding
     return lst
 
 def save_json_sheet(srcpath, tile_size, get_desc, outer_pad=0, padding=1):
@@ -94,16 +94,16 @@ def save_json_sheet(srcpath, tile_size, get_desc, outer_pad=0, padding=1):
 def get_desc(row, col):
     meta = [
         ["melee1", "south"],
-        ["melee1", "north"],
+        ["melee1", "lunge"],
         ["melee1", "dying"],
         ["melee2", "south"],
-        ["melee2", "north"],
+        ["melee2", "lunge"],
         ["melee2", "dying"],
         ["melee3", "south"],
-        ["melee3", "north"],
+        ["melee3", "lunge"],
         ["melee3", "dying"],
         ["melee4", "south"],
-        ["melee4", "north"],
+        ["melee4", "lunge"],
         ["melee4", "dying"],
     ]
     return "_".join(meta[row]) + "_" + str(col+1)
@@ -269,7 +269,7 @@ desc = [
     ("smooth_floor_l", "smooth_floor_m", "smooth_floor_r", "door1", "door2", "door3", "door4", "torch", None, None, None),
     ("smooth_floor_bl", "smooth_floor_bm", "smooth_floor_br", "blood1", "blood2", "blood3", "blood4", "chest_closed", "chest_open", "skull1", "skull2"),
     ("water", "green_water", None, "barrel1", "barrel2", "barrel3", "barrel4", "barrel5", "barrel6", "barrel7", "bones"),
-    ("bridge_b", "bridge_t", None, "sack1", "sack2", "sack3", "sack4", "sack5", "sack6", None, "mushroom"),
+    ("bridge_b", "bridge_t", None, "sack1_open", "sack1_closed", None, "sack2_open", "sack2_closed", None, None, "mushroom"),
     (None, None, None, "carpet_l", "carpet_m", "carpet_r", "dust1", "dust2", ", dust3", "dust4"),
     (None, None, None, "carpet_bl", "carpet_bm", "carpet_br", None, None, None, None, None),
 ]
@@ -349,3 +349,27 @@ out += FOOTER % {
     "w" : img.size[0], 
     "h" : img.size[1]}
 open("UI.json", "w").write(out)
+
+###
+
+
+desc = [
+    ("dragon-idle",),
+    ("dragon-walk1",),
+    ("dragon-walk2",),
+    ("dragon-roar1",),
+    ("dragon-roar2",),
+]
+frames = gen_grid((1,1), (48, 31), desc)
+
+srcpath = "dragon-frames.png"
+img = PIL.Image.open(srcpath)
+
+out = HEADER
+out += ",".join(frames)
+out += FOOTER % {
+    "src" : srcpath, 
+    "w" : img.size[0], 
+    "h" : img.size[1]}
+open("Dragon.json", "w").write(out)
+
