@@ -18,6 +18,7 @@
  */
 
 PRIMARY = 90;
+PRIMARY_ALT = 65;
 SWAP = 88;
 ARROW_UP = 38;
 ARROW_LEFT = 37;
@@ -78,6 +79,7 @@ function attachKeyDown(controls)
 	    controls.right = true;
 	    break;
 	case PRIMARY:
+	case PRIMARY_ALT:
 	    controls.primary = true;
 	    break;
 	case SWAP:
@@ -105,6 +107,7 @@ function attachKeyUp(controls)
 	    controls.right = false;
 	    break;
 	case PRIMARY:
+	case PRIMARY_ALT:
 	    controls.primary = false;
 	    break;
 	case SWAP:

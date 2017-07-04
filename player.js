@@ -43,6 +43,12 @@ function Player()
     this.armour = Item.NONE;
     this.bow = Item.NONE;
     this.sword = Item.NONE;
+    // Whether the user has free control over the player (set to false 
+    // during a cutscene)
+    this.hasControl = true;
+    this.dirx = 0;
+    this.diry = 0;
+
     //this.weapon = Item.NONE; // current weapon
     // Define the hitbox
     this.hitbox = new Hitbox(0, -4, 6*SCALE, 6*SCALE);
@@ -84,14 +90,24 @@ function Player()
     //this.setWeapon(Item.SMALL_BOW);
 }
 
+Player.prototype.faceDirection = function(dirx)
+{
+    this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
+}
+
 Player.prototype.update = function(dt)
 {
     var dirx = 0;
     var diry = 0;
 
     if (this.knockedTimer <= 0) {
-	dirx = controls.getX();
-	diry = controls.getY();
+	if (this.hasControl) {
+	    dirx = controls.getX();
+	    diry = controls.getY();
+	} else {
+	    dirx = this.dirx;
+	    diry = this.diry;
+	}
     } else {
 	this.velx = this.knocked;
 	this.knockedTimer -= dt;
@@ -110,7 +126,7 @@ Player.prototype.update = function(dt)
 
     if (dirx) {
 	// Handle walking left/right by mirroring the sprite
-	this.sprite.scale.x = Math.abs(this.sprite.scale.x)*dirx;
+	this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
 	this.velx = dirx * this.maxSpeed;
 	this.facing = Math.sign(dirx);
     } else {

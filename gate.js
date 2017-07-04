@@ -35,7 +35,7 @@ function Gate()
 
 Gate.prototype.isOpen = function()
 {
-    return (this.frameNum === 2 && this.moving === 0);
+    return (this.frameNum === this.frames.length-1 && this.moving === 0);
 }
 
 Gate.prototype.startOpening = function()

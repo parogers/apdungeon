@@ -33,9 +33,9 @@ function generateLevel()
 	}
     }
 
+    // Add a random spot of water somewhere
     var w = randint(4, 8);
-    var pos = randint(2, grid.cols-2-w);
-    //var pos = 5; // TODO - change
+    var pos = randint(10, grid.cols-2-w);
     for (var row = 1; row < grid.rows; row++)
 	for (var col = pos-randint(0,2); col < pos+w+randint(0,2); col++)
 	    grid[row][col] = "water";
@@ -139,6 +139,16 @@ function generateLevel()
     var round = new Round(1);
     round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
     arena.rounds.push(round);
+
+    // Add a door to enter the level
+    var door = new Door();
+    //door.startOpening();
+    door.sprite.x = 100;
+    door.sprite.y = 64;
+    level.addThing(door);
+
+    var scn = new EnterScene(door);
+    level.addThing(scn);
 
 /*
     for (var n = 0; n < 10; n++) {

@@ -17,6 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+BEHIND_BACKGROUND_POS = -1;
 BACKGROUND_POS = 0;
 FLOOR_POS = 1;
 FRONT_POS = 10000;
@@ -57,7 +58,8 @@ function Camera()
 function compareDepth(s1, s2) {
     var z1 = s1.zpos || s1.y;
     var z2 = s2.zpos || s2.y;
-    return z1-z2;
+    //return z1-z2;
+    return (z1>z2) - (z2>z1);
 }
 
 // The various level states
@@ -100,15 +102,16 @@ function Level(bg)
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()
 {
-    return this.bg.sprite.texture.width*SCALE;
+    return this.bg.sprite.width;
 }
 
 // Returns the height of the level in pixels (ie render size)
 Level.prototype.getHeight = function()
 {
-    return this.bg.sprite.texture.height*SCALE;
+    return this.bg.sprite.height;
 }
 
+// Called every frame to update the general level state
 Level.prototype.update = function(dt)
 {
     var arena = this.arenas[this.arenaNum];
@@ -187,17 +190,21 @@ Level.prototype.update = function(dt)
 
     case LEVEL.END_LEVEL:
 	break;
-
     }
 
+    // Re-sort the sprites by Z-depth so things are rendered in the correct
+    // order.
     this.stage.children.sort(compareDepth);
     // Position the camera
     this.stage.x = -this.camera.x;
     this.stage.y = -this.camera.y;
     // Update everything in the level
-    for (var n = 0; n < this.things.length; n++) {
-	if (this.things[n].update) this.things[n].update(dt);
+    for (thing of this.things) {
+	if (thing.update) thing.update(dt);
     }
+    /*for (var n = 0; n < this.things.length; n++) {
+	if (this.things[n].update) this.things[n].update(dt);
+    }*/
 }
 
 Level.prototype.checkHit = function(x, y, hitbox, ignore)
@@ -325,5 +332,98 @@ LevelScreen.prototype.setLevel = function(level)
 	this.goMarker.sprite.y = 10;
 	//this.goMarker.sprite.width/2-10;
 	//this.goMarker.sprite.y = this.goMarker.sprite.height/2+10;
+    }
+}
+
+/*****************/
+/* EnterScene */
+/*****************/
+
+/* A thing to handle the player entering a level. (door opens, player walks
+ * through the door, looks around, door closes, level starts) */
+function EnterScene(door)
+{
+    // Waiting for the cutscene to start
+    this.IDLE = 0;
+    // The cutscene has started
+    this.START = 1;
+    // Waiting for the door to finish opening
+    this.OPENING_DOOR = 2;
+    // Waiting for the player to enter the level
+    this.PLAYER_ENTERING = 3;
+    // Player is looking around
+    this.PLAYER_LOOK_LEFT = 4;
+    this.PLAYER_LOOK_RIGHT = 5;
+
+    this.door = door;
+    // No sprite associated with this thing
+    this.sprite = null;
+    this.state = this.IDLE;
+    this.timer = 0;
+    this.travelTime = 0;
+}
+
+EnterScene.prototype.update = function(dt)
+{
+    if (this.timer > 0) {
+	this.timer -= dt;
+	return;
+    }
+
+    switch(this.state) {
+    case this.IDLE:
+	// Position the player behind the level so they're hidden, and centered 
+	// on the door so the camera renders in the right place.
+	player.sprite.x = this.door.sprite.x;
+	player.sprite.y = this.door.sprite.y+1;
+	player.sprite.zpos = BEHIND_BACKGROUND_POS;
+	player.hasControl = false;
+	this.timer = 0.75;
+	this.state = this.START;
+	break;
+
+    case this.START:
+	// Start the door opening
+	this.door.startOpening();
+	this.state = this.OPENING_DOOR;
+	break;
+
+    case this.OPENING_DOOR:
+	// Waiting for the door to open
+	if (this.door.isOpen()) {
+	    player.sprite.zpos = undefined;
+	    this.state = this.PLAYER_ENTERING;
+	    this.timer = 0.5;
+	    this.travelTime = 0.6;
+	}
+	break;
+
+    case this.PLAYER_ENTERING:
+	// Player walking some ways into the level
+	player.diry = 0.5;
+	this.travelTime -= dt;
+	if (this.travelTime <= 0) {
+	    this.state = this.PLAYER_LOOK_LEFT;
+	    this.timer = 0.5;
+	    player.dirx = 0;
+	    player.diry = 0;
+	} else if (this.travelTime < 0.35) {
+	    player.dirx = 0.25;
+	}
+	break;
+
+    case this.PLAYER_LOOK_LEFT:
+	player.faceDirection(-1);
+	this.state = this.PLAYER_LOOK_RIGHT;
+	this.timer = 0.75;
+	break;
+
+    case this.PLAYER_LOOK_RIGHT:
+	player.faceDirection(1);
+	player.hasControl = true;
+	this.timer = 0.5;
+	// Done!
+	level.removeThing(this);
+	break;
     }
 }

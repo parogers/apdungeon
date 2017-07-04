@@ -80,7 +80,7 @@ function loaded()
 
     function progresscb(loader, resource) {
 	console.log("loading: " + resource.url + 
-		    "(" + loader.progress + "%)"); 
+		    " (" + (loader.progress|0) + "%)"); 
 	progress.update(loader.progress/100.0);
 	requestAnimFrame(function() {
 	    renderer.render(stage);
@@ -236,11 +236,7 @@ function setup()
     //test.guiLayer = true;
     level.addThing(test);*/
 
-    var door = new Door();
-    //door.startOpening();
-    door.sprite.x = 100;
-    door.sprite.y = 64;
-    level.addThing(door);
+    level.update(0);
 
     music = sounds[GAME_MUSIC];
     music.loop = true;
