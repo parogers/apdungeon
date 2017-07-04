@@ -185,7 +185,7 @@ function setup()
     stage.children = [];
 
     /* Generate the level */
-    level = generateLevel();
+    level = generateLevel(0);
 
     screen = new LevelScreen();
     screen.setLevel(level);

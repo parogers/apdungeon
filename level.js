@@ -154,7 +154,7 @@ Level.prototype.update = function(dt)
 	// Update the camera to track the player. Have the camera move
 	// smoothly towards the player to avoid jumping around.
 	var xpos = player.sprite.x - this.camera.width/2;
-	if (xpos >= 0) {
+	if (xpos >= 0 && xpos+this.camera.width <= this.bg.sprite.width) {
 	    if (this.smoothTracking) {
 		var dirx = Math.sign(xpos-this.camera.x);
 		this.camera.x += dt*1.25*player.maxSpeed*dirx;
@@ -174,7 +174,7 @@ Level.prototype.update = function(dt)
 	}
 
 	// Wait for the player to move into the next arena
-	if (this.camera.x + this.camera.width >= arena.endx-1)
+	if (arena && this.camera.x + this.camera.width >= arena.endx-1)
 	{
 	    // Snap the camera into place and activate the next arena
 	    this.camera.x = arena.endx - this.camera.width;

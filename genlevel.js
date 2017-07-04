@@ -17,7 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function generateLevel()
+function generateLevel(levelNum)
 {
     var things = [];
     /* Generate the floor */
