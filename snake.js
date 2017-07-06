@@ -17,6 +17,10 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+/*********/
+/* Snake */
+/*********/
+
 var SNAKE_IDLE = 0;
 var SNAKE_ATTACKING = 1;
 var SNAKE_HURT = 2;
@@ -44,7 +48,7 @@ function Snake(state)
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = state || SNAKE_IDLE;
+    this.state = state || SNAKE_ATTACKING;
     this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
 }
 
@@ -178,6 +182,10 @@ Snake.prototype.handlePlayerCollision = function()
 
 /* Other snake-like things */
 
+/*******/
+/* Rat */
+/*******/
+
 function Rat()
 {
     Snake.call(this);
@@ -187,15 +195,16 @@ function Rat()
     this.frame = 0;
     this.facing = 1;
     this.travel = 100;
-    this.sprite = new PIXI.Sprite();
-    this.sprite.scale.set(SCALE);
-    this.sprite.anchor.set(0.5, 6.5/8);
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = SNAKE_IDLE;
+    this.state = SNAKE_ATTACKING;
 }
 
 Rat.prototype = Object.create(Snake.prototype);
+
+/************/
+/* Scorpion */
+/************/
 
 function Scorpion()
 {
@@ -206,12 +215,9 @@ function Scorpion()
     this.frame = 0;
     this.facing = 1;
     this.travel = 100;
-    this.sprite = new PIXI.Sprite();
-    this.sprite.scale.set(SCALE);
-    this.sprite.anchor.set(0.5, 6.5/8);
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = SNAKE_IDLE;
+    this.state = SNAKE_ATTACKING;
 }
 
 Scorpion.prototype = Object.create(Snake.prototype);

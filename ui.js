@@ -17,23 +17,42 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function renderText(msg)
+function renderText(lines, options)
 {
-    var img = getFrame(UI, "0");
+    if (!(lines instanceof Array)) lines = [lines];
 
-    var renderTexture = PIXI.RenderTexture.create(
-	(img.width+1)*msg.length, img.height);
+    var maxWidth = 0;
     var cnt = new PIXI.Container();
-    var x = 0;
-    for (var n = 0; n < msg.length; n++) 
+    var y = 1;
+    for (var row = 0; row < lines.length; row++) 
     {
-	var sprite = new PIXI.Sprite(getFrame(UI, msg[n]));
-	sprite.x = x;
-	if (msg[n] === " ") x += (img.width+1)/2;
-	else x += img.width+1;
-	cnt.addChild(sprite);
+	var x = 1;
+	var msg = lines[row];
+	var height = 0;
+	for (var n = 0; n < msg.length; n++) 
+	{
+	    var sprite = new PIXI.Sprite(getFrame(UI, msg[n]));
+	    sprite.anchor.set(0,0);
+	    sprite.x = x;
+	    sprite.y = y;
+	    // Make spaces a bit more narrow (looks better)
+	    if (msg[n] === " ") x += (sprite.width+1)/2;
+	    else x += sprite.width+1;
+	    cnt.addChild(sprite);
+	    height = Math.max(height, sprite.height);
+	}
+	maxWidth = Math.max(maxWidth, x);
+	y += height+1;
     }
 
+    if (options && options.blackBG) {
+	var bg = new PIXI.Sprite(getFrame(UI, "black"));
+	bg.scale.set(maxWidth/bg.width, y/bg.height);
+	cnt.addChild(bg);
+	cnt.children.unshift(cnt.children.pop());
+    }
+
+    var renderTexture = PIXI.RenderTexture.create(maxWidth, y);
     renderer.render(cnt, renderTexture);
     return renderTexture;
 }

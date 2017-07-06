@@ -17,17 +17,18 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function Tile(name, solid)
+function Tile(name, solid, wall)
 {
     this.name = name;
     this.solid = solid;
+    this.wall = false;
 }
 
 function Tileset()
 {
-    var wall = new Tile("wall", true);
-    var floor = new Tile("floor", false);
-    var water = new Tile("water", false);
+    var wall = new Tile("wall", true, true);
+    var floor = new Tile("floor", false, false);
+    var water = new Tile("water", false, false);
     water.water = true;
     this.tiles = {
 	"smooth_floor_m" : floor,

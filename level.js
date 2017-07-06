@@ -111,6 +111,40 @@ Level.prototype.getHeight = function()
     return this.bg.sprite.height;
 }
 
+/* Find some clear space to spawn a thing at the given location. This code
+ * looks up/down until it finds the first pixel of free space. Returns ypos
+ */
+Level.prototype.findClearSpace = function(x, y)
+{
+    var offset = 0;
+    while(true)
+    {
+	var north = this.bg.getTileAt(x, y + offset);
+	var south = this.bg.getTileAt(x, y - offset);
+	if (!north.solid) {
+	    return y + offset;
+	}
+	if (!south.solid) {
+	    return y - offset;
+	}
+	if (y + offset > this.getHeight() && y - offset < 0) {
+	    // This should never happen, but just in case...
+	    return null;
+	}
+	offset += TILE_HEIGHT*SCALE;
+    }
+}
+
+/* Adds an arena to this level. This function also maintains the correct
+ * ordering of arenas sorted by ending position. */
+Level.prototype.addArena = function(arena)
+{
+    this.arenas.push(arena);
+    this.arenas.sort(function(a1, a2) {
+	return (a1.endx > a2.endx) - (a2.endx > a1.endx);
+    });
+}
+
 // Called every frame to update the general level state
 Level.prototype.update = function(dt)
 {
@@ -136,9 +170,11 @@ Level.prototype.update = function(dt)
 	// Update the camera - the player has full mobility within the 
 	// start and stop bounds of the arena.
 	var xpos = player.sprite.x - this.camera.width/2;
-	if (xpos >= arena.startx && xpos + this.camera.width <= arena.endx) {
+	xpos = Math.max(xpos, arena.startx);
+	xpos = Math.min(xpos, arena.endx-this.camera.width);
+	/*if (xpos >= arena.startx && xpos + this.camera.width <= arena.endx) {
 	    this.camera.x = xpos;
-	}
+        }*/
 	break;
 	
     case LEVEL.SHOWING_GO:
@@ -154,17 +190,17 @@ Level.prototype.update = function(dt)
 	// Update the camera to track the player. Have the camera move
 	// smoothly towards the player to avoid jumping around.
 	var xpos = player.sprite.x - this.camera.width/2;
-	if (xpos >= 0 && xpos+this.camera.width <= this.bg.sprite.width) {
-	    if (this.smoothTracking) {
-		var dirx = Math.sign(xpos-this.camera.x);
-		this.camera.x += dt*1.25*player.maxSpeed*dirx;
-		if (dirx != Math.sign(xpos-this.camera.x)) {
-		    // Overshot the target, stop smoothly tracking
-		    this.smoothTracking = false;
-		}
-	    } else {
-		this.camera.x = xpos;
+	xpos = Math.max(xpos, 0);
+	xpos = Math.min(xpos, this.bg.sprite.width-this.camera.width);
+	if (this.smoothTracking) {
+	    var dirx = Math.sign(xpos-this.camera.x);
+	    this.camera.x += dt*1.25*player.maxSpeed*dirx;
+	    if (dirx != Math.sign(xpos-this.camera.x)) {
+		// Overshot the target, stop smoothly tracking
+		this.smoothTracking = false;
 	    }
+	} else {
+	    this.camera.x = xpos;
 	}
 
 	// Also remove the go marker (if it's done animated) since the player
@@ -393,7 +429,7 @@ EnterScene.prototype.update = function(dt)
 	if (this.door.isOpen()) {
 	    player.sprite.zpos = undefined;
 	    this.state = this.PLAYER_ENTERING;
-	    this.timer = 0.5;
+	    this.timer = 0.4;
 	    this.travelTime = 0.6;
 	}
 	break;
@@ -405,6 +441,7 @@ EnterScene.prototype.update = function(dt)
 	if (this.travelTime <= 0) {
 	    this.state = this.PLAYER_LOOK_LEFT;
 	    this.timer = 0.5;
+	    this.door.startClosing();
 	    player.dirx = 0;
 	    player.diry = 0;
 	} else if (this.travelTime < 0.35) {
@@ -415,7 +452,7 @@ EnterScene.prototype.update = function(dt)
     case this.PLAYER_LOOK_LEFT:
 	player.faceDirection(-1);
 	this.state = this.PLAYER_LOOK_RIGHT;
-	this.timer = 0.75;
+	this.timer = 1;
 	break;
 
     case this.PLAYER_LOOK_RIGHT:

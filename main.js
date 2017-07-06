@@ -19,7 +19,7 @@
 
 MALE_MELEE = "media/rogue-like-8x8/Male-Melee.json"
 FEMALE_MELEE = "media/rogue-like-8x8/Girl-Melee.json"
-NPC = "media/rogue-like-8x8/NPC.json"
+NPC_TILESET = "media/rogue-like-8x8/NPC.json"
 MAPTILES = "media/rogue-like-8x8/Tileset.json"
 ENEMIES = "media/rogue-like-8x8/Enemies.json"
 WEAPONS = "media/rogue-like-8x8/Weapons.json"
@@ -66,7 +66,7 @@ function loaded()
 
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST    
 
-    renderer = PIXI.autoDetectRenderer(600, 400);
+    renderer = PIXI.autoDetectRenderer(550, 400);
     div.appendChild(renderer.view);
     stage = new PIXI.Container();
 
@@ -94,7 +94,7 @@ function loaded()
     PIXI.loader
 	.add(MALE_MELEE)
 	.add(FEMALE_MELEE)
-	.add(NPC)
+	.add(NPC_TILESET)
 	.add(MAPTILES)
 	.add(ENEMIES)
 	.add(WEAPONS)
@@ -185,7 +185,7 @@ function setup()
     stage.children = [];
 
     /* Generate the level */
-    level = generateLevel(0);
+    level = LevelGenerator.generate(0);
 
     screen = new LevelScreen();
     screen.setLevel(level);
@@ -205,12 +205,6 @@ function setup()
     npc.sprite.x = 200;
     npc.sprite.y = 160;
     level.addThing(npc);*/
-
-    var items = [Item.SMALL_HEALTH, Item.LARGE_HEALTH, Item.ARROW, Item.COIN, Item.COIN, Item.COIN, Item.SMALL_BOW, Item.SMALL_SWORD, Item.LEATHER_ARMOUR];
-    var chest = new Chest(items);
-    chest.sprite.x = 150;
-    chest.sprite.y = 180;
-    level.addThing(chest);
 
 /*    var text = "100";
     textSprite = new PIXI.Text(

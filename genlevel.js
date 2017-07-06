@@ -17,146 +17,263 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function generateLevel(levelNum)
-{
-    var things = [];
-    /* Generate the floor */
-    var length = 50;
-    var grid = createGrid(5, length);
-    for (var row = 0; row < grid.rows; row++) {
-	for (var col = 0; col < grid.cols; col++) {
-	    var n = Math.random();
-	    if (n < 0.5) grid[0][col] = "brick_wall_m";
-	    else if (n < 0.8) grid[0][col] = "mossy_wall_m";
-	    else grid[0][col] = "broken_wall_m";
-	    grid[row][col] = "smooth_floor_m";
-	}
-    }
+var LevelGenerator = (function() {
 
-    // Add a random spot of water somewhere
-    var w = randint(4, 8);
-    var pos = randint(10, grid.cols-2-w);
-    for (var row = 1; row < grid.rows; row++)
-	for (var col = pos-randint(0,2); col < pos+w+randint(0,2); col++)
-	    grid[row][col] = "water";
-
-    var pos = 0;
-    while (true) 
+    function monsterEntry(klass, score, addScore)
     {
-	nextpos = pos + randint(5, 10);
-	if (nextpos >= grid.cols) break;
+	return {
+	    klass: klass,
+	    score: score,
+	    addScore: addScore
+	};
+    }
 
-	// Add a random gate every now and then
-	if (Math.random() < 0.5 && pos > 0) {
-	    var gate = new Gate();
-	    var col = randint(pos+1, nextpos-1);
-	    gate.sprite.x = col*TILE_WIDTH*SCALE;
-	    gate.sprite.y = 0;
-	    things.push(gate);
-	    grid[0][col] = null;
-	}
-	pos = nextpos;
+    var monsterTable = [
+	monsterEntry(Snake,       1, 1),
+	monsterEntry(Rat,         1, 1),
+	monsterEntry(Scorpion,    2, 1),
+	monsterEntry(Goblin,      3, 2),
+	monsterEntry(SkelWarrior, 4, 3),
+	monsterEntry(Ghost,       5, 4)
+    ];
 
-	// Add a random outcropping of wall
-	var w = 1;
-	if (Math.random() < 0.5) {
-	    w = randint(2, 4);
-	}
-	if (pos+w >= grid.cols) w = 0;
+    var exports = {};
 
-	var depth = randint(1, 3);
-	for (var col = 0; col < w; col++) {
-	    for (var row = 0; row < depth; row++) {
-		if (row == 0) grid[row][pos+col] = "wall_behind";
-		else grid[row][pos+col] = "wall_behind2";
+    function chooseMonsters(budget)
+    {
+	var picks = [];
+	while (true)
+	{
+	    // Compile a list of monster options to choose from
+	    var options = [];
+	    for (entry of monsterTable) {
+		if (entry.score <= budget) options.push(entry);
 	    }
-	    grid[depth][pos+col] = "smooth_wall_m";
+	    if (options.length === 0) break;
+	    // Pick a monster at random
+	    var opt = randomChoice(options)
+	    picks.push(opt.klass);
+	    budget -= opt.score;
 	}
-	pos += w;
+	return picks;
     }
 
-    // Add a vertical wall to either side of the level
-    for (var row = 0; row < grid.rows-1; row++) {
-	grid[row][0] = "wall_behind2";
-	grid[row][grid.cols-1] = "wall_behind2";
+    exports.generate = function(levelNum)
+    {
+	// Generate the floor and top wall across the level
+	var length = 100;
+	var grid = createGrid(5, length);
+	for (var row = 0; row < grid.rows; row++) {
+	    for (var col = 0; col < grid.cols; col++) {
+		var n = Math.random();
+		if (n < 0.5) grid[0][col] = "brick_wall_m";
+		else if (n < 0.8) grid[0][col] = "mossy_wall_m";
+		else grid[0][col] = "broken_wall_m";
+		grid[row][col] = "smooth_floor_m";
+	    }
+	}
+
+	// Add a random spot of water somewhere
+	var w = randint(4, 8);
+	var pos = randint(10, grid.cols-2-w);
+	for (var row = 1; row < grid.rows; row++)
+	    for (var col = pos-randint(0,2); col < pos+w+randint(0,2); col++)
+		grid[row][col] = "water";
+
+	// Add random outcropping of wall sections
+	var pos = 0;
+	if (levelNum === 0) {
+	    // Leave a large, empty space in the first level to make room for
+	    // a starter chest and some NPCs
+	    pos += 10;
+	}
+	while (true) 
+	{
+	    pos += randint(5, 10);
+	    // Leave space at the end of the level
+	    if (pos >= grid.cols-12) break;
+
+	    var w = 1;
+	    if (Math.random() < 0.5) {
+		w = randint(3, 5);
+	    }
+	    if (pos+w >= grid.cols) w = 0;
+
+	    var depth = randomChoice([1, 1, 2, 2, 3]);
+	    for (var col = 0; col < w; col++) {
+		for (var row = 0; row < depth; row++) {
+		    if (row == 0) grid[row][pos+col] = "wall_behind";
+		    else grid[row][pos+col] = "wall_behind2";
+		}
+		grid[depth][pos+col] = "smooth_wall_m";
+	    }
+	    pos += w;
+	}
+
+	// Add a vertical wall to either side of the level
+	for (var row = 0; row < grid.rows-1; row++) {
+	    grid[row][0] = "wall_behind2";
+	    grid[row][grid.cols-1] = "wall_behind2";
+	}
+	grid[0][0] = "wall_behind";
+	grid[0][grid.cols-1] = "wall_behind";
+	grid[grid.rows-1][0] = "smooth_wall_m";
+	grid[grid.rows-1][grid.cols-1] = "smooth_wall_m";
+
+	// Build a big sprite for the tiled map
+	var bg = new TiledBackground(
+	    TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
+	    getTextures(MAPTILES), grid);
+	var level = new Level(bg);
+
+	// Now add some random gates throughout the level
+	var pos = 0;
+	while (true) 
+	{
+	    if (Math.random() < 0.5 && pos > 0) 
+	    {
+		// Find the bottom-most section of wall
+		var found = -1;
+		for (var row = grid.rows-1; row >= 0; row--) {
+		    if (grid[row][pos] && 
+			grid[row][pos] !== "wall_behind" && 
+			grid[row][pos] !== "wall_behind2" && 
+			grid[row][pos].indexOf("wall") !== -1)
+		    {
+			found = row;
+			break
+		    }
+		}
+		if (found !== -1) {
+		    var gate = new Gate();
+		    gate.sprite.x = pos*TILE_WIDTH*SCALE;
+		    gate.sprite.y = found*TILE_HEIGHT*SCALE;
+		    level.addThing(gate);
+		}
+	    }
+	    pos += randint(5, 15);
+	    if (pos >= grid.cols-5) break;
+	}
+
+	// Break the level down into "arena" sections where the player gets
+	// to fight monsters. We start with an arena at the very end of the 
+	// level, then work backwards from there.
+	var endx = level.getWidth()-1;
+	var arenaWidth = level.camera.width;
+	var budget = (levelNum+1)*6;
+	while (endx > arenaWidth*1.5)
+	{
+	    var arena = new Arena(arenaWidth, endx);
+	    level.addArena(arena);
+
+	    var numRounds = randint(2, 5);
+
+	    for (var n = 0; n < numRounds; n++) {
+		var round = new Round(randUniform(0.5, 1));
+		var monsters = chooseMonsters(budget);
+		for (klass of monsters) {
+		    var ypos = randUniform(0, level.camera.height);
+		    var xdir = randomChoice([-1, 1]);
+		    if (endx >= level.getWidth()-1) xdir = -1;
+		    round.addSpawn(new Spawn(new klass(), xdir, ypos));
+		}
+		arena.rounds.push(round);
+	    }
+
+	    endx -= (arenaWidth*randUniform(1, 1.5))|0;
+	    if (budget > 3) budget--;
+	}
+
+	// ***
+	//round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
+	//round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
+	/*
+	  var arena = new Arena();
+	  arena.startx = level.camera.width;
+	  arena.endx = level.camera.width*2;
+	  level.addArena(arena);
+
+	  var round = new Round(1);
+	  round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
+	  //round.addSpawn(new Spawn(new SkelWarrior(), -1, 150));
+	  //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
+	  arena.rounds.push(round);
+
+	  var ypos = level.bg.getHeight()/2;
+	  var round = new Round(0.5);
+	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
+	  arena.rounds.push(round);
+
+	  var round = new Round(0.5);
+	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
+	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos));
+	  arena.rounds.push(round);
+
+	  var round = new Round(0.75);
+	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos-50));
+	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos+50));
+	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
+	  //round.addSpawn(new GateSpawn(new Goblin(), gate));
+	  arena.rounds.push(round);
+
+	  var arena = new Arena();
+	  arena.startx = level.camera.width*2;
+	  arena.endx = level.camera.width*3;
+	  level.addArena(arena);
+
+	  var ypos = level.bg.getHeight()/2;
+
+	  var round = new Round(1);
+	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
+	  arena.rounds.push(round);*/
+
+	// ***
+
+	if (levelNum === 0) {
+	    //var items = [Item.SMALL_HEALTH, Item.LARGE_HEALTH, Item.ARROW, Item.COIN, Item.COIN, Item.COIN, Item.SMALL_BOW, Item.SMALL_SWORD, Item.LEATHER_ARMOUR];
+	    // First level in the game. Add a chest of starter items. Have the 
+	    // chest eject items to the right away from the first NPC. (so none
+	    // of the items become hidden behind)
+	    var items = [Item.COIN, Item.COIN, Item.COIN, Item.SMALL_SWORD];
+	    var chest = new Chest(items, {ejectX: 1});
+	    chest.sprite.x = 300;
+	    chest.sprite.y = 120;
+	    level.addThing(chest);
+
+	    // Add an NPC to give the player some dialog
+	    var npc = new NPC();
+	    npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
+	    npc.sprite.x = 230;
+	    npc.sprite.y = 125;
+	    level.addThing(npc);
+
+	    // Add an NPC to give the player some dialog
+	    var npc = new NPC("npc3_south_1");
+	    npc.setDialog("GOOD LUCK!");
+	    npc.sprite.x = 400;
+	    npc.sprite.y = 200;
+	    level.addThing(npc);
+	}
+
+	// Add a door to enter the level
+	var door = new Door();
+	//door.startOpening();
+	door.sprite.x = 100;
+	door.sprite.y = 64;
+	level.addThing(door);
+
+	var scn = new EnterScene(door);
+	level.addThing(scn);
+
+	/*
+	  for (var n = 0; n < 10; n++) {
+	  snake = new Scorpion();
+	  snake.sprite.x = 100+150*n;
+	  snake.sprite.y = 180+50*Math.sin(n*5);
+	  level.addThing(snake);
+	  }
+	*/
+	return level;
     }
-    grid[0][0] = "wall_behind";
-    grid[0][grid.cols-1] = "wall_behind";
-    grid[grid.rows-1][0] = "smooth_wall_m";
-    grid[grid.rows-1][grid.cols-1] = "smooth_wall_m";
-
-    var gate = new Gate();
-    var col = 4;
-    gate.sprite.x = col*TILE_WIDTH*SCALE;
-    gate.sprite.y = 0;
-    things.push(gate);
-    grid[0][col] = null;
-
-    var bg = new TiledBackground(
-	TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
-	getTextures(MAPTILES), grid);
-
-    var level = new Level(bg);
-    for (var thing of things) {
-	level.addThing(thing);
-    }
-
-    var arena = new Arena();
-    arena.startx = level.camera.width;
-    arena.endx = level.camera.width*2;
-    level.arenas.push(arena);
-
-    var round = new Round(1);
-    round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
-    //round.addSpawn(new Spawn(new SkelWarrior(), -1, 150));
-    //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
-    arena.rounds.push(round);
-
-    var ypos = level.bg.getHeight()/2;
-    var round = new Round(0.5);
-    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-    arena.rounds.push(round);
-
-    var round = new Round(0.5);
-    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos));
-    arena.rounds.push(round);
-
-    var round = new Round(0.75);
-    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos-50));
-    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos+50));
-    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-    //round.addSpawn(new GateSpawn(new Goblin(), gate));
-    arena.rounds.push(round);
-
-    var arena = new Arena();
-    arena.startx = level.camera.width*2;
-    arena.endx = level.camera.width*3;
-    level.arenas.push(arena);
-
-    var ypos = level.bg.getHeight()/2;
-
-    var round = new Round(1);
-    round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-    arena.rounds.push(round);
-
-    // Add a door to enter the level
-    var door = new Door();
-    //door.startOpening();
-    door.sprite.x = 100;
-    door.sprite.y = 64;
-    level.addThing(door);
-
-    var scn = new EnterScene(door);
-    level.addThing(scn);
-
-/*
-    for (var n = 0; n < 10; n++) {
-	snake = new Scorpion();
-	snake.sprite.x = 100+150*n;
-	snake.sprite.y = 180+50*Math.sin(n*5);
-	level.addThing(snake);
-    }
-*/
-    return level;
-}
+    return exports;
+})();

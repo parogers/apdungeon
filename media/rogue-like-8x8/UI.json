@@ -107,6 +107,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":3, "h":4},
     "sourceSize" : {"w":3, "h":4}
+},"black" : {
+    "frame" : {"x":41, "y":38, "w":3, "h":4},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":3, "h":4},
+    "sourceSize" : {"w":3, "h":4}
 },"A" : {
     "frame" : {"x":1, "y":43, "w":3, "h":4},
     "rotated" : false,

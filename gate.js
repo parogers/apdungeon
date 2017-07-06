@@ -100,6 +100,7 @@ function Door()
 	getFrame(MAPTILES, "door3"),
 	getFrame(MAPTILES, "door4")
     ];
+    this.fps = 3;
     this.sprite.anchor.set(0.5,1);
     this.sprite.texture = this.frames[0];
 }

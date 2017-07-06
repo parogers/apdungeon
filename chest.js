@@ -17,7 +17,13 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function Chest(items)
+/* A container for holding items. The chest is opened when the player touches
+ * it, and the chests contents are ejected randomly.
+ * 
+ * items - array of Item types
+ * options.ejectX - a particular X direction to eject the items 
+ * */
+function Chest(items, options)
 {
     this.openTexture = getFrame(MAPTILES, "chest_open");
     this.closedTexture = getFrame(MAPTILES, "chest_closed");
@@ -27,6 +33,7 @@ function Chest(items)
     this.isOpen = false;
     this.timer = 0;
     this.items = items;
+    this.options = options;
 }
 
 Chest.prototype.hitbox = new Hitbox(0, 0, 5, 5);
@@ -42,7 +49,10 @@ Chest.prototype.update = function(dt)
 		    item, 
 		    this.sprite.x+5*randUniform(0, 1), 
 		    this.sprite.y+10*randUniform(0.1, 1));
-		gnd.velx = randomChoice([-1, 1])*randUniform(30, 60);
+		if (this.options && this.options.ejectX) 
+		    gnd.velx = this.options.ejectX*randUniform(30, 60);
+		else
+		    gnd.velx = randomChoice([-1, 1])*randUniform(30, 60);
 		gnd.velz = -randUniform(-10, 30);
 		gnd.velh = -150*randUniform(0.9, 1);
 	    }

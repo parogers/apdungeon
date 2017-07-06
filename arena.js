@@ -24,16 +24,17 @@
 // A region of the level where the player battles monsters and collects 
 // treasures. Once all monsters in the region are defeated the player can
 // move forward. (a "Go" arrow is displayed)
-function Arena()
+function Arena(width, endx)
 {
-    // The start and end of the arena. (positions within the level) Once the
-    // player passes the 'startx' position the arena is considered activated,
-    // and they won't be able to proceed past 'endx' until all monsters are
-    // defeated.
     this.startx = 0;
     this.endx = 0;
+    if (width !== undefined && endx !== undefined) {
+	this.startx = endx - width;
+	this.endx = endx;
+    }
     // The rounds to play through (Round instances)
     this.rounds = [];
+    this.running = [];
     this.round = -1;
     this.finishing = false;
     this.done = false;
@@ -73,7 +74,6 @@ Arena.prototype.update = function(dt)
 
 Arena.prototype.activate = function()
 {
-    // Add the "go" sign to the stage
 }
 
 /*********/
@@ -86,18 +86,29 @@ Arena.prototype.activate = function()
 function Round(delay)
 {
     this.delay = delay || 0;
+    // Spawns are initially added to the 'spawns' queue, then moved over to
+    // the 'running' queue once they become active.
     this.spawns = [];
+    this.running = [];
     this.done = false;
     this.activated = false;
 }
 
-// Called to trigger the spawners in this round
-Round.prototype.activate = function()
-{
-}
-
 Round.prototype.update = function(dt)
 {
+    // Move spawns over to the 'running' queue
+    if (this.spawns.length > 0) {
+	if (this.spawns[0].roundDelay > 0) {
+	    // Still waiting for the next spawn to start
+	    this.spawns[0].roundDelay -= dt;
+	} else {
+	    var spawn = this.spawns.shift();
+	    spawn.activate();
+	    this.running.push(spawn);
+	}
+    }
+
+/*
     if (!this.activated) 
     {
 	// Wait a bit before activating the round
@@ -111,17 +122,20 @@ Round.prototype.update = function(dt)
 	}
 	this.activated = true;
     }
+*/
     // Wait for all the monsters to die
     this.done = true;
-    for (spawn of this.spawns) {
+    for (spawn of this.running) {
 	if (spawn.update) spawn.update(dt);
 	if (!spawn.monster.dead) this.done = false;
     }
 }
 
 // Add a monster spawner to this round
-Round.prototype.addSpawn = function(spawn)
+Round.prototype.addSpawn = function(spawn, delay)
 {
+    // TODO - tacky
+    spawn.roundDelay = delay || 0;
     this.spawns.push(spawn);
 }
 
@@ -146,34 +160,23 @@ Spawn.prototype.activate = function()
 {
     // Start the monster somewhere off screen either left or right
     this.monster.sprite.x = level.camera.x + level.camera.width/2 + 
-	-1*this.direction*(level.camera.width/2+20);
-    // Make sure the monster isn't being spawned inside of a wall. Here we
-    // move the sprite either up/down until we find a free space.
+	this.direction*(level.camera.width/2+20);
     var offset = 0;
-    while(true) 
-    {
-	var north = level.bg.getTileAt(this.monster.sprite.x, this.ypos+offset);
-	var south = level.bg.getTileAt(this.monster.sprite.x, this.ypos-offset);
-	if (!north.solid) {
-	    this.monster.sprite.y = this.ypos + offset;
-	    break;
-	}
-	if (!south.solid) {
-	    this.monster.sprite.y = this.ypos - offset;
-	    break;
-	}
-	if (this.ypos + offset > level.getHeight() && 
-	    this.ypos - offset < 0) {
-	    // This should never happen, but just in case...
-	    console.log("WARNING: can't spawn monster near " + this.ypos + 
-			", despawning...");
-	    this.monster.dead = true;
-	    return;
-	}
-	offset += TILE_HEIGHT*SCALE;
+
+    // Find some clear space to spawn the monster (ie don't spawn in a wall)
+    var y = level.findClearSpace(this.monster.sprite.x, this.ypos);
+    if (y === null) {
+	console.log("WARNING: can't spawn monster near " + this.ypos);
+	this.monster.dead = true;
+    } else {
+	this.monster.sprite.y = y;
+	level.addThing(this.monster);
     }
-    level.addThing(this.monster);
 }
+
+/*************/
+/* GateSpawn */
+/*************/
 
 // Monster walks in through a gate
 function GateSpawn(monster, gate)
@@ -212,6 +215,10 @@ GateSpawn.prototype.update = function(dt)
 	}
     }
 }
+
+/*************/
+/* DropSpawn */
+/*************/
 
 // Monster drops from above to the given location (casting a shadow on the
 // way down, etc.)
@@ -269,6 +276,10 @@ DropSpawn.prototype.update = function(dt)
 	this.done = true;
     }
 }
+
+/**************/
+/* WaterSpawn */
+/**************/
 
 // Monster spawns under water, then rises with bubbles etc
 function WaterSpawn(monster, x, y)

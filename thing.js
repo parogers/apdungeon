@@ -25,7 +25,7 @@ function Thing()
 {
     // Position of the hit box, relative to the sprite position
     this.hitbox = new Hitbox(0, 0, 5, 5);
-    var texture = getTextures(GROUND_ITEMS)["coin"];
+    var texture = getFrame(GROUND_ITEMS, "coin");
     this.sprite = new PIXI.Sprite(texture);
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0,0);

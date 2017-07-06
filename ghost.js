@@ -45,7 +45,7 @@ function Ghost(state)
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GHOST_ATTACKING;
-    this.hitbox = new Hitbox(0, -2*SCALE, 8*SCALE, 8*SCALE);
+    this.hitbox = new Hitbox(0, -2*SCALE, 6*SCALE, 6*SCALE);
 }
 
 Ghost.prototype.update = function(dt)

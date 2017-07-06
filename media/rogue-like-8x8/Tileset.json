@@ -317,38 +317,26 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sack1" : {
+},"sack1_open" : {
     "frame" : {"x":55, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sack2" : {
+},"sack1_closed" : {
     "frame" : {"x":64, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sack3" : {
-    "frame" : {"x":73, "y":28, "w":8, "h":8},
-    "rotated" : false,
-    "trimmed" : false,
-    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
-    "sourceSize" : {"w":8, "h":8}
-},"sack4" : {
+},"sack2_open" : {
     "frame" : {"x":82, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sack5" : {
+},"sack2_closed" : {
     "frame" : {"x":91, "y":28, "w":8, "h":8},
-    "rotated" : false,
-    "trimmed" : false,
-    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
-    "sourceSize" : {"w":8, "h":8}
-},"sack6" : {
-    "frame" : {"x":100, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},

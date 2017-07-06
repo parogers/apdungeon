@@ -329,7 +329,7 @@ desc = [
 frames += gen_grid((1,29), (5, 4), desc)
 
 desc = [
-    "0123456789",
+    ["0","1","2","3","4","5","6","7","8","9","black"],
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!-+",
 ]
 frames += gen_grid((1,38), (3, 4), desc)
