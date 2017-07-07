@@ -63,7 +63,7 @@ Arena.prototype.update = function(dt)
 	{
 	    // Spawn in monsters for the next round
 	    this.round++;
-	    this.rounds[this.round].activate();
+	    //this.rounds[this.round].activate();
 	} else {
 	    this.finishing = true;
 	}
@@ -124,7 +124,7 @@ Round.prototype.update = function(dt)
     }
 */
     // Wait for all the monsters to die
-    this.done = true;
+    this.done = (this.spawns.length === 0);
     for (spawn of this.running) {
 	if (spawn.update) spawn.update(dt);
 	if (!spawn.monster.dead) this.done = false;
@@ -243,6 +243,15 @@ function DropSpawn(monster, x, y)
 
 DropSpawn.prototype.activate = function()
 {
+    var y = level.findClearSpace(this.xpos, this.ypos);
+    if (y === null) {
+	console.log("WARNING: can't spawn monster near " + this.ypos);
+	this.monster.dead = true;
+	return;
+    } else {
+	this.ypos = y;
+	this.shadow.sprite.y = y;
+    }
     level.addThing(this.shadow);
     this.falling.sprite.zpos = FRONT_POS;
     this.falling.sprite.x = this.xpos;

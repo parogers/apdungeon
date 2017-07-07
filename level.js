@@ -97,6 +97,7 @@ function Level(bg)
     // Current active arena (number)
     this.arenaNum = 0;
     this.smoothTracking = true;
+    this.exitDoor = null;
 }
 
 // Returns the width of the level in pixels (ie render size)
@@ -163,6 +164,7 @@ Level.prototype.update = function(dt)
 	    } else {
 		// No more arenas - finished the level!
 		this.state = LEVEL.END_LEVEL;
+		if (this.exitDoor) this.exitDoor.startOpening();
 	    }
 	} else {
 	    arena.update(dt);
@@ -307,6 +309,34 @@ Level.prototype.removeThing = function(thing)
 	    this.levelStage.removeChild(thing.sprite);
 	}*/
 	thing.sprite.parent.removeChild(thing.sprite);
+    }
+}
+
+Level.prototype.handleTreasureDrop = function(table, x, y)
+{
+    // Pick an item entry from the table, using a weighted probability pick
+    // Entries look like: [item_number, weight]. First sum all the weights
+    // and pick a random number up to that total.
+    var total = 0;
+    for (entry of table) {
+	total += entry[1];
+    }
+    // Pick a random number, then iterate over the items and find what 
+    // item it corresponds to.
+    var pick = null;
+    var num = randint(0, total);
+    for (entry of table) {
+	num -= entry[1];
+	if (num <= 0) {
+	    pick = entry[0];
+	    break;
+	}
+    }
+    // Drop the item
+    if (pick !== null) {
+	var coin = spawnItem(pick, x, y);
+	coin.velx = 50*(x > this.camera.x ? -1 : 1);
+	coin.velh = -200;
     }
 }
 

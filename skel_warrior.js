@@ -61,6 +61,13 @@ function SkelWarrior(state)
     this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 8*SCALE);
 }
 
+SkelWarrior.prototype.dropTable = [
+    [Item.COIN, 6],
+    [Item.LARGE_HEALTH, 6],
+    [Item.LEATHER_ARMOUR, 1],
+    [Item.SMALL_BOW, 1]
+];
+
 SkelWarrior.prototype.update = function(dt)
 {
     switch(this.state)
@@ -251,9 +258,7 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 	sounds[DEAD_SND].play();
 	this.state = SKEL_WARRIOR_DEAD;
 	// Drop a reward
-	var coin = spawnItem(Item.LEATHER_ARMOUR, this.sprite.x, this.sprite.y);
-	coin.velx = 50*Math.sign(this.sprite.x-srcx);
-	coin.velh = -200;
+	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
 	this.dead = true;
 
     } else {

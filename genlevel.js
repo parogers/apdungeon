@@ -161,21 +161,29 @@ var LevelGenerator = (function() {
 	var endx = level.getWidth()-1;
 	var arenaWidth = level.camera.width;
 	var budget = (levelNum+1)*6;
-	while (endx > arenaWidth*1.5)
+	while (endx > arenaWidth*2)
 	{
 	    var arena = new Arena(arenaWidth, endx);
 	    level.addArena(arena);
 
-	    var numRounds = randint(2, 5);
+	    var numRounds = randint(2, 4);
 
 	    for (var n = 0; n < numRounds; n++) {
 		var round = new Round(randUniform(0.5, 1));
 		var monsters = chooseMonsters(budget);
-		for (klass of monsters) {
+		for (klass of monsters) 
+		{
+		    var spawn = null;
 		    var ypos = randUniform(0, level.camera.height);
-		    var xdir = randomChoice([-1, 1]);
-		    if (endx >= level.getWidth()-1) xdir = -1;
-		    round.addSpawn(new Spawn(new klass(), xdir, ypos));
+		    if (randint(1, 5) === 1) {
+			var xpos = randint(arena.startx, arena.endx);
+			spawn = new DropSpawn(new klass(), xpos, ypos);
+		    } else {
+			var xdir = randomChoice([-1, 1]);
+			if (endx >= level.getWidth()-1) xdir = -1;
+			spawn = new Spawn(new klass(), xdir, ypos);
+		    }
+		    round.addSpawn(spawn, randUniform(0, 1));
 		}
 		arena.rounds.push(round);
 	    }
@@ -264,6 +272,14 @@ var LevelGenerator = (function() {
 
 	var scn = new EnterScene(door);
 	level.addThing(scn);
+
+	// Add a door to enter the level
+	var door = new Door();
+	//door.startOpening();
+	door.sprite.x = level.getWidth()-100;
+	door.sprite.y = 64;
+	level.exitDoor = door;
+	level.addThing(door);
 
 	/*
 	  for (var n = 0; n < 10; n++) {

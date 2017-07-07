@@ -77,6 +77,14 @@ function Goblin(state)
     this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
 }
 
+Goblin.prototype.dropTable = [
+    [Item.COIN, 8],
+    [Item.SMALL_HEALTH, 6],
+    [Item.ARROW, 4],
+    [Item.STEEL_ARMOUR, 1],
+    [Item.LARGE_BOW, 1]
+];
+
 Goblin.prototype.update = function(dt)
 {
     switch(this.state)
@@ -263,9 +271,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 	sounds[DEAD_SND].play();
 	this.state = GOBLIN_DEAD;
 	// Drop a reward
-	var coin = spawnItem(Item.COIN, this.sprite.x, this.sprite.y);
-	coin.velx = 50*Math.sign(this.sprite.x-srcx);
-	coin.velh = -200;
+	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
 	this.dead = true;
 
     } else {
@@ -285,4 +291,9 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 	level.stage.addChild(sprite);
     }
     return true;
+}
+
+Goblin.prototype.handlePlayerCollision = function()
+{
+    player.takeDamage(1, this);
 }

@@ -52,6 +52,12 @@ function Snake(state)
     this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
 }
 
+Snake.prototype.dropTable = [
+    [Item.COIN, 2],
+    [Item.ARROW, 1],
+    [Item.SMALL_HEALTH, 1]
+];
+
 Snake.prototype.update = function(dt)
 {
     if (this.state === SNAKE_IDLE) this.updateIdle(dt);
@@ -151,9 +157,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 	sounds[DEAD_SND].play();
 	this.state = SNAKE_DEAD;
 	// Drop a reward
-	var coin = spawnItem(Item.COIN, this.sprite.x, this.sprite.y);
-	coin.velx = 50*Math.sign(this.sprite.x-srcx);
-	coin.velh = -200;
+	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
 	this.dead = true;
 
     } else {

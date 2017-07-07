@@ -48,6 +48,11 @@ function Ghost(state)
     this.hitbox = new Hitbox(0, -2*SCALE, 6*SCALE, 6*SCALE);
 }
 
+Ghost.prototype.dropTable = [
+    [Item.SMALL_HEALTH, 1],
+    [Item.LARGE_HEALTH, 5]
+];
+
 Ghost.prototype.update = function(dt)
 {
     if (this.state === GHOST_ATTACKING) this.updateAttacking(dt);
@@ -122,9 +127,7 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
 	sounds[DEAD_SND].play();
 	this.state = GHOST_DEAD;
 	// Drop a reward
-	var coin = spawnItem(Item.COIN, this.sprite.x, this.sprite.y);
-	coin.velx = 50*Math.sign(this.sprite.x-srcx);
-	coin.velh = -200;
+	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
 	this.dead = true;
 
     } else {

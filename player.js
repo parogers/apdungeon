@@ -35,11 +35,11 @@ function Player()
     this.facing = 1;
     // Player status
     this.health = 3;
-    this.maxHealth = 5;
+    this.maxHealth = 6;
     this.maxSpeed = 200; // pixels/second
     // Inventory stuff
-    this.numCoins = 5;
-    this.numArrows = 10;
+    this.numCoins = 0;
+    this.numArrows = 0;
     this.armour = Item.NONE;
     this.bow = Item.NONE;
     this.sword = Item.NONE;
@@ -342,7 +342,7 @@ Player.prototype.handleTakeItem = function(item)
     // Consumable items
     switch (item) {
     case Item.ARROW:
-	this.numArrows++;
+	this.numArrows += 5;
 	break;
 
     case Item.COIN:
