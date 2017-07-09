@@ -62,24 +62,21 @@ function compareDepth(s1, s2) {
     return (z1>z2) - (z2>z1);
 }
 
-// The various level states
-var LEVEL = {
-    // Player is within an active arena
-    ACTIVE_ARENA: 1,
-    // Showing the go arrow, indicating the player should advance forward
-    SHOWING_GO: 2,
-    // Player is moving towards next arena (not active yet)
-    NEXT_ARENA: 3,
-    // Level is finished
-    END_LEVEL: 4
-};
-
 function Level(bg)
 {
+    // Player is within an active arena
+    this.ACTIVE_ARENA = 1;
+    // Showing the go arrow, indicating the player should advance forward
+    this.SHOWING_GO = 2;
+    // Player is moving towards next arena (not active yet)
+    this.NEXT_ARENA = 3;
+    // Level is finished
+    this.END_LEVEL = 4;
+
     this.camera = new Camera();
     //this.player = null;
     this.stage = null;
-    this.state = LEVEL.NEXT_ARENA;
+    this.state = this.NEXT_ARENA;
     // The background sprite (TiledBackground)
     this.bg = bg;
     this.bg.zpos = BACKGROUND_POS;
@@ -88,10 +85,6 @@ function Level(bg)
     // The PIXI container for everything we want to draw
     this.stage = new PIXI.Container();
     this.stage.addChild(this.bg.sprite);
-    // The container holding all user interface stuff
-    /*this.guiStage = new PIXI.Container();
-    this.stage.addChild(this.levelStage);
-    this.stage.addChild(this.guiStage);*/
     // List of arenas in this level (Arena instances)
     this.arenas = [];
     // Current active arena (number)
@@ -113,8 +106,8 @@ Level.prototype.getHeight = function()
 }
 
 /* Find some clear space to spawn a thing at the given location. This code
- * looks up/down until it finds the first pixel of free space. Returns ypos
- */
+ * looks up/down until it finds the first pixel of free space. Returns the
+ * y-position of that free space. */
 Level.prototype.findClearSpace = function(x, y)
 {
     var offset = 0;
@@ -129,7 +122,7 @@ Level.prototype.findClearSpace = function(x, y)
 	    return y - offset;
 	}
 	if (y + offset > this.getHeight() && y - offset < 0) {
-	    // This should never happen, but just in case...
+	    // We've gone completely outside the level - no space found
 	    return null;
 	}
 	offset += TILE_HEIGHT*SCALE;
@@ -146,24 +139,32 @@ Level.prototype.addArena = function(arena)
     });
 }
 
+/* Called by the exit Door when the player walks through to the next level */
+Level.prototype.triggerNextLevel = function()
+{
+    if (this.state === this.END_LEVEL) {
+	console.log("NEXT LEVEL");
+    }
+}
+
 // Called every frame to update the general level state
 Level.prototype.update = function(dt)
 {
     var arena = this.arenas[this.arenaNum];
     switch(this.state) {
-    case LEVEL.ACTIVE_ARENA:
+    case this.ACTIVE_ARENA:
 	// Wait for the current arena to be finished (ie player defeats 
 	// all the monsters)
 	if (arena.done) {
 	    if (this.arenaNum < this.arenas.length-1) {
 		// Show the "go forward" marker
-		screen.goMarker.show();
+		gamestate.screen.goMarker.show();
 		// Advance to the next arena
 		this.arenaNum++;
-		this.state = LEVEL.SHOWING_GO;
+		this.state = this.SHOWING_GO;
 	    } else {
 		// No more arenas - finished the level!
-		this.state = LEVEL.END_LEVEL;
+		this.state = this.END_LEVEL;
 		if (this.exitDoor) this.exitDoor.startOpening();
 	    }
 	} else {
@@ -174,21 +175,18 @@ Level.prototype.update = function(dt)
 	var xpos = player.sprite.x - this.camera.width/2;
 	xpos = Math.max(xpos, arena.startx);
 	xpos = Math.min(xpos, arena.endx-this.camera.width);
-	/*if (xpos >= arena.startx && xpos + this.camera.width <= arena.endx) {
-	    this.camera.x = xpos;
-        }*/
 	break;
 	
-    case LEVEL.SHOWING_GO:
+    case this.SHOWING_GO:
 	// Wait for the player to move the level forward by "pushing" the
 	// edge of the screen.
 	if (player.sprite.x > this.camera.x + this.camera.width*0.8) {
-	    this.state = LEVEL.NEXT_ARENA;
+	    this.state = this.NEXT_ARENA;
 	    this.smoothTracking = true;
 	}
 	break;
 
-    case LEVEL.NEXT_ARENA:
+    case this.NEXT_ARENA:
 	// Update the camera to track the player. Have the camera move
 	// smoothly towards the player to avoid jumping around.
 	var xpos = player.sprite.x - this.camera.width/2;
@@ -207,8 +205,9 @@ Level.prototype.update = function(dt)
 
 	// Also remove the go marker (if it's done animated) since the player
 	// already knows to move forward by now.
-	if (screen.goMarker.sprite.visible && screen.goMarker.done) {
-	    screen.goMarker.hide();
+	if (gamestate.screen.goMarker.sprite.visible && 
+	    gamestate.screen.goMarker.done) {
+	    gamestate.screen.goMarker.hide();
 	}
 
 	// Wait for the player to move into the next arena
@@ -217,18 +216,21 @@ Level.prototype.update = function(dt)
 	    // Snap the camera into place and activate the next arena
 	    this.camera.x = arena.endx - this.camera.width;
 	    arena.activate();
-	    this.state = LEVEL.ACTIVE_ARENA;
+	    this.state = this.ACTIVE_ARENA;
 	    // If somehow the go marker is sticking around (maybe the player
 	    // is moving _really_ fast) remove it now, done or not.
-	    if (screen.goMarker.sprite.visible) {
-		screen.goMarker.hide();
+	    if (gamestate.screen.goMarker.sprite.visible) {
+		gamestate.screen.goMarker.hide();
 	    }
 	}
 	break;
 
-    case LEVEL.END_LEVEL:
+    case this.END_LEVEL:
 	break;
     }
+
+    // TODO - this could be better optimized by despawning things that are
+    // no longer visible. (ie blood spatters etc)
 
     // Re-sort the sprites by Z-depth so things are rendered in the correct
     // order.
@@ -240,19 +242,20 @@ Level.prototype.update = function(dt)
     for (thing of this.things) {
 	if (thing.update) thing.update(dt);
     }
-    /*for (var n = 0; n < this.things.length; n++) {
-	if (this.things[n].update) this.things[n].update(dt);
-    }*/
 }
 
+/* Check if the given hitbox, at the given position, overlaps with any thing 
+ * in the level. Can also supply a thing to ignore when making the check. 
+ * This function is used to determine if a projectile strikes a target. */
 Level.prototype.checkHit = function(x, y, hitbox, ignore)
 {
     var xp = x + hitbox.x, yp = y + hitbox.y;
     var w = hitbox.w, h = hitbox.h;
-    var thing = null;
-    for (var n = 0; n < this.things.length; n++) 
+    //var thing = null;
+    //for (var n = 0; n < this.things.length; n++) 
+    for (thing of this.things)
     {
-	thing = this.things[n];
+	//thing = this.things[n];
 	if (thing !== ignore && thing.sprite && 
 	    thing.hitbox && thing.hitbox !== hitbox && 
 	    Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
@@ -264,15 +267,19 @@ Level.prototype.checkHit = function(x, y, hitbox, ignore)
     return null;
 }
 
+/* Returns a list of things that overlap with the given hitbox at a given
+ * position within the level. (useful for checking if the player has collided
+ * with any monsters) */
 Level.prototype.checkHitMany = function(x, y, hitbox, ignore)
 {
     var xp = x + hitbox.x, yp = y + hitbox.y;
     var w = hitbox.w, h = hitbox.h;
-    var thing = null;
+    //var thing = null;
     var hit = [];
-    for (var n = 0; n < this.things.length; n++) 
+    //for (var n = 0; n < this.things.length; n++) 
+    for (thing of this.things)
     {
-	thing = this.things[n];
+	//thing = this.things[n];
 	if (thing !== ignore && thing.sprite && 
 	    thing.hitbox && thing.hitbox !== hitbox && 
 	    Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
@@ -303,11 +310,6 @@ Level.prototype.removeThing = function(thing)
     }
 
     if (thing.sprite && thing.sprite.parent) {
-	/*if (thing.guiLayer) {
-	    this.guiStage.removeChild(thing.sprite);
-	} else {
-	    this.levelStage.removeChild(thing.sprite);
-	}*/
 	thing.sprite.parent.removeChild(thing.sprite);
     }
 }

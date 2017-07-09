@@ -161,7 +161,7 @@ var LevelGenerator = (function() {
 	var endx = level.getWidth()-1;
 	var arenaWidth = level.camera.width;
 	var budget = (levelNum+1)*6;
-	while (endx > arenaWidth*2)
+	while (false) //endx > arenaWidth*2)
 	{
 	    var arena = new Arena(arenaWidth, endx);
 	    level.addArena(arena);
@@ -192,53 +192,7 @@ var LevelGenerator = (function() {
 	    if (budget > 3) budget--;
 	}
 
-	// ***
-	//round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
-	//round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
-	/*
-	  var arena = new Arena();
-	  arena.startx = level.camera.width;
-	  arena.endx = level.camera.width*2;
-	  level.addArena(arena);
-
-	  var round = new Round(1);
-	  round.addSpawn(new DropSpawn(new SkelWarrior(), arena.startx+100, 175));
-	  //round.addSpawn(new Spawn(new SkelWarrior(), -1, 150));
-	  //round.addSpawn(new WaterSpawn(new Snake(SNAKE_ATTACKING), 250, 175));
-	  arena.rounds.push(round);
-
-	  var ypos = level.bg.getHeight()/2;
-	  var round = new Round(0.5);
-	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-	  arena.rounds.push(round);
-
-	  var round = new Round(0.5);
-	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos));
-	  arena.rounds.push(round);
-
-	  var round = new Round(0.75);
-	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos-50));
-	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), 1, ypos+50));
-	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-	  //round.addSpawn(new GateSpawn(new Goblin(), gate));
-	  arena.rounds.push(round);
-
-	  var arena = new Arena();
-	  arena.startx = level.camera.width*2;
-	  arena.endx = level.camera.width*3;
-	  level.addArena(arena);
-
-	  var ypos = level.bg.getHeight()/2;
-
-	  var round = new Round(1);
-	  round.addSpawn(new Spawn(new Snake(SNAKE_ATTACKING), -1, ypos));
-	  arena.rounds.push(round);*/
-
-	// ***
-
 	if (levelNum === 0) {
-	    //var items = [Item.SMALL_HEALTH, Item.LARGE_HEALTH, Item.ARROW, Item.COIN, Item.COIN, Item.COIN, Item.SMALL_BOW, Item.SMALL_SWORD, Item.LEATHER_ARMOUR];
 	    // First level in the game. Add a chest of starter items. Have the 
 	    // chest eject items to the right away from the first NPC. (so none
 	    // of the items become hidden behind)
@@ -265,7 +219,6 @@ var LevelGenerator = (function() {
 
 	// Add a door to enter the level
 	var door = new Door();
-	//door.startOpening();
 	door.sprite.x = 100;
 	door.sprite.y = 64;
 	level.addThing(door);
@@ -273,22 +226,14 @@ var LevelGenerator = (function() {
 	var scn = new EnterScene(door);
 	level.addThing(scn);
 
-	// Add a door to enter the level
+	// Add a door to exit the level
 	var door = new Door();
-	//door.startOpening();
-	door.sprite.x = level.getWidth()-100;
+	door.sprite.x = level.getWidth()-120;
 	door.sprite.y = 64;
 	level.exitDoor = door;
+	door.startOpening();
 	level.addThing(door);
 
-	/*
-	  for (var n = 0; n < 10; n++) {
-	  snake = new Scorpion();
-	  snake.sprite.x = 100+150*n;
-	  snake.sprite.y = 180+50*Math.sin(n*5);
-	  level.addThing(snake);
-	  }
-	*/
 	return level;
     }
     return exports;

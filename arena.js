@@ -21,6 +21,12 @@
 /* Arena */
 /*********/
 
+/* TODO - arenas could be implemented as level Things which control/limit
+ * camera movement, rather than having that logic inside of Level itself. 
+ * It would help clean up Level a bit without making Arena that much more 
+ * complicated.
+ */
+
 // A region of the level where the player battles monsters and collects 
 // treasures. Once all monsters in the region are defeated the player can
 // move forward. (a "Go" arrow is displayed)

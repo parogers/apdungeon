@@ -57,7 +57,7 @@ var level = null;
 var renderer = null;
 var stage = null;
 var progress = null;
-var screen = null;
+var gamestate = null;
 
 function loaded()
 {
@@ -77,6 +77,8 @@ function loaded()
 
     controls = new GameControls();
     controls.attach();
+
+    gamestate = new GameState();
 
     function progresscb(loader, resource) {
 	console.log("loading: " + resource.url + 
@@ -106,6 +108,14 @@ function loaded()
 	.load(graphicsLoaded);
 }
 
+/* TODO - the game is implemented as a big loop where 'update' is called on
+ * the level every iteration before painting the screen. (in term the level
+ * calls 'update' on all things in the level, plus arena controllers, etc. 
+ * This could be better implemented as an event loop, where things queue
+ * up events for callback later, issue broadcast events etc. This has the
+ * benefit where entities that don't need to do anything (eg blood spatter),
+ * or objects waiting for a trigger (eg door) don't waste processor time */
+
 var lastCheck = 0;
 var fps = 0;
 var lastTime = null;
@@ -126,9 +136,9 @@ function gameLoop()
 	fps = 0;
     }
 
-    screen.update(dt);
     controls.update();
-    screen.render();
+    gamestate.update(dt);
+    gamestate.render();
     requestAnimFrame(gameLoop)
 }
 
@@ -187,8 +197,10 @@ function setup()
     /* Generate the level */
     level = LevelGenerator.generate(0);
 
-    screen = new LevelScreen();
+    var screen = new LevelScreen();
     screen.setLevel(level);
+
+    gamestate.screen = screen;
 
     /* Add some demo stuff */
     player = new Player();

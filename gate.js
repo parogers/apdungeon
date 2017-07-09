@@ -83,6 +83,11 @@ Gate.prototype.handleHit = function(x, y, dmg)
 
 Gate.prototype.handlePlayerCollision = function()
 {
+    if (this.isOpen() && level.exitDoor === this && controls.up && 
+	Math.abs(player.sprite.y-this.sprite.y) < 2) {
+	// Next level
+	level.triggerNextLevel();
+    }
 }
 
 /********/
