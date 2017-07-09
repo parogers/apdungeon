@@ -34,8 +34,8 @@ function Player()
     this.count = 0;
     this.facing = 1;
     // Player status
-    this.health = 3;
     this.maxHealth = 6;
+    this.health = this.maxHealth;
     this.maxSpeed = 200; // pixels/second
     // Inventory stuff
     this.numCoins = 0;

@@ -23,8 +23,9 @@ ITEM_GRAVITY = 600;
 /* GroundItem */
 /**************/
 
-function GroundItem(img, x, y, item)
+function GroundItem(item, x, y)
 {
+    var img = getFrame(GROUND_ITEMS, item);
     this.sprite = new PIXI.Sprite(img);
     this.sprite.anchor.set(0.5, 0.6);
     this.sprite.scale.set(SCALE);
@@ -101,8 +102,7 @@ GroundItem.prototype.handlePlayerCollision = function()
 /* Spawn in the given item, at the given location */
 function spawnItem(item, x, y)
 {
-    var img = getFrame(GROUND_ITEMS, item);
-    var gnd = new GroundItem(img, x, y, item);
+    var gnd = new GroundItem(item, x, y);
     level.addThing(gnd);
     return gnd;
 }

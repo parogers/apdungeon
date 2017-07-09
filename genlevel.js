@@ -37,8 +37,36 @@ var LevelGenerator = (function() {
 	monsterEntry(Ghost,       5, 4)
     ];
 
-    var exports = {};
+    /* Returns some random treasures for a chest */
+    function randomTreasures(levelNum)
+    {
+	switch(randint(1, 10)) {
+	case 1:
+	    return [Item.COIN, Item.COIN, Item.COIN];
+	case 2:
+	    return [Item.COIN, Item.COIN, Item.COIN, Item.COIN, Item.COIN];
+	case 3:
+	    if (levelNum < 2) return [Item.SMALL_BOW, Item.ARROW];
+	    else return [Item.LARGE_BOW];
+	case 4:
+	    if (levelNum < 2) return [Item.LEATHER_ARMOUR];
+	    else return [Item.STEEL_ARMOUR];
+	case 5:
+	    return [Item.SMALL_HEALTH, Item.SMALL_HEALTH, 
+		    Item.ARROW, Item.ARROW];
+	case 6:
+	case 7:
+	    return [Item.COIN, Item.COIN, Item.SMALL_HEALTH];
+	case 8:
+	    return [Item.COIN, Item.COIN, Item.LARGE_HEALTH];
+	case 9:
+	    return [Item.LARGE_SWORD];
+	case 10:
+	    return [Item.ARROW, Item.ARROW, Item.ARROW, Item.COIN, Item.COIN];
+	}
+    }
 
+    // Returns a list of randomly chosen monsters that fall within the budget
     function chooseMonsters(budget)
     {
 	var picks = [];
@@ -57,6 +85,8 @@ var LevelGenerator = (function() {
 	}
 	return picks;
     }
+
+    var exports = {};
 
     exports.generate = function(levelNum)
     {
@@ -130,7 +160,7 @@ var LevelGenerator = (function() {
 	var pos = 0;
 	while (true) 
 	{
-	    if (Math.random() < 0.5 && pos > 0) 
+	    if (Math.random() < 0.6 && pos > 0) 
 	    {
 		// Find the bottom-most section of wall
 		var found = -1;
@@ -160,24 +190,56 @@ var LevelGenerator = (function() {
 	// level, then work backwards from there.
 	var endx = level.getWidth()-1;
 	var arenaWidth = level.camera.width;
+	// The starting monster "budget" for this level. Harder monsters cost
+	// more and multiples of the same monster may have an additional
+	// cost. Each round is populated with monsters that fall within this 
+	// budget. This is gradually reduced working backwards through the 
+	// level to make earlier rounds a little easier.
 	var budget = (levelNum+1)*6;
 	while (endx > arenaWidth*1.75)
 	{
 	    var arena = new Arena(arenaWidth, endx);
 	    level.addArena(arena);
 
-	    var numRounds = randint(2, 4);
+	    // Find the visible gates (for gate spawning below)
+	    var gates = [];
+	    for (thing of level.things) {
+		if (thing instanceof Gate &&
+		    thing.sprite.x > arena.startx && 
+		    thing.sprite.x < arena.endx)
+		{
+		    gates.push(thing);
+		}
+	    }
 
-	    for (var n = 0; n < numRounds; n++) {
+	    // Higher levels have more rounds per arena on average
+	    for (var rnum = 0; rnum < randint(2, 4+levelNum); rnum++) 
+	    {
 		var round = new Round(randUniform(0.5, 1));
-		var monsters = chooseMonsters(budget);
+		var monsters = null;
+
+		if (rnum === 0 && levelNum === 0 && 
+		    endx === level.getWidth()-1) {
+		    // Lots of rats!
+		    monsters = [];
+		    for (var n = 0; n < randint(10, 20); n++) {
+			monsters.push(Rat);
+		    }
+		} else {
+		    monsters = chooseMonsters(budget);
+		}
+
 		for (klass of monsters) 
 		{
 		    var spawn = null;
 		    var ypos = randUniform(0, level.camera.height);
-		    if (randint(1, 5) === 1 && klass !== Ghost) {
-			var xpos = randint(arena.startx, arena.endx);
+		    var style = randint(1, 5);
+
+		    if (style === 1 && klass !== Ghost) {
+			var xpos = randint(arena.startx+20, arena.endx-20);
 			spawn = new DropSpawn(new klass(), xpos, ypos);
+		    } else if (style === 2 && gates.length > 0) {
+			spawn = new GateSpawn(new klass(), randomChoice(gates));
 		    } else {
 			var xdir = randomChoice([-1, 1]);
 			if (endx >= level.getWidth()-1) xdir = -1;
@@ -187,9 +249,47 @@ var LevelGenerator = (function() {
 		}
 		arena.rounds.push(round);
 	    }
+	    // Randomly add a chest into the arena
+	    if (randint(1, 10) < 7)
+	    {
+		// Find some clear space to add it
+		var xpos = randint(arena.startx+30, arena.endx-30);
+		var ypos = randint(10, level.getHeight()-10);
 
+		ypos = level.findClearSpace(xpos, ypos);
+		if (ypos !== null) {
+		    var chest = new Chest(randomTreasures(levelNum));
+		    chest.sprite.x = xpos;
+		    chest.sprite.y = ypos;
+		    level.addThing(chest);
+		}
+	    }
+	    // Skip some space to the previous arena (working backwards)
 	    endx -= (arenaWidth*randUniform(1, 1.25))|0;
+	    // Decrease the monster 'budget' so the arenas are slightly easier
 	    if (budget > 3) budget--;
+	}
+
+	// Add random coins scattered throughout the level
+	for (var n = 0; n < randint(10, 20); n++) {
+	    var xpos = randint(level.camera.width+10, level.getWidth()-10);
+	    var ypos = randint(10, level.getHeight()-10);
+	    ypos = level.findClearSpace(xpos, ypos);
+	    if (ypos !== null) {
+		var coin = new GroundItem(Item.COIN, xpos, ypos);
+		level.addThing(coin);
+	    }
+	}
+
+	// Add some health potions in the second half of the level
+	for (var n = 0; n < randint(1, 5); n++) {
+	    var xpos = randint(level.getWidth()/2, level.getWidth()-10);
+	    var ypos = randint(10, level.getHeight()-10);
+	    ypos = level.findClearSpace(xpos, ypos);
+	    if (ypos !== null) {
+		var coin = new GroundItem(Item.SMALL_HEALTH, xpos, ypos);
+		level.addThing(coin);
+	    }
 	}
 
 	if (levelNum === 0) {
@@ -231,7 +331,6 @@ var LevelGenerator = (function() {
 	door.sprite.x = level.getWidth()-120;
 	door.sprite.y = 64;
 	level.exitDoor = door;
-	door.startOpening();
 	level.addThing(door);
 
 	return level;

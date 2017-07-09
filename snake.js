@@ -202,6 +202,7 @@ function Rat()
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_ATTACKING;
+    this.waterSprite.y = -0.9*SCALE;
 }
 
 Rat.prototype = Object.create(Snake.prototype);
@@ -222,6 +223,7 @@ function Scorpion()
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_ATTACKING;
+    this.waterSprite.y = -0.85*SCALE;
 }
 
 Scorpion.prototype = Object.create(Snake.prototype);
