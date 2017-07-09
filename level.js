@@ -158,7 +158,7 @@ Level.prototype.update = function(dt)
 	if (arena.done) {
 	    if (this.arenaNum < this.arenas.length-1) {
 		// Show the "go forward" marker
-		gamestate.screen.goMarker.show();
+		//gamestate.screen.goMarker.show();
 		// Advance to the next arena
 		this.arenaNum++;
 		this.state = this.SHOWING_GO;
@@ -205,10 +205,10 @@ Level.prototype.update = function(dt)
 
 	// Also remove the go marker (if it's done animated) since the player
 	// already knows to move forward by now.
-	if (gamestate.screen.goMarker.sprite.visible && 
+	/*if (gamestate.screen.goMarker.sprite.visible && 
 	    gamestate.screen.goMarker.done) {
 	    gamestate.screen.goMarker.hide();
-	}
+	}*/
 
 	// Wait for the player to move into the next arena
 	if (arena && this.camera.x + this.camera.width >= arena.endx-1)
@@ -219,9 +219,9 @@ Level.prototype.update = function(dt)
 	    this.state = this.ACTIVE_ARENA;
 	    // If somehow the go marker is sticking around (maybe the player
 	    // is moving _really_ fast) remove it now, done or not.
-	    if (gamestate.screen.goMarker.sprite.visible) {
+	    /*if (gamestate.screen.goMarker.sprite.visible) {
 		gamestate.screen.goMarker.hide();
-	    }
+	    }*/
 	}
 	break;
 
@@ -368,9 +368,7 @@ LevelScreen.prototype.update = function(dt)
     if (this.level) this.level.update(dt);
     this.healthUI.update(dt);
     this.inventoryUI.update(dt);
-    if (this.goMarker.sprite.visible) {
-	this.goMarker.update(dt);
-    }
+    this.goMarker.update(dt);
 }
 
 LevelScreen.prototype.render = function()
@@ -398,8 +396,6 @@ LevelScreen.prototype.setLevel = function(level)
 	// Put the go marker in the top-right corner of the level area
 	this.goMarker.sprite.x = renderer.width - 10;
 	this.goMarker.sprite.y = 10;
-	//this.goMarker.sprite.width/2-10;
-	//this.goMarker.sprite.y = this.goMarker.sprite.height/2+10;
     }
 }
 

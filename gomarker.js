@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+/* TODO - this code would be cleaner if we implemented an event queue/message
+ * passing system. The level instance could broadcast changes in it's state,
+ * (eg wait-to-advance) which would be picked up by the go marker, who could
+ * then change it's appearance accordingly (eg play go animation) */
+
 function GoMarker()
 {
     this.frames = [
@@ -29,7 +34,7 @@ function GoMarker()
     this.timer = 0;
     this.dings = 3;
     this.frameNum = 0;
-    this.done = false;
+    this.done = true;
     this.sprite.visible = false;
 }
 
@@ -51,7 +56,22 @@ GoMarker.prototype.hide = function()
 
 GoMarker.prototype.update = function(dt)
 {
-    if (this.done) return;
+    if (!this.sprite.visible) {
+	// Become visible if the level is ready to advance to the next arena
+	if (level.state === level.SHOWING_GO) {
+	    this.show();
+	}
+	return;
+    }
+
+    if (this.done) {
+	// Hide when the player is advancing to the next arena
+	if (level.state !== level.SHOWING_GO) {
+	    this.hide();
+	}
+	return;
+    }
+
     var next = this.timer + dt;
     if (this.timer < 0.3 && next >= 0.3) {
 	if (this.dings-- > 0) sounds[GO_SND].play();

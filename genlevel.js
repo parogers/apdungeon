@@ -161,7 +161,7 @@ var LevelGenerator = (function() {
 	var endx = level.getWidth()-1;
 	var arenaWidth = level.camera.width;
 	var budget = (levelNum+1)*6;
-	while (false) //endx > arenaWidth*2)
+	while (endx > arenaWidth*1.75)
 	{
 	    var arena = new Arena(arenaWidth, endx);
 	    level.addArena(arena);
@@ -175,7 +175,7 @@ var LevelGenerator = (function() {
 		{
 		    var spawn = null;
 		    var ypos = randUniform(0, level.camera.height);
-		    if (randint(1, 5) === 1) {
+		    if (randint(1, 5) === 1 && klass !== Ghost) {
 			var xpos = randint(arena.startx, arena.endx);
 			spawn = new DropSpawn(new klass(), xpos, ypos);
 		    } else {
@@ -188,7 +188,7 @@ var LevelGenerator = (function() {
 		arena.rounds.push(round);
 	    }
 
-	    endx -= (arenaWidth*randUniform(1, 1.5))|0;
+	    endx -= (arenaWidth*randUniform(1, 1.25))|0;
 	    if (budget > 3) budget--;
 	}
 

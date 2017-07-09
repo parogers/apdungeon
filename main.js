@@ -136,8 +136,8 @@ function gameLoop()
 	fps = 0;
     }
 
-    controls.update();
     gamestate.update(dt);
+    controls.update();
     gamestate.render();
     requestAnimFrame(gameLoop)
 }
