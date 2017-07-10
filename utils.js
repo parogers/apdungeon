@@ -108,3 +108,12 @@ function getFrames()
     }
     return frames;
 }
+
+// Updates a dictionary with the contents of another dictionary
+function updateDict(dict, other)
+{
+    for (key in other) {
+	dict[key] = other[key];
+    }
+}
+

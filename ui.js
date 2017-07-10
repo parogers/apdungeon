@@ -50,6 +50,8 @@ function renderText(lines, options)
 	bg.scale.set(maxWidth/bg.width, y/bg.height);
 	cnt.addChild(bg);
 	cnt.children.unshift(cnt.children.pop());
+	// TODO - why doesn't this work for render textures?
+	//renderer.backgroundColor = 0x000000;
     }
 
     var renderTexture = PIXI.RenderTexture.create(maxWidth, y);

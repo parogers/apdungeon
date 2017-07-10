@@ -154,7 +154,7 @@ var LevelGenerator = (function() {
 	var bg = new TiledBackground(
 	    TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
 	    getTextures(MAPTILES), grid);
-	var level = new Level(bg);
+	var level = new Level(bg, levelNum);
 
 	// Now add some random gates throughout the level
 	var pos = 0;

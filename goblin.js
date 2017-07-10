@@ -37,6 +37,7 @@ var GOBLIN_GRAVITY = 1000;
  * quickly approaches to attack when the player's back is turned */
 function Goblin(state)
 {
+    this.name = "Hop Goblin";
     this.idleFrame = getFrame(ENEMIES, "goblin_south_1");
     this.frames = getFrames(ENEMIES, "goblin_south_2", "goblin_south_3");
     this.speed = 80;
@@ -272,6 +273,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 	this.state = GOBLIN_DEAD;
 	// Drop a reward
 	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
+	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {

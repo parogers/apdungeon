@@ -34,6 +34,7 @@ function GameState()
     // Showing the game over screen
     this.GAME_OVER = 5;
 
+    this.state = this.LEVEL_SCREEN;
     this.screen = null;
 }
 
@@ -43,6 +44,19 @@ GameState.prototype.update = function(dt)
 {
     if (this.screen) {
 	this.screen.update(dt);
+    }
+
+    switch(this.state) {
+    case this.TITLE_SCREEN:
+	break;
+
+    case this.LEVEL_SCREEN:
+	// Wait until a game over happens
+	if (this.screen.state === this.screen.GAME_OVER) {
+	    // Transition to the game over screen
+	    
+	}
+	break;
     }
 }
 

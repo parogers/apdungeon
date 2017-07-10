@@ -194,55 +194,10 @@ function setup()
     //stage.removeChild(progress.sprite);
     stage.children = [];
 
-    /* Generate the level */
-    level = LevelGenerator.generate(0);
-
     var screen = new LevelScreen();
-    screen.setLevel(level);
+    screen.startGame();
 
     gamestate.screen = screen;
-
-    /* Add some demo stuff */
-    player = new Player();
-    player.sprite.x = 250;
-    player.sprite.y = 200;
-    level.addThing(player);
-
-    /*var go = new GoMarker();
-    go.sprite.x = 500;
-    go.sprite.y = 100;
-    level.addThing(go);*/
-
-    /*var npc = new Scenery(getTextures(NPC)["npc1_south_1"]);
-    npc.sprite.x = 200;
-    npc.sprite.y = 160;
-    level.addThing(npc);*/
-
-/*    var text = "100";
-    textSprite = new PIXI.Text(
-	text, {fontFamily: 'Courier New', 
-	       fontSize: 10,
-	       fill: 0xffffff,
-	       fontWeight: 'bold'
-	      });
-    textSprite.x = 50;
-    textSprite.y = 50;
-    textSprite.scale.set(SCALE*0.25);
-    level.guiStage.addChild(textSprite)*/
-
-    /*var test = new Scenery(
-	getFrame(MAPTILES, "door1"),
-	getFrame(MAPTILES, "door2"),
-	getFrame(MAPTILES, "door4")
-    );
-    test.sprite.x = 350;
-    test.sprite.y = 200;
-    //test.velx = -150;
-    test.fps = 4;
-    //test.guiLayer = true;
-    level.addThing(test);*/
-
-    level.update(0);
 
     music = sounds[GAME_MUSIC];
     music.loop = true;

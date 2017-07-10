@@ -28,6 +28,7 @@ var SNAKE_DEAD = 3;
 
 function Snake(state)
 {
+    this.name = "Bitey Snake";
     this.frames = getFrames(ENEMIES, "snake_south_1", "snake_south_2");
     this.speed = 80;
     this.health = 3;
@@ -158,6 +159,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 	this.state = SNAKE_DEAD;
 	// Drop a reward
 	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
+	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
@@ -193,6 +195,7 @@ Snake.prototype.handlePlayerCollision = function()
 function Rat()
 {
     Snake.call(this);
+    this.name = "Lowly Rat";
     this.frames = getFrames(ENEMIES, "rat_south_1", "rat_south_2");
     this.health = 1;
     this.speed = 100;
@@ -214,6 +217,7 @@ Rat.prototype = Object.create(Snake.prototype);
 function Scorpion()
 {
     Snake.call(this);
+    this.name = "Deadly Scorpion";
     this.frames = getFrames(ENEMIES, "scorpion_south_1", "scorpion_south_2");
     this.health = 4;
     this.speed = 50;

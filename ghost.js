@@ -24,6 +24,7 @@ var GHOST_DEAD = 3;
 
 function Ghost(state)
 {
+    this.name = "Spooker";
     this.frames = getFrames(ENEMIES, "ghost_south_1", "ghost_south_2");
     this.speed = 80;
     this.health = 3;
@@ -35,13 +36,14 @@ function Ghost(state)
     this.vely = 0;
     this.accel = 100;
     this.maxSpeed = 100;
-    // The sprite container holding the monster and splash sprite
+    // The sprite container holding the monster
     this.sprite = new PIXI.Container();
+    this.sprite.alpha = 0.75;
     // The actual goblin sprite
-    this.goblinSprite = new PIXI.Sprite();
-    this.goblinSprite.scale.set(SCALE);
-    this.goblinSprite.anchor.set(0.5, 6.5/8);
-    this.sprite.addChild(this.goblinSprite);
+    this.ghostSprite = new PIXI.Sprite();
+    this.ghostSprite.scale.set(SCALE);
+    this.ghostSprite.anchor.set(0.5, 6.5/8);
+    this.sprite.addChild(this.ghostSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GHOST_ATTACKING;
@@ -99,7 +101,7 @@ Ghost.prototype.updateAttacking = function(dt)
 	}
     }*/
     this.frame += 4*dt;
-    this.goblinSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+    this.ghostSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
 
 Ghost.prototype.updateHurt = function(dt)
@@ -128,6 +130,7 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
 	this.state = GHOST_DEAD;
 	// Drop a reward
 	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
+	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {

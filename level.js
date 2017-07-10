@@ -58,25 +58,28 @@ function Camera()
 function compareDepth(s1, s2) {
     var z1 = s1.zpos || s1.y;
     var z2 = s2.zpos || s2.y;
-    //return z1-z2;
     return (z1>z2) - (z2>z1);
 }
 
-function Level(bg)
+function Level(bg, levelNum)
 {
+    // The various level states:
     // Player is within an active arena
     this.ACTIVE_ARENA = 1;
     // Showing the go arrow, indicating the player should advance forward
     this.SHOWING_GO = 2;
     // Player is moving towards next arena (not active yet)
     this.NEXT_ARENA = 3;
-    // Level is finished
-    this.END_LEVEL = 4;
+    // All monsters defeated - exit is open
+    this.EXIT_OPEN = 4;
+    // Player has passed through the exit
+    this.FINISHED = 5;
 
     this.camera = new Camera();
-    //this.player = null;
+    this.player = null;
     this.stage = null;
     this.state = this.NEXT_ARENA;
+    this.levelNum = levelNum;
     // The background sprite (TiledBackground)
     this.bg = bg;
     this.bg.zpos = BACKGROUND_POS;
@@ -142,7 +145,7 @@ Level.prototype.addArena = function(arena)
 /* Called by the exit Door when the player walks through to the next level */
 Level.prototype.triggerNextLevel = function()
 {
-    if (this.state === this.END_LEVEL) {
+    if (this.state === this.EXIT_OPEN) {
 	console.log("NEXT LEVEL");
     }
 }
@@ -163,8 +166,8 @@ Level.prototype.update = function(dt)
 		this.arenaNum++;
 		this.state = this.SHOWING_GO;
 	    } else {
-		// No more arenas - finished the level!
-		this.state = this.END_LEVEL;
+		// No more arenas - open the exit door
+		this.state = this.EXIT_OPEN;
 		if (this.exitDoor) this.exitDoor.startOpening();
 	    }
 	} else {
@@ -172,7 +175,7 @@ Level.prototype.update = function(dt)
 	}
 	// Update the camera - the player has full mobility within the 
 	// start and stop bounds of the arena.
-	var xpos = player.sprite.x - this.camera.width/2;
+	var xpos = this.player.sprite.x - this.camera.width/2;
 	xpos = Math.max(xpos, arena.startx);
 	xpos = Math.min(xpos, arena.endx-this.camera.width);
 	break;
@@ -180,7 +183,7 @@ Level.prototype.update = function(dt)
     case this.SHOWING_GO:
 	// Wait for the player to move the level forward by "pushing" the
 	// edge of the screen.
-	if (player.sprite.x > this.camera.x + this.camera.width*0.8) {
+	if (this.player.sprite.x > this.camera.x + this.camera.width*0.8) {
 	    this.state = this.NEXT_ARENA;
 	    this.smoothTracking = true;
 	}
@@ -189,12 +192,12 @@ Level.prototype.update = function(dt)
     case this.NEXT_ARENA:
 	// Update the camera to track the player. Have the camera move
 	// smoothly towards the player to avoid jumping around.
-	var xpos = player.sprite.x - this.camera.width/2;
+	var xpos = this.player.sprite.x - this.camera.width/2;
 	xpos = Math.max(xpos, 0);
 	xpos = Math.min(xpos, this.bg.sprite.width-this.camera.width);
 	if (this.smoothTracking) {
 	    var dirx = Math.sign(xpos-this.camera.x);
-	    this.camera.x += dt*1.25*player.maxSpeed*dirx;
+	    this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
 	    if (dirx != Math.sign(xpos-this.camera.x)) {
 		// Overshot the target, stop smoothly tracking
 		this.smoothTracking = false;
@@ -225,8 +228,9 @@ Level.prototype.update = function(dt)
 	}
 	break;
 
-    case this.END_LEVEL:
+    case this.EXIT_OPEN:
 	break;
+
     }
 
     // TODO - this could be better optimized by despawning things that are
@@ -291,9 +295,10 @@ Level.prototype.checkHitMany = function(x, y, hitbox, ignore)
     return hit;
 }
 
-// Add a 'thing' to the level and it's sprite to the stage
+// Add a 'thing' to the level and it's sprite to the render stage
 Level.prototype.addThing = function(thing)
 {
+    thing.level = this;
     this.things.push(thing);
     if (thing.sprite) {
 	this.stage.addChild(thing.sprite);
@@ -307,6 +312,7 @@ Level.prototype.removeThing = function(thing)
     if (i >= 0) {
 	this.things[i] = this.things[this.things.length-1];
 	this.things.pop();
+	thing.level = null;
     }
 
     if (thing.sprite && thing.sprite.parent) {
@@ -351,7 +357,15 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
  * and the UI elements. (health bar, etc) */
 function LevelScreen()
 {
+    // The various states this screen can be in
+    this.IDLE = 0;
+    this.PLAYING = 1;
+    this.NEXT_LEVEL = 2;
+    this.GAME_OVER = 3;
+
     this.level = null;
+    this.state = this.IDLE;
+
     this.stage = new PIXI.Container();
 
     this.healthUI = new HealthUI();
@@ -363,12 +377,46 @@ function LevelScreen()
     this.stage.addChild(this.goMarker.sprite);
 }
 
+LevelScreen.prototype.startGame = function()
+{
+    if (this.state !== this.IDLE) return;
+
+    player = new Player();
+    player.sprite.x = 250;
+    player.sprite.y = 200;
+    this.player = player;
+
+    /* Generate the level */
+    level = LevelGenerator.generate(0);
+    this.setLevel(level);
+    this.state = this.PLAYING;
+}
+
 LevelScreen.prototype.update = function(dt)
 {
-    if (this.level) this.level.update(dt);
-    this.healthUI.update(dt);
-    this.inventoryUI.update(dt);
-    this.goMarker.update(dt);
+    switch(this.state) {
+    case this.PLAYING:
+	if (this.level.state === this.level.FINISHED) {
+	    // Proceed to the next level
+	    // ...
+	} else if (this.player.dead) {
+	    // Show the game over screen
+	    console.log("GAME OVER");
+	    this.state = this.GAME_OVER;
+	} else {
+	    if (this.level) this.level.update(dt);
+	    this.healthUI.update(dt);
+	    this.inventoryUI.update(dt);
+	    this.goMarker.update(dt);
+	}
+	break;
+
+    case this.NEXT_LEVEL:
+	break;
+
+    case this.GAME_OVER:
+	break;
+    }
 }
 
 LevelScreen.prototype.render = function()
@@ -378,10 +426,12 @@ LevelScreen.prototype.render = function()
 
 LevelScreen.prototype.setLevel = function(level)
 {
+    // Remove the previous level sprite container
     if (this.level) {
 	this.stage.removeChild(this.level.stage);
     }
-    if (level) {
+    if (level) 
+    {
 	this.stage.addChild(level.stage);
 	// Move the level (container) sprite to the start of the list of
 	// child sprites, so it gets rendered before anything else.
@@ -396,12 +446,15 @@ LevelScreen.prototype.setLevel = function(level)
 	// Put the go marker in the top-right corner of the level area
 	this.goMarker.sprite.x = renderer.width - 10;
 	this.goMarker.sprite.y = 10;
+	this.level.player = this.player;
+	this.level.addThing(this.player);
+	this.level.update(0);
     }
 }
 
-/*****************/
+/**************/
 /* EnterScene */
-/*****************/
+/**************/
 
 /* A thing to handle the player entering a level. (door opens, player walks
  * through the door, looks around, door closes, level starts) */

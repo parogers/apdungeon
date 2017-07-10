@@ -48,6 +48,14 @@ function Player()
     this.hasControl = true;
     this.dirx = 0;
     this.diry = 0;
+    // Process of dying (showing animation)
+    this.dying = false;
+    // Actually dead
+    this.dead = false;
+    // The number of kills (stored by monster name). Also stores the 
+    // constructor used to instantiate the monster:
+    //     {count: ZZZ, klass: ZZZ}
+    this.kills = {};
 
     //this.weapon = Item.NONE; // current weapon
     // Define the hitbox
@@ -100,6 +108,30 @@ Player.prototype.update = function(dt)
     var dirx = 0;
     var diry = 0;
 
+    if (this.dead) return;
+
+    // Handle dying state animation
+    if (this.dying) {
+	this.frame += 2.5*dt;
+	if (this.frame > this.dyingFrames.length-1) {
+	    this.frame = this.dyingFrames.length-1;
+	    this.dead = true;
+	}
+	var frame = this.dyingFrames[(this.frame)|0];
+	this.spriteChar.texture = frame;
+	return;
+    }
+
+    // Check if the player has just died
+    if (this.health <= 0) {
+	this.dying = true;
+	this.frame = 0;
+	this.weaponSlot = null;
+	this.updatePlayerAppearance();
+	this.spriteChar.tint = NO_TINT;
+	return;
+    }
+
     if (this.knockedTimer <= 0) {
 	if (this.hasControl) {
 	    dirx = controls.getX();
@@ -144,10 +176,6 @@ Player.prototype.update = function(dt)
     } else {
 	this.frame = 0;
     }
-
-    //this.sprite.rotation += dt;
-    //this.velx += this.accelx*dt;
-    //this.vely += this.accely*dt;
 
     var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
     if (speed > this.maxSpeed) {
@@ -220,20 +248,24 @@ Player.prototype.update = function(dt)
 	}
     }
 
-    //if (this.weaponSlot && this.weaponSlot.attackCooldown > 0) {
-    //this.spriteChar.texture = this.lungeFrame;
-    //} else {
     // Update animation
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
     this.spriteChar.texture = frame;
-    //}
 }
 
 Player.prototype.setCharFrames = function(res, name)
 {
     this.frames = getFrames(
-	res, name + "_south_1", name + "_south_2", name + "_south_3");
+	res, 
+	name + "_south_1", 
+	name + "_south_2", 
+	name + "_south_3");
     this.lungeFrame = getFrame(res, name + "_lunge_1");
+    this.dyingFrames = getFrames(
+	res, 
+	"melee1_dying_1", 
+	"melee1_dying_2", 
+	"melee1_dying_3");
 }
 
 Player.prototype.setArmour = function(item)
@@ -322,6 +354,17 @@ Player.prototype.swapWeapons = function()
     }
 }
 
+/* Called when a monster (thing) is killed by the player */
+Player.prototype.handleMonsterKilled = function(monster)
+{
+    if (this.kills[monster.name] === undefined) {
+	this.kills[monster.name] = {count: 0, klass: monster.constructor};
+    }
+    this.kills[monster.name].count++;
+}
+
+/* Called when the player walks over a takeable item (GroundItem). The item
+ * number is passed in here. (Item.ZZZ) */
 Player.prototype.handleTakeItem = function(item)
 {
     // Check for an armour upgrade

@@ -32,6 +32,7 @@ var SKEL_WARRIOR_DEAD = 6;
  * quickly approaches to attack when the player's back is turned */
 function SkelWarrior(state)
 {
+    this.name = "Skeleton Warrior";
     this.idleFrame = getFrame(ENEMIES, "skeleton_warrior_south_1");
     this.frames = getFrames(
 	ENEMIES, "skeleton_warrior_south_2", "skeleton_warrior_south_3");
@@ -62,8 +63,7 @@ function SkelWarrior(state)
 }
 
 SkelWarrior.prototype.dropTable = [
-    [Item.COIN, 6],
-    [Item.LARGE_HEALTH, 6],
+    [Item.LARGE_HEALTH, 5],
     [Item.LEATHER_ARMOUR, 1],
     [Item.SMALL_BOW, 1]
 ];
@@ -259,6 +259,7 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 	this.state = SKEL_WARRIOR_DEAD;
 	// Drop a reward
 	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
+	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
