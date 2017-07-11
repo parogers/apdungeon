@@ -358,13 +358,13 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
 function LevelScreen()
 {
     // The various states this screen can be in
-    this.IDLE = 0;
-    this.PLAYING = 1;
-    this.NEXT_LEVEL = 2;
-    this.GAME_OVER = 3;
+    this.NEW_GAME = 1;
+    this.PLAYING = 2;
+    this.NEXT_LEVEL = 3;
+    this.GAME_OVER = 4;
 
     this.level = null;
-    this.state = this.IDLE;
+    this.state = this.NEW_GAME;
 
     this.stage = new PIXI.Container();
 
@@ -377,31 +377,29 @@ function LevelScreen()
     this.stage.addChild(this.goMarker.sprite);
 }
 
-LevelScreen.prototype.startGame = function()
-{
-    if (this.state !== this.IDLE) return;
-
-    player = new Player();
-    player.sprite.x = 250;
-    player.sprite.y = 200;
-    this.player = player;
-
-    /* Generate the level */
-    level = LevelGenerator.generate(0);
-    this.setLevel(level);
-    this.state = this.PLAYING;
-}
-
 LevelScreen.prototype.update = function(dt)
 {
     switch(this.state) {
+    case this.NEW_GAME:
+	// Generate a new level and player character
+	player = new Player();
+	player.sprite.x = 250;
+	player.sprite.y = 200;
+	this.player = player;
+	// Generate the first level
+	level = LevelGenerator.generate(0);
+	this.setLevel(level);
+	// Start playing it immediately
+	this.state = this.PLAYING;
+	break;
+
     case this.PLAYING:
 	if (this.level.state === this.level.FINISHED) {
 	    // Proceed to the next level
 	    // ...
 	} else if (this.player.dead) {
-	    // Show the game over screen
-	    console.log("GAME OVER");
+	    // This triggers the game state machine to advance to the game
+	    // over screen.
 	    this.state = this.GAME_OVER;
 	} else {
 	    if (this.level) this.level.update(dt);
@@ -421,7 +419,9 @@ LevelScreen.prototype.update = function(dt)
 
 LevelScreen.prototype.render = function()
 {
-    renderer.render(this.stage);
+    if (this.level) {
+	renderer.render(this.stage);
+    }
 }
 
 LevelScreen.prototype.setLevel = function(level)

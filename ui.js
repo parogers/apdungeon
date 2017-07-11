@@ -69,6 +69,7 @@ function HealthUI()
     this.sprite = new PIXI.Container();
     this.hearts = [];
     this.fullHeart = getFrame(UI, "full_heart");
+    this.halfHeart = getFrame(UI, "half_heart");
     this.emptyHeart = getFrame(UI, "empty_heart");
 
     for (var n = 0; n < 3; n++) {
@@ -102,20 +103,24 @@ HealthUI.prototype.removeHeart = function()
 HealthUI.prototype.update = function(dt)
 {
     // Add hearts to match the player's max health
-    while (this.hearts.length < player.maxHealth) {
+    while (this.hearts.length < Math.floor(player.maxHealth/2)) {
 	this.addHeart();
     }
     // Remove hearts to match the player's max health
-    while (this.hearts.length > player.maxHealth) {
+    while (this.hearts.length > Math.floor(player.maxHealth/2)) {
 	this.removeHeart();
     }
     // Synchronize the hearts to reflect the player's health
     for (var n = 0; n < this.hearts.length; n++) {
-	if (n < player.health) {
-	    this.hearts[n].texture = this.fullHeart;
+	var img = null;
+	if (n < Math.floor(player.health/2)) {
+	    img = this.fullHeart;
+	} else if (n < Math.floor((player.health+1)/2)) {
+	    img = this.halfHeart;
 	} else {
-	    this.hearts[n].texture = this.emptyHeart;
+	    img = this.emptyHeart;
 	}
+	this.hearts[n].texture = img;
     }
 }
 

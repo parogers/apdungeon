@@ -37,7 +37,7 @@ var GOBLIN_GRAVITY = 1000;
  * quickly approaches to attack when the player's back is turned */
 function Goblin(state)
 {
-    this.name = "Hop Goblin";
+    this.name = "Goblin";
     this.idleFrame = getFrame(ENEMIES, "goblin_south_1");
     this.frames = getFrames(ENEMIES, "goblin_south_2", "goblin_south_3");
     this.speed = 80;
@@ -64,7 +64,7 @@ function Goblin(state)
     // The sprite container holding the monster and splash sprite
     this.sprite = new PIXI.Container();
     // The actual goblin sprite
-    this.goblinSprite = new PIXI.Sprite();
+    this.goblinSprite = new PIXI.Sprite(this.frames[0]);
     this.goblinSprite.scale.set(SCALE);
     this.goblinSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.goblinSprite);
@@ -297,5 +297,5 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 
 Goblin.prototype.handlePlayerCollision = function()
 {
-    player.takeDamage(1, this);
+    player.takeDamage(2, this);
 }

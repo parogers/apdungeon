@@ -32,7 +32,7 @@ var SKEL_WARRIOR_DEAD = 6;
  * quickly approaches to attack when the player's back is turned */
 function SkelWarrior(state)
 {
-    this.name = "Skeleton Warrior";
+    this.name = "Skeleton";
     this.idleFrame = getFrame(ENEMIES, "skeleton_warrior_south_1");
     this.frames = getFrames(
 	ENEMIES, "skeleton_warrior_south_2", "skeleton_warrior_south_3");
@@ -46,12 +46,12 @@ function SkelWarrior(state)
     this.timer = null;
     this.counter = 0;
     // The sprite container holding the monster and splash sprite
-    this.sprite = new PIXI.Container();
+    this.sprite = new PIXI.Container(this.frames[0]);
     // The actual goblin sprite
-    this.goblinSprite = new PIXI.Sprite();
-    this.goblinSprite.scale.set(SCALE);
-    this.goblinSprite.anchor.set(0.5, 6.5/8);
-    this.sprite.addChild(this.goblinSprite);
+    this.monsterSprite = new PIXI.Sprite();
+    this.monsterSprite.scale.set(SCALE);
+    this.monsterSprite.anchor.set(0.5, 6.5/8);
+    this.sprite.addChild(this.monsterSprite);
     // Make the splash/water sprite
     this.waterSprite = createSplashSprite();
     this.waterSprite.y = -0.5*SCALE;
@@ -155,7 +155,7 @@ SkelWarrior.prototype.updateAttacking = function(dt)
 	}
     }
     this.frame += 4*dt;
-    this.goblinSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+    this.monsterSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
 
 SkelWarrior.prototype.updateApproach = function(dt)
@@ -232,7 +232,7 @@ SkelWarrior.prototype.updateApproach = function(dt)
 	this.waterSprite.visible = tile.water;
     }
     this.frame += 4*dt;
-    this.goblinSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+    this.monsterSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
 
 SkelWarrior.prototype.updateHurt = function(dt)
@@ -282,5 +282,5 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 
 SkelWarrior.prototype.handlePlayerCollision = function()
 {
-    player.takeDamage(1, this);
+    player.takeDamage(2, this);
 }

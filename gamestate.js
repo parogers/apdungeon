@@ -28,13 +28,15 @@ function GameState()
     // Showing the title screen - waiting for player to start
     this.TITLE_SCREEN = 2;
     // Playing through a level
-    this.LEVEL_SCREEN = 3;
+    this.PLAYING_GAME = 3;
     // Showing the "next level" transition screen
     this.NEXT_SCREEN = 4;
     // Showing the game over screen
     this.GAME_OVER = 5;
+    // Starting a new game
+    this.NEW_GAME = 6;
 
-    this.state = this.LEVEL_SCREEN;
+    this.state = this.TITLE_SCREEN;
     this.screen = null;
 }
 
@@ -48,13 +50,28 @@ GameState.prototype.update = function(dt)
 
     switch(this.state) {
     case this.TITLE_SCREEN:
+	this.state = this.NEW_GAME;
 	break;
 
-    case this.LEVEL_SCREEN:
+    case this.NEW_GAME:
+	// Start a new game
+	this.screen = new LevelScreen();
+	this.state = this.PLAYING_GAME;
+	break;
+
+    case this.PLAYING_GAME:
 	// Wait until a game over happens
 	if (this.screen.state === this.screen.GAME_OVER) {
 	    // Transition to the game over screen
-	    
+	    this.screen = new GameOverScreen(this.screen);
+	    this.state = this.GAME_OVER;
+	}
+	break;
+
+    case this.GAME_OVER:
+	// Wait until the player is finished with the game over screen
+	if (this.screen.state === this.screen.DONE) {
+	    this.state = this.NEW_GAME;
 	}
 	break;
     }

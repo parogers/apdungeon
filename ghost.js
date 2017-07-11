@@ -24,7 +24,7 @@ var GHOST_DEAD = 3;
 
 function Ghost(state)
 {
-    this.name = "Spooker";
+    this.name = "Spectre";
     this.frames = getFrames(ENEMIES, "ghost_south_1", "ghost_south_2");
     this.speed = 80;
     this.health = 3;
@@ -40,7 +40,7 @@ function Ghost(state)
     this.sprite = new PIXI.Container();
     this.sprite.alpha = 0.75;
     // The actual goblin sprite
-    this.ghostSprite = new PIXI.Sprite();
+    this.ghostSprite = new PIXI.Sprite(this.frames[0]);
     this.ghostSprite.scale.set(SCALE);
     this.ghostSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.ghostSprite);
@@ -144,5 +144,5 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
 
 Ghost.prototype.handlePlayerCollision = function()
 {
-    player.takeDamage(1, this);
+    player.takeDamage(4, this);
 }

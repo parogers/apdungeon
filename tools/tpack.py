@@ -31,6 +31,10 @@ FRAME_TMP = """"%(name)s" : {
 
 def gen_grid(start_pos, tile_size, desc, padding=1):
     lst = []
+
+    if (isinstance(desc, str)):
+        desc = ((desc,),)
+
     rows = len(desc)
     y = start_pos[1]
     for row in range(rows):
@@ -329,7 +333,7 @@ desc = [
 frames += gen_grid((1,29), (5, 4), desc)
 
 desc = [
-    ["0","1","2","3","4","5","6","7","8","9","black"],
+    ["0","1","2","3","4","5","6","7","8","9","black","*"],
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!-+",
 ]
 frames += gen_grid((1,38), (3, 4), desc)
@@ -338,6 +342,11 @@ desc = [
     ("go1", "go2"),
 ]
 frames += gen_grid((86,1), (20, 10), desc)
+frames += gen_grid((1, 48), (42, 5), "game-over-text")
+frames += gen_grid((46, 48), (48, 5), "title-text")
+frames += gen_grid((97, 48), (20, 5), "demo-text")
+frames += gen_grid((118, 48), (4, 5), "left-brackety")
+frames += gen_grid((123, 48), (4, 5), "right-brackety")
 
 srcpath = "UI.png"
 img = PIL.Image.open(srcpath)

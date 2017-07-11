@@ -194,11 +194,6 @@ function setup()
     //stage.removeChild(progress.sprite);
     stage.children = [];
 
-    var screen = new LevelScreen();
-    screen.startGame();
-
-    gamestate.screen = screen;
-
     music = sounds[GAME_MUSIC];
     music.loop = true;
     music.volume = 0.5;

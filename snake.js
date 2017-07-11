@@ -28,7 +28,7 @@ var SNAKE_DEAD = 3;
 
 function Snake(state)
 {
-    this.name = "Bitey Snake";
+    this.name = "Snake";
     this.frames = getFrames(ENEMIES, "snake_south_1", "snake_south_2");
     this.speed = 80;
     this.health = 3;
@@ -39,7 +39,7 @@ function Snake(state)
     // The sprite container holding the snake and splash sprite
     this.sprite = new PIXI.Container();
     // The actual snake sprite
-    this.snakeSprite = new PIXI.Sprite();
+    this.snakeSprite = new PIXI.Sprite(this.frames[0]);
     this.snakeSprite.scale.set(SCALE);
     this.snakeSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.snakeSprite);
@@ -195,7 +195,7 @@ Snake.prototype.handlePlayerCollision = function()
 function Rat()
 {
     Snake.call(this);
-    this.name = "Lowly Rat";
+    this.name = "Rat";
     this.frames = getFrames(ENEMIES, "rat_south_1", "rat_south_2");
     this.health = 1;
     this.speed = 100;
@@ -205,6 +205,7 @@ function Rat()
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_ATTACKING;
+    this.snakeSprite.texture = this.frames[0];
     this.waterSprite.y = -0.9*SCALE;
 }
 
@@ -217,7 +218,7 @@ Rat.prototype = Object.create(Snake.prototype);
 function Scorpion()
 {
     Snake.call(this);
-    this.name = "Deadly Scorpion";
+    this.name = "Scorpion";
     this.frames = getFrames(ENEMIES, "scorpion_south_1", "scorpion_south_2");
     this.health = 4;
     this.speed = 50;
@@ -227,6 +228,7 @@ function Scorpion()
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_ATTACKING;
+    this.snakeSprite.texture = this.frames[0];
     this.waterSprite.y = -0.85*SCALE;
 }
 

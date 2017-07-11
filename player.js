@@ -33,8 +33,8 @@ function Player()
     this.lungeFrame = null;
     this.count = 0;
     this.facing = 1;
-    // Player status
-    this.maxHealth = 6;
+    // Player health in half hearts. This should always be a multiple of two
+    this.maxHealth = 10;
     this.health = this.maxHealth;
     this.maxSpeed = 200; // pixels/second
     // Inventory stuff
@@ -56,6 +56,13 @@ function Player()
     // constructor used to instantiate the monster:
     //     {count: ZZZ, klass: ZZZ}
     this.kills = {};
+
+    /*this.handleMonsterKilled(new Snake());
+    this.handleMonsterKilled(new Goblin());
+    this.handleMonsterKilled(new Rat());
+    this.handleMonsterKilled(new Scorpion());
+    this.handleMonsterKilled(new SkelWarrior());
+    this.handleMonsterKilled(new Ghost());*/
 
     //this.weapon = Item.NONE; // current weapon
     // Define the hitbox
@@ -129,6 +136,10 @@ Player.prototype.update = function(dt)
 	this.weaponSlot = null;
 	this.updatePlayerAppearance();
 	this.spriteChar.tint = NO_TINT;
+	// Bring the player corpse to the front (so it's rendered very 
+	// clearly overtop any other junk in the scene)
+	level.stage.removeChild(this.sprite);
+	level.stage.addChild(this.sprite);
 	return;
     }
 
@@ -217,6 +228,8 @@ Player.prototype.update = function(dt)
     } else {
 	this.waterSprite.visible = false;
     }
+
+    //if (controls.primary && !controls.lastPrimary) this.health = 0;
 
     // Handle attacking
     if (this.weaponSlot) 
@@ -332,14 +345,36 @@ Player.prototype.healDamage = function(amt)
 
 Player.prototype.takeDamage = function(amt, src)
 {
-    if (this.damageTimer <= 0) {
+    if (this.damageTimer <= 0) 
+    {
+	// Adjust the damage parameters based on our armour
+	var cooldown = this.damageCooldown;
+	var knockedVel = 500;
+	var knockedTimer = 0.1;
+
+	if (this.armour === Item.LEATHER_ARMOUR) {
+	    cooldown = this.damageCooldown*1.25;
+	    knockedVel = 450;
+	    knockedTimer = 0.08;
+	    if (randint(1, 4) === 1) {
+		if (amt > 1) amt--;
+	    }
+	} else if (this.armour === Item.STEEL_ARMOUR) {
+	    cooldown = this.damageCooldown*1.5;
+	    knockedVel = 400;
+	    knockedTimer = 0.05;
+	    if (randint(1, 2) === 1) {
+		amt--;
+	    }
+	}
+
 	// Take damage and have the player flash red for a moment
 	this.health -= amt;
 	this.damageTimer = this.damageCooldown;
 	this.spriteChar.tint = DAMAGE_TINT;
 	// Knock the player back a bit too
-	this.knocked = 500*Math.sign(this.sprite.x - src.sprite.x);
-	this.knockedTimer = 0.1;
+	this.knocked = knockedVel*Math.sign(this.sprite.x - src.sprite.x);
+	this.knockedTimer = knockedTimer;
     }
 }
 
@@ -358,7 +393,7 @@ Player.prototype.swapWeapons = function()
 Player.prototype.handleMonsterKilled = function(monster)
 {
     if (this.kills[monster.name] === undefined) {
-	this.kills[monster.name] = {count: 0, klass: monster.constructor};
+	this.kills[monster.name] = {count: 0, img: monster.frames[0]};
     }
     this.kills[monster.name].count++;
 }
@@ -393,7 +428,7 @@ Player.prototype.handleTakeItem = function(item)
 	break;
 
     case Item.SMALL_HEALTH:
-	this.healDamage(1);
+	this.healDamage(2);
 	break;
 
     case Item.LARGE_HEALTH:
