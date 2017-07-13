@@ -333,7 +333,12 @@ desc = [
 frames += gen_grid((1,29), (5, 4), desc)
 
 desc = [
-    ["0","1","2","3","4","5","6","7","8","9","black","*"],
+    ("black", "brown1", "brown2", "brown3"),
+]
+frames += gen_grid((1,34), (3, 3), desc)
+
+desc = [
+    ["0","1","2","3","4","5","6","7","8","9","-","*"],
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!-+",
 ]
 frames += gen_grid((1,38), (3, 4), desc)
@@ -344,9 +349,7 @@ desc = [
 frames += gen_grid((86,1), (20, 10), desc)
 frames += gen_grid((1, 48), (42, 5), "game-over-text")
 frames += gen_grid((46, 48), (48, 5), "title-text")
-frames += gen_grid((97, 48), (20, 5), "demo-text")
-frames += gen_grid((118, 48), (4, 5), "left-brackety")
-frames += gen_grid((123, 48), (4, 5), "right-brackety")
+frames += gen_grid((97, 48), (30, 5), "demo-text")
 
 srcpath = "UI.png"
 img = PIL.Image.open(srcpath)

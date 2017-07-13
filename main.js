@@ -197,7 +197,6 @@ function setup()
     music = sounds[GAME_MUSIC];
     music.loop = true;
     music.volume = 0.5;
-    music.play();
 
     requestAnimFrame(gameLoop)
 }

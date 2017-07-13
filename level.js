@@ -61,7 +61,7 @@ function compareDepth(s1, s2) {
     return (z1>z2) - (z2>z1);
 }
 
-function Level(bg, levelNum)
+function Level(bg)
 {
     // The various level states:
     // Player is within an active arena
@@ -79,7 +79,6 @@ function Level(bg, levelNum)
     this.player = null;
     this.stage = null;
     this.state = this.NEXT_ARENA;
-    this.levelNum = levelNum;
     // The background sprite (TiledBackground)
     this.bg = bg;
     this.bg.zpos = BACKGROUND_POS;
@@ -391,6 +390,9 @@ LevelScreen.prototype.update = function(dt)
 	this.setLevel(level);
 	// Start playing it immediately
 	this.state = this.PLAYING;
+	// Start playing music (fade in)
+	music.play();
+	music.fadeIn(1);
 	break;
 
     case this.PLAYING:

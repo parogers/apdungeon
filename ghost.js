@@ -22,10 +22,12 @@ var GHOST_ATTACKING = 1;
 var GHOST_HURT = 2;
 var GHOST_DEAD = 3;
 
+var GHOST_FRAMES = ["ghost_south_1", "ghost_south_2"];
+
 function Ghost(state)
 {
     this.name = "Spectre";
-    this.frames = getFrames(ENEMIES, "ghost_south_1", "ghost_south_2");
+    this.frames = getFrames(ENEMIES, GHOST_FRAMES);
     this.speed = 80;
     this.health = 3;
     this.frame = 0;

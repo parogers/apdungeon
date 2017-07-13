@@ -97,13 +97,12 @@ function getFrame(res, name)
     return getTextures(res)[name];
 }
 
-function getFrames()
+function getFrames(res, names)
 {
     var frames = [];
-    var res = arguments[0];
-    for (var n = 1; n < arguments.length; n++) {
-	var frame = getTextures(res)[arguments[n]];
-	if (!frame) console.log("ERROR: missing frame " + arguments[n]);
+    for (var n = 0; n < names.length; n++) {
+	var frame = getTextures(res)[names[n]];
+	if (!frame) console.log("ERROR: missing frame " + names[n]);
 	frames.push(frame);
     }
     return frames;
@@ -117,3 +116,62 @@ function updateDict(dict, other)
     }
 }
 
+/************/
+/* Sequence */
+/************/
+
+function Sequence()
+{
+    var args = arguments[0];
+    for (key in args) {
+	this[key] = args[key];
+    }
+    this.done = false;
+    this.numSteps = arguments.length-1;
+    this.labels = {};
+    for (var n = 1; n < arguments.length; n++) {
+	// The sequence contains functions to call, and embedded strings to
+	// use as labels. (for looping, branching, etc)
+	if (arguments[n].constructor === String) {
+	    this.labels[arguments[n]] = n-1;
+	} else {
+	    // Note functions are assigned to this object, so that calling
+	    // them this way gives us access to 'this' inside.
+	    var name = "func_" + (n-1);
+	    this[name] = arguments[n];
+	}
+    }
+    // The current state. This advances incrementally by default, and 
+    // occasionally jumping randomly to another state.
+    this.state = 0;
+    // Delay before advancing the state
+    this.delay = 0;
+    this.NEXT = true;
+}
+
+Sequence.prototype.update = function(dt)
+{
+    if (this.done) return;
+    if (this.delay > 0) {
+	this.delay -= dt;
+	return;
+    }
+    // Check if the current state is a function (or a label)
+    var fname = "func_" + this.state;
+    if (this[fname]) {
+	var ret = this[fname](dt);
+	if (ret === this.NEXT) {
+	    // Advance to the next state
+	    this.state++;
+	} else if (ret) {
+	    // Jump to another state
+	    this.state = this.labels[ret];
+	}
+    } else {
+	// Skip over the label
+	this.state++;
+    }
+    if (this.state >= this.numSteps) {
+	this.done = true;
+    }
+}

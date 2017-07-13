@@ -154,7 +154,7 @@ var LevelGenerator = (function() {
 	var bg = new TiledBackground(
 	    TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
 	    getTextures(MAPTILES), grid);
-	var level = new Level(bg, levelNum);
+	var level = new Level(bg);
 
 	// Now add some random gates throughout the level
 	var pos = 0;
@@ -335,5 +335,15 @@ var LevelGenerator = (function() {
 
 	return level;
     }
+
+    exports.generateEmpty = function(rows, cols, value)
+    {
+	var grid = createGrid(rows, cols, value);
+	var bg = new TiledBackground(
+	    TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
+	    getTextures(MAPTILES), grid);
+	return new Level(bg);
+    }
+
     return exports;
 })();

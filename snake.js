@@ -26,10 +26,12 @@ var SNAKE_ATTACKING = 1;
 var SNAKE_HURT = 2;
 var SNAKE_DEAD = 3;
 
+var SNAKE_FRAMES = ["snake_south_1", "snake_south_2"];
+
 function Snake(state)
 {
     this.name = "Snake";
-    this.frames = getFrames(ENEMIES, "snake_south_1", "snake_south_2");
+    this.frames = getFrames(ENEMIES, SNAKE_FRAMES);
     this.speed = 80;
     this.health = 3;
     this.frame = 0;
@@ -192,11 +194,13 @@ Snake.prototype.handlePlayerCollision = function()
 /* Rat */
 /*******/
 
+var RAT_FRAMES = ["rat_south_1", "rat_south_2"];
+
 function Rat()
 {
     Snake.call(this);
     this.name = "Rat";
-    this.frames = getFrames(ENEMIES, "rat_south_1", "rat_south_2");
+    this.frames = getFrames(ENEMIES, RAT_FRAMES);
     this.health = 1;
     this.speed = 100;
     this.frame = 0;
@@ -215,11 +219,13 @@ Rat.prototype = Object.create(Snake.prototype);
 /* Scorpion */
 /************/
 
+var SCORPION_FRAMES = ["scorpion_south_1", "scorpion_south_2"];
+
 function Scorpion()
 {
     Snake.call(this);
     this.name = "Scorpion";
-    this.frames = getFrames(ENEMIES, "scorpion_south_1", "scorpion_south_2");
+    this.frames = getFrames(ENEMIES, SCORPION_FRAMES);
     this.health = 4;
     this.speed = 50;
     this.frame = 0;

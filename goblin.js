@@ -33,13 +33,15 @@ var GOBLIN_DEAD = 6;
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
 var GOBLIN_GRAVITY = 1000;
 
+var GOBLIN_FRAMES = ["goblin_south_2", "goblin_south_3"];
+
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
 function Goblin(state)
 {
     this.name = "Goblin";
     this.idleFrame = getFrame(ENEMIES, "goblin_south_1");
-    this.frames = getFrames(ENEMIES, "goblin_south_2", "goblin_south_3");
+    this.frames = getFrames(ENEMIES, GOBLIN_FRAMES);
     this.speed = 80;
     this.health = 3;
     this.frame = 0;

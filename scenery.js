@@ -17,10 +17,10 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-function Scenery()
+function Scenery(frames)
 {
-    this.frames = Array.prototype.slice.call(arguments);
-    this.sprite = new PIXI.Sprite(arguments[0]);
+    this.frames = frames;
+    this.sprite = new PIXI.Sprite(frames[0]);
     this.sprite.anchor.set(0.5, 1);
     this.sprite.scale.set(SCALE);
     this.timer = 0;
@@ -28,6 +28,11 @@ function Scenery()
     this.vely = 0;
     this.fps = 5;
     this.frame = 0;
+}
+
+Scenery.prototype.faceDirection = function(dir)
+{
+    this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dir);
 }
 
 Scenery.prototype.update = function(dt)

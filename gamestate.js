@@ -25,18 +25,20 @@ function GameState()
 {
     // Loading assets and showing the loading screen
     this.LOADING = 1;
+    // Show the title screen
+    this.SHOW_TITLE_SCREEN = 2;
     // Showing the title screen - waiting for player to start
-    this.TITLE_SCREEN = 2;
+    this.TITLE_SCREEN = 3;
     // Playing through a level
-    this.PLAYING_GAME = 3;
+    this.PLAYING_GAME = 4;
     // Showing the "next level" transition screen
-    this.NEXT_SCREEN = 4;
+    this.NEXT_SCREEN = 5;
     // Showing the game over screen
-    this.GAME_OVER = 5;
+    this.GAME_OVER = 6;
     // Starting a new game
-    this.NEW_GAME = 6;
+    this.NEW_GAME = 7;
 
-    this.state = this.TITLE_SCREEN;
+    this.state = this.SHOW_TITLE_SCREEN;
     this.screen = null;
 }
 
@@ -49,8 +51,16 @@ GameState.prototype.update = function(dt)
     }
 
     switch(this.state) {
+    case this.SHOW_TITLE_SCREEN:
+	//this.state = this.NEW_GAME;
+	this.screen = new TitleScreen();
+	this.state = this.TITLE_SCREEN;
+	break;
+
     case this.TITLE_SCREEN:
-	this.state = this.NEW_GAME;
+	if (this.screen.state === this.screen.NEW_GAME) {
+	    this.state = this.NEW_GAME;
+	}
 	break;
 
     case this.NEW_GAME:

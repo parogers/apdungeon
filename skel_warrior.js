@@ -28,14 +28,16 @@ var SKEL_WARRIOR_POST_ATTACK = 4;
 var SKEL_WARRIOR_HURT = 5;
 var SKEL_WARRIOR_DEAD = 6;
 
+var SKEL_WARRIOR_FRAMES = ["skeleton_warrior_south_2", 
+			   "skeleton_warrior_south_3"];
+
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
 function SkelWarrior(state)
 {
     this.name = "Skeleton";
     this.idleFrame = getFrame(ENEMIES, "skeleton_warrior_south_1");
-    this.frames = getFrames(
-	ENEMIES, "skeleton_warrior_south_2", "skeleton_warrior_south_3");
+    this.frames = getFrames(ENEMIES, SKEL_WARRIOR_FRAMES);
     this.speed = 100;
     this.health = 3;
     this.frame = 0;

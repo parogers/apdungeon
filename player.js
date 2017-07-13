@@ -57,6 +57,10 @@ function Player()
     //     {count: ZZZ, klass: ZZZ}
     this.kills = {};
 
+    // Whether the player movement is restricted by the camera position.
+    // Disabled during cut scenes and whatnot.
+    this.cameraMovement = true;
+
     /*this.handleMonsterKilled(new Snake());
     this.handleMonsterKilled(new Goblin());
     this.handleMonsterKilled(new Rat());
@@ -138,8 +142,8 @@ Player.prototype.update = function(dt)
 	this.spriteChar.tint = NO_TINT;
 	// Bring the player corpse to the front (so it's rendered very 
 	// clearly overtop any other junk in the scene)
-	level.stage.removeChild(this.sprite);
-	level.stage.addChild(this.sprite);
+	this.level.stage.removeChild(this.sprite);
+	this.level.stage.addChild(this.sprite);
 	return;
     }
 
@@ -198,12 +202,13 @@ Player.prototype.update = function(dt)
     // Handle left/right movement
     if (this.velx) {
 	var x = this.sprite.x + this.velx*dt;
-	var left = level.bg.getTileAt(x-w/2, this.sprite.y);
-	var right = level.bg.getTileAt(x+w/2, this.sprite.y);
-	// Keep the player visible to the camera
-	if (!left.solid && !right.solid && 
-	    x-10 >= level.camera.x && 
-	    x+10 <= level.camera.x + level.camera.width) {
+	var left = this.level.bg.getTileAt(x-w/2, this.sprite.y);
+	var right = this.level.bg.getTileAt(x+w/2, this.sprite.y);
+	// Keep the player visible to the camera (unless camera mode disabled)
+	if (!left.solid && !right.solid && (
+	    !this.cameraMovement || (
+		x-10 >= this.level.camera.x && 
+		x+10 <= this.level.camera.x + this.level.camera.width))) {
 	    this.sprite.x = x;
 	} else {
 	    this.velx = 0;
@@ -211,8 +216,8 @@ Player.prototype.update = function(dt)
     }
     if (this.vely) {
 	var y = this.sprite.y + this.vely*dt;
-	var left = level.bg.getTileAt(this.sprite.x-w/2, y);
-	var right = level.bg.getTileAt(this.sprite.x+w/2, y);
+	var left = this.level.bg.getTileAt(this.sprite.x-w/2, y);
+	var right = this.level.bg.getTileAt(this.sprite.x+w/2, y);
 	if (!left.solid && !right.solid) {
 	    this.sprite.y = y;
 	} else {
@@ -221,7 +226,7 @@ Player.prototype.update = function(dt)
     }
 
     // Make a splashy sound when we enter water
-    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.water) {
 	if (!this.waterSprite.visible) sounds[SPLASH_SND].play();
 	this.waterSprite.visible = true;
@@ -252,7 +257,7 @@ Player.prototype.update = function(dt)
     }
 
     // Check for collisions with other things
-    var hit = level.checkHitMany(
+    var hit = this.level.checkHitMany(
 	this.sprite.x, this.sprite.y, 
 	this.hitbox, this);
     for (var n = 0; n < hit.length; n++) {
@@ -270,15 +275,15 @@ Player.prototype.setCharFrames = function(res, name)
 {
     this.frames = getFrames(
 	res, 
-	name + "_south_1", 
-	name + "_south_2", 
-	name + "_south_3");
+	[name + "_south_1", 
+	 name + "_south_2", 
+	 name + "_south_3"]);
     this.lungeFrame = getFrame(res, name + "_lunge_1");
     this.dyingFrames = getFrames(
 	res, 
-	"melee1_dying_1", 
-	"melee1_dying_2", 
-	"melee1_dying_3");
+	["melee1_dying_1", 
+	 "melee1_dying_2", 
+	 "melee1_dying_3"]);
 }
 
 Player.prototype.setArmour = function(item)

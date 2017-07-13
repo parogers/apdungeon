@@ -41,8 +41,8 @@ Credits
   License: Public Domain
   URL: http://opengameart.org/content/8x8-rogue-like-charenemiestiles
 
-* Music "A Journey Awaits2.ogg"
-  Author: pbondoer
+* Music: "A Journey Awaits"
+  Author: Pierre Bondoerffer (@pbondoer)
   License: CC-BY-SA 3.0
   URL: https://opengameart.org/content/a-journey-awaits
 
