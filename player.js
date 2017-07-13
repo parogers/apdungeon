@@ -373,6 +373,8 @@ Player.prototype.takeDamage = function(amt, src)
 	    }
 	}
 
+	sounds[HIT_SND].play();
+
 	// Take damage and have the player flash red for a moment
 	this.health -= amt;
 	this.damageTimer = this.damageCooldown;

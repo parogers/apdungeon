@@ -390,8 +390,9 @@ LevelScreen.prototype.update = function(dt)
 	this.setLevel(level);
 	// Start playing it immediately
 	this.state = this.PLAYING;
-	// Start playing music (fade in)
-	music.play();
+	// Start playing music (fade in). We call restart, which stops the
+	// previously play (if any), rewinds and starts again.
+	music.restart();
 	music.fadeIn(1);
 	break;
 
@@ -401,7 +402,9 @@ LevelScreen.prototype.update = function(dt)
 	    // ...
 	} else if (this.player.dead) {
 	    // This triggers the game state machine to advance to the game
-	    // over screen.
+	    // over screen. Note there is no stop for sound effects, only 
+	    // a pause function. (TODO - why?)
+	    music.pause();
 	    this.state = this.GAME_OVER;
 	} else {
 	    if (this.level) this.level.update(dt);

@@ -235,7 +235,7 @@ var LevelGenerator = (function() {
 		    var ypos = randUniform(0, level.camera.height);
 		    var style = randint(1, 5);
 
-		    if (style === 1 && klass !== Ghost) {
+		    if (true && klass !== Ghost) {
 			var xpos = randint(arena.startx+20, arena.endx-20);
 			spawn = new DropSpawn(new klass(), xpos, ypos);
 		    } else if (style === 2 && gates.length > 0) {

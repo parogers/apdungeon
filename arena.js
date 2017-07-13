@@ -254,10 +254,9 @@ DropSpawn.prototype.activate = function()
 	console.log("WARNING: can't spawn monster near " + this.ypos);
 	this.monster.dead = true;
 	return;
-    } else {
-	this.ypos = y;
-	this.shadow.sprite.y = y;
     }
+    this.ypos = y;
+    this.shadow.sprite.y = y;
     level.addThing(this.shadow);
     this.falling.sprite.zpos = FRONT_POS;
     this.falling.sprite.x = this.xpos;

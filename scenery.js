@@ -19,6 +19,7 @@
 
 function Scenery(frames)
 {
+    if (!(frames instanceof Array)) frames = [frames];
     this.frames = frames;
     this.sprite = new PIXI.Sprite(frames[0]);
     this.sprite.anchor.set(0.5, 1);

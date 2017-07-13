@@ -163,6 +163,7 @@ function graphicsLoaded()
 	ARROW_DING_SND,
 	SPLASH_SND,
 	GO_SND,
+	HIT_SND,
 	COIN_SND,
 	GATE_SND,
 	DROP_SND,
