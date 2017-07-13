@@ -235,7 +235,7 @@ var LevelGenerator = (function() {
 		    var ypos = randUniform(0, level.camera.height);
 		    var style = randint(1, 5);
 
-		    if (true && klass !== Ghost) {
+		    if (style === 1 && klass !== Ghost) {
 			var xpos = randint(arena.startx+20, arena.endx-20);
 			spawn = new DropSpawn(new klass(), xpos, ypos);
 		    } else if (style === 2 && gates.length > 0) {
@@ -254,7 +254,7 @@ var LevelGenerator = (function() {
 	    {
 		// Find some clear space to add it
 		var xpos = randint(arena.startx+30, arena.endx-30);
-		var ypos = randint(10, level.getHeight()-10);
+		var ypos = randint(10, level.getHeight()-30);
 
 		ypos = level.findClearSpace(xpos, ypos);
 		if (ypos !== null) {
@@ -331,6 +331,7 @@ var LevelGenerator = (function() {
 	door.sprite.x = level.getWidth()-120;
 	door.sprite.y = 64;
 	level.exitDoor = door;
+	//door.startOpening();
 	level.addThing(door);
 
 	return level;

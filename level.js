@@ -362,6 +362,7 @@ function LevelScreen()
     this.NEXT_LEVEL = 3;
     this.GAME_OVER = 4;
 
+    this.levelNum = 0;
     this.level = null;
     this.state = this.NEW_GAME;
 
@@ -384,9 +385,10 @@ LevelScreen.prototype.update = function(dt)
 	player = new Player();
 	player.sprite.x = 250;
 	player.sprite.y = 200;
+	this.levelNum = 0;
 	this.player = player;
 	// Generate the first level
-	level = LevelGenerator.generate(0);
+	level = LevelGenerator.generate(this.levelNum);
 	this.setLevel(level);
 	// Start playing it immediately
 	this.state = this.PLAYING;
@@ -399,7 +401,8 @@ LevelScreen.prototype.update = function(dt)
     case this.PLAYING:
 	if (this.level.state === this.level.FINISHED) {
 	    // Proceed to the next level
-	    // ...
+	    level = LevelGenerator.generate(++this.levelNum);
+	    this.setLevel(level);
 	} else if (this.player.dead) {
 	    // This triggers the game state machine to advance to the game
 	    // over screen. Note there is no stop for sound effects, only 
