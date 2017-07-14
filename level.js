@@ -141,14 +141,6 @@ Level.prototype.addArena = function(arena)
     });
 }
 
-/* Called by the exit Door when the player walks through to the next level */
-Level.prototype.triggerNextLevel = function()
-{
-    if (this.state === this.EXIT_OPEN) {
-	console.log("NEXT LEVEL");
-    }
-}
-
 // Called every frame to update the general level state
 Level.prototype.update = function(dt)
 {
@@ -401,6 +393,7 @@ LevelScreen.prototype.update = function(dt)
     case this.PLAYING:
 	if (this.level.state === this.level.FINISHED) {
 	    // Proceed to the next level
+	    console.log("NEXT LEVEL");
 	    level = LevelGenerator.generate(++this.levelNum);
 	    this.setLevel(level);
 	} else if (this.player.dead) {
