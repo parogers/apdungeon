@@ -64,7 +64,7 @@ function loaded()
     var div = document.getElementById("canvas_area");
     div.focus();
 
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST    
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
     renderer = PIXI.autoDetectRenderer(550, 400);
     div.appendChild(renderer.view);
@@ -110,7 +110,7 @@ function loaded()
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
- * calls 'update' on all things in the level, plus arena controllers, etc. 
+ * calls 'update' on all things in the level, plus arena controllers, etc.
  * This could be better implemented as an event loop, where things queue
  * up events for callback later, issue broadcast events etc. This has the
  * benefit where entities that don't need to do anything (eg blood spatter),
