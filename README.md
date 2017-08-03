@@ -8,11 +8,11 @@ Source
 
 Source files can be found on the github project page:
 
-       https://github.com/parogers/apdungeon
+       <https://github.com/parogers/apdungeon>
 
 High-level analysis and discussion of the code is here:
 
-	http://writtenwordinteractive.com/ap-dungeon
+       <http://writtenwordinteractive.com/ap-dungeon>
 
 Design
 ------
@@ -44,12 +44,12 @@ Credits
 * 2D graphics (items, monsters, map tilesets, etc):
   Author: Min/Kyle
   License: Public Domain
-  URL: http://opengameart.org/content/8x8-rogue-like-charenemiestiles
+  URL: <http://opengameart.org/content/8x8-rogue-like-charenemiestiles>
 
 * Music: "A Journey Awaits"
   Author: Pierre Bondoerffer (@pbondoer)
   License: CC-BY-SA 3.0
-  URL: https://opengameart.org/content/a-journey-awaits
+  URL: <https://opengameart.org/content/a-journey-awaits>
 
 License
 -------
