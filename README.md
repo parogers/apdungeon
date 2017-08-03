@@ -7,7 +7,12 @@ Source
 ------
 
 Source files can be found on the github project page:
+
        https://github.com/parogers/apdungeon
+
+High-level analysis and discussion of the code is here:
+
+	http://writtenwordinteractive.com/ap-dungeon
 
 Design
 ------
