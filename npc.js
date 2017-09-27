@@ -21,7 +21,7 @@ function NPC(img)
 {
     // Position of the hit box, relative to the sprite position
     this.hitbox = new Hitbox(0, 0, 5*SCALE, 5*SCALE);
-    var texture = getFrame(NPC_TILESET, img || "npc1_south_1");
+    var texture = getFrame(RES.NPC_TILESET, img || "npc1_south_1");
     this.sprite = new PIXI.Container();
     this.npcSprite = new PIXI.Sprite(texture);
     this.npcSprite.scale.set(SCALE);

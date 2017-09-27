@@ -40,8 +40,8 @@ var GOBLIN_FRAMES = ["goblin_south_2", "goblin_south_3"];
 function Goblin(state)
 {
     this.name = "Goblin";
-    this.idleFrame = getFrame(ENEMIES, "goblin_south_1");
-    this.frames = getFrames(ENEMIES, GOBLIN_FRAMES);
+    this.idleFrame = getFrame(RES.ENEMIES, "goblin_south_1");
+    this.frames = getFrames(RES.ENEMIES, GOBLIN_FRAMES);
     this.speed = 80;
     this.health = 3;
     this.frame = 0;
@@ -114,7 +114,7 @@ Goblin.prototype.update = function(dt)
 	this.updateHurt(dt);
 	break;
     case GOBLIN_DEAD:
-	level.removeThing(this);
+	this.level.removeThing(this);
 	break;
     }
 }
@@ -135,7 +135,7 @@ Goblin.prototype.updateJumping = function(dt)
 
     // Check if we can move where we want to
     var x = this.sprite.x + this.facing*this.jumpHorSpeed*dt;
-    var tile = level.bg.getTileAt(x, this.jumpStartY);
+    var tile = this.level.bg.getTileAt(x, this.jumpStartY);
     if (!tile.solid) {
 	this.sprite.x = x;
     }
@@ -173,7 +173,7 @@ Goblin.prototype.updateAttacking = function(dt)
     }
 
     // Check if we can move left/right
-    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+    var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
 	this.sprite.x += dx;
 	this.waterSprite.visible = tile.water;
@@ -181,7 +181,7 @@ Goblin.prototype.updateAttacking = function(dt)
 
     // Now check if it can move up/down. Doing this separately from the check
     // above means we can "slide" along walls and such.
-    var tile2 = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
+    var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile2.solid) {
 	// Go a bit faster if we're just moving up/down
 	if (tile.solid) this.sprite.y += 3*dy;
@@ -238,7 +238,7 @@ Goblin.prototype.updateApproach = function(dt)
 	dy = dt*30*Math.sign(dist);
     }
     // Check if we can move where we want to
-    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y+dy);
+    var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y+dy);
     if (!tile.solid) {
 	this.sprite.x += dx;
 	this.sprite.y += dy;
@@ -253,7 +253,7 @@ Goblin.prototype.updateHurt = function(dt)
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
 	var dx = this.knocked*dt;
-	var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+	var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
 	if (!tile.solid) {
 	    this.sprite.x += dx;
 	}
@@ -271,15 +271,16 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === GOBLIN_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	sounds[DEAD_SND].play();
+	getSound(RES.DEAD_SND).play();
 	this.state = GOBLIN_DEAD;
 	// Drop a reward
-	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
+	this.level.handleTreasureDrop(
+	    this.dropTable, this.sprite.x, this.sprite.y);
 	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
-	sounds[SNAKE_HURT_SND].play();
+	getSound(RES.SNAKE_HURT_SND).play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*300;
 	this.knockedTimer = 0.1;
 	this.state = GOBLIN_HURT;
@@ -287,12 +288,12 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 
     // Add some random blood, but only if we're not currently in water
     // (looks better this way)
-    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
 	var sprite = createBloodSpatter();
 	sprite.x = this.sprite.x;
 	sprite.y = this.sprite.y-1;
-	level.stage.addChild(sprite);
+	this.level.stage.addChild(sprite);
     }
     return true;
 }

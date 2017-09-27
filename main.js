@@ -17,47 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-MALE_MELEE = "media/rogue-like-8x8/Male-Melee.json"
-FEMALE_MELEE = "media/rogue-like-8x8/Girl-Melee.json"
-NPC_TILESET = "media/rogue-like-8x8/NPC.json"
-MAPTILES = "media/rogue-like-8x8/Tileset.json"
-ENEMIES = "media/rogue-like-8x8/Enemies.json"
-WEAPONS = "media/rogue-like-8x8/Weapons.json"
-GROUND_ITEMS = "media/rogue-like-8x8/GroundItems.json"
-UI = "media/rogue-like-8x8/UI.json"
-DRAGON = "media/rogue-like-8x8/Dragon.json"
-
-GAME_MUSIC = "media/music/A Journey Awaits2.ogg"
-ATTACK_SWORD_SND = "media/effects/attack_sword2.wav"
-HIT_SND = "media/effects/hit.wav"
-SNAKE_HURT_SND = "media/effects/snake_hurt.wav"
-DEAD_SND = "media/effects/dead.wav"
-SPLASH_SND = "media/effects/splash.wav"
-ARROW_DING_SND = "media/effects/arrow_ding.wav"
-GO_SND = "media/effects/go.wav"
-COIN_SND = "media/effects/coin.wav"
-GATE_SND = "media/effects/gate.wav"
-DROP_SND = "media/effects/drop.wav"
-POWERUP1_SND = "media/effects/powerup1.wav"
-POWERUP2_SND = "media/effects/powerup2.wav"
-POWERUP3_SND = "media/effects/powerup3.wav"
-POWERUP4_SND = "media/effects/powerup4.wav"
-CHEST_SND = "media/effects/chest_open.wav"
-
 SCALE = 5;
 
-TILE_WIDTH = 8;
-TILE_HEIGHT = 8;
-WALL_HEIGHT = 13;
-
-// Currently playing music
-var music = null;
-var tileset = new Tileset();
-var level = null;
-var renderer = null;
+var gamestate = null;
 var stage = null;
 var progress = null;
-var gamestate = null;
 
 function loaded()
 {
@@ -69,7 +33,7 @@ function loaded()
     PIXI.ticker.shared.autoStart = false;
     PIXI.ticker.shared.stop();
 
-    renderer = PIXI.autoDetectRenderer({
+    RES.renderer = PIXI.autoDetectRenderer({
 	width: 550, 
 	height: 400,
 //	antialias: true,
@@ -78,7 +42,7 @@ function loaded()
 //	clearBeforeRender: true
     });
     //renderer = new PIXI.CanvasRenderer(550, 400);
-    div.appendChild(renderer.view);
+    div.appendChild(getRenderer().view);
     stage = new PIXI.Container();
 
     progress = new ProgressBar(200, 20, "LOADING IMAGES...");
@@ -96,7 +60,7 @@ function loaded()
 		    " (" + (loader.progress|0) + "%)"); 
 	progress.update(loader.progress/100.0);
 	requestAnimationFrame(function() {
-	    renderer.render(stage);
+	    getRenderer().render(stage);
 	});
     }
     // Add a random query string when loading the JSON files below. This avoids
@@ -105,15 +69,15 @@ function loaded()
     var now = (new Date()).getTime();
     PIXI.loader.defaultQueryString = "nocache=" + now;
     PIXI.loader
-	.add(MALE_MELEE)
-	.add(FEMALE_MELEE)
-	.add(NPC_TILESET)
-	.add(MAPTILES)
-	.add(ENEMIES)
-	.add(WEAPONS)
-	.add(GROUND_ITEMS)
-	.add(UI)
-	.add(DRAGON)
+	.add(RES.MALE_MELEE)
+	.add(RES.FEMALE_MELEE)
+	.add(RES.NPC_TILESET)
+	.add(RES.MAPTILES)
+	.add(RES.ENEMIES)
+	.add(RES.WEAPONS)
+	.add(RES.GROUND_ITEMS)
+	.add(RES.UI)
+	.add(RES.DRAGON)
 	//.add({name: "hit", url: "media/hit.wav"})
 	.on("progress", progresscb)
 	.load(graphicsLoaded);
@@ -164,26 +128,26 @@ function graphicsLoaded()
     sounds.onProgress = function(percent) {
 	progress.update(percent/100.0);
 	requestAnimationFrame(function() {
-	    renderer.render(stage);
+	    getRenderer().render(stage);
 	});
     };
     sounds.load([
-	ATTACK_SWORD_SND,
-	SNAKE_HURT_SND,
-	DEAD_SND,
-	ARROW_DING_SND,
-	SPLASH_SND,
-	GO_SND,
-	HIT_SND,
-	COIN_SND,
-	GATE_SND,
-	DROP_SND,
-	POWERUP1_SND,
-	POWERUP2_SND,
-	POWERUP3_SND,
-	POWERUP4_SND,
-	CHEST_SND,
-	GAME_MUSIC
+	RES.ATTACK_SWORD_SND,
+	RES.SNAKE_HURT_SND,
+	RES.DEAD_SND,
+	RES.ARROW_DING_SND,
+	RES.SPLASH_SND,
+	RES.GO_SND,
+	RES.HIT_SND,
+	RES.COIN_SND,
+	RES.GATE_SND,
+	RES.DROP_SND,
+	RES.POWERUP1_SND,
+	RES.POWERUP2_SND,
+	RES.POWERUP3_SND,
+	RES.POWERUP4_SND,
+	RES.CHEST_SND,
+	RES.GAME_MUSIC
     ]);
 }
 
@@ -206,9 +170,8 @@ function setup()
     //stage.removeChild(progress.sprite);
     stage.children = [];
 
-    music = sounds[GAME_MUSIC];
-    music.loop = true;
-    music.volume = 0.5;
+    getMusic().loop = true;
+    getMusic().volume = 0.5;
 
     requestAnimationFrame(gameLoop)
 }

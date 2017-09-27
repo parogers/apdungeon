@@ -45,8 +45,8 @@ function Camera()
 {
     this.x = 0;
     this.y = 0;
-    this.width = renderer.width;
-    this.height = renderer.height;
+    this.width = getRenderer().width;
+    this.height = getRenderer().height;
 }
 
 /*********/
@@ -127,7 +127,7 @@ Level.prototype.findClearSpace = function(x, y)
 	    // We've gone completely outside the level - no space found
 	    return null;
 	}
-	offset += TILE_HEIGHT*SCALE;
+	offset += RES.TILE_HEIGHT*SCALE;
     }
 }
 
@@ -333,9 +333,10 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
     }
     // Drop the item
     if (pick !== null) {
-	var coin = spawnItem(pick, x, y);
-	coin.velx = 50*(x > this.camera.x ? -1 : 1);
-	coin.velh = -200;
+	var gnd = new GroundItem(pick, x, y);
+	gnd.velx = 50*(x > this.camera.x ? -1 : 1);
+	gnd.velh = -200;
+	this.addThing(gnd);
     }
 }
 
@@ -362,7 +363,7 @@ function LevelScreen()
 
     this.healthUI = new HealthUI();
     this.inventoryUI = new InventoryUI();
-    this.goMarker = new GoMarker();
+    this.goMarker = new GoMarker(this);
 
     this.stage.addChild(this.healthUI.sprite);
     this.stage.addChild(this.inventoryUI.sprite);
@@ -380,14 +381,14 @@ LevelScreen.prototype.update = function(dt)
 	this.levelNum = 0;
 	this.player = player;
 	// Generate the first level
-	level = LevelGenerator.generate(this.levelNum);
+	var level = LevelGenerator.generate(this.levelNum);
 	this.setLevel(level);
 	// Start playing it immediately
 	this.state = this.PLAYING;
 	// Start playing music (fade in). We call restart, which stops the
 	// previously play (if any), rewinds and starts again.
-	music.restart();
-	music.fadeIn(1);
+	getMusic().restart();
+	getMusic().fadeIn(1);
 	break;
 
     case this.PLAYING:
@@ -400,7 +401,7 @@ LevelScreen.prototype.update = function(dt)
 	    // This triggers the game state machine to advance to the game
 	    // over screen. Note there is no stop for sound effects, only 
 	    // a pause function. (TODO - why?)
-	    music.pause();
+	    getMusic().pause();
 	    this.state = this.GAME_OVER;
 	} else {
 	    if (this.level) this.level.update(dt);
@@ -421,7 +422,7 @@ LevelScreen.prototype.update = function(dt)
 LevelScreen.prototype.render = function()
 {
     if (this.level) {
-	renderer.render(this.stage);
+	getRenderer().render(this.stage);
     }
 }
 
@@ -440,12 +441,12 @@ LevelScreen.prototype.setLevel = function(level)
 	this.stage.children.unshift(this.stage.children.pop());
 	this.level = level;
 	// Position the UI just below the level render area
-	this.healthUI.sprite.x = renderer.width-1;
+	this.healthUI.sprite.x = getRenderer().width-1;
 	this.healthUI.sprite.y = level.getHeight()-10;
 	this.inventoryUI.sprite.x = 30;
 	this.inventoryUI.sprite.y = level.getHeight()+15;
 	// Put the go marker in the top-right corner of the level area
-	this.goMarker.sprite.x = renderer.width - 10;
+	this.goMarker.sprite.x = getRenderer().width - 10;
 	this.goMarker.sprite.y = 10;
 	this.level.player = this.player;
 	this.level.addThing(this.player);
@@ -542,7 +543,7 @@ EnterScene.prototype.update = function(dt)
 	player.hasControl = true;
 	this.timer = 0.5;
 	// Done!
-	level.removeThing(this);
+	this.level.removeThing(this);
 	break;
     }
 }

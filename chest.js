@@ -25,8 +25,8 @@
  * */
 function Chest(items, options)
 {
-    this.openTexture = getFrame(MAPTILES, "chest_open");
-    this.closedTexture = getFrame(MAPTILES, "chest_closed");
+    this.openTexture = getFrame(RES.MAPTILES, "chest_open");
+    this.closedTexture = getFrame(RES.MAPTILES, "chest_closed");
     this.sprite = new PIXI.Sprite(this.closedTexture);
     this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0.5, 0.75);
@@ -45,10 +45,11 @@ Chest.prototype.update = function(dt)
 	if (this.timer <= 0) {
 	    // Eject the contents from the chest
 	    for (item of this.items) {
-		var gnd = spawnItem(
+		var gnd = new GroundItem(
 		    item, 
 		    this.sprite.x+5*randUniform(0, 1), 
 		    this.sprite.y+10*randUniform(0.1, 1));
+		this.level.addThing(gnd);
 		if (this.options && this.options.ejectX) 
 		    gnd.velx = this.options.ejectX*randUniform(30, 60);
 		else
@@ -72,6 +73,6 @@ Chest.prototype.handlePlayerCollision = function()
 	this.sprite.texture = this.openTexture;
 	this.isOpen = true;
 	this.timer = 0.25;
-	sounds[CHEST_SND].play();
+	getSound(RES.CHEST_SND).play();
     }
 }

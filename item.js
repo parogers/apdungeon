@@ -25,7 +25,7 @@ ITEM_GRAVITY = 600;
 
 function GroundItem(item, x, y)
 {
-    var img = getFrame(GROUND_ITEMS, item);
+    var img = getFrame(RES.GROUND_ITEMS, item);
     this.sprite = new PIXI.Sprite(img);
     this.sprite.anchor.set(0.5, 0.6);
     this.sprite.scale.set(SCALE);
@@ -53,7 +53,7 @@ GroundItem.prototype.update = function(dt)
 	// we don't bump into anything.
 	if (this.velz !== 0) {
 	    var dz = this.velz*dt;
-	    var tile = level.bg.getTileAt(this.sprite.x, this.ypos+dz);
+	    var tile = this.level.bg.getTileAt(this.sprite.x, this.ypos+dz);
 	    // If we connect with a wall, don't bother bouncing off
 	    if (tile.solid) this.velz = 0;
 	    else {
@@ -65,7 +65,7 @@ GroundItem.prototype.update = function(dt)
 	// Move the item left/right having it bounce off walls too. Note we
 	// check the "floor" position of the item instead of the sprite pos.
 	var dx = this.velx*dt;
-	var tile = level.bg.getTileAt(this.sprite.x+dx, this.ypos);
+	var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.ypos);
 	if (tile.solid) {
 	    this.velx *= -1;
 	} else {
@@ -94,17 +94,9 @@ GroundItem.prototype.handlePlayerCollision = function()
     if (this.height < 3 && this.velh >= 0) 
     {
 	if (this.item && player.handleTakeItem(this.item)) {
-	    level.removeThing(this);
+	    this.level.removeThing(this);
 	}
     }
-}
-
-/* Spawn in the given item, at the given location */
-function spawnItem(item, x, y)
-{
-    var gnd = new GroundItem(item, x, y);
-    level.addThing(gnd);
-    return gnd;
 }
 
 /*********/

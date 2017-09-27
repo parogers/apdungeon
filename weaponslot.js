@@ -66,7 +66,7 @@ SwordWeaponSlot.prototype.update = function(dt)
 SwordWeaponSlot.prototype.setTexture = function(name)
 {
     if (this.textureName !== name) {
-	this.sprite.texture = getFrame(WEAPONS, name);
+	this.sprite.texture = getFrame(RES.WEAPONS, name);
 	this.textureName = name;
     }
 }
@@ -75,11 +75,11 @@ SwordWeaponSlot.prototype.startAttack = function()
 {
     if (this.attackCooldown > 0) return;
 
-    sounds[ATTACK_SWORD_SND].play();
+    getSound(RES.ATTACK_SWORD_SND).play();
     this.sprite.rotation = 0;
     this.sprite.x = 3.5*SCALE;
 
-    var lst = level.checkHitMany(
+    var lst = this.player.level.checkHitMany(
 	this.player.sprite.x + this.player.facing*this.weaponReach, 
 	this.player.sprite.y,
 	this.hitbox, this.player);
@@ -139,7 +139,7 @@ BowWeaponSlot.prototype.update = function(dt)
 BowWeaponSlot.prototype.setTexture = function(name)
 {
     if (this.textureName !== name) {
-	this.sprite.texture = getFrame(WEAPONS, name);
+	this.sprite.texture = getFrame(RES.WEAPONS, name);
 	this.textureName = name;
     }
 }
@@ -149,7 +149,7 @@ BowWeaponSlot.prototype.startAttack = function()
     // Make sure we have an arrow to fire
     if (this.player.numArrows <= 0) return;
     if (this.attackCooldown > 0) return;
-    sounds[ATTACK_SWORD_SND].play();
+    getSound(RES.ATTACK_SWORD_SND).play();
     this.attackCooldown = 0.2;
 
     this.player.numArrows--;
@@ -161,7 +161,7 @@ BowWeaponSlot.prototype.startAttack = function()
 	Math.abs(this.sprite.y));
     //level.things.push(arrow);
     //level.stage.addChild(arrow.sprite);
-    level.addThing(arrow);
+    this.player.level.addThing(arrow);
 }
 
 BowWeaponSlot.prototype.stopAttack = function()
@@ -170,7 +170,7 @@ BowWeaponSlot.prototype.stopAttack = function()
 
 function Arrow(x, y, velx, vely, height)
 {
-    this.sprite = new PIXI.Sprite(getFrame(WEAPONS, "arrow"));
+    this.sprite = new PIXI.Sprite(getFrame(RES.WEAPONS, "arrow"));
     this.sprite.anchor.set(0.5, 0.5);
     this.sprite.scale.x = Math.sign(velx)*SCALE;
     this.sprite.scale.y = SCALE;
@@ -186,6 +186,7 @@ function Arrow(x, y, velx, vely, height)
 
 Arrow.prototype.update = function(dt)
 {
+    var level = this.player.level;
     if (this.state === ARROW_FLIGHT) {
 	this.sprite.x += this.velx*dt;
 	this.sprite.y += this.vely*dt;
@@ -203,8 +204,8 @@ Arrow.prototype.update = function(dt)
 	    this.velx *= -0.25;
 	    this.vely = 0;
 	    this.state = ARROW_FALLING;
-	    sounds[ARROW_DING_SND].volume = 0.4;
-	    sounds[ARROW_DING_SND].play();
+	    getSound(RES.ARROW_DING_SND).volume = 0.4;
+	    getSound(RES.ARROW_DING_SND).play();
 	    return;
 	}
 	// Now check if we've hit an enemy

@@ -41,10 +41,10 @@ function GameOverScreen(levelScreen)
     this.stage.addChild(levelScreen.stage);
 
     // Create a black sprite that covers the screen
-    this.bg = new PIXI.Sprite(getFrame(UI, "black"));
+    this.bg = new PIXI.Sprite(getFrame(RES.UI, "black"));
     this.bg.anchor.set(0, 0);
-    this.bg.scale.set(renderer.width/this.bg.texture.width,
-		      renderer.height/this.bg.texture.height);
+    this.bg.scale.set(getRenderer().width/this.bg.texture.width,
+		      getRenderer().height/this.bg.texture.height);
     this.bg.alpha = 0;
     this.timer = 0;
     this.delay = 0.25;
@@ -84,10 +84,10 @@ GameOverScreen.prototype.update = function(dt)
 	{
 	    // Background is now fully black. Show the game over text
 	    this.bg.alpha = 1;
-	    var txt = new PIXI.Sprite(getFrame(UI, "game-over-text"));
+	    var txt = new PIXI.Sprite(getFrame(RES.UI, "game-over-text"));
 	    txt.anchor.set(0.5, 0.5);
 	    txt.scale.set(SCALE);
-	    txt.x = renderer.width/2;
+	    txt.x = getRenderer().width/2;
 	    txt.y = 60;
 	    this.stage.addChild(txt);
 	    this.state = this.SHOWING_KILLS;
@@ -98,7 +98,7 @@ GameOverScreen.prototype.update = function(dt)
     case this.SHOWING_KILLS:
 	while (this.killStats.length > 0) {
 	    // Show the next killed monster
-	    var xpos = 50+this.col*renderer.width/2;
+	    var xpos = 50+this.col*getRenderer().width/2;
 	    var ypos = 150+this.row*55;
 	    var stat = this.killStats.shift();
 	    var monster = new PIXI.Sprite(stat.img);
@@ -131,8 +131,8 @@ GameOverScreen.prototype.update = function(dt)
 	var txt = new PIXI.Sprite(renderText("PRESS SPACE TO CONTINUE"));
 	txt.scale.set(SCALE);
 	txt.anchor.set(0.5, 0.5);
-	txt.x = renderer.width/2;
-	txt.y = renderer.height-50;
+	txt.x = getRenderer().width/2;
+	txt.y = getRenderer().height-50;
 	this.stage.addChild(txt);
 	this.state = this.WAITING;
 	break;
@@ -147,5 +147,5 @@ GameOverScreen.prototype.update = function(dt)
 
 GameOverScreen.prototype.render = function()
 {
-    renderer.render(this.stage);
+    getRenderer().render(this.stage);
 }

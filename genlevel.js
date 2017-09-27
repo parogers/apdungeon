@@ -152,8 +152,8 @@ var LevelGenerator = (function() {
 
 	// Build a big sprite for the tiled map
 	var bg = new TiledBackground(
-	    TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
-	    getTextures(MAPTILES), grid);
+	    RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT,
+	    getTextures(RES.MAPTILES), grid);
 	var level = new Level(bg);
 
 	// Now add some random gates throughout the level
@@ -176,8 +176,8 @@ var LevelGenerator = (function() {
 		}
 		if (found !== -1) {
 		    var gate = new Gate();
-		    gate.sprite.x = pos*TILE_WIDTH*SCALE;
-		    gate.sprite.y = found*TILE_HEIGHT*SCALE;
+		    gate.sprite.x = pos*RES.TILE_WIDTH*SCALE;
+		    gate.sprite.y = found*RES.TILE_HEIGHT*SCALE;
 		    level.addThing(gate);
 		}
 	    }
@@ -198,7 +198,7 @@ var LevelGenerator = (function() {
 	var budget = (levelNum+1)*6;
 	while (endx > arenaWidth*1.75)
 	{
-	    var arena = new Arena(arenaWidth, endx);
+	    var arena = new Arena(level, arenaWidth, endx);
 	    level.addArena(arena);
 
 	    // Find the visible gates (for gate spawning below)
@@ -237,13 +237,15 @@ var LevelGenerator = (function() {
 
 		    if (style === 1 && klass !== Ghost) {
 			var xpos = randint(arena.startx+20, arena.endx-20);
-			spawn = new DropSpawn(new klass(), xpos, ypos);
+			spawn = new DropSpawn(
+			    level, new klass(), xpos, ypos);
 		    } else if (style === 2 && gates.length > 0) {
-			spawn = new GateSpawn(new klass(), randomChoice(gates));
+			spawn = new GateSpawn(
+			    level, new klass(), randomChoice(gates));
 		    } else {
 			var xdir = randomChoice([-1, 1]);
 			if (endx >= level.getWidth()-1) xdir = -1;
-			spawn = new Spawn(new klass(), xdir, ypos);
+			spawn = new Spawn(level, new klass(), xdir, ypos);
 		    }
 		    round.addSpawn(spawn, randUniform(0, 1));
 		}
@@ -341,8 +343,8 @@ var LevelGenerator = (function() {
     {
 	var grid = createGrid(rows, cols, value);
 	var bg = new TiledBackground(
-	    TILE_WIDTH, TILE_HEIGHT, WALL_HEIGHT,
-	    getTextures(MAPTILES), grid);
+	    RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT,
+	    getTextures(RES.MAPTILES), grid);
 	return new Level(bg);
     }
 

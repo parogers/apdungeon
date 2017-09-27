@@ -72,7 +72,7 @@ function Player()
     // Define the hitbox
     this.hitbox = new Hitbox(0, -4, 6*SCALE, 6*SCALE);
 
-    this.setCharFrames(FEMALE_MELEE, "melee1");
+    this.setCharFrames(RES.FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
      * equipment they're carrying. */
     this.sprite = new PIXI.Container();
@@ -228,7 +228,7 @@ Player.prototype.update = function(dt)
     // Make a splashy sound when we enter water
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.water) {
-	if (!this.waterSprite.visible) sounds[SPLASH_SND].play();
+	if (!this.waterSprite.visible) getSound(RES.SPLASH_SND).play();
 	this.waterSprite.visible = true;
     } else {
 	this.waterSprite.visible = false;
@@ -299,7 +299,7 @@ Player.prototype.updatePlayerAppearance = function()
     var img = "melee1";
     if (this.armour === Item.LEATHER_ARMOUR) img = "melee2";
     else if (this.armour == Item.STEEL_ARMOUR) img = "melee3";
-    this.setCharFrames(FEMALE_MELEE, img);
+    this.setCharFrames(RES.FEMALE_MELEE, img);
     // Update the sword sprite
     // ...
     // Update the bow sprite
@@ -336,15 +336,15 @@ Player.prototype.upgradeBow = function(item)
 Player.prototype.upgradeArmour = function(item)
 {
     this.setArmour(item);
-    sounds[POWERUP2_SND].play();
+    getSound(RES.POWERUP2_SND).play();
 }
 
 Player.prototype.healDamage = function(amt)
 {
     if (this.health < this.maxHealth) {
 	this.health = Math.min(this.health+amt, this.maxHealth);
-	sounds[POWERUP4_SND].volume = 1.25;
-	sounds[POWERUP4_SND].play();
+	getSound(RES.POWERUP4_SND).volume = 1.25;
+	getSound(RES.POWERUP4_SND).play();
     }
 }
 
@@ -373,7 +373,7 @@ Player.prototype.takeDamage = function(amt, src)
 	    }
 	}
 
-	sounds[HIT_SND].play();
+	getSound(RES.HIT_SND).play();
 
 	// Take damage and have the player flash red for a moment
 	this.health -= amt;
@@ -442,6 +442,6 @@ Player.prototype.handleTakeItem = function(item)
 	this.healDamage(this.maxHealth);
 	break;
     }
-    sounds[COIN_SND].play();
+    getSound(RES.COIN_SND).play();
     return true;
 }

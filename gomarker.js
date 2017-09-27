@@ -22,11 +22,12 @@
  * (eg wait-to-advance) which would be picked up by the go marker, who could
  * then change it's appearance accordingly (eg play go animation) */
 
-function GoMarker()
+function GoMarker(screen)
 {
+    this.screen = screen;
     this.frames = [
-	getFrame(UI, "go1"), 
-	getFrame(UI, "go2")
+	getFrame(RES.UI, "go1"), 
+	getFrame(RES.UI, "go2")
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.scale.set(SCALE);
@@ -56,6 +57,7 @@ GoMarker.prototype.hide = function()
 
 GoMarker.prototype.update = function(dt)
 {
+    var level = this.screen.level;
     if (!this.sprite.visible) {
 	// Become visible if the level is ready to advance to the next arena
 	if (level.state === level.SHOWING_GO) {
@@ -74,7 +76,7 @@ GoMarker.prototype.update = function(dt)
 
     var next = this.timer + dt;
     if (this.timer < 0.3 && next >= 0.3) {
-	if (this.dings-- > 0) sounds[GO_SND].play();
+	if (this.dings-- > 0) getSound(RES.GO_SND).play();
 	else this.done = true;
 	this.frameNum = 1;
     } else if (this.timer < 1 && next >= 1) {

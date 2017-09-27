@@ -30,8 +30,9 @@
 // A region of the level where the player battles monsters and collects 
 // treasures. Once all monsters in the region are defeated the player can
 // move forward. (a "Go" arrow is displayed)
-function Arena(width, endx)
+function Arena(level, width, endx)
 {
+    this.level = level;
     this.startx = 0;
     this.endx = 0;
     if (width !== undefined && endx !== undefined) {
@@ -89,8 +90,9 @@ Arena.prototype.activate = function()
 // Each round will spawn a number of monsters and includes a "win condition"
 // that determines when the round is finished. (and the arena progresses to
 // the next round)
-function Round(delay)
+function Round(level, delay)
 {
+    this.level = level;
     this.delay = delay || 0;
     // Spawns are initially added to the 'spawns' queue, then moved over to
     // the 'running' queue once they become active.
@@ -155,8 +157,9 @@ Round.prototype.addSpawn = function(spawn, delay)
 // water, through a gate, drop from above
 
 // Spawn from the left/right side of the screen (monster starts off-screen)
-function Spawn(monster, direction, ypos)
+function Spawn(level, monster, direction, ypos)
 {
+    this.level = level;
     this.monster = monster;
     this.direction = direction;
     this.ypos = ypos;
@@ -165,18 +168,18 @@ function Spawn(monster, direction, ypos)
 Spawn.prototype.activate = function()
 {
     // Start the monster somewhere off screen either left or right
-    this.monster.sprite.x = level.camera.x + level.camera.width/2 + 
-	this.direction*(level.camera.width/2+20);
+    this.monster.sprite.x = this.level.camera.x + this.level.camera.width/2 + 
+	this.direction*(this.level.camera.width/2+20);
     var offset = 0;
 
     // Find some clear space to spawn the monster (ie don't spawn in a wall)
-    var y = level.findClearSpace(this.monster.sprite.x, this.ypos);
+    var y = this.level.findClearSpace(this.monster.sprite.x, this.ypos);
     if (y === null) {
 	console.log("WARNING: can't spawn monster near " + this.ypos);
 	this.monster.dead = true;
     } else {
 	this.monster.sprite.y = y;
-	level.addThing(this.monster);
+	this.level.addThing(this.monster);
     }
 }
 
@@ -185,8 +188,9 @@ Spawn.prototype.activate = function()
 /*************/
 
 // Monster walks in through a gate
-function GateSpawn(monster, gate)
+function GateSpawn(level, monster, gate)
 {
+    this.level = level;
     this.monster = monster;
     this.gate = gate;
     this.spawned = false;
@@ -206,7 +210,7 @@ GateSpawn.prototype.update = function(dt)
     {
 	// Spawn in the monster, overtop the opened gate
 	this.spawned = true;
-	level.addThing(this.monster);
+	this.level.addThing(this.monster);
 	this.monster.sprite.x = this.gate.sprite.x + 
 	    this.gate.sprite.texture.width*SCALE/2;
 	this.monster.sprite.y = this.gate.sprite.y + 
@@ -228,14 +232,15 @@ GateSpawn.prototype.update = function(dt)
 
 // Monster drops from above to the given location (casting a shadow on the
 // way down, etc.)
-function DropSpawn(monster, x, y)
+function DropSpawn(level, monster, x, y)
 {
+    this.level = level;
     this.monster = monster;
     this.xpos = x;
     this.ypos = y;
     this.done = false;
     // Shadow to display on the floor, as the monster is falling
-    this.shadow = new Scenery(getFrame(MAPTILES, "shadow"));
+    this.shadow = new Scenery(getFrame(RES.MAPTILES, "shadow"));
     this.shadow.sprite.zpos = FLOOR_POS;
     this.shadow.sprite.anchor.set(0.5, 0.5);
     this.shadow.sprite.x = x;
@@ -249,7 +254,7 @@ function DropSpawn(monster, x, y)
 
 DropSpawn.prototype.activate = function()
 {
-    var y = level.findClearSpace(this.xpos, this.ypos);
+    var y = this.level.findClearSpace(this.xpos, this.ypos);
     if (y === null) {
 	console.log("WARNING: can't spawn monster near " + this.ypos);
 	this.monster.dead = true;
@@ -257,10 +262,10 @@ DropSpawn.prototype.activate = function()
     }
     this.ypos = y;
     this.shadow.sprite.y = y;
-    level.addThing(this.shadow);
+    this.level.addThing(this.shadow);
     this.falling.sprite.zpos = FRONT_POS;
     this.falling.sprite.x = this.xpos;
-    this.falling.sprite.y = level.camera.y + 20;
+    this.falling.sprite.y = this.level.camera.y + 20;
 }
 
 DropSpawn.prototype.update = function(dt)
@@ -272,9 +277,9 @@ DropSpawn.prototype.update = function(dt)
 	this.timer -= dt;
 	if (this.timer <= 0) {
 	    // Start the drop
-	    level.addThing(this.falling);
-	    sounds[DROP_SND].volume = 0.25;
-	    sounds[DROP_SND].play();
+	    this.level.addThing(this.falling);
+	    getSound(RES.DROP_SND).volume = 0.25;
+	    getSound(RES.DROP_SND).play();
 	}
 	return;
     }
@@ -282,9 +287,9 @@ DropSpawn.prototype.update = function(dt)
     if (this.falling.sprite.y > this.ypos) 
     {
 	// Hit the ground - spawn in the monster
-	level.removeThing(this.shadow);
-	level.removeThing(this.falling);
-	level.addThing(this.monster);
+	this.level.removeThing(this.shadow);
+	this.level.removeThing(this.falling);
+	this.level.addThing(this.monster);
 	this.monster.sprite.x = this.xpos;
 	this.monster.sprite.y = this.ypos;
 	this.done = true;
@@ -296,12 +301,13 @@ DropSpawn.prototype.update = function(dt)
 /**************/
 
 // Monster spawns under water, then rises with bubbles etc
-function WaterSpawn(monster, x, y)
+function WaterSpawn(level, monster, x, y)
 {
+    this.level = level;
     this.monster = monster;
     this.xpos = x;
     this.ypos = y;
-    var img = getTextures(MAPTILES)["rippling_water"];
+    var img = getFrame(RES.MAPTILES, "rippling_water");
     this.water = new Scenery(img);
     this.water.sprite.anchor.set(0.5, 0.7);
     this.water.sprite.x = x;
@@ -312,7 +318,7 @@ function WaterSpawn(monster, x, y)
 WaterSpawn.prototype.activate = function()
 {
     // Show the water rippling right away
-    level.addThing(this.water)
+    this.level.addThing(this.water)
 }
 
 WaterSpawn.prototype.update = function(dt)
@@ -321,8 +327,8 @@ WaterSpawn.prototype.update = function(dt)
     if (this.spawnDelay > 0) {
 	this.spawnDelay -= dt;
 	if (this.spawnDelay <= 0) {
-	    level.removeThing(this.water);
-	    level.addThing(this.monster);
+	    this.level.removeThing(this.water);
+	    this.level.addThing(this.monster);
 	    this.monster.sprite.x = this.xpos;
 	    this.monster.sprite.y = this.ypos;
 	}

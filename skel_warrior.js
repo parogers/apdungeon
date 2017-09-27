@@ -36,8 +36,8 @@ var SKEL_WARRIOR_FRAMES = ["skeleton_warrior_south_2",
 function SkelWarrior(state)
 {
     this.name = "Skeleton";
-    this.idleFrame = getFrame(ENEMIES, "skeleton_warrior_south_1");
-    this.frames = getFrames(ENEMIES, SKEL_WARRIOR_FRAMES);
+    this.idleFrame = getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
+    this.frames = getFrames(RES.ENEMIES, SKEL_WARRIOR_FRAMES);
     this.speed = 100;
     this.health = 3;
     this.frame = 0;
@@ -99,7 +99,7 @@ SkelWarrior.prototype.update = function(dt)
 	break;
 
     case SKEL_WARRIOR_DEAD:
-	level.removeThing(this);
+	this.level.removeThing(this);
 	break;
     }
 }
@@ -139,7 +139,7 @@ SkelWarrior.prototype.updateAttacking = function(dt)
     }
 
     // Check if we can move left/right
-    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+    var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
 	this.sprite.x += dx;
 	this.waterSprite.visible = tile.water;
@@ -147,7 +147,7 @@ SkelWarrior.prototype.updateAttacking = function(dt)
 
     // Now check if it can move up/down. Doing this separately from the check
     // above means we can "slide" along walls and such.
-    var tile2 = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
+    var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile2.solid) {
 	// Go a bit faster if we're just moving up/down
 	if (tile.solid) this.sprite.y += 3*dy;
@@ -222,13 +222,13 @@ SkelWarrior.prototype.updateApproach = function(dt)
     dy *= speed;
     // Check if we can move horizontally (checked separately from vertical 
     // movement to prevent us from getting stuck)
-    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+    var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
 	this.sprite.x += dx;
 	this.waterSprite.visible = tile.water;
     }
     // Handle vertical movement
-    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile.solid) {
 	this.sprite.y += dy;
 	this.waterSprite.visible = tile.water;
@@ -242,7 +242,7 @@ SkelWarrior.prototype.updateHurt = function(dt)
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
 	var dx = this.knocked*dt;
-	var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+	var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
 	if (!tile.solid) {
 	    this.sprite.x += dx;
 	}
@@ -257,27 +257,28 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === SKEL_WARRIOR_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	sounds[DEAD_SND].play();
+	getSound(RES.DEAD_SND).play();
 	this.state = SKEL_WARRIOR_DEAD;
 	// Drop a reward
-	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
+	this.level.handleTreasureDrop(
+	    this.dropTable, this.sprite.x, this.sprite.y);
 	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
-	sounds[SNAKE_HURT_SND].play();
+	getSound(RES.SNAKE_HURT_SND).play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*300;
 	this.knockedTimer = 0.1;
 	this.state = SKEL_WARRIOR_HURT;
     }
 
     // Add some random dust, but only if we're not currently in water
-    var tile = level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
 	var sprite = createBloodSpatter(["dust1", "dust2", "dust3", "dust4"]);
 	sprite.x = this.sprite.x;
 	sprite.y = this.sprite.y-1;
-	level.stage.addChild(sprite);
+	this.level.stage.addChild(sprite);
     }
     return true;
 }

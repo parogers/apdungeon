@@ -43,7 +43,7 @@ Scenery.prototype.update = function(dt)
     if (this.timer > 0) {
 	this.timer -= dt;
 	if (this.timer <= 0) {
-	    level.removeThing(this);
+	    this.level.removeThing(this);
 	}
     }
     if (this.frames.length > 1) {

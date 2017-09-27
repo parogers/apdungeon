@@ -71,15 +71,17 @@ function createSplashSprite()
     waterSprite.scale.set(SCALE);
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
-    waterSprite.texture = getTextures(MAPTILES)["treading_water"];
+    waterSprite.texture = getFrame(RES.MAPTILES, "treading_water");
     return waterSprite;
 }
 
 function createBloodSpatter(imgs)
 {
-    var sprite = new PIXI.Sprite(getTextures(MAPTILES)[
-	randomChoice(imgs || ["blood1", "blood2", "blood3"])
-    ]);
+    var sprite = new PIXI.Sprite(
+	getFrame(
+	    RES.MAPTILES, 
+	    randomChoice(imgs || ["blood1", "blood2", "blood3"])
+    ));
     sprite.scale.set(SCALE);
     sprite.zpos = FLOOR_POS;
     sprite.anchor.set(0.5, 0.5);
@@ -89,6 +91,7 @@ function createBloodSpatter(imgs)
 // Helper function for returning a texture set given the resource string
 function getTextures(res)
 {
+    if (!res) throw Error("must specify a resource");
     return PIXI.loader.resources[res].textures;
 }
 
@@ -114,6 +117,21 @@ function updateDict(dict, other)
     for (key in other) {
 	dict[key] = other[key];
     }
+}
+
+function getSound(snd)
+{
+    return sounds[snd];
+}
+
+function getMusic()
+{
+    return sounds[RES.GAME_MUSIC];
+}
+
+function getRenderer()
+{
+    return RES.renderer;
 }
 
 /************/
@@ -175,3 +193,4 @@ Sequence.prototype.update = function(dt)
 	this.done = true;
     }
 }
+

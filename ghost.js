@@ -27,7 +27,7 @@ var GHOST_FRAMES = ["ghost_south_1", "ghost_south_2"];
 function Ghost(state)
 {
     this.name = "Spectre";
-    this.frames = getFrames(ENEMIES, GHOST_FRAMES);
+    this.frames = getFrames(RES.ENEMIES, GHOST_FRAMES);
     this.speed = 80;
     this.health = 3;
     this.frame = 0;
@@ -62,7 +62,7 @@ Ghost.prototype.update = function(dt)
     if (this.state === GHOST_ATTACKING) this.updateAttacking(dt);
     else if (this.state === GHOST_HURT) this.updateHurt(dt);
     else if (this.state === GHOST_DEAD) {
-	level.removeThing(this);
+	this.level.removeThing(this);
     }
 }
 
@@ -111,7 +111,7 @@ Ghost.prototype.updateHurt = function(dt)
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
 	var dx = this.knocked*dt;
-	var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+	var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
 	if (!tile.solid) {
 	    this.sprite.x += dx;
 	}
@@ -128,15 +128,16 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === GHOST_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	sounds[DEAD_SND].play();
+	getSound(RES.DEAD_SND).play();
 	this.state = GHOST_DEAD;
 	// Drop a reward
-	level.handleTreasureDrop(this.dropTable, this.sprite.x, this.sprite.y);
+	this.level.handleTreasureDrop(
+	    this.dropTable, this.sprite.x, this.sprite.y);
 	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
-	sounds[SNAKE_HURT_SND].play();
+	getSound(RES.SNAKE_HURT_SND).play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*500;
 	this.knockedTimer = 0.1;
 	this.state = GHOST_HURT;

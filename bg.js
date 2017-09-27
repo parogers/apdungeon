@@ -67,8 +67,9 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
     }
     cnt.x = 0;
     cnt.y = 0;
-    renderer.render(cnt, renderTexture);
+    getRenderer().render(cnt, renderTexture);
 
+    this.tileset = new Tileset();
     this.grid = grid;
     this.tileWidth = tileWidth*SCALE;
     this.tileHeight = tileHeight*SCALE;
@@ -114,8 +115,8 @@ TiledBackground.prototype.getTileAt = function(x, y)
     var row = (y / this.tileHeight)|0;
     var col = (x / this.tileWidth)|0;
     if (this.grid[row] && this.grid[row][col])
-	return tileset.getTile(this.grid[row][col]);
-    return tileset.wall;
+	return this.tileset.getTile(this.grid[row][col]);
+    return this.tileset.wall;
 }
 
 TiledBackground.prototype.getHeight = function()

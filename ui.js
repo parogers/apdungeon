@@ -31,7 +31,7 @@ function renderText(lines, options)
 	var height = 0;
 	for (var n = 0; n < msg.length; n++) 
 	{
-	    var sprite = new PIXI.Sprite(getFrame(UI, msg[n]));
+	    var sprite = new PIXI.Sprite(getFrame(RES.UI, msg[n]));
 	    sprite.anchor.set(0,0);
 	    sprite.x = x;
 	    sprite.y = y;
@@ -46,7 +46,7 @@ function renderText(lines, options)
     }
 
     if (options && options.blackBG) {
-	var bg = new PIXI.Sprite(getFrame(UI, "black"));
+	var bg = new PIXI.Sprite(getFrame(RES.UI, "black"));
 	bg.scale.set(maxWidth/bg.width, y/bg.height);
 	cnt.addChild(bg);
 	cnt.children.unshift(cnt.children.pop());
@@ -55,7 +55,7 @@ function renderText(lines, options)
     }
 
     var renderTexture = PIXI.RenderTexture.create(maxWidth, y);
-    renderer.render(cnt, renderTexture);
+    getRenderer().render(cnt, renderTexture);
     return renderTexture;
 }
 
@@ -65,12 +65,11 @@ function renderText(lines, options)
 
 function HealthUI()
 {
-    //var texture = getTextures(GROUND_ITEMS)["coin"];
     this.sprite = new PIXI.Container();
     this.hearts = [];
-    this.fullHeart = getFrame(UI, "full_heart");
-    this.halfHeart = getFrame(UI, "half_heart");
-    this.emptyHeart = getFrame(UI, "empty_heart");
+    this.fullHeart = getFrame(RES.UI, "full_heart");
+    this.halfHeart = getFrame(RES.UI, "half_heart");
+    this.emptyHeart = getFrame(RES.UI, "empty_heart");
 
     for (var n = 0; n < 3; n++) {
 	this.addHeart();
@@ -137,11 +136,11 @@ function ItemSlotUI(item, args)
     this.baseItem = item;
     this.item = item;
     this.count = 0;
-    this.itemSprite = new PIXI.Sprite(getFrame(GROUND_ITEMS, item));
+    this.itemSprite = new PIXI.Sprite(getFrame(RES.GROUND_ITEMS, item));
     this.itemSprite.anchor.set(0.5, 0.5);
     this.itemSprite.x = 0.5;
     this.itemSprite.y = -0.5;
-    this.slotSprite = new PIXI.Sprite(getFrame(UI, "small_slot"));
+    this.slotSprite = new PIXI.Sprite(getFrame(RES.UI, "small_slot"));
     this.slotSprite.anchor.set(0.5, 0.5);
     this.sprite.addChild(this.slotSprite);
     this.sprite.addChild(this.itemSprite);
@@ -178,7 +177,7 @@ ItemSlotUI.prototype.setItem = function(item)
     if (item === Item.NONE) item = this.baseItem;
     if (this.item !== item) {
 	this.item = item;
-	this.itemSprite.texture = getFrame(GROUND_ITEMS, item);
+	this.itemSprite.texture = getFrame(RES.GROUND_ITEMS, item);
     }
 }
 

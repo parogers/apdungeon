@@ -28,26 +28,26 @@ function TitleScreen()
     this.stage = new PIXI.Container();
     this.state = this.PLAYING_INTRO;
 
-    this.bg = new PIXI.Sprite(getFrame(UI, "brown3"));
+    this.bg = new PIXI.Sprite(getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
-    this.bg.scale.set(renderer.width/this.bg.texture.width,
-		      renderer.height/this.bg.texture.height);
+    this.bg.scale.set(getRenderer().width/this.bg.texture.width,
+		      getRenderer().height/this.bg.texture.height);
     this.stage.addChild(this.bg);
     this.delay = 0;
 
-    txt = new PIXI.Sprite(getFrame(UI, "title-text"));
+    txt = new PIXI.Sprite(getFrame(RES.UI, "title-text"));
     txt.scale.set(SCALE);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = renderer.width/2;
+    txt.x = getRenderer().width/2;
     txt.y = 80;
     this.stage.addChild(txt);
 
-    txt = new PIXI.Sprite(getFrame(UI, "demo-text"));
+    txt = new PIXI.Sprite(getFrame(RES.UI, "demo-text"));
     txt.scale.set(SCALE);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = renderer.width/2;
+    txt.x = getRenderer().width/2;
     txt.y = 140;
     this.stage.addChild(txt);
 
@@ -55,8 +55,8 @@ function TitleScreen()
     txt.scale.set(SCALE*0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = renderer.width/2;
-    txt.y = renderer.height-50;
+    txt.x = getRenderer().width/2;
+    txt.y = getRenderer().height-50;
     this.stage.addChild(txt);
 
     this.sequence = new Sequence(
@@ -69,12 +69,12 @@ function TitleScreen()
 	function(dt) {
 	    this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
 	    this.level.stage.x = -50;
-	    this.level.stage.y = renderer.height/2-25;
+	    this.level.stage.y = getRenderer().height/2-25;
 	    this.stage.addChild(this.level.stage);
 	    // Note the screen position within the level (so we can know when
 	    // objects are offscreen)
 	    this.screenLeft = -this.level.stage.x;
-	    this.screenRight = this.screenLeft + renderer.width;
+	    this.screenRight = this.screenLeft + getRenderer().width;
 	    // Create a dummy player to drive around
 	    this.player = new Player();
 	    this.player.cameraMovement = false;
@@ -83,7 +83,7 @@ function TitleScreen()
 	    this.player.sprite.y = 100;
 	    this.level.addThing(this.player);
 
-	    this.monster = new Scenery(getFrames(ENEMIES, RAT_FRAMES));
+	    this.monster = new Scenery(getFrames(RES.ENEMIES, RAT_FRAMES));
 	    this.monster.sprite.y = this.player.sprite.y;
 	    this.level.addThing(this.monster);
 
@@ -132,7 +132,7 @@ function TitleScreen()
 		this.monsterChoice++;
 		var choice = this.monsterChoices[
 		    this.monsterChoice%this.monsterChoices.length];
-		this.monster.frames = getFrames(ENEMIES, choice);
+		this.monster.frames = getFrames(RES.ENEMIES, choice);
 		return "loop";
 	    }
 	}
@@ -156,5 +156,5 @@ TitleScreen.prototype.update = function(dt)
 
 TitleScreen.prototype.render = function()
 {
-    renderer.render(this.stage);
+    getRenderer().render(this.stage);
 }
