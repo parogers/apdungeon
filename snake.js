@@ -81,7 +81,7 @@ Snake.prototype.updateIdle = function(dt)
 
     // Start attacking the player when they're close enough, and when
     // the snake is facing them.
-    if (Math.abs(player.sprite.x - this.sprite.x) < getRenderer().width/3 &&
+    if (Math.abs(player.sprite.x-this.sprite.x) < this.level.camera.width/3 &&
 	this.facing*(player.sprite.x - this.sprite.x) > 0) 
     {
 	this.state = SNAKE_ATTACKING;

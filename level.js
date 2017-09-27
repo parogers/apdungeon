@@ -41,13 +41,15 @@ function Hitbox(x, y, w, h)
 /* Camera */
 /**********/
 
-function Camera()
+function Camera(w, h)
 {
     this.x = 0;
     this.y = 0;
-    this.width = getRenderer().width/SCALE;
-    this.height = getRenderer().height/SCALE;
+    this.width = w;
+    this.height = h;
 }
+
+//Camera.autoFit
 
 /*********/
 /* Level */
@@ -75,7 +77,7 @@ function Level(bg)
     // Player has passed through the exit
     this.FINISHED = 5;
 
-    this.camera = new Camera();
+    this.camera = new Camera(100, 65);
     this.player = null;
     this.stage = null;
     this.state = this.NEXT_ARENA;
@@ -360,7 +362,6 @@ function LevelScreen()
     this.state = this.NEW_GAME;
 
     this.stage = new PIXI.Container();
-    this.stage.scale.set(SCALE);
 
     this.healthUI = new HealthUI();
     this.inventoryUI = new InventoryUI();
@@ -423,7 +424,7 @@ LevelScreen.prototype.update = function(dt)
 LevelScreen.prototype.render = function()
 {
     if (this.level) {
-	getRenderer().render(this.stage);
+	Render.getRenderer().render(this.stage);
     }
 }
 
@@ -433,27 +434,31 @@ LevelScreen.prototype.setLevel = function(level)
     if (this.level) {
 	this.stage.removeChild(this.level.stage);
     }
-    if (level) 
-    {
-	this.stage.addChild(level.stage);
-	// Move the level (container) sprite to the start of the list of
-	// child sprites, so it gets rendered before anything else.
-	// (ie UI elements are drawn on top of the level)
-	this.stage.children.unshift(this.stage.children.pop());
-	this.level = level;
-	var right = getRenderer().width/SCALE;
-	// Position the UI just below the level render area
-	this.healthUI.sprite.x = right-1;
-	this.healthUI.sprite.y = level.getHeight()-1;
-	this.inventoryUI.sprite.x = 6;
-	this.inventoryUI.sprite.y = level.getHeight()+3;
-	// Put the go marker in the top-right corner of the level area
-	this.goMarker.sprite.x = right-1;
-	this.goMarker.sprite.y = 2;
-	this.level.player = this.player;
-	this.level.addThing(this.player);
-	this.level.update(0);
-    }
+    if (!level) return;
+
+    var scale = Render.getRenderer().height / level.camera.height;
+
+    // Revise the camera width to fill the available horizontal space
+    level.camera.width = Render.getRenderer().width / scale;
+
+    this.stage.scale.set(scale);
+    this.stage.addChild(level.stage);
+    // Move the level (container) sprite to the start of the list of
+    // child sprites, so it gets rendered before anything else.
+    // (ie UI elements are drawn on top of the level)
+    this.stage.children.unshift(this.stage.children.pop());
+    this.level = level;
+    // Position the UI just below the level render area
+    this.healthUI.sprite.x = level.camera.width-1;
+    this.healthUI.sprite.y = level.getHeight()-1;
+    this.inventoryUI.sprite.x = 6;
+    this.inventoryUI.sprite.y = level.getHeight()+3;
+    // Put the go marker in the top-right corner of the level area
+    this.goMarker.sprite.x = level.camera.width-1;
+    this.goMarker.sprite.y = 2;
+    this.level.player = this.player;
+    this.level.addThing(this.player);
+    this.level.update(0);
 }
 
 /**************/

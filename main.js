@@ -17,8 +17,6 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-SCALE = 5;
-
 var gamestate = null;
 var stage = null;
 var progress = null;
@@ -28,21 +26,9 @@ function loaded()
     var div = document.getElementById("canvas_area");
     div.focus();
 
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-    // Disable the ticker sinc we don't use it (rendering happens as needed)
-    PIXI.ticker.shared.autoStart = false;
-    PIXI.ticker.shared.stop();
+    Render.configure(660, 400, div);
 
-    RES.renderer = PIXI.autoDetectRenderer({
-	width: 550, 
-	height: 400,
-//	antialias: true,
-	// Required to prevent flickering in Chrome on Android (others too?)
-	preserveDrawingBuffer: true,
-//	clearBeforeRender: true
-    });
     //renderer = new PIXI.CanvasRenderer(550, 400);
-    div.appendChild(getRenderer().view);
     stage = new PIXI.Container();
 
     progress = new ProgressBar(200, 20, "LOADING IMAGES...");
@@ -60,7 +46,7 @@ function loaded()
 		    " (" + (loader.progress|0) + "%)"); 
 	progress.update(loader.progress/100.0);
 	requestAnimationFrame(function() {
-	    getRenderer().render(stage);
+	    Render.getRenderer().render(stage);
 	});
     }
     // Add a random query string when loading the JSON files below. This avoids
@@ -128,7 +114,7 @@ function graphicsLoaded()
     sounds.onProgress = function(percent) {
 	progress.update(percent/100.0);
 	requestAnimationFrame(function() {
-	    getRenderer().render(stage);
+	    Render.getRenderer().render(stage);
 	});
     };
     sounds.load([

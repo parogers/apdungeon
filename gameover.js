@@ -35,9 +35,9 @@ function GameOverScreen(levelScreen)
     this.DONE = 5;
 
     this.screenHeight = 80;
-    var scale = getRenderer().height/this.screenHeight;
+    var scale = Render.getRenderer().height/this.screenHeight;
 
-    this.screenWidth = getRenderer().width/scale;
+    this.screenWidth = Render.getRenderer().width/scale;
 
     this.levelScreen = levelScreen;
     this.state = this.TRANSITION_TO_GAMEOVER;
@@ -151,5 +151,5 @@ GameOverScreen.prototype.update = function(dt)
 
 GameOverScreen.prototype.render = function()
 {
-    getRenderer().render(this.stage);
+    Render.getRenderer().render(this.stage);
 }

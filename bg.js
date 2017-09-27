@@ -67,7 +67,7 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
     }
     cnt.x = 0;
     cnt.y = 0;
-    getRenderer().render(cnt, renderTexture);
+    Render.getRenderer().render(cnt, renderTexture);
 
     this.tileset = new Tileset();
     this.grid = grid;

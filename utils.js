@@ -127,11 +127,6 @@ function getMusic()
     return sounds[RES.GAME_MUSIC];
 }
 
-function getRenderer()
-{
-    return RES.renderer;
-}
-
 /************/
 /* Sequence */
 /************/

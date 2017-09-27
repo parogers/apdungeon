@@ -55,7 +55,7 @@ function renderText(lines, options)
     }
 
     var renderTexture = PIXI.RenderTexture.create(maxWidth, y);
-    getRenderer().render(cnt, renderTexture);
+    Render.getRenderer().render(cnt, renderTexture);
     return renderTexture;
 }
 

@@ -28,10 +28,10 @@ function TitleScreen()
     var screenHeight = 80;
     // Calculate the native-to-screen scaling so that the title screen fits
     // the available vertical space.
-    var scale = getRenderer().height/screenHeight;
+    var scale = Render.getRenderer().height/screenHeight;
 
     // Now figure out how wide the screen is (to fill the space)
-    var screenWidth = getRenderer().width/scale;
+    var screenWidth = Render.getRenderer().width/scale;
 
     // The PIXI container for rendering the scene
     this.stage = new PIXI.Container();
@@ -167,5 +167,5 @@ TitleScreen.prototype.update = function(dt)
 
 TitleScreen.prototype.render = function()
 {
-    getRenderer().render(this.stage);
+    Render.getRenderer().render(this.stage);
 }
