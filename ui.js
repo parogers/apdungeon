@@ -80,14 +80,13 @@ function HealthUI()
 HealthUI.prototype.addHeart = function()
 {
     var heart = new PIXI.Sprite(this.fullHeart);
-    heart.scale.set(SCALE);
     this.hearts.push(heart);
     this.sprite.addChild(heart);
 
-    var x = -this.hearts.length*(this.fullHeart.width+1)*SCALE;
+    var x = -this.hearts.length*(this.fullHeart.width+1);
     for (heart of this.hearts) {
 	heart.x = x;
-	x += (this.fullHeart.width+1)*SCALE;
+	x += (this.fullHeart.width+1);
     }
 }
 
@@ -132,7 +131,6 @@ HealthUI.prototype.update = function(dt)
 function ItemSlotUI(item, args)
 {
     this.sprite = new PIXI.Container();
-    this.sprite.scale.set(SCALE);
     this.baseItem = item;
     this.item = item;
     this.count = 0;
@@ -211,7 +209,7 @@ function InventoryUI()
     for (slot of this.slots) {
 	this.sprite.addChild(slot.sprite);
 	slot.sprite.x = x;
-	x += (slot.slotSprite.texture.width+1)*SCALE;
+	x += (slot.slotSprite.texture.width+1);
     }
 }
 

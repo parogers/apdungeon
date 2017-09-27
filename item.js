@@ -17,7 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-ITEM_GRAVITY = 600;
+ITEM_GRAVITY = 120;
 
 /**************/
 /* GroundItem */
@@ -28,7 +28,6 @@ function GroundItem(item, x, y)
     var img = getFrame(RES.GROUND_ITEMS, item);
     this.sprite = new PIXI.Sprite(img);
     this.sprite.anchor.set(0.5, 0.6);
-    this.sprite.scale.set(SCALE);
     this.height = 0;
     this.sprite.x = x;
     this.sprite.y = y;

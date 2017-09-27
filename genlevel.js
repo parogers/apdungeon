@@ -176,8 +176,8 @@ var LevelGenerator = (function() {
 		}
 		if (found !== -1) {
 		    var gate = new Gate();
-		    gate.sprite.x = pos*RES.TILE_WIDTH*SCALE;
-		    gate.sprite.y = found*RES.TILE_HEIGHT*SCALE;
+		    gate.sprite.x = pos*RES.TILE_WIDTH;
+		    gate.sprite.y = found*RES.TILE_HEIGHT;
 		    level.addThing(gate);
 		}
 	    }
@@ -300,29 +300,29 @@ var LevelGenerator = (function() {
 	    // of the items become hidden behind)
 	    var items = [Item.COIN, Item.COIN, Item.COIN, Item.SMALL_SWORD];
 	    var chest = new Chest(items, {ejectX: 1});
-	    chest.sprite.x = 300;
-	    chest.sprite.y = 120;
+	    chest.sprite.x = 60;
+	    chest.sprite.y = 24;
 	    level.addThing(chest);
 
 	    // Add an NPC to give the player some dialog
 	    var npc = new NPC();
 	    npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
-	    npc.sprite.x = 230;
-	    npc.sprite.y = 125;
+	    npc.sprite.x = 46;
+	    npc.sprite.y = 25;
 	    level.addThing(npc);
 
 	    // Add an NPC to give the player some dialog
 	    var npc = new NPC("npc3_south_1");
 	    npc.setDialog("GOOD LUCK!");
-	    npc.sprite.x = 400;
-	    npc.sprite.y = 200;
+	    npc.sprite.x = 80;
+	    npc.sprite.y = 40;
 	    level.addThing(npc);
 	}
 
 	// Add a door to enter the level
 	var door = new Door();
-	door.sprite.x = 100;
-	door.sprite.y = 64;
+	door.sprite.x = 20;
+	door.sprite.y = 12.8;
 	level.addThing(door);
 
 	var scn = new EnterScene(door);
@@ -330,8 +330,8 @@ var LevelGenerator = (function() {
 
 	// Add a door to exit the level
 	var door = new Door();
-	door.sprite.x = level.getWidth()-120;
-	door.sprite.y = 64;
+	door.sprite.x = level.getWidth()-24;
+	door.sprite.y = 12.8;
 	level.exitDoor = door;
 	//door.startOpening();
 	level.addThing(door);

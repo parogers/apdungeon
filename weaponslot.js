@@ -32,15 +32,14 @@ function SwordWeaponSlot(player)
     //this.weaponSprite.anchor.set(6.5/8, 4/8.); // bow
     this.sprite.anchor.set(4./8, 3.9/8); // sword
     //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
-    this.sprite.scale.set(SCALE);
     // Sprite position (relative to the player) and rotation
-    this.sprite.x = 2.5*SCALE;
-    this.sprite.y = -4*SCALE;
+    this.sprite.x = 2.5;
+    this.sprite.y = -4;
     this.sprite.rotation = -Math.PI/3;
     this.attackCooldown = 0;
-    this.weaponReach = 3.25*SCALE;
+    this.weaponReach = 3.25;
     this.player = player;
-    this.hitbox = new Hitbox(0, -4*SCALE, 10*SCALE, 6*SCALE);
+    this.hitbox = new Hitbox(0, -4, 10, 6);
     // Which weapon texture is currently displayed
     this.textureName = null;
     this.setTexture("sword2");
@@ -51,7 +50,7 @@ SwordWeaponSlot.prototype.update = function(dt)
     if (this.attackCooldown > 0) {
 	this.attackCooldown -= dt;
 	if (this.attackCooldown <= 0) {
-	    this.sprite.x = 2.5*SCALE;
+	    this.sprite.x = 2.5;
 	    this.sprite.rotation = -Math.PI/3;
 	}
     }
@@ -77,7 +76,7 @@ SwordWeaponSlot.prototype.startAttack = function()
 
     getSound(RES.ATTACK_SWORD_SND).play();
     this.sprite.rotation = 0;
-    this.sprite.x = 3.5*SCALE;
+    this.sprite.x = 3.5;
 
     var lst = this.player.level.checkHitMany(
 	this.player.sprite.x + this.player.facing*this.weaponReach, 
@@ -107,7 +106,6 @@ function BowWeaponSlot(player)
     this.sprite = new PIXI.Sprite();
     this.sprite.anchor.set(6.5/8, 4/8.); // bow
     //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
-    this.sprite.scale.set(SCALE);
     // Sprite position (relative to the player) and rotation
     this.player = player;
     this.attackCooldown = 0;
@@ -121,12 +119,12 @@ BowWeaponSlot.prototype.update = function(dt)
 	/* Have the bow rock back and forth as the player moves. */
 	this.sprite.rotation = Math.PI/5 + 
 	    (Math.PI/40)*Math.cos(10*this.player.frame);
-	this.sprite.x = 3.*SCALE;
-	this.sprite.y = -2.5*SCALE;
+	this.sprite.x = 3.0;
+	this.sprite.y = -2.5;
     } else {
 	this.sprite.rotation = 0;
-	this.sprite.x = 3*SCALE;
-	this.sprite.y = -3.25*SCALE;
+	this.sprite.x = 3;
+	this.sprite.y = -3.25;
 	this.attackCooldown -= dt;
     }
     /* Staff placement */
@@ -155,9 +153,10 @@ BowWeaponSlot.prototype.startAttack = function()
     this.player.numArrows--;
 
     var arrow = new Arrow(
+	this.player,
 	this.player.sprite.x,
 	this.player.sprite.y+this.sprite.y,
-	this.player.facing*500, 0,
+	this.player.facing*100, 0,
 	Math.abs(this.sprite.y));
     //level.things.push(arrow);
     //level.stage.addChild(arrow.sprite);
@@ -168,12 +167,13 @@ BowWeaponSlot.prototype.stopAttack = function()
 {
 }
 
-function Arrow(x, y, velx, vely, height)
+function Arrow(owner, x, y, velx, vely, height)
 {
+    this.owner = owner;
     this.sprite = new PIXI.Sprite(getFrame(RES.WEAPONS, "arrow"));
     this.sprite.anchor.set(0.5, 0.5);
-    this.sprite.scale.x = Math.sign(velx)*SCALE;
-    this.sprite.scale.y = SCALE;
+    this.sprite.scale.x = Math.sign(velx);
+    this.sprite.scale.y = 1;
     this.sprite.x = x;
     this.sprite.y = y;
     this.velx = velx;
@@ -186,7 +186,7 @@ function Arrow(x, y, velx, vely, height)
 
 Arrow.prototype.update = function(dt)
 {
-    var level = this.player.level;
+    var level = this.owner.level;
     if (this.state === ARROW_FLIGHT) {
 	this.sprite.x += this.velx*dt;
 	this.sprite.y += this.vely*dt;
@@ -198,7 +198,7 @@ Arrow.prototype.update = function(dt)
 	}
 	// Check if the arrow hits a wall
 	var tile = level.bg.getTileAt(
-	    this.sprite.x+Math.sign(this.velx)*20,
+	    this.sprite.x+Math.sign(this.velx)*4,
 	    this.sprite.y+this.height);
 	if (tile.solid) {
 	    this.velx *= -0.25;
@@ -211,7 +211,7 @@ Arrow.prototype.update = function(dt)
 	// Now check if we've hit an enemy
 	var other = level.checkHit(
 	    this.sprite.x, this.sprite.y, 
-	    this.hitbox, this.player);
+	    this.hitbox, this.owner);
 	if (other && other.handleHit) {
 	    var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
 	    if (ret === true) {

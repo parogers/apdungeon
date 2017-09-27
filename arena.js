@@ -169,7 +169,7 @@ Spawn.prototype.activate = function()
 {
     // Start the monster somewhere off screen either left or right
     this.monster.sprite.x = this.level.camera.x + this.level.camera.width/2 + 
-	this.direction*(this.level.camera.width/2+20);
+	this.direction*(this.level.camera.width/2+4);
     var offset = 0;
 
     // Find some clear space to spawn the monster (ie don't spawn in a wall)
@@ -212,9 +212,9 @@ GateSpawn.prototype.update = function(dt)
 	this.spawned = true;
 	this.level.addThing(this.monster);
 	this.monster.sprite.x = this.gate.sprite.x + 
-	    this.gate.sprite.texture.width*SCALE/2;
+	    this.gate.sprite.texture.width/2;
 	this.monster.sprite.y = this.gate.sprite.y + 
-	    this.gate.sprite.texture.height*SCALE;
+	    this.gate.sprite.texture.height;
     } 
     else if (this.spawned && this.closeDelay > 0)
     {
@@ -249,7 +249,7 @@ function DropSpawn(level, monster, x, y)
     var img = this.monster.dropFrame || this.monster.frames[0];
     this.falling = new Scenery(img);
     this.timer = 0.5;
-    this.fallSpeed = 200;
+    this.fallSpeed = 40;
 }
 
 DropSpawn.prototype.activate = function()
@@ -265,7 +265,7 @@ DropSpawn.prototype.activate = function()
     this.level.addThing(this.shadow);
     this.falling.sprite.zpos = FRONT_POS;
     this.falling.sprite.x = this.xpos;
-    this.falling.sprite.y = this.level.camera.y + 20;
+    this.falling.sprite.y = this.level.camera.y + 4;
 }
 
 DropSpawn.prototype.update = function(dt)

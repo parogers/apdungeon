@@ -30,7 +30,6 @@ function GoMarker(screen)
 	getFrame(RES.UI, "go2")
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
-    this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(1,0);
     this.timer = 0;
     this.dings = 3;

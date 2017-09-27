@@ -28,7 +28,6 @@ function Chest(items, options)
     this.openTexture = getFrame(RES.MAPTILES, "chest_open");
     this.closedTexture = getFrame(RES.MAPTILES, "chest_closed");
     this.sprite = new PIXI.Sprite(this.closedTexture);
-    this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0.5, 0.75);
     this.isOpen = false;
     this.timer = 0;
@@ -47,15 +46,15 @@ Chest.prototype.update = function(dt)
 	    for (item of this.items) {
 		var gnd = new GroundItem(
 		    item, 
-		    this.sprite.x+5*randUniform(0, 1), 
-		    this.sprite.y+10*randUniform(0.1, 1));
+		    this.sprite.x+1*randUniform(0, 1), 
+		    this.sprite.y+2*randUniform(0.1, 1));
 		this.level.addThing(gnd);
 		if (this.options && this.options.ejectX) 
-		    gnd.velx = this.options.ejectX*randUniform(30, 60);
+		    gnd.velx = this.options.ejectX*randUniform(6, 12);
 		else
-		    gnd.velx = randomChoice([-1, 1])*randUniform(30, 60);
-		gnd.velz = -randUniform(-10, 30);
-		gnd.velh = -150*randUniform(0.9, 1);
+		    gnd.velx = randomChoice([-1, 1])*randUniform(6, 12);
+		gnd.velz = -randUniform(-2, 6);
+		gnd.velh = -30*randUniform(0.9, 1);
 	    }
 	}
     }

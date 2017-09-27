@@ -68,7 +68,6 @@ function createGrid(rows, cols, value)
 function createSplashSprite()
 {
     waterSprite = new PIXI.Sprite();
-    waterSprite.scale.set(SCALE);
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
     waterSprite.texture = getFrame(RES.MAPTILES, "treading_water");
@@ -82,7 +81,6 @@ function createBloodSpatter(imgs)
 	    RES.MAPTILES, 
 	    randomChoice(imgs || ["blood1", "blood2", "blood3"])
     ));
-    sprite.scale.set(SCALE);
     sprite.zpos = FLOOR_POS;
     sprite.anchor.set(0.5, 0.5);
     return sprite;

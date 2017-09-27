@@ -20,16 +20,15 @@
 function NPC(img)
 {
     // Position of the hit box, relative to the sprite position
-    this.hitbox = new Hitbox(0, 0, 5*SCALE, 5*SCALE);
+    this.hitbox = new Hitbox(0, 0, 5, 5);
     var texture = getFrame(RES.NPC_TILESET, img || "npc1_south_1");
     this.sprite = new PIXI.Container();
     this.npcSprite = new PIXI.Sprite(texture);
-    this.npcSprite.scale.set(SCALE);
     this.npcSprite.anchor.set(0.5, 1);
     this.sprite.addChild(this.npcSprite);
 
     this.textSprite = new PIXI.Sprite(renderText("?"));
-    this.textSprite.scale.set(SCALE*3/5.);
+    this.textSprite.scale.set(3/5.);
     this.textSprite.anchor.set(0.5, 1);
     this.textSprite.y = -this.npcSprite.height-2;
     this.textSprite.visible = false;

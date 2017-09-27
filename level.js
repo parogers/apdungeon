@@ -45,8 +45,8 @@ function Camera()
 {
     this.x = 0;
     this.y = 0;
-    this.width = getRenderer().width;
-    this.height = getRenderer().height;
+    this.width = getRenderer().width/SCALE;
+    this.height = getRenderer().height/SCALE;
 }
 
 /*********/
@@ -127,7 +127,7 @@ Level.prototype.findClearSpace = function(x, y)
 	    // We've gone completely outside the level - no space found
 	    return null;
 	}
-	offset += RES.TILE_HEIGHT*SCALE;
+	offset += RES.TILE_HEIGHT;
     }
 }
 
@@ -166,9 +166,9 @@ Level.prototype.update = function(dt)
 	}
 	// Update the camera - the player has full mobility within the 
 	// start and stop bounds of the arena.
-	var xpos = this.player.sprite.x - this.camera.width/2;
-	xpos = Math.max(xpos, arena.startx);
-	xpos = Math.min(xpos, arena.endx-this.camera.width);
+	//var xpos = this.player.sprite.x - this.camera.width/2;
+	//xpos = Math.max(xpos, arena.startx);
+	//xpos = Math.min(xpos, arena.endx-this.camera.width);
 	break;
 	
     case this.SHOWING_GO:
@@ -205,7 +205,7 @@ Level.prototype.update = function(dt)
 	}*/
 
 	// Wait for the player to move into the next arena
-	if (arena && this.camera.x + this.camera.width >= arena.endx-1)
+	if (arena && this.camera.x + this.camera.width >= arena.endx)
 	{
 	    // Snap the camera into place and activate the next arena
 	    this.camera.x = arena.endx - this.camera.width;
@@ -334,8 +334,8 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
     // Drop the item
     if (pick !== null) {
 	var gnd = new GroundItem(pick, x, y);
-	gnd.velx = 50*(x > this.camera.x ? -1 : 1);
-	gnd.velh = -200;
+	gnd.velx = 10*(x > this.camera.x ? -1 : 1);
+	gnd.velh = -40;
 	this.addThing(gnd);
     }
 }
@@ -360,6 +360,7 @@ function LevelScreen()
     this.state = this.NEW_GAME;
 
     this.stage = new PIXI.Container();
+    this.stage.scale.set(SCALE);
 
     this.healthUI = new HealthUI();
     this.inventoryUI = new InventoryUI();
@@ -376,8 +377,8 @@ LevelScreen.prototype.update = function(dt)
     case this.NEW_GAME:
 	// Generate a new level and player character
 	player = new Player();
-	player.sprite.x = 250;
-	player.sprite.y = 200;
+	player.sprite.x = 0;
+	player.sprite.y = 0;
 	this.levelNum = 0;
 	this.player = player;
 	// Generate the first level
@@ -440,14 +441,15 @@ LevelScreen.prototype.setLevel = function(level)
 	// (ie UI elements are drawn on top of the level)
 	this.stage.children.unshift(this.stage.children.pop());
 	this.level = level;
+	var right = getRenderer().width/SCALE;
 	// Position the UI just below the level render area
-	this.healthUI.sprite.x = getRenderer().width-1;
-	this.healthUI.sprite.y = level.getHeight()-10;
-	this.inventoryUI.sprite.x = 30;
-	this.inventoryUI.sprite.y = level.getHeight()+15;
+	this.healthUI.sprite.x = right-1;
+	this.healthUI.sprite.y = level.getHeight()-1;
+	this.inventoryUI.sprite.x = 6;
+	this.inventoryUI.sprite.y = level.getHeight()+3;
 	// Put the go marker in the top-right corner of the level area
-	this.goMarker.sprite.x = getRenderer().width - 10;
-	this.goMarker.sprite.y = 10;
+	this.goMarker.sprite.x = right-1;
+	this.goMarker.sprite.y = 2;
 	this.level.player = this.player;
 	this.level.addThing(this.player);
 	this.level.update(0);

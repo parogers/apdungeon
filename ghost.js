@@ -28,7 +28,6 @@ function Ghost(state)
 {
     this.name = "Spectre";
     this.frames = getFrames(RES.ENEMIES, GHOST_FRAMES);
-    this.speed = 80;
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
@@ -36,20 +35,19 @@ function Ghost(state)
     this.travel = 0;
     this.velx = 0;
     this.vely = 0;
-    this.accel = 100;
-    this.maxSpeed = 100;
+    this.accel = 20;
+    this.maxSpeed = 30;
     // The sprite container holding the monster
     this.sprite = new PIXI.Container();
     this.sprite.alpha = 0.75;
-    // The actual goblin sprite
+    // The actual sprite
     this.ghostSprite = new PIXI.Sprite(this.frames[0]);
-    this.ghostSprite.scale.set(SCALE);
     this.ghostSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.ghostSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GHOST_ATTACKING;
-    this.hitbox = new Hitbox(0, -2*SCALE, 6*SCALE, 6*SCALE);
+    this.hitbox = new Hitbox(0, 0, 8, 4);
 }
 
 Ghost.prototype.dropTable = [
@@ -74,8 +72,8 @@ Ghost.prototype.updateAttacking = function(dt)
     accelx = this.accel*accelx/mag;
     accely = this.accel*accely/mag;
 
-    this.velx += accelx*dt;
-    this.vely += accely*dt;
+    this.velx += accelx*dt + 10*Math.cos(this.frame)*dt;
+    this.vely += accely*dt + 10*Math.sin(this.frame)*dt;
 
     var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
     if (speed > this.maxSpeed) {
@@ -83,25 +81,9 @@ Ghost.prototype.updateAttacking = function(dt)
 	this.vely = this.maxSpeed*this.vely/speed;
     }
 
-    this.sprite.x += this.velx*dt+Math.cos(this.frame);
-    this.sprite.y += this.vely*dt+Math.sin(this.frame);
+    this.sprite.x += this.velx*dt;//+Math.cos(this.frame);
+    this.sprite.y += this.vely*dt;//+Math.sin(this.frame);
 
-/*    // Check if we can move left/right
-    var tile = level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
-    if (!tile.solid) {
-	this.sprite.x += dx;
-    }
-
-    // Now check if it can move up/down. Doing this separately from the check
-    // above means we can "slide" along walls and such.
-    var tile2 = level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
-    if (!tile2.solid) {
-	// Go a bit faster if we're just moving up/down
-	if (tile.solid) this.sprite.y += 3*dy;
-	else {
-	    this.sprite.y += dy;
-	}
-    }*/
     this.frame += 4*dt;
     this.ghostSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 }
@@ -138,7 +120,7 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
 
     } else {
 	getSound(RES.SNAKE_HURT_SND).play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*500;
+	this.knocked = Math.sign(this.sprite.x-srcx)*100;
 	this.knockedTimer = 0.1;
 	this.state = GHOST_HURT;
     }

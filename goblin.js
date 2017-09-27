@@ -31,7 +31,7 @@ var GOBLIN_HURT = 5;
 var GOBLIN_DEAD = 6;
 
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
-var GOBLIN_GRAVITY = 1000;
+var GOBLIN_GRAVITY = 200;
 
 var GOBLIN_FRAMES = ["goblin_south_2", "goblin_south_3"];
 
@@ -42,13 +42,13 @@ function Goblin(state)
     this.name = "Goblin";
     this.idleFrame = getFrame(RES.ENEMIES, "goblin_south_1");
     this.frames = getFrames(RES.ENEMIES, GOBLIN_FRAMES);
-    this.speed = 80;
+    this.speed = 16;
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
     // The horizontal and vertical jumping speeds
-    this.jumpVerSpeed = 250;
-    this.jumpHorSpeed = 120;
+    this.jumpVerSpeed = 50;
+    this.jumpHorSpeed = 24;
     this.dead = false;
     // How high we're off the ground (when jumping)
     this.height = 0;
@@ -57,9 +57,9 @@ function Goblin(state)
     // Our current vertical velocity (when jumping)
     this.velh = 0;
     // When approaching the player, how far to keep distance
-    this.approachDist = 150;
+    this.approachDist = 30;
     // At what distance to the player we should do our jump attack
-    this.jumpDist = 100;
+    this.jumpDist = 20;
     // When in the approach state, used to determine when to jump at the player
     this.jumpTimeout = 1.5;
     this.jumpTimer = 0;
@@ -67,17 +67,16 @@ function Goblin(state)
     this.sprite = new PIXI.Container();
     // The actual goblin sprite
     this.goblinSprite = new PIXI.Sprite(this.frames[0]);
-    this.goblinSprite.scale.set(SCALE);
     this.goblinSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.goblinSprite);
     // Make the splash/water sprite
     this.waterSprite = createSplashSprite();
-    this.waterSprite.y = -0.75*SCALE;
+    this.waterSprite.y = -0.75;
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GOBLIN_APPROACH;
-    this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
+    this.hitbox = new Hitbox(0, -1, 6, 6);
 }
 
 Goblin.prototype.dropTable = [
@@ -281,7 +280,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 
     } else {
 	getSound(RES.SNAKE_HURT_SND).play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*300;
+	this.knocked = Math.sign(this.sprite.x-srcx)*60;
 	this.knockedTimer = 0.1;
 	this.state = GOBLIN_HURT;
     }

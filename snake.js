@@ -32,7 +32,7 @@ function Snake(state)
 {
     this.name = "Snake";
     this.frames = getFrames(RES.ENEMIES, SNAKE_FRAMES);
-    this.speed = 80;
+    this.speed = 16;
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
@@ -42,17 +42,16 @@ function Snake(state)
     this.sprite = new PIXI.Container();
     // The actual snake sprite
     this.snakeSprite = new PIXI.Sprite(this.frames[0]);
-    this.snakeSprite.scale.set(SCALE);
     this.snakeSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.snakeSprite);
     // Make the splash/water sprite
     this.waterSprite = createSplashSprite();
-    this.waterSprite.y = -1.25*SCALE;
+    this.waterSprite.y = -1.25;
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || SNAKE_ATTACKING;
-    this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 6*SCALE);
+    this.hitbox = new Hitbox(0, -1, 6, 6);
 }
 
 Snake.prototype.dropTable = [
@@ -102,13 +101,13 @@ Snake.prototype.updateAttacking = function(dt)
     } else {
 	if (player.sprite.x < this.sprite.x) this.facing = -1;
 	else this.facing = 1;
-	this.travel = randint(80, 100);
+	this.travel = randint(16, 20);
     }
 
     // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
     if (Math.abs(dist) > 10) {
-	dy = dt*20*Math.sign(dist);
+	dy = dt*4*Math.sign(dist);
     }
 
     // Check if the snake can move left/right
@@ -123,7 +122,7 @@ Snake.prototype.updateAttacking = function(dt)
     var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile2.solid) {
 	// Go a bit faster if we're just moving up/down
-	if (tile.solid) this.sprite.y += 3*dy;
+	if (tile.solid) this.sprite.y += 1*dy;
 	else {
 	    this.sprite.y += dy;
 	    this.waterSprite.visible = tile2.water;
@@ -167,7 +166,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 
     } else {
 	getSound(RES.SNAKE_HURT_SND).play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*300;
+	this.knocked = Math.sign(this.sprite.x-srcx)*60;
 	this.knockedTimer = 0.1;
 	this.state = SNAKE_HURT;
     }
@@ -203,15 +202,15 @@ function Rat()
     this.name = "Rat";
     this.frames = getFrames(RES.ENEMIES, RAT_FRAMES);
     this.health = 1;
-    this.speed = 100;
+    this.speed = 20;
     this.frame = 0;
     this.facing = 1;
-    this.travel = 100;
+    this.travel = 20;
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_ATTACKING;
     this.snakeSprite.texture = this.frames[0];
-    this.waterSprite.y = -0.9*SCALE;
+    this.waterSprite.y = -0.9;
 }
 
 Rat.prototype = Object.create(Snake.prototype);
@@ -228,15 +227,15 @@ function Scorpion()
     this.name = "Scorpion";
     this.frames = getFrames(RES.ENEMIES, SCORPION_FRAMES);
     this.health = 4;
-    this.speed = 50;
+    this.speed = 10;
     this.frame = 0;
     this.facing = 1;
-    this.travel = 100;
+    this.travel = 20;
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = SNAKE_ATTACKING;
     this.snakeSprite.texture = this.frames[0];
-    this.waterSprite.y = -0.85*SCALE;
+    this.waterSprite.y = -0.85;
 }
 
 Scorpion.prototype = Object.create(Snake.prototype);

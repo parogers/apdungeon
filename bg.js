@@ -71,14 +71,13 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
 
     this.tileset = new Tileset();
     this.grid = grid;
-    this.tileWidth = tileWidth*SCALE;
-    this.tileHeight = tileHeight*SCALE;
-    this.wallHeight = wallHeight*SCALE;
+    this.tileWidth = tileWidth;
+    this.tileHeight = tileHeight;
+    this.wallHeight = wallHeight;
     this.sprite = new PIXI.Sprite();
     this.sprite.texture = renderTexture;
     this.sprite.x = 0;
     this.sprite.y = 0;
-    this.sprite.scale.set(SCALE);
     //this.sprite.scale.set(1.8);
 }
 
@@ -87,8 +86,8 @@ TiledBackground.prototype.checkHit = function(x, y, w)
     return false;
     var x = x-this.sprite.x;
     var y = y-(this.sprite.y+this.tileHeight);
-    if (x < 0 || x > this.sprite.texture.width*SCALE ||
-	y < 0 || y > this.sprite.texture.height*SCALE - this.tileHeight) 
+    if (x < 0 || x > this.sprite.texture.width ||
+	y < 0 || y > this.sprite.texture.height - this.tileHeight) 
     {
 	return true;
     }
@@ -107,11 +106,7 @@ TiledBackground.prototype.getTileAt = function(x, y)
     // first row of tiles are wall tiles. (ie taller)
     var x = x-this.sprite.x;
     var y = y-this.sprite.y-(this.wallHeight-this.tileHeight);
-    /*if (x < 0 || x > this.sprite.texture.width*SCALE ||
-	y < 0 || y > this.sprite.texture.height*SCALE - this.tileHeight) 
-    {
-	return null;
-    }*/
+
     var row = (y / this.tileHeight)|0;
     var col = (x / this.tileWidth)|0;
     if (this.grid[row] && this.grid[row][col])
@@ -121,5 +116,5 @@ TiledBackground.prototype.getTileAt = function(x, y)
 
 TiledBackground.prototype.getHeight = function()
 {
-    return this.sprite.texture.height*SCALE;
+    return this.sprite.texture.height;
 }

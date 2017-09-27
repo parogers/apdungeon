@@ -24,39 +24,50 @@ function TitleScreen()
     // Player wants to start a new game
     this.NEW_GAME = 2;
 
+    // The (native) height of the title screen before scaling
+    var screenHeight = 80;
+    // Calculate the native-to-screen scaling so that the title screen fits
+    // the available vertical space.
+    var scale = getRenderer().height/screenHeight;
+
+    // Now figure out how wide the screen is (to fill the space)
+    var screenWidth = getRenderer().width/scale;
+
     // The PIXI container for rendering the scene
     this.stage = new PIXI.Container();
+    this.stage.scale.set(scale);
     this.state = this.PLAYING_INTRO;
 
     this.bg = new PIXI.Sprite(getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
-    this.bg.scale.set(getRenderer().width/this.bg.texture.width,
-		      getRenderer().height/this.bg.texture.height);
+    this.bg.scale.set(
+	screenWidth/this.bg.texture.width,
+	screenHeight/this.bg.texture.height);
     this.stage.addChild(this.bg);
     this.delay = 0;
 
     txt = new PIXI.Sprite(getFrame(RES.UI, "title-text"));
-    txt.scale.set(SCALE);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = getRenderer().width/2;
-    txt.y = 80;
+    //txt.x = getRenderer().width/2;
+    txt.x = screenWidth/2;
+    txt.y = screenHeight/5;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(getFrame(RES.UI, "demo-text"));
-    txt.scale.set(SCALE);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = getRenderer().width/2;
-    txt.y = 140;
+    //txt.x = getRenderer().width/2;
+    txt.x = screenWidth/2;
+    txt.y = screenHeight/5+15;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(renderText("PRESS SPACE TO PLAY"));
-    txt.scale.set(SCALE*0.75);
+    txt.scale.set(0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = getRenderer().width/2;
-    txt.y = getRenderer().height-50;
+    txt.x = screenWidth/2; //getRenderer().width/2;
+    txt.y = 6*screenHeight/7; //getRenderer().height-50;
     this.stage.addChild(txt);
 
     this.sequence = new Sequence(
@@ -68,19 +79,19 @@ function TitleScreen()
 	"start",
 	function(dt) {
 	    this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
-	    this.level.stage.x = -50;
-	    this.level.stage.y = getRenderer().height/2-25;
+	    this.level.stage.x = -10;
+	    this.level.stage.y = screenHeight/2-5;
 	    this.stage.addChild(this.level.stage);
 	    // Note the screen position within the level (so we can know when
 	    // objects are offscreen)
 	    this.screenLeft = -this.level.stage.x;
-	    this.screenRight = this.screenLeft + getRenderer().width;
+	    this.screenRight = this.screenLeft + screenWidth;
 	    // Create a dummy player to drive around
 	    this.player = new Player();
 	    this.player.cameraMovement = false;
 	    this.player.hasControl = false;
-	    this.player.sprite.x = 10;
-	    this.player.sprite.y = 100;
+	    this.player.sprite.x = 2;
+	    this.player.sprite.y = 20;
 	    this.level.addThing(this.player);
 
 	    this.monster = new Scenery(getFrames(RES.ENEMIES, RAT_FRAMES));
@@ -102,8 +113,8 @@ function TitleScreen()
 	    // Have the player run right offscreen
 	    this.player.dirx = 1;
 	    this.player.update(dt);
-	    if (this.player.sprite.x > this.screenRight+20) {
-		this.monster.sprite.x = this.screenRight+80;
+	    if (this.player.sprite.x > this.screenRight+4) {
+		this.monster.sprite.x = this.screenRight+16;
 		return this.NEXT;
 	    }
 	},
@@ -112,10 +123,10 @@ function TitleScreen()
 	    // Have the player run the other way chased by a monster
 	    this.player.dirx = -1;
 	    this.player.update(dt);
-	    this.monster.velx = -100;
+	    this.monster.velx = -20;
 	    this.monster.update(dt);
 	    this.monster.faceDirection(-1);
-	    if (this.player.sprite.x < this.screenLeft-20) {
+	    if (this.player.sprite.x < this.screenLeft-4) {
 		this.player.upgradeSword(Item.SMALL_SWORD);
 		return this.NEXT;
 	    }
@@ -124,10 +135,10 @@ function TitleScreen()
 	    // Now the player chases the monster with a sword
 	    this.player.dirx = 1;
 	    this.player.update(dt);
-	    this.monster.velx = 100;
+	    this.monster.velx = 20;
 	    this.monster.update(dt);
 	    this.monster.faceDirection(1);
-	    if (this.player.sprite.x > this.screenRight+20) {
+	    if (this.player.sprite.x > this.screenRight+4) {
 		// New monster chases the player
 		this.monsterChoice++;
 		var choice = this.monsterChoices[

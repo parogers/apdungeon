@@ -38,30 +38,29 @@ function SkelWarrior(state)
     this.name = "Skeleton";
     this.idleFrame = getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
     this.frames = getFrames(RES.ENEMIES, SKEL_WARRIOR_FRAMES);
-    this.speed = 100;
+    this.speed = 20;
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
     this.dead = false;
     // When approaching the player, how far to keep distance
-    this.approachDist = 150;
+    this.approachDist = 30;
     this.timer = null;
     this.counter = 0;
     // The sprite container holding the monster and splash sprite
     this.sprite = new PIXI.Container(this.frames[0]);
     // The actual goblin sprite
     this.monsterSprite = new PIXI.Sprite();
-    this.monsterSprite.scale.set(SCALE);
     this.monsterSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.monsterSprite);
     // Make the splash/water sprite
     this.waterSprite = createSplashSprite();
-    this.waterSprite.y = -0.5*SCALE;
+    this.waterSprite.y = -0.5;
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || SKEL_WARRIOR_START_APPROACH;
-    this.hitbox = new Hitbox(0, -1*SCALE, 6*SCALE, 8*SCALE);
+    this.hitbox = new Hitbox(0, -1, 6, 8);
 }
 
 SkelWarrior.prototype.dropTable = [
@@ -123,7 +122,7 @@ SkelWarrior.prototype.updateAttacking = function(dt)
     }
     this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
 
-    if (Math.abs(this.sprite.x - player.sprite.x) < 5*SCALE)
+    if (Math.abs(this.sprite.x - player.sprite.x) < 5)
     {
 	// Hit the player
 	// ...
@@ -267,7 +266,7 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 
     } else {
 	getSound(RES.SNAKE_HURT_SND).play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*300;
+	this.knocked = Math.sign(this.sprite.x-srcx)*60;
 	this.knockedTimer = 0.1;
 	this.state = SKEL_WARRIOR_HURT;
     }

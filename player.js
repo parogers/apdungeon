@@ -36,7 +36,7 @@ function Player()
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 10;
     this.health = this.maxHealth;
-    this.maxSpeed = 200; // pixels/second
+    this.maxSpeed = 40; // pixels/second
     // Inventory stuff
     this.numCoins = 0;
     this.numArrows = 0;
@@ -53,8 +53,8 @@ function Player()
     // Actually dead
     this.dead = false;
     // The number of kills (stored by monster name). Also stores the 
-    // constructor used to instantiate the monster:
-    //     {count: ZZZ, klass: ZZZ}
+    // image of the monster (for displaying stats later)
+    //     {count: ZZZ, img: ZZZ}
     this.kills = {};
 
     // Whether the player movement is restricted by the camera position.
@@ -70,7 +70,7 @@ function Player()
 
     //this.weapon = Item.NONE; // current weapon
     // Define the hitbox
-    this.hitbox = new Hitbox(0, -4, 6*SCALE, 6*SCALE);
+    this.hitbox = new Hitbox(0, -4, 6, 6);
 
     this.setCharFrames(RES.FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
@@ -78,12 +78,11 @@ function Player()
     this.sprite = new PIXI.Container();
     // Setup the player sprite (texture comes later)
     this.spriteChar = new PIXI.Sprite();
-    this.spriteChar.scale.set(SCALE);
     this.spriteChar.anchor.set(0.5, 1);
     this.sprite.addChild(this.spriteChar);
     // Setup the sprite for when the player is treading water
     this.waterSprite = createSplashSprite();
-    this.waterSprite.y = -1.5*SCALE;
+    this.waterSprite.y = -1.5;
     this.sprite.addChild(this.waterSprite);
 
     // Minimum amount of time after taking damage, until the player can be
@@ -197,7 +196,7 @@ Player.prototype.update = function(dt)
 	this.velx = this.velx * (this.maxSpeed/speed);
 	this.vely = this.vely * (this.maxSpeed/speed);
     }
-    var w = this.spriteChar.texture.width*SCALE*0.75;
+    var w = this.spriteChar.texture.width*0.75;
 
     // Handle left/right movement
     if (this.velx) {
@@ -207,8 +206,8 @@ Player.prototype.update = function(dt)
 	// Keep the player visible to the camera (unless camera mode disabled)
 	if (!left.solid && !right.solid && (
 	    !this.cameraMovement || (
-		x-10 >= this.level.camera.x && 
-		x+10 <= this.level.camera.x + this.level.camera.width))) {
+		x-w/2 >= this.level.camera.x && 
+		x+w/2 <= this.level.camera.x + this.level.camera.width))) {
 	    this.sprite.x = x;
 	} else {
 	    this.velx = 0;
@@ -234,10 +233,10 @@ Player.prototype.update = function(dt)
 	this.waterSprite.visible = false;
     }
 
-    //if (controls.primary && !controls.lastPrimary) this.health = 0;
+    if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
     // Handle attacking
-    if (this.weaponSlot) 
+    if (this.weaponSlot && this.hasControl) 
     {
 	if (controls.primary && !controls.lastPrimary)
 	{
@@ -354,19 +353,19 @@ Player.prototype.takeDamage = function(amt, src)
     {
 	// Adjust the damage parameters based on our armour
 	var cooldown = this.damageCooldown;
-	var knockedVel = 500;
+	var knockedVel = 100;
 	var knockedTimer = 0.1;
 
 	if (this.armour === Item.LEATHER_ARMOUR) {
 	    cooldown = this.damageCooldown*1.25;
-	    knockedVel = 450;
+	    knockedVel = 90;
 	    knockedTimer = 0.08;
 	    if (randint(1, 4) === 1) {
 		if (amt > 1) amt--;
 	    }
 	} else if (this.armour === Item.STEEL_ARMOUR) {
 	    cooldown = this.damageCooldown*1.5;
-	    knockedVel = 400;
+	    knockedVel = 80;
 	    knockedTimer = 0.05;
 	    if (randint(1, 2) === 1) {
 		amt--;

@@ -34,17 +34,24 @@ function GameOverScreen(levelScreen)
     // Done showing the game over screen
     this.DONE = 5;
 
+    this.screenHeight = 80;
+    var scale = getRenderer().height/this.screenHeight;
+
+    this.screenWidth = getRenderer().width/scale;
+
     this.levelScreen = levelScreen;
     this.state = this.TRANSITION_TO_GAMEOVER;
 
     this.stage = new PIXI.Container();
+    this.stage.scale.set(scale);
     this.stage.addChild(levelScreen.stage);
+    levelScreen.stage.scale.set(levelScreen.stage.scale.x/scale);
 
     // Create a black sprite that covers the screen
     this.bg = new PIXI.Sprite(getFrame(RES.UI, "black"));
     this.bg.anchor.set(0, 0);
-    this.bg.scale.set(getRenderer().width/this.bg.texture.width,
-		      getRenderer().height/this.bg.texture.height);
+    this.bg.scale.set(this.screenWidth/this.bg.texture.width,
+		      this.screenHeight/this.bg.texture.height);
     this.bg.alpha = 0;
     this.timer = 0;
     this.delay = 0.25;
@@ -54,7 +61,7 @@ function GameOverScreen(levelScreen)
     this.col = 0;
     this.killStats = [];
     var names = Object.keys(levelScreen.player.kills);
-    for (name of names) {
+    for (var name of names) {
 	var stat = levelScreen.player.kills[name];
 	this.killStats.push({
 	    count: stat.count,
@@ -86,9 +93,8 @@ GameOverScreen.prototype.update = function(dt)
 	    this.bg.alpha = 1;
 	    var txt = new PIXI.Sprite(getFrame(RES.UI, "game-over-text"));
 	    txt.anchor.set(0.5, 0.5);
-	    txt.scale.set(SCALE);
-	    txt.x = getRenderer().width/2;
-	    txt.y = 60;
+	    txt.x = this.screenWidth/2;
+	    txt.y = this.screenHeight/8;
 	    this.stage.addChild(txt);
 	    this.state = this.SHOWING_KILLS;
 	    this.delay = 0.75;
@@ -98,11 +104,10 @@ GameOverScreen.prototype.update = function(dt)
     case this.SHOWING_KILLS:
 	while (this.killStats.length > 0) {
 	    // Show the next killed monster
-	    var xpos = 50+this.col*getRenderer().width/2;
-	    var ypos = 150+this.row*55;
+	    var xpos = 10+this.col*this.screenWidth/2;
+	    var ypos = 30+this.row*11;
 	    var stat = this.killStats.shift();
 	    var monster = new PIXI.Sprite(stat.img);
-	    monster.scale.set(SCALE);
 	    monster.anchor.set(0.5, 1);
 	    monster.x = xpos;
 	    monster.y = ypos;
@@ -111,10 +116,10 @@ GameOverScreen.prototype.update = function(dt)
 	    // Show the name
 	    var msg = stat.name.toUpperCase() + " *" + stat.count;
 	    var txt = new PIXI.Sprite(renderText(msg));
-	    txt.x = xpos + 40;
+	    txt.x = xpos + 8;
 	    txt.y = ypos;
 	    txt.anchor.set(0,1);
-	    txt.scale.set(SCALE*0.65);
+	    txt.scale.set(0.65);
 	    this.stage.addChild(txt);
 
 	    this.col++;
@@ -129,10 +134,9 @@ GameOverScreen.prototype.update = function(dt)
 
     case this.SHOW_CONTINUE_TEXT:
 	var txt = new PIXI.Sprite(renderText("PRESS SPACE TO CONTINUE"));
-	txt.scale.set(SCALE);
 	txt.anchor.set(0.5, 0.5);
-	txt.x = getRenderer().width/2;
-	txt.y = getRenderer().height-50;
+	txt.x = this.screenWidth/2;
+	txt.y = this.screenHeight-15;
 	this.stage.addChild(txt);
 	this.state = this.WAITING;
 	break;

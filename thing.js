@@ -27,7 +27,6 @@ function Thing()
     this.hitbox = new Hitbox(0, 0, 5, 5);
     var texture = getFrame(RES.GROUND_ITEMS, "coin");
     this.sprite = new PIXI.Sprite(texture);
-    this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0,0);
 }
 

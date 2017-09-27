@@ -26,7 +26,6 @@ function Gate()
     ];
     this.hitbox = new Hitbox(0, 0, 5, 5);
     this.sprite = new PIXI.Sprite(this.frames[0]);
-    this.sprite.scale.set(SCALE);
     this.sprite.anchor.set(0,0);
     this.frameNum = 0;
     this.fps = 2;
