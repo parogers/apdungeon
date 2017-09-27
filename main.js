@@ -65,8 +65,19 @@ function loaded()
     div.focus();
 
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+    // Disable the ticker sinc we don't use it (rendering happens as needed)
+    PIXI.ticker.shared.autoStart = false;
+    PIXI.ticker.shared.stop();
 
-    renderer = PIXI.autoDetectRenderer(550, 400);
+    renderer = PIXI.autoDetectRenderer({
+	width: 550, 
+	height: 400,
+//	antialias: true,
+	// Required to prevent flickering in Chrome on Android (others too?)
+	preserveDrawingBuffer: true,
+//	clearBeforeRender: true
+    });
+    //renderer = new PIXI.CanvasRenderer(550, 400);
     div.appendChild(renderer.view);
     stage = new PIXI.Container();
 
@@ -84,7 +95,7 @@ function loaded()
 	console.log("loading: " + resource.url + 
 		    " (" + (loader.progress|0) + "%)"); 
 	progress.update(loader.progress/100.0);
-	requestAnimFrame(function() {
+	requestAnimationFrame(function() {
 	    renderer.render(stage);
 	});
     }
@@ -139,7 +150,7 @@ function gameLoop()
     gamestate.update(dt);
     controls.update();
     gamestate.render();
-    requestAnimFrame(gameLoop)
+    requestAnimationFrame(gameLoop)
 }
 
 function graphicsLoaded()
@@ -152,7 +163,7 @@ function graphicsLoaded()
     progress.setText("LOADING AUDIO...");
     sounds.onProgress = function(percent) {
 	progress.update(percent/100.0);
-	requestAnimFrame(function() {
+	requestAnimationFrame(function() {
 	    renderer.render(stage);
 	});
     };
@@ -199,5 +210,5 @@ function setup()
     music.loop = true;
     music.volume = 0.5;
 
-    requestAnimFrame(gameLoop)
+    requestAnimationFrame(gameLoop)
 }

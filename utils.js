@@ -19,7 +19,7 @@
 
 /* Cross platform way of requesting an animation update
  * (see http://jlongster.com/Making-Sprite-based-Games-with-Canvas) */
-var requestAnimFrame =
+/*var requestAnimFrame =
 	window.requestAnimationFrame ||
 	window.webkitRequestAnimationFrame ||
 	window.mozRequestAnimationFrame ||
@@ -27,7 +27,7 @@ var requestAnimFrame =
 	window.msRequestAnimationFrame ||
 	function(callback){
 	    window.setTimeout(callback, 1000 / 60);
-	};
+	};*/
 
 // Returns a random number integer between a & b (inclusive)
 function randint(a, b)
