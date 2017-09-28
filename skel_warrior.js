@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Thing = require("./thing");
+var Item = require("./item");
+
 var SKEL_WARRIOR_IDLE = 0;
 // Slowly approaching the player
 var SKEL_WARRIOR_START_APPROACH = 1;
@@ -28,16 +33,13 @@ var SKEL_WARRIOR_POST_ATTACK = 4;
 var SKEL_WARRIOR_HURT = 5;
 var SKEL_WARRIOR_DEAD = 6;
 
-var SKEL_WARRIOR_FRAMES = ["skeleton_warrior_south_2", 
-			   "skeleton_warrior_south_3"];
-
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
 function SkelWarrior(state)
 {
     this.name = "Skeleton";
-    this.idleFrame = getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
-    this.frames = getFrames(RES.ENEMIES, SKEL_WARRIOR_FRAMES);
+    this.idleFrame = Utils.getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
+    this.frames = Utils.getFrames(RES.ENEMIES, SkelWarrior.FRAMES);
     this.speed = 20;
     this.health = 3;
     this.frame = 0;
@@ -54,20 +56,23 @@ function SkelWarrior(state)
     this.monsterSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.monsterSprite);
     // Make the splash/water sprite
-    this.waterSprite = createSplashSprite();
+    this.waterSprite = Utils.createSplashSprite();
     this.waterSprite.y = -0.5;
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || SKEL_WARRIOR_START_APPROACH;
-    this.hitbox = new Hitbox(0, -1, 6, 8);
+    this.hitbox = new Thing.Hitbox(0, -1, 6, 8);
 }
 
-SkelWarrior.prototype.dropTable = [
-    [Item.LARGE_HEALTH, 5],
-    [Item.LEATHER_ARMOUR, 1],
-    [Item.SMALL_BOW, 1]
-];
+SkelWarrior.FRAMES = ["skeleton_warrior_south_2", "skeleton_warrior_south_3"];
+
+SkelWarrior.prototype.getDropTable = function() 
+{
+    return [[Item.Table.LARGE_HEALTH, 5],
+	    [Item.Table.LEATHER_ARMOUR, 1],
+	    [Item.Table.SMALL_BOW, 1]];
+}
 
 SkelWarrior.prototype.update = function(dt)
 {
@@ -256,16 +261,16 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === SKEL_WARRIOR_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	getSound(RES.DEAD_SND).play();
+	Utils.getSound(RES.DEAD_SND).play();
 	this.state = SKEL_WARRIOR_DEAD;
 	// Drop a reward
 	this.level.handleTreasureDrop(
-	    this.dropTable, this.sprite.x, this.sprite.y);
+	    this.getDropTable(), this.sprite.x, this.sprite.y);
 	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
-	getSound(RES.SNAKE_HURT_SND).play();
+	Utils.getSound(RES.SNAKE_HURT_SND).play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*60;
 	this.knockedTimer = 0.1;
 	this.state = SKEL_WARRIOR_HURT;
@@ -274,10 +279,9 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
     // Add some random dust, but only if we're not currently in water
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
-	var sprite = createBloodSpatter(["dust1", "dust2", "dust3", "dust4"]);
-	sprite.x = this.sprite.x;
-	sprite.y = this.sprite.y-1;
-	this.level.stage.addChild(sprite);
+	this.level.createBloodSpatter(
+	    this.sprite.x, this.sprite.y-1,
+	    ["dust1", "dust2", "dust3", "dust4"]);
     }
     return true;
 }
@@ -286,3 +290,6 @@ SkelWarrior.prototype.handlePlayerCollision = function()
 {
     player.takeDamage(2, this);
 }
+
+module.exports = SkelWarrior;
+

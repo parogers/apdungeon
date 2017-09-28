@@ -17,14 +17,18 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Thing = require("./thing");
+
 function Gate()
 {
     this.frames = [
-	getFrame(RES.MAPTILES, "gate_wall_1"),
-	getFrame(RES.MAPTILES, "gate_wall_2"),
-	getFrame(RES.MAPTILES, "gate_wall_3")
+	Utils.getFrame(RES.MAPTILES, "gate_wall_1"),
+	Utils.getFrame(RES.MAPTILES, "gate_wall_2"),
+	Utils.getFrame(RES.MAPTILES, "gate_wall_3")
     ];
-    this.hitbox = new Hitbox(0, 0, 5, 5);
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.anchor.set(0,0);
     this.frameNum = 0;
@@ -69,8 +73,8 @@ Gate.prototype.update = function(dt)
 	// Make a "clicksh" noise as the gate is opening. (we do this every
 	// other frame to make it more obvious, hence the '2' here and above)
 	if (fnum !== Math.round(2*this.frameNum)) {
-	    sounds[RES.GATE_SND].volume = 0.20;
-	    sounds[RES.GATE_SND].play();
+	    Utils.getSound(RES.GATE_SND).volume = 0.20;
+	    Utils.getSound(RES.GATE_SND).play();
 	}
     }
     this.sprite.texture = this.frames[Math.round(this.frameNum)|0];
@@ -92,24 +96,4 @@ Gate.prototype.handlePlayerCollision = function()
     }
 }
 
-/********/
-/* Door */
-/********/
-
-/* A door is basically a gate with different graphics, and an extra sprite
- * behind it so when the door opens, it shows darkness behind it. */
-function Door()
-{
-    Gate.call(this);
-    this.frames = [
-	getFrame(RES.MAPTILES, "door1"),
-	getFrame(RES.MAPTILES, "door2"),
-	getFrame(RES.MAPTILES, "door3"),
-	getFrame(RES.MAPTILES, "door4")
-    ];
-    this.fps = 3;
-    this.sprite.anchor.set(0.5,1);
-    this.sprite.texture = this.frames[0];
-}
-
-Door.prototype = Object.create(Gate.prototype);
+module.exports = Gate;

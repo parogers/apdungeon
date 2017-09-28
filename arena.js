@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Scenery = require("./scenery");
+var Utils = require("./utils");
+var Level = require("./level");
+
 /*********/
 /* Arena */
 /*********/
@@ -240,8 +245,8 @@ function DropSpawn(level, monster, x, y)
     this.ypos = y;
     this.done = false;
     // Shadow to display on the floor, as the monster is falling
-    this.shadow = new Scenery(getFrame(RES.MAPTILES, "shadow"));
-    this.shadow.sprite.zpos = FLOOR_POS;
+    this.shadow = new Scenery(Utils.getFrame(RES.MAPTILES, "shadow"));
+    this.shadow.sprite.zpos = Level.FLOOR_POS;
     this.shadow.sprite.anchor.set(0.5, 0.5);
     this.shadow.sprite.x = x;
     this.shadow.sprite.y = y;
@@ -263,7 +268,7 @@ DropSpawn.prototype.activate = function()
     this.ypos = y;
     this.shadow.sprite.y = y;
     this.level.addThing(this.shadow);
-    this.falling.sprite.zpos = FRONT_POS;
+    this.falling.sprite.zpos = Level.FRONT_POS;
     this.falling.sprite.x = this.xpos;
     this.falling.sprite.y = this.level.camera.y + 4;
 }
@@ -278,8 +283,8 @@ DropSpawn.prototype.update = function(dt)
 	if (this.timer <= 0) {
 	    // Start the drop
 	    this.level.addThing(this.falling);
-	    getSound(RES.DROP_SND).volume = 0.25;
-	    getSound(RES.DROP_SND).play();
+	    Utils.getSound(RES.DROP_SND).volume = 0.25;
+	    Utils.getSound(RES.DROP_SND).play();
 	}
 	return;
     }
@@ -307,7 +312,7 @@ function WaterSpawn(level, monster, x, y)
     this.monster = monster;
     this.xpos = x;
     this.ypos = y;
-    var img = getFrame(RES.MAPTILES, "rippling_water");
+    var img = Utils.getFrame(RES.MAPTILES, "rippling_water");
     this.water = new Scenery(img);
     this.water.sprite.anchor.set(0.5, 0.7);
     this.water.sprite.x = x;
@@ -334,3 +339,12 @@ WaterSpawn.prototype.update = function(dt)
 	}
     }
 }
+
+module.exports = {
+    Arena: Arena,
+    Round: Round,
+    Spawn: Spawn,
+    WaterSpawn: WaterSpawn,
+    DropSpawn: DropSpawn,
+    GateSpawn: GateSpawn
+};

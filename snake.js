@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Thing = require("./thing");
+var Item = require("./item");
+
 /*********/
 /* Snake */
 /*********/
@@ -26,12 +31,10 @@ var SNAKE_ATTACKING = 1;
 var SNAKE_HURT = 2;
 var SNAKE_DEAD = 3;
 
-var SNAKE_FRAMES = ["snake_south_1", "snake_south_2"];
-
 function Snake(state)
 {
     this.name = "Snake";
-    this.frames = getFrames(RES.ENEMIES, SNAKE_FRAMES);
+    this.frames = Utils.getFrames(RES.ENEMIES, Snake.FRAMES);
     this.speed = 16;
     this.health = 3;
     this.frame = 0;
@@ -45,20 +48,23 @@ function Snake(state)
     this.snakeSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.snakeSprite);
     // Make the splash/water sprite
-    this.waterSprite = createSplashSprite();
+    this.waterSprite = Utils.createSplashSprite();
     this.waterSprite.y = -1.25;
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || SNAKE_ATTACKING;
-    this.hitbox = new Hitbox(0, -1, 6, 6);
+    this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
 }
 
-Snake.prototype.dropTable = [
-    [Item.COIN, 2],
-    [Item.ARROW, 1],
-    [Item.SMALL_HEALTH, 1]
-];
+Snake.FRAMES = ["snake_south_1", "snake_south_2"];
+
+Snake.prototype.getDropTable = function() 
+{
+    return [[Item.Table.COIN, 2],
+	    [Item.Table.ARROW, 1],
+	    [Item.Table.SMALL_HEALTH, 1]];
+}
 
 Snake.prototype.update = function(dt)
 {
@@ -101,7 +107,7 @@ Snake.prototype.updateAttacking = function(dt)
     } else {
 	if (player.sprite.x < this.sprite.x) this.facing = -1;
 	else this.facing = 1;
-	this.travel = randint(16, 20);
+	this.travel = Utils.randint(16, 20);
     }
 
     // Move up/down towards the player more slowly (and don't overshoot)
@@ -156,16 +162,16 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === SNAKE_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	getSound(RES.DEAD_SND).play();
+	Utils.getSound(RES.DEAD_SND).play();
 	this.state = SNAKE_DEAD;
 	// Drop a reward
 	this.level.handleTreasureDrop(
-	    this.dropTable, this.sprite.x, this.sprite.y);
+	    this.getDropTable(), this.sprite.x, this.sprite.y);
 	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
-	getSound(RES.SNAKE_HURT_SND).play();
+	Utils.getSound(RES.SNAKE_HURT_SND).play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*60;
 	this.knockedTimer = 0.1;
 	this.state = SNAKE_HURT;
@@ -175,10 +181,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     // (looks better this way)
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
-	var sprite = createBloodSpatter();
-	sprite.x = this.sprite.x;
-	sprite.y = this.sprite.y-1;
-	this.level.stage.addChild(sprite);
+	this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
     }
     return true;
 }
@@ -194,13 +197,11 @@ Snake.prototype.handlePlayerCollision = function()
 /* Rat */
 /*******/
 
-var RAT_FRAMES = ["rat_south_1", "rat_south_2"];
-
 function Rat()
 {
     Snake.call(this);
     this.name = "Rat";
-    this.frames = getFrames(RES.ENEMIES, RAT_FRAMES);
+    this.frames = Utils.getFrames(RES.ENEMIES, Rat.FRAMES);
     this.health = 1;
     this.speed = 20;
     this.frame = 0;
@@ -213,19 +214,19 @@ function Rat()
     this.waterSprite.y = -0.9;
 }
 
+Rat.FRAMES = ["rat_south_1", "rat_south_2"];
+
 Rat.prototype = Object.create(Snake.prototype);
 
 /************/
 /* Scorpion */
 /************/
 
-var SCORPION_FRAMES = ["scorpion_south_1", "scorpion_south_2"];
-
 function Scorpion()
 {
     Snake.call(this);
     this.name = "Scorpion";
-    this.frames = getFrames(RES.ENEMIES, SCORPION_FRAMES);
+    this.frames = Utils.getFrames(RES.ENEMIES, Scorpion.FRAMES);
     this.health = 4;
     this.speed = 10;
     this.frame = 0;
@@ -238,4 +239,12 @@ function Scorpion()
     this.waterSprite.y = -0.85;
 }
 
+Scorpion.FRAMES = ["scorpion_south_1", "scorpion_south_2"];
+
 Scorpion.prototype = Object.create(Snake.prototype);
+
+module.exports = {
+    Snake: Snake,
+    Rat: Rat,
+    Scorpion: Scorpion
+};

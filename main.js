@@ -17,11 +17,19 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Render = require("./render");
+var ProgressBar = require("./progress");
+var GameControls = require("./controls");
+var GameState = require("./gamestate");
+var Utils = require("./utils");
+//require("./contrib/sound.js");
+
 var gamestate = null;
 var stage = null;
 var progress = null;
 
-function loaded()
+function start()
 {
     var div = document.getElementById("canvas_area");
     div.focus();
@@ -156,8 +164,16 @@ function setup()
     //stage.removeChild(progress.sprite);
     stage.children = [];
 
-    getMusic().loop = true;
-    getMusic().volume = 0.5;
+    Utils.getMusic().loop = true;
+    Utils.getMusic().volume = 0.5;
 
     requestAnimationFrame(gameLoop)
 }
+
+var Item = require("./item");
+
+module.exports = {
+    gamestate: gamestate,
+    start: start,
+    Item: Item
+};

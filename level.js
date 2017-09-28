@@ -17,25 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-BEHIND_BACKGROUND_POS = -1;
-BACKGROUND_POS = 0;
-FLOOR_POS = 1;
-FRONT_POS = 10000;
-
-/**********/
-/* Hitbox */
-/**********/
-
-// A hitbox that defines an area of a thing to test collisions against. Note
-// the (x, y) point is relative to the thing's sprite position, and (w, h)
-// defines a rectangle that is centered on that position.
-function Hitbox(x, y, w, h)
-{
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-}
+var RES = require("./res");
+var Utils = require("./utils");
+var Render = require("./render");
+var LevelGenerator = require("./genlevel");
+var GroundItem = require("./grounditem");
 
 /**********/
 /* Camera */
@@ -83,7 +69,7 @@ function Level(bg)
     this.state = this.NEXT_ARENA;
     // The background sprite (TiledBackground)
     this.bg = bg;
-    this.bg.zpos = BACKGROUND_POS;
+    this.bg.zpos = Level.BACKGROUND_POS;
     // List of enemies, interactable objects etc and the player
     this.things = [];
     // The PIXI container for everything we want to draw
@@ -96,6 +82,11 @@ function Level(bg)
     this.smoothTracking = true;
     this.exitDoor = null;
 }
+
+Level.BEHIND_BACKGROUND_POS = -1;
+Level.BACKGROUND_POS = 0;
+Level.FLOOR_POS = 1;
+Level.FRONT_POS = 10000;
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()
@@ -325,7 +316,7 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
     // Pick a random number, then iterate over the items and find what 
     // item it corresponds to.
     var pick = null;
-    var num = randint(0, total);
+    var num = Utils.randint(0, total);
     for (entry of table) {
 	num -= entry[1];
 	if (num <= 0) {
@@ -342,215 +333,17 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
     }
 }
 
-/***************/
-/* LevelScreen */
-/***************/
-
-/* A container for holding screen-related stuff for playing a level. This
- * includes the level itself, PIXI container (staging area for rendering),
- * and the UI elements. (health bar, etc) */
-function LevelScreen()
+Level.prototype.createBloodSpatter = function(x, y, imgs)
 {
-    // The various states this screen can be in
-    this.NEW_GAME = 1;
-    this.PLAYING = 2;
-    this.NEXT_LEVEL = 3;
-    this.GAME_OVER = 4;
-
-    this.levelNum = 0;
-    this.level = null;
-    this.state = this.NEW_GAME;
-
-    this.stage = new PIXI.Container();
-
-    this.healthUI = new HealthUI();
-    this.inventoryUI = new InventoryUI();
-    this.goMarker = new GoMarker(this);
-
-    this.stage.addChild(this.healthUI.sprite);
-    this.stage.addChild(this.inventoryUI.sprite);
-    this.stage.addChild(this.goMarker.sprite);
+    var txt = Utils.randomChoice(imgs || ["blood1", "blood2", "blood3"]);
+    var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAPTILES, txt));
+    sprite.zpos = Level.FLOOR_POS;
+    sprite.anchor.set(0.5, 0.5);
+    sprite.x = x;
+    sprite.y = y;
+    this.stage.addChild(sprite);
+    return sprite;
 }
 
-LevelScreen.prototype.update = function(dt)
-{
-    switch(this.state) {
-    case this.NEW_GAME:
-	// Generate a new level and player character
-	player = new Player();
-	player.sprite.x = 0;
-	player.sprite.y = 0;
-	this.levelNum = 0;
-	this.player = player;
-	// Generate the first level
-	var level = LevelGenerator.generate(this.levelNum);
-	this.setLevel(level);
-	// Start playing it immediately
-	this.state = this.PLAYING;
-	// Start playing music (fade in). We call restart, which stops the
-	// previously play (if any), rewinds and starts again.
-	getMusic().restart();
-	getMusic().fadeIn(1);
-	break;
+module.exports = Level;
 
-    case this.PLAYING:
-	if (this.level.state === this.level.FINISHED) {
-	    // Proceed to the next level
-	    console.log("NEXT LEVEL");
-	    level = LevelGenerator.generate(++this.levelNum);
-	    this.setLevel(level);
-	} else if (this.player.dead) {
-	    // This triggers the game state machine to advance to the game
-	    // over screen. Note there is no stop for sound effects, only 
-	    // a pause function. (TODO - why?)
-	    getMusic().pause();
-	    this.state = this.GAME_OVER;
-	} else {
-	    if (this.level) this.level.update(dt);
-	    this.healthUI.update(dt);
-	    this.inventoryUI.update(dt);
-	    this.goMarker.update(dt);
-	}
-	break;
-
-    case this.NEXT_LEVEL:
-	break;
-
-    case this.GAME_OVER:
-	break;
-    }
-}
-
-LevelScreen.prototype.render = function()
-{
-    if (this.level) {
-	Render.getRenderer().render(this.stage);
-    }
-}
-
-LevelScreen.prototype.setLevel = function(level)
-{
-    // Remove the previous level sprite container
-    if (this.level) {
-	this.stage.removeChild(this.level.stage);
-    }
-    if (!level) return;
-
-    var scale = Render.getRenderer().height / level.camera.height;
-
-    // Revise the camera width to fill the available horizontal space
-    level.camera.width = Render.getRenderer().width / scale;
-
-    this.stage.scale.set(scale);
-    this.stage.addChild(level.stage);
-    // Move the level (container) sprite to the start of the list of
-    // child sprites, so it gets rendered before anything else.
-    // (ie UI elements are drawn on top of the level)
-    this.stage.children.unshift(this.stage.children.pop());
-    this.level = level;
-    // Position the UI just below the level render area
-    this.healthUI.sprite.x = level.camera.width-1;
-    this.healthUI.sprite.y = level.getHeight()-1;
-    this.inventoryUI.sprite.x = 6;
-    this.inventoryUI.sprite.y = level.getHeight()+3;
-    // Put the go marker in the top-right corner of the level area
-    this.goMarker.sprite.x = level.camera.width-1;
-    this.goMarker.sprite.y = 2;
-    this.level.player = this.player;
-    this.level.addThing(this.player);
-    this.level.update(0);
-}
-
-/**************/
-/* EnterScene */
-/**************/
-
-/* A thing to handle the player entering a level. (door opens, player walks
- * through the door, looks around, door closes, level starts) */
-function EnterScene(door)
-{
-    // Waiting for the cutscene to start
-    this.IDLE = 0;
-    // The cutscene has started
-    this.START = 1;
-    // Waiting for the door to finish opening
-    this.OPENING_DOOR = 2;
-    // Waiting for the player to enter the level
-    this.PLAYER_ENTERING = 3;
-    // Player is looking around
-    this.PLAYER_LOOK_LEFT = 4;
-    this.PLAYER_LOOK_RIGHT = 5;
-
-    this.door = door;
-    // No sprite associated with this thing
-    this.sprite = null;
-    this.state = this.IDLE;
-    this.timer = 0;
-    this.travelTime = 0;
-}
-
-EnterScene.prototype.update = function(dt)
-{
-    if (this.timer > 0) {
-	this.timer -= dt;
-	return;
-    }
-
-    switch(this.state) {
-    case this.IDLE:
-	// Position the player behind the level so they're hidden, and centered 
-	// on the door so the camera renders in the right place.
-	player.sprite.x = this.door.sprite.x;
-	player.sprite.y = this.door.sprite.y+1;
-	player.sprite.zpos = BEHIND_BACKGROUND_POS;
-	player.hasControl = false;
-	this.timer = 0.75;
-	this.state = this.START;
-	break;
-
-    case this.START:
-	// Start the door opening
-	this.door.startOpening();
-	this.state = this.OPENING_DOOR;
-	break;
-
-    case this.OPENING_DOOR:
-	// Waiting for the door to open
-	if (this.door.isOpen()) {
-	    player.sprite.zpos = undefined;
-	    this.state = this.PLAYER_ENTERING;
-	    this.timer = 0.4;
-	    this.travelTime = 0.6;
-	}
-	break;
-
-    case this.PLAYER_ENTERING:
-	// Player walking some ways into the level
-	player.diry = 0.5;
-	this.travelTime -= dt;
-	if (this.travelTime <= 0) {
-	    this.state = this.PLAYER_LOOK_LEFT;
-	    this.timer = 0.5;
-	    this.door.startClosing();
-	    player.dirx = 0;
-	    player.diry = 0;
-	} else if (this.travelTime < 0.35) {
-	    player.dirx = 0.25;
-	}
-	break;
-
-    case this.PLAYER_LOOK_LEFT:
-	player.faceDirection(-1);
-	this.state = this.PLAYER_LOOK_RIGHT;
-	this.timer = 1;
-	break;
-
-    case this.PLAYER_LOOK_RIGHT:
-	player.faceDirection(1);
-	player.hasControl = true;
-	this.timer = 0.5;
-	// Done!
-	this.level.removeThing(this);
-	break;
-    }
-}

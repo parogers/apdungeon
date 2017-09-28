@@ -17,6 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+
 /* TODO - this code would be cleaner if we implemented an event queue/message
  * passing system. The level instance could broadcast changes in it's state,
  * (eg wait-to-advance) which would be picked up by the go marker, who could
@@ -26,8 +29,8 @@ function GoMarker(screen)
 {
     this.screen = screen;
     this.frames = [
-	getFrame(RES.UI, "go1"), 
-	getFrame(RES.UI, "go2")
+	Utils.getFrame(RES.UI, "go1"), 
+	Utils.getFrame(RES.UI, "go2")
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.anchor.set(1,0);
@@ -75,7 +78,7 @@ GoMarker.prototype.update = function(dt)
 
     var next = this.timer + dt;
     if (this.timer < 0.3 && next >= 0.3) {
-	if (this.dings-- > 0) getSound(RES.GO_SND).play();
+	if (this.dings-- > 0) Utils.getSound(RES.GO_SND).play();
 	else this.done = true;
 	this.frameNum = 1;
     } else if (this.timer < 1 && next >= 1) {
@@ -93,3 +96,6 @@ GoMarker.prototype.handleHit = function(x, y, dmg)
 GoMarker.prototype.handlePlayerCollision = function()
 {
 }
+
+module.exports = GoMarker;
+

@@ -17,6 +17,12 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Item = require("./item");
+var Thing = require("./thing");
+var WeaponSlot = require("./weaponslot")
+
 // What tint of colour to use when the player takes damage
 var DAMAGE_TINT = 0xFF0000;
 var NO_TINT = 0xFFFFFF;
@@ -40,9 +46,9 @@ function Player()
     // Inventory stuff
     this.numCoins = 0;
     this.numArrows = 0;
-    this.armour = Item.NONE;
-    this.bow = Item.NONE;
-    this.sword = Item.NONE;
+    this.armour = Item.Table.NONE;
+    this.bow = Item.Table.NONE;
+    this.sword = Item.Table.NONE;
     // Whether the user has free control over the player (set to false 
     // during a cutscene)
     this.hasControl = true;
@@ -68,9 +74,8 @@ function Player()
     this.handleMonsterKilled(new SkelWarrior());
     this.handleMonsterKilled(new Ghost());*/
 
-    //this.weapon = Item.NONE; // current weapon
     // Define the hitbox
-    this.hitbox = new Hitbox(0, -4, 6, 6);
+    this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
 
     this.setCharFrames(RES.FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
@@ -81,7 +86,7 @@ function Player()
     this.spriteChar.anchor.set(0.5, 1);
     this.sprite.addChild(this.spriteChar);
     // Setup the sprite for when the player is treading water
-    this.waterSprite = createSplashSprite();
+    this.waterSprite = Utils.createSplashSprite();
     this.waterSprite.y = -1.5;
     this.sprite.addChild(this.waterSprite);
 
@@ -99,13 +104,12 @@ function Player()
     // Weapon slots are used to manage the weapon sprite. (ie attack and
     // running animations, etc) We add both slot sprites to the player sprite,
     // then use the 'visible' flag to control which is rendered.
-    this.bowWeaponSlot = new BowWeaponSlot(this);
-    this.swordWeaponSlot = new SwordWeaponSlot(this);
+    this.bowWeaponSlot = new WeaponSlot.Bow(this);
+    this.swordWeaponSlot = new WeaponSlot.Sword(this);
     this.sprite.addChild(this.bowWeaponSlot.sprite);
     this.sprite.addChild(this.swordWeaponSlot.sprite);
     this.bowWeaponSlot.sprite.visible = false;
     this.swordWeaponSlot.sprite.visible = false;
-    //this.setWeapon(Item.SMALL_BOW);
 }
 
 Player.prototype.faceDirection = function(dirx)
@@ -227,7 +231,8 @@ Player.prototype.update = function(dt)
     // Make a splashy sound when we enter water
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.water) {
-	if (!this.waterSprite.visible) getSound(RES.SPLASH_SND).play();
+	if (!this.waterSprite.visible) 
+	    Utils.getSound(RES.SPLASH_SND).play();
 	this.waterSprite.visible = true;
     } else {
 	this.waterSprite.visible = false;
@@ -272,13 +277,13 @@ Player.prototype.update = function(dt)
 
 Player.prototype.setCharFrames = function(res, name)
 {
-    this.frames = getFrames(
+    this.frames = Utils.getFrames(
 	res, 
 	[name + "_south_1", 
 	 name + "_south_2", 
 	 name + "_south_3"]);
-    this.lungeFrame = getFrame(res, name + "_lunge_1");
-    this.dyingFrames = getFrames(
+    this.lungeFrame = Utils.getFrame(res, name + "_lunge_1");
+    this.dyingFrames = Utils.getFrames(
 	res, 
 	["melee1_dying_1", 
 	 "melee1_dying_2", 
@@ -296,8 +301,8 @@ Player.prototype.updatePlayerAppearance = function()
 {
     // Update the player character sprite, based on the armour we're wearing
     var img = "melee1";
-    if (this.armour === Item.LEATHER_ARMOUR) img = "melee2";
-    else if (this.armour == Item.STEEL_ARMOUR) img = "melee3";
+    if (this.armour === Item.Table.LEATHER_ARMOUR) img = "melee2";
+    else if (this.armour == Item.Table.STEEL_ARMOUR) img = "melee3";
     this.setCharFrames(RES.FEMALE_MELEE, img);
     // Update the sword sprite
     // ...
@@ -335,15 +340,15 @@ Player.prototype.upgradeBow = function(item)
 Player.prototype.upgradeArmour = function(item)
 {
     this.setArmour(item);
-    getSound(RES.POWERUP2_SND).play();
+    Utils.getSound(RES.POWERUP2_SND).play();
 }
 
 Player.prototype.healDamage = function(amt)
 {
     if (this.health < this.maxHealth) {
 	this.health = Math.min(this.health+amt, this.maxHealth);
-	getSound(RES.POWERUP4_SND).volume = 1.25;
-	getSound(RES.POWERUP4_SND).play();
+	Utils.getSound(RES.POWERUP4_SND).volume = 1.25;
+	Utils.getSound(RES.POWERUP4_SND).play();
     }
 }
 
@@ -356,23 +361,23 @@ Player.prototype.takeDamage = function(amt, src)
 	var knockedVel = 100;
 	var knockedTimer = 0.1;
 
-	if (this.armour === Item.LEATHER_ARMOUR) {
+	if (this.armour === Item.Table.LEATHER_ARMOUR) {
 	    cooldown = this.damageCooldown*1.25;
 	    knockedVel = 90;
 	    knockedTimer = 0.08;
-	    if (randint(1, 4) === 1) {
+	    if (Utils.randint(1, 4) === 1) {
 		if (amt > 1) amt--;
 	    }
-	} else if (this.armour === Item.STEEL_ARMOUR) {
+	} else if (this.armour === Item.Table.STEEL_ARMOUR) {
 	    cooldown = this.damageCooldown*1.5;
 	    knockedVel = 80;
 	    knockedTimer = 0.05;
-	    if (randint(1, 2) === 1) {
+	    if (Utils.randint(1, 2) === 1) {
 		amt--;
 	    }
 	}
 
-	getSound(RES.HIT_SND).play();
+	Utils.getSound(RES.HIT_SND).play();
 
 	// Take damage and have the player flash red for a moment
 	this.health -= amt;
@@ -405,42 +410,44 @@ Player.prototype.handleMonsterKilled = function(monster)
 }
 
 /* Called when the player walks over a takeable item (GroundItem). The item
- * number is passed in here. (Item.ZZZ) */
+ * is passed in here. (eg Item.Table.ZZZ) */
 Player.prototype.handleTakeItem = function(item)
 {
     // Check for an armour upgrade
-    if (isArmour(item) && isArmourBetter(this.armour, item)) {
+    if (item.isArmour() && item.isBetter(this.armour)) {
 	this.upgradeArmour(item);
 	return true;
     }
     // Check for a sword upgrade
-    if (isSword(item) && isSwordBetter(this.sword, item)) {
+    if (item.isSword() && item.isBetter(this.sword)) {
 	this.upgradeSword(item);
 	return true;
     }
     // Check for a bow upgrade
-    if (isBow(item) && isBowBetter(this.bow, item)) {
+    if (item.isBow() && item.isBetter(this.bow)) {
 	this.upgradeBow(item);
 	return true;
     }
     // Consumable items
     switch (item) {
-    case Item.ARROW:
+    case Item.Table.ARROW:
 	this.numArrows += 5;
 	break;
 
-    case Item.COIN:
+    case Item.Table.COIN:
 	this.numCoins++;
 	break;
 
-    case Item.SMALL_HEALTH:
+    case Item.Table.SMALL_HEALTH:
 	this.healDamage(2);
 	break;
 
-    case Item.LARGE_HEALTH:
+    case Item.Table.LARGE_HEALTH:
 	this.healDamage(this.maxHealth);
 	break;
     }
-    getSound(RES.COIN_SND).play();
+    Utils.getSound(RES.COIN_SND).play();
     return true;
 }
+
+module.exports = Player;

@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Render = require("./render");
+var Item = require("./item");
+
 function renderText(lines, options)
 {
     if (!(lines instanceof Array)) lines = [lines];
@@ -31,7 +36,7 @@ function renderText(lines, options)
 	var height = 0;
 	for (var n = 0; n < msg.length; n++) 
 	{
-	    var sprite = new PIXI.Sprite(getFrame(RES.UI, msg[n]));
+	    var sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
 	    sprite.anchor.set(0,0);
 	    sprite.x = x;
 	    sprite.y = y;
@@ -46,7 +51,7 @@ function renderText(lines, options)
     }
 
     if (options && options.blackBG) {
-	var bg = new PIXI.Sprite(getFrame(RES.UI, "black"));
+	var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
 	bg.scale.set(maxWidth/bg.width, y/bg.height);
 	cnt.addChild(bg);
 	cnt.children.unshift(cnt.children.pop());
@@ -67,9 +72,9 @@ function HealthUI()
 {
     this.sprite = new PIXI.Container();
     this.hearts = [];
-    this.fullHeart = getFrame(RES.UI, "full_heart");
-    this.halfHeart = getFrame(RES.UI, "half_heart");
-    this.emptyHeart = getFrame(RES.UI, "empty_heart");
+    this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
+    this.halfHeart = Utils.getFrame(RES.UI, "half_heart");
+    this.emptyHeart = Utils.getFrame(RES.UI, "empty_heart");
 
     for (var n = 0; n < 3; n++) {
 	this.addHeart();
@@ -134,11 +139,12 @@ function ItemSlotUI(item, args)
     this.baseItem = item;
     this.item = item;
     this.count = 0;
-    this.itemSprite = new PIXI.Sprite(getFrame(RES.GROUND_ITEMS, item));
+    this.itemSprite = new PIXI.Sprite(
+	Utils.getFrame(RES.GROUND_ITEMS, item.image));
     this.itemSprite.anchor.set(0.5, 0.5);
     this.itemSprite.x = 0.5;
     this.itemSprite.y = -0.5;
-    this.slotSprite = new PIXI.Sprite(getFrame(RES.UI, "small_slot"));
+    this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "small_slot"));
     this.slotSprite.anchor.set(0.5, 0.5);
     this.sprite.addChild(this.slotSprite);
     this.sprite.addChild(this.itemSprite);
@@ -172,10 +178,10 @@ ItemSlotUI.prototype.setCount = function(count)
 ItemSlotUI.prototype.setItem = function(item)
 {
     // If no item is specified, use the item passed to the constructor instead
-    if (item === Item.NONE) item = this.baseItem;
+    if (item === Item.Table.NONE) item = this.baseItem;
     if (this.item !== item) {
 	this.item = item;
-	this.itemSprite.texture = getFrame(RES.GROUND_ITEMS, item);
+	this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
     }
 }
 
@@ -187,12 +193,12 @@ ItemSlotUI.prototype.setItem = function(item)
 function InventoryUI()
 {
     this.sprite = new PIXI.Container();
-    this.armourSlot = new ItemSlotUI(Item.NO_ARMOUR);
-    this.swordSlot = new ItemSlotUI(Item.NO_SWORD);
-    this.bowSlot = new ItemSlotUI(Item.NO_BOW, {x: -0.5});
-    this.arrowSlot = new ItemSlotUI(Item.ARROW, {showCount: true});
+    this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
+    this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
+    this.bowSlot = new ItemSlotUI(Item.Table.NO_BOW, {x: -0.5});
+    this.arrowSlot = new ItemSlotUI(Item.Table.ARROW, {showCount: true});
     this.coinSlot = new ItemSlotUI(
-	Item.COIN, {
+	Item.Table.COIN, {
 	    showCount: true,
 	    x: -0.5,
 	    y: 0.5
@@ -222,3 +228,10 @@ InventoryUI.prototype.update = function(dt)
     this.arrowSlot.setCount(player.numArrows);
     this.coinSlot.setCount(player.numCoins);
 }
+
+module.exports = {
+    renderText: renderText,
+    HealthUI: HealthUI,
+    InventoryUI: InventoryUI,
+    ItemSlotUI: ItemSlotUI
+};

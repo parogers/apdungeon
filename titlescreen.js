@@ -17,6 +17,23 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Render = require("./render");
+var UI = require("./ui");
+var LevelGenerator = require("./genlevel");
+var Player = require("./player");
+var Item = require("./item");
+var Scenery = require("./scenery");
+var SnakeLike = require("./snake");
+var Goblin = require("./goblin");
+var SkelWarrior = require("./skel_warrior");
+var Ghost = require("./ghost");
+
+var Snake = SnakeLike.Snake;
+var Rat = SnakeLike.Rat;
+var Scorpion = SnakeLike.Scorpion;
+
 function TitleScreen()
 {
     // Playing through the intro sequence (looping)
@@ -38,7 +55,7 @@ function TitleScreen()
     this.stage.scale.set(scale);
     this.state = this.PLAYING_INTRO;
 
-    this.bg = new PIXI.Sprite(getFrame(RES.UI, "brown3"));
+    this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
     this.bg.scale.set(
 	screenWidth/this.bg.texture.width,
@@ -46,7 +63,7 @@ function TitleScreen()
     this.stage.addChild(this.bg);
     this.delay = 0;
 
-    txt = new PIXI.Sprite(getFrame(RES.UI, "title-text"));
+    txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
@@ -54,7 +71,7 @@ function TitleScreen()
     txt.y = screenHeight/5;
     this.stage.addChild(txt);
 
-    txt = new PIXI.Sprite(getFrame(RES.UI, "demo-text"));
+    txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
@@ -62,7 +79,7 @@ function TitleScreen()
     txt.y = screenHeight/5+15;
     this.stage.addChild(txt);
 
-    txt = new PIXI.Sprite(renderText("PRESS SPACE TO PLAY"));
+    txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
     txt.scale.set(0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
@@ -70,7 +87,7 @@ function TitleScreen()
     txt.y = 6*screenHeight/7; //getRenderer().height-50;
     this.stage.addChild(txt);
 
-    this.sequence = new Sequence(
+    this.sequence = new Utils.Sequence(
 	{
 	    stage: this.stage,
 	    level: null,
@@ -94,17 +111,18 @@ function TitleScreen()
 	    this.player.sprite.y = 20;
 	    this.level.addThing(this.player);
 
-	    this.monster = new Scenery(getFrames(RES.ENEMIES, RAT_FRAMES));
+	    this.monster = new Scenery(
+		Utils.getFrames(RES.ENEMIES, Rat.FRAMES));
 	    this.monster.sprite.y = this.player.sprite.y;
 	    this.level.addThing(this.monster);
 
 	    this.monsterChoices = [
-		RAT_FRAMES,
-		SNAKE_FRAMES,
-		SCORPION_FRAMES,
-		SKEL_WARRIOR_FRAMES,
-		GOBLIN_FRAMES,
-		GHOST_FRAMES]
+		Rat.FRAMES,
+		Snake.FRAMES,
+		Scorpion.FRAMES,
+		SkelWarrior.FRAMES,
+		Goblin.FRAMES,
+		Ghost.FRAMES]
 	    this.monsterChoice = 0;
 
 	    return this.NEXT;
@@ -127,7 +145,7 @@ function TitleScreen()
 	    this.monster.update(dt);
 	    this.monster.faceDirection(-1);
 	    if (this.player.sprite.x < this.screenLeft-4) {
-		this.player.upgradeSword(Item.SMALL_SWORD);
+		this.player.upgradeSword(Item.Table.SMALL_SWORD);
 		return this.NEXT;
 	    }
 	},
@@ -143,7 +161,7 @@ function TitleScreen()
 		this.monsterChoice++;
 		var choice = this.monsterChoices[
 		    this.monsterChoice%this.monsterChoices.length];
-		this.monster.frames = getFrames(RES.ENEMIES, choice);
+		this.monster.frames = Utils.getFrames(RES.ENEMIES, choice);
 		return "loop";
 	    }
 	}
@@ -169,3 +187,5 @@ TitleScreen.prototype.render = function()
 {
     Render.getRenderer().render(this.stage);
 }
+
+module.exports = TitleScreen;

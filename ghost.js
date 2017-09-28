@@ -17,17 +17,20 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Thing = require("./thing");
+var Item = require("./item");
+
 var GHOST_IDLE = 0;
 var GHOST_ATTACKING = 1;
 var GHOST_HURT = 2;
 var GHOST_DEAD = 3;
 
-var GHOST_FRAMES = ["ghost_south_1", "ghost_south_2"];
-
 function Ghost(state)
 {
     this.name = "Spectre";
-    this.frames = getFrames(RES.ENEMIES, GHOST_FRAMES);
+    this.frames = Utils.getFrames(RES.ENEMIES, Ghost.FRAMES);
     this.health = 3;
     this.frame = 0;
     this.facing = 1;
@@ -47,13 +50,16 @@ function Ghost(state)
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GHOST_ATTACKING;
-    this.hitbox = new Hitbox(0, 0, 8, 4);
+    this.hitbox = new Thing.Hitbox(0, 0, 8, 4);
 }
 
-Ghost.prototype.dropTable = [
-    [Item.SMALL_HEALTH, 1],
-    [Item.LARGE_HEALTH, 5]
-];
+Ghost.FRAMES = ["ghost_south_1", "ghost_south_2"];
+
+Ghost.prototype.getDropTable = function() 
+{
+    return [[Item.Table.SMALL_HEALTH, 1],
+	    [Item.Table.LARGE_HEALTH, 5]];
+}
 
 Ghost.prototype.update = function(dt)
 {
@@ -110,16 +116,16 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === GHOST_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	getSound(RES.DEAD_SND).play();
+	Utils.getSound(RES.DEAD_SND).play();
 	this.state = GHOST_DEAD;
 	// Drop a reward
 	this.level.handleTreasureDrop(
-	    this.dropTable, this.sprite.x, this.sprite.y);
+	    this.getDropTable(), this.sprite.x, this.sprite.y);
 	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
-	getSound(RES.SNAKE_HURT_SND).play();
+	Utils.getSound(RES.SNAKE_HURT_SND).play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*100;
 	this.knockedTimer = 0.1;
 	this.state = GHOST_HURT;
@@ -131,3 +137,6 @@ Ghost.prototype.handlePlayerCollision = function()
 {
     player.takeDamage(4, this);
 }
+
+module.exports = Ghost;
+

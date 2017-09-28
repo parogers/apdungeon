@@ -140,3 +140,5 @@ GameControls.prototype.attach = function()
     attachKeyDown(this);
     attachKeyUp(this);
 }
+
+module.exports = GameControls;

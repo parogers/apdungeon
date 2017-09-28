@@ -17,6 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var Utils = require("./utils");
+
 /* Template code for defining a 'thing' in a level. Generally things have 
  * sprites associated with them, and can be interacted with by the player.
  * Note there's no need to subclass because this code doesn't contain any
@@ -24,8 +26,8 @@
 function Thing()
 {
     // Position of the hit box, relative to the sprite position
-    this.hitbox = new Hitbox(0, 0, 5, 5);
-    var texture = getFrame(RES.GROUND_ITEMS, "coin");
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    var texture = Utils.getFrame(RES.GROUND_ITEMS, "coin");
     this.sprite = new PIXI.Sprite(texture);
     this.sprite.anchor.set(0,0);
 }
@@ -41,3 +43,21 @@ Thing.prototype.handleHit = function(x, y, dmg)
 Thing.prototype.handlePlayerCollision = function()
 {
 }
+
+/**********/
+/* Hitbox */
+/**********/
+
+// A hitbox that defines an area of a thing to test collisions against. Note
+// the (x, y) point is relative to the thing's sprite position, and (w, h)
+// defines a rectangle that is centered on that position.
+Thing.Hitbox = function(x, y, w, h)
+{
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+}
+
+module.exports = Thing;
+

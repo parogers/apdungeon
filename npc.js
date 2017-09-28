@@ -17,17 +17,22 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var UI = require("./ui");
+var RES = require("./res");
+var Thing = require("./thing");
+var Utils = require("./utils");
+
 function NPC(img)
 {
     // Position of the hit box, relative to the sprite position
-    this.hitbox = new Hitbox(0, 0, 5, 5);
-    var texture = getFrame(RES.NPC_TILESET, img || "npc1_south_1");
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    var texture = Utils.getFrame(RES.NPC_TILESET, img || "npc1_south_1");
     this.sprite = new PIXI.Container();
     this.npcSprite = new PIXI.Sprite(texture);
     this.npcSprite.anchor.set(0.5, 1);
     this.sprite.addChild(this.npcSprite);
 
-    this.textSprite = new PIXI.Sprite(renderText("?"));
+    this.textSprite = new PIXI.Sprite(UI.renderText("?"));
     this.textSprite.scale.set(3/5.);
     this.textSprite.anchor.set(0.5, 1);
     this.textSprite.y = -this.npcSprite.height-2;
@@ -39,7 +44,7 @@ function NPC(img)
 
 NPC.prototype.setDialog = function(lines)
 {
-    this.textSprite.texture = renderText(lines, {blackBG: true})
+    this.textSprite.texture = UI.renderText(lines, {blackBG: true})
 }
 
 NPC.prototype.update = function(dt)
@@ -70,3 +75,6 @@ NPC.prototype.handlePlayerCollision = function()
     }
     this.visibleTimer = 1;
 }
+
+module.exports = NPC;
+

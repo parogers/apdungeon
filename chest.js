@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Thing = require("./thing");
+var GroundItem = require("./grounditem");
+
 /* A container for holding items. The chest is opened when the player touches
  * it, and the chests contents are ejected randomly.
  * 
@@ -25,17 +30,16 @@
  * */
 function Chest(items, options)
 {
-    this.openTexture = getFrame(RES.MAPTILES, "chest_open");
-    this.closedTexture = getFrame(RES.MAPTILES, "chest_closed");
+    this.openTexture = Utils.getFrame(RES.MAPTILES, "chest_open");
+    this.closedTexture = Utils.getFrame(RES.MAPTILES, "chest_closed");
     this.sprite = new PIXI.Sprite(this.closedTexture);
     this.sprite.anchor.set(0.5, 0.75);
     this.isOpen = false;
     this.timer = 0;
     this.items = items;
     this.options = options;
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
 }
-
-Chest.prototype.hitbox = new Hitbox(0, 0, 5, 5);
 
 Chest.prototype.update = function(dt)
 {
@@ -46,15 +50,17 @@ Chest.prototype.update = function(dt)
 	    for (item of this.items) {
 		var gnd = new GroundItem(
 		    item, 
-		    this.sprite.x+1*randUniform(0, 1), 
-		    this.sprite.y+2*randUniform(0.1, 1));
+		    this.sprite.x+1*Utils.randUniform(0, 1), 
+		    this.sprite.y+2*Utils.randUniform(0.1, 1));
 		this.level.addThing(gnd);
-		if (this.options && this.options.ejectX) 
-		    gnd.velx = this.options.ejectX*randUniform(6, 12);
-		else
-		    gnd.velx = randomChoice([-1, 1])*randUniform(6, 12);
-		gnd.velz = -randUniform(-2, 6);
-		gnd.velh = -30*randUniform(0.9, 1);
+		var spd = Utils.randUniform(6, 12);
+		if (this.options && this.options.ejectX) {
+		    gnd.velx = this.options.ejectX*spd;
+		} else {
+		    gnd.velx = Utils.randomChoice([-1, 1])*spd;
+		}
+		gnd.velz = -Utils.randUniform(-2, 6);
+		gnd.velh = -30*Utils.randUniform(0.9, 1);
 	    }
 	}
     }
@@ -72,6 +78,9 @@ Chest.prototype.handlePlayerCollision = function()
 	this.sprite.texture = this.openTexture;
 	this.isOpen = true;
 	this.timer = 0.25;
-	getSound(RES.CHEST_SND).play();
+	Utils.getSound(RES.CHEST_SND).play();
     }
 }
+
+module.exports = Chest;
+

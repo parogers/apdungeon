@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Thing = require("./thing");
+var Item = require("./item");
+
 var GOBLIN_IDLE = 0;
 // Approaching the player, but keeping a distance away
 var GOBLIN_APPROACH = 1;
@@ -33,15 +38,13 @@ var GOBLIN_DEAD = 6;
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
 var GOBLIN_GRAVITY = 200;
 
-var GOBLIN_FRAMES = ["goblin_south_2", "goblin_south_3"];
-
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
 function Goblin(state)
 {
     this.name = "Goblin";
-    this.idleFrame = getFrame(RES.ENEMIES, "goblin_south_1");
-    this.frames = getFrames(RES.ENEMIES, GOBLIN_FRAMES);
+    this.idleFrame = Utils.getFrame(RES.ENEMIES, "goblin_south_1");
+    this.frames = Utils.getFrames(RES.ENEMIES, Goblin.FRAMES);
     this.speed = 16;
     this.health = 3;
     this.frame = 0;
@@ -70,22 +73,25 @@ function Goblin(state)
     this.goblinSprite.anchor.set(0.5, 6.5/8);
     this.sprite.addChild(this.goblinSprite);
     // Make the splash/water sprite
-    this.waterSprite = createSplashSprite();
+    this.waterSprite = Utils.createSplashSprite();
     this.waterSprite.y = -0.75;
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GOBLIN_APPROACH;
-    this.hitbox = new Hitbox(0, -1, 6, 6);
+    this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
 }
 
-Goblin.prototype.dropTable = [
-    [Item.COIN, 8],
-    [Item.SMALL_HEALTH, 6],
-    [Item.ARROW, 4],
-    [Item.STEEL_ARMOUR, 1],
-    [Item.LARGE_BOW, 1]
-];
+Goblin.FRAMES = ["goblin_south_2", "goblin_south_3"];
+
+Goblin.prototype.getDropTable = function() 
+{
+    return [[Item.Table.COIN, 8],
+	    [Item.Table.SMALL_HEALTH, 6],
+	    [Item.Table.ARROW, 4],
+	    [Item.Table.STEEL_ARMOUR, 1],
+	    [Item.Table.LARGE_BOW, 1]];
+}
 
 Goblin.prototype.update = function(dt)
 {
@@ -270,16 +276,16 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === GOBLIN_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	getSound(RES.DEAD_SND).play();
+	Utils.getSound(RES.DEAD_SND).play();
 	this.state = GOBLIN_DEAD;
 	// Drop a reward
 	this.level.handleTreasureDrop(
-	    this.dropTable, this.sprite.x, this.sprite.y);
+	    this.getDropTable(), this.sprite.x, this.sprite.y);
 	player.handleMonsterKilled(this);
 	this.dead = true;
 
     } else {
-	getSound(RES.SNAKE_HURT_SND).play();
+	Utils.getSound(RES.SNAKE_HURT_SND).play();
 	this.knocked = Math.sign(this.sprite.x-srcx)*60;
 	this.knockedTimer = 0.1;
 	this.state = GOBLIN_HURT;
@@ -289,10 +295,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
     // (looks better this way)
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
-	var sprite = createBloodSpatter();
-	sprite.x = this.sprite.x;
-	sprite.y = this.sprite.y-1;
-	this.level.stage.addChild(sprite);
+	this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
     }
     return true;
 }
@@ -301,3 +304,6 @@ Goblin.prototype.handlePlayerCollision = function()
 {
     player.takeDamage(2, this);
 }
+
+module.exports = Goblin;
+

@@ -52,3 +52,4 @@ Scenery.prototype.update = function(dt)
     }
 }
 
+module.exports = Scenery;

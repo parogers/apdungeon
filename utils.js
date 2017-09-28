@@ -17,17 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-/* Cross platform way of requesting an animation update
- * (see http://jlongster.com/Making-Sprite-based-Games-with-Canvas) */
-/*var requestAnimFrame =
-	window.requestAnimationFrame ||
-	window.webkitRequestAnimationFrame ||
-	window.mozRequestAnimationFrame ||
-	window.oRequestAnimationFrame ||
-	window.msRequestAnimationFrame ||
-	function(callback){
-	    window.setTimeout(callback, 1000 / 60);
-	};*/
+var RES = require("./res");
 
 // Returns a random number integer between a & b (inclusive)
 function randint(a, b)
@@ -72,18 +62,6 @@ function createSplashSprite()
     waterSprite.visible = false;
     waterSprite.texture = getFrame(RES.MAPTILES, "treading_water");
     return waterSprite;
-}
-
-function createBloodSpatter(imgs)
-{
-    var sprite = new PIXI.Sprite(
-	getFrame(
-	    RES.MAPTILES, 
-	    randomChoice(imgs || ["blood1", "blood2", "blood3"])
-    ));
-    sprite.zpos = FLOOR_POS;
-    sprite.anchor.set(0.5, 0.5);
-    return sprite;
 }
 
 // Helper function for returning a texture set given the resource string
@@ -187,3 +165,17 @@ Sequence.prototype.update = function(dt)
     }
 }
 
+module.exports = {
+    randint: randint,
+    randUniform: randUniform,
+    randomChoice: randomChoice,
+    Sequence: Sequence,
+    getMusic: getMusic,
+    getSound: getSound,
+    createGrid: createGrid,
+    createSplashSprite: createSplashSprite,
+
+    getFrame: getFrame,
+    getFrames: getFrames,
+    getTextures: getTextures
+};

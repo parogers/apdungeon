@@ -17,6 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var RES = require("./res");
+var Utils = require("./utils");
+var Render = require("./render");
+var UI = require("./ui");
+
 /* Displays a game over screen. The LevelScreen that caused the game over
  * should be passed in. This screen will make a gradual transition from 
  * the level scene to a general game over screen, showing stats etc */
@@ -48,7 +53,7 @@ function GameOverScreen(levelScreen)
     levelScreen.stage.scale.set(levelScreen.stage.scale.x/scale);
 
     // Create a black sprite that covers the screen
-    this.bg = new PIXI.Sprite(getFrame(RES.UI, "black"));
+    this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
     this.bg.anchor.set(0, 0);
     this.bg.scale.set(this.screenWidth/this.bg.texture.width,
 		      this.screenHeight/this.bg.texture.height);
@@ -91,7 +96,7 @@ GameOverScreen.prototype.update = function(dt)
 	{
 	    // Background is now fully black. Show the game over text
 	    this.bg.alpha = 1;
-	    var txt = new PIXI.Sprite(getFrame(RES.UI, "game-over-text"));
+	    var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "game-over-text"));
 	    txt.anchor.set(0.5, 0.5);
 	    txt.x = this.screenWidth/2;
 	    txt.y = this.screenHeight/8;
@@ -115,7 +120,7 @@ GameOverScreen.prototype.update = function(dt)
 
 	    // Show the name
 	    var msg = stat.name.toUpperCase() + " *" + stat.count;
-	    var txt = new PIXI.Sprite(renderText(msg));
+	    var txt = new PIXI.Sprite(UI.renderText(msg));
 	    txt.x = xpos + 8;
 	    txt.y = ypos;
 	    txt.anchor.set(0,1);
@@ -133,7 +138,7 @@ GameOverScreen.prototype.update = function(dt)
 	break;
 
     case this.SHOW_CONTINUE_TEXT:
-	var txt = new PIXI.Sprite(renderText("PRESS SPACE TO CONTINUE"));
+	var txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO CONTINUE"));
 	txt.anchor.set(0.5, 0.5);
 	txt.x = this.screenWidth/2;
 	txt.y = this.screenHeight-15;
@@ -153,3 +158,5 @@ GameOverScreen.prototype.render = function()
 {
     Render.getRenderer().render(this.stage);
 }
+
+module.exports = GameOverScreen;

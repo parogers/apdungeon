@@ -17,9 +17,13 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-ARROW_FLIGHT = 0;
-ARROW_FALLING = 1;
-ARROW_DISAPPEAR = 2;
+var RES = require("./res");
+var Utils = require("./utils");
+var Thing = require("./thing");
+
+var ARROW_FLIGHT = 0;
+var ARROW_FALLING = 1;
+var ARROW_DISAPPEAR = 2;
 
 /*********/
 /* Sword */
@@ -39,7 +43,7 @@ function SwordWeaponSlot(player)
     this.attackCooldown = 0;
     this.weaponReach = 3.25;
     this.player = player;
-    this.hitbox = new Hitbox(0, -4, 10, 6);
+    this.hitbox = new Thing.Hitbox(0, -4, 10, 6);
     // Which weapon texture is currently displayed
     this.textureName = null;
     this.setTexture("sword2");
@@ -65,7 +69,7 @@ SwordWeaponSlot.prototype.update = function(dt)
 SwordWeaponSlot.prototype.setTexture = function(name)
 {
     if (this.textureName !== name) {
-	this.sprite.texture = getFrame(RES.WEAPONS, name);
+	this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
 	this.textureName = name;
     }
 }
@@ -74,7 +78,7 @@ SwordWeaponSlot.prototype.startAttack = function()
 {
     if (this.attackCooldown > 0) return;
 
-    getSound(RES.ATTACK_SWORD_SND).play();
+    Utils.getSound(RES.ATTACK_SWORD_SND).play();
     this.sprite.rotation = 0;
     this.sprite.x = 3.5;
 
@@ -137,7 +141,7 @@ BowWeaponSlot.prototype.update = function(dt)
 BowWeaponSlot.prototype.setTexture = function(name)
 {
     if (this.textureName !== name) {
-	this.sprite.texture = getFrame(RES.WEAPONS, name);
+	this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
 	this.textureName = name;
     }
 }
@@ -147,7 +151,7 @@ BowWeaponSlot.prototype.startAttack = function()
     // Make sure we have an arrow to fire
     if (this.player.numArrows <= 0) return;
     if (this.attackCooldown > 0) return;
-    getSound(RES.ATTACK_SWORD_SND).play();
+    Utils.getSound(RES.ATTACK_SWORD_SND).play();
     this.attackCooldown = 0.2;
 
     this.player.numArrows--;
@@ -170,7 +174,7 @@ BowWeaponSlot.prototype.stopAttack = function()
 function Arrow(owner, x, y, velx, vely, height)
 {
     this.owner = owner;
-    this.sprite = new PIXI.Sprite(getFrame(RES.WEAPONS, "arrow"));
+    this.sprite = new PIXI.Sprite(Utils.getFrame(RES.WEAPONS, "arrow"));
     this.sprite.anchor.set(0.5, 0.5);
     this.sprite.scale.x = Math.sign(velx);
     this.sprite.scale.y = 1;
@@ -181,7 +185,7 @@ function Arrow(owner, x, y, velx, vely, height)
     this.height = height;
     this.state = ARROW_FLIGHT;
     this.timer = 0;
-    this.hitbox = new Hitbox(0, 0, 5, 5);
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
 }
 
 Arrow.prototype.update = function(dt)
@@ -204,8 +208,8 @@ Arrow.prototype.update = function(dt)
 	    this.velx *= -0.25;
 	    this.vely = 0;
 	    this.state = ARROW_FALLING;
-	    getSound(RES.ARROW_DING_SND).volume = 0.4;
-	    getSound(RES.ARROW_DING_SND).play();
+	    Utils.getSound(RES.ARROW_DING_SND).volume = 0.4;
+	    Utils.getSound(RES.ARROW_DING_SND).play();
 	    return;
 	}
 	// Now check if we've hit an enemy
@@ -233,4 +237,9 @@ Arrow.prototype.update = function(dt)
 	if (this.timer <= 0) level.removeThing(this);
     }
 }
+
+module.exports = {
+    Bow: BowWeaponSlot,
+    Sword: SwordWeaponSlot
+};
 

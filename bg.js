@@ -17,6 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var Render = require("./render");
+var Utils = require("./utils");
+
 function Tile(name, solid, wall)
 {
     this.name = name;
@@ -51,7 +54,7 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
 	grid[0].length*tileWidth, 
 	(grid.length+1)*tileHeight);
     var cnt = new PIXI.Container();
-    this.solid = createGrid(grid.rows, grid.cols);
+    this.solid = Utils.createGrid(grid.rows, grid.cols);
     for (var row = 0; row < grid.length; row++) 
     {
 	for (var col = 0; col < grid[0].length; col++) 
@@ -118,3 +121,5 @@ TiledBackground.prototype.getHeight = function()
 {
     return this.sprite.texture.height;
 }
+
+module.exports = TiledBackground;

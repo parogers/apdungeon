@@ -17,31 +17,27 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-var renderer = null;
+var Gate = require("./gate");
+var Utils = require("./utils");
+var RES = require("./res");
 
-module.exports = {};
-module.exports.configure = function(width, height, div) 
+/* A door is basically a gate with different graphics, and an extra sprite
+ * behind it so when the door opens, it shows darkness behind it. */
+function Door()
 {
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-    // Disable the ticker sinc we don't use it (rendering happens as needed)
-    PIXI.ticker.shared.autoStart = false;
-    PIXI.ticker.shared.stop();
-
-    renderer = PIXI.autoDetectRenderer({
-	width: width,
-	height: height,
-	//	antialias: true,
-	// Required to prevent flickering in Chrome on Android (others too?)
-	preserveDrawingBuffer: true,
-	//	clearBeforeRender: true
-    });
-
-    if (div) {
-	div.appendChild(renderer.view);
-    }
+    Gate.call(this);
+    this.frames = [
+	Utils.getFrame(RES.MAPTILES, "door1"),
+	Utils.getFrame(RES.MAPTILES, "door2"),
+	Utils.getFrame(RES.MAPTILES, "door3"),
+	Utils.getFrame(RES.MAPTILES, "door4")
+    ];
+    this.fps = 3;
+    this.sprite.anchor.set(0.5,1);
+    this.sprite.texture = this.frames[0];
 }
 
-module.exports.getRenderer = function() {
-    return renderer;
-}
+Door.prototype = Object.create(Gate.prototype);
+
+module.exports = Door;
 

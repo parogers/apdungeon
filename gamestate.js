@@ -17,6 +17,10 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+var TitleScreen = require("./titlescreen");
+var LevelScreen = require("./levelscreen");
+var GameOverScreen = require("./gameover");
+
 /* The finite state machine that drives the entire game. It manages things
  * at a high level, loading and unloading screens as it transitions
  * between game states. */
@@ -94,4 +98,6 @@ GameState.prototype.render = function()
 	this.screen.render();
     }
 }
+
+module.exports = GameState;
 
