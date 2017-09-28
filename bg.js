@@ -34,9 +34,9 @@ function Tileset()
     var water = new Tile("water", false, false);
     water.water = true;
     this.tiles = {
-	"smooth_floor_m" : floor,
-	"smooth_wall_m" : wall,
-	"water" : water
+        "smooth_floor_m" : floor,
+        "smooth_wall_m" : wall,
+        "water" : water
     };
     this.wall = wall;
 }
@@ -51,22 +51,22 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
     /* Create a texture large enough to hold all the tiles, plus a little extra
      * for the first row, in case it contains wall tiles. (taller) */
     var renderTexture = PIXI.RenderTexture.create(
-	grid[0].length*tileWidth, 
-	(grid.length+1)*tileHeight);
+        grid[0].length*tileWidth, 
+        (grid.length+1)*tileHeight);
     var cnt = new PIXI.Container();
     this.solid = Utils.createGrid(grid.rows, grid.cols);
     for (var row = 0; row < grid.length; row++) 
     {
-	for (var col = 0; col < grid[0].length; col++) 
-	{
-	    var sprite = new PIXI.Sprite(textures[grid[row][col]]);
-	    sprite.anchor.set(0,1);
-	    sprite.x = col*tileWidth;
-	    sprite.y = wallHeight + row*tileHeight;
-	    //(row+1)*tileHeight-(sprite.texture.height-tileHeight);
-	    cnt.addChild(sprite);
-	    this.solid[row][col] = (grid[row][col] !== "smooth_floor_m");
-	}
+        for (var col = 0; col < grid[0].length; col++) 
+        {
+            var sprite = new PIXI.Sprite(textures[grid[row][col]]);
+            sprite.anchor.set(0,1);
+            sprite.x = col*tileWidth;
+            sprite.y = wallHeight + row*tileHeight;
+            //(row+1)*tileHeight-(sprite.texture.height-tileHeight);
+            cnt.addChild(sprite);
+            this.solid[row][col] = (grid[row][col] !== "smooth_floor_m");
+        }
     }
     cnt.x = 0;
     cnt.y = 0;
@@ -90,16 +90,16 @@ TiledBackground.prototype.checkHit = function(x, y, w)
     var x = x-this.sprite.x;
     var y = y-(this.sprite.y+this.tileHeight);
     if (x < 0 || x > this.sprite.texture.width ||
-	y < 0 || y > this.sprite.texture.height - this.tileHeight) 
+        y < 0 || y > this.sprite.texture.height - this.tileHeight) 
     {
-	return true;
+        return true;
     }
     var row = (y / this.tileHeight)|0;
     var col1 = (x / this.tileWidth)|0;
     var col2 = ((x+w) / this.tileWidth)|0;
     for (var col = col1; col <= col2; col++)
-	if (this.solid[row] && this.solid[row][col])
-	    return true;
+        if (this.solid[row] && this.solid[row][col])
+            return true;
     return false;
 }
 
@@ -113,7 +113,7 @@ TiledBackground.prototype.getTileAt = function(x, y)
     var row = (y / this.tileHeight)|0;
     var col = (x / this.tileWidth)|0;
     if (this.grid[row] && this.grid[row][col])
-	return this.tileset.getTile(this.grid[row][col]);
+        return this.tileset.getTile(this.grid[row][col]);
     return this.tileset.wall;
 }
 

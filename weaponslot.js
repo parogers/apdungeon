@@ -52,11 +52,11 @@ function SwordWeaponSlot(player)
 SwordWeaponSlot.prototype.update = function(dt)
 {
     if (this.attackCooldown > 0) {
-	this.attackCooldown -= dt;
-	if (this.attackCooldown <= 0) {
-	    this.sprite.x = 2.5;
-	    this.sprite.rotation = -Math.PI/3;
-	}
+        this.attackCooldown -= dt;
+        if (this.attackCooldown <= 0) {
+            this.sprite.x = 2.5;
+            this.sprite.rotation = -Math.PI/3;
+        }
     }
 
     /* Staff placement */
@@ -69,8 +69,8 @@ SwordWeaponSlot.prototype.update = function(dt)
 SwordWeaponSlot.prototype.setTexture = function(name)
 {
     if (this.textureName !== name) {
-	this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
-	this.textureName = name;
+        this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
+        this.textureName = name;
     }
 }
 
@@ -83,15 +83,15 @@ SwordWeaponSlot.prototype.startAttack = function()
     this.sprite.x = 3.5;
 
     var lst = this.player.level.checkHitMany(
-	this.player.sprite.x + this.player.facing*this.weaponReach, 
-	this.player.sprite.y,
-	this.hitbox, this.player);
+        this.player.sprite.x + this.player.facing*this.weaponReach, 
+        this.player.sprite.y,
+        this.hitbox, this.player);
 
     for (let hit of lst) {
-	if (hit.handleHit) {
-	    hit.handleHit(this.player.sprite.x, 
-			  this.player.sprite.y, 1);
-	}
+        if (hit.handleHit) {
+            hit.handleHit(this.player.sprite.x, 
+                          this.player.sprite.y, 1);
+        }
     }
     this.attackCooldown = 0.15;
 }
@@ -120,16 +120,16 @@ function BowWeaponSlot(player)
 BowWeaponSlot.prototype.update = function(dt)
 {
     if (this.attackCooldown <= 0) {
-	/* Have the bow rock back and forth as the player moves. */
-	this.sprite.rotation = Math.PI/5 + 
-	    (Math.PI/40)*Math.cos(10*this.player.frame);
-	this.sprite.x = 3.0;
-	this.sprite.y = -2.5;
+        /* Have the bow rock back and forth as the player moves. */
+        this.sprite.rotation = Math.PI/5 + 
+            (Math.PI/40)*Math.cos(10*this.player.frame);
+        this.sprite.x = 3.0;
+        this.sprite.y = -2.5;
     } else {
-	this.sprite.rotation = 0;
-	this.sprite.x = 3;
-	this.sprite.y = -3.25;
-	this.attackCooldown -= dt;
+        this.sprite.rotation = 0;
+        this.sprite.x = 3;
+        this.sprite.y = -3.25;
+        this.attackCooldown -= dt;
     }
     /* Staff placement */
     /*this.weaponSprite.x = 3.4*SCALE;
@@ -141,8 +141,8 @@ BowWeaponSlot.prototype.update = function(dt)
 BowWeaponSlot.prototype.setTexture = function(name)
 {
     if (this.textureName !== name) {
-	this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
-	this.textureName = name;
+        this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
+        this.textureName = name;
     }
 }
 
@@ -157,11 +157,11 @@ BowWeaponSlot.prototype.startAttack = function()
     this.player.numArrows--;
 
     var arrow = new Arrow(
-	this.player,
-	this.player.sprite.x,
-	this.player.sprite.y+this.sprite.y,
-	this.player.facing*100, 0,
-	Math.abs(this.sprite.y));
+        this.player,
+        this.player.sprite.x,
+        this.player.sprite.y+this.sprite.y,
+        this.player.facing*100, 0,
+        Math.abs(this.sprite.y));
     //level.things.push(arrow);
     //level.stage.addChild(arrow.sprite);
     this.player.level.addThing(arrow);
@@ -192,49 +192,49 @@ Arrow.prototype.update = function(dt)
 {
     var level = this.owner.level;
     if (this.state === ARROW_FLIGHT) {
-	this.sprite.x += this.velx*dt;
-	this.sprite.y += this.vely*dt;
-	// The arrow disappears when it's no longer visible
-	if (this.sprite.x < level.camera.x || 
-	    this.sprite.x > level.camera.x + level.camera.width) 
-	{
-	    level.removeThing(this);
-	}
-	// Check if the arrow hits a wall
-	var tile = level.bg.getTileAt(
-	    this.sprite.x+Math.sign(this.velx)*4,
-	    this.sprite.y+this.height);
-	if (tile.solid) {
-	    this.velx *= -0.25;
-	    this.vely = 0;
-	    this.state = ARROW_FALLING;
-	    Utils.getSound(RES.ARROW_DING_SND).volume = 0.4;
-	    Utils.getSound(RES.ARROW_DING_SND).play();
-	    return;
-	}
-	// Now check if we've hit an enemy
-	var other = level.checkHit(
-	    this.sprite.x, this.sprite.y, 
-	    this.hitbox, this.owner);
-	if (other && other.handleHit) {
-	    var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
-	    if (ret === true) {
-		level.removeThing(this);
-	    }
-	}
+        this.sprite.x += this.velx*dt;
+        this.sprite.y += this.vely*dt;
+        // The arrow disappears when it's no longer visible
+        if (this.sprite.x < level.camera.x || 
+            this.sprite.x > level.camera.x + level.camera.width) 
+        {
+            level.removeThing(this);
+        }
+        // Check if the arrow hits a wall
+        var tile = level.bg.getTileAt(
+            this.sprite.x+Math.sign(this.velx)*4,
+            this.sprite.y+this.height);
+        if (tile.solid) {
+            this.velx *= -0.25;
+            this.vely = 0;
+            this.state = ARROW_FALLING;
+            Utils.getSound(RES.ARROW_DING_SND).volume = 0.4;
+            Utils.getSound(RES.ARROW_DING_SND).play();
+            return;
+        }
+        // Now check if we've hit an enemy
+        var other = level.checkHit(
+            this.sprite.x, this.sprite.y, 
+            this.hitbox, this.owner);
+        if (other && other.handleHit) {
+            var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
+            if (ret === true) {
+                level.removeThing(this);
+            }
+        }
 
     } else if (this.state === ARROW_FALLING) {
-	this.vely -= 700*dt;
-	this.height += this.vely*dt;
-	this.sprite.x += this.velx*dt;
-	this.sprite.y -= this.vely*dt;
-	if (this.height <= 0) {
-	    this.timer = 1;
-	    this.state = ARROW_DISAPPEAR;
-	}
+        this.vely -= 700*dt;
+        this.height += this.vely*dt;
+        this.sprite.x += this.velx*dt;
+        this.sprite.y -= this.vely*dt;
+        if (this.height <= 0) {
+            this.timer = 1;
+            this.state = ARROW_DISAPPEAR;
+        }
     } else {
-	this.timer -= dt;
-	if (this.timer <= 0) level.removeThing(this);
+        this.timer -= dt;
+        if (this.timer <= 0) level.removeThing(this);
     }
 }
 

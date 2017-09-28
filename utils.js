@@ -46,10 +46,10 @@ function createGrid(rows, cols, value)
     grid.rows = rows;
     grid.cols = cols;
     for (var row = 0; row < rows; row++) {
-	grid[row] = [];
-	for (var col = 0; col < cols; col++) {
-	    grid[row][col] = value;
-	}
+        grid[row] = [];
+        for (var col = 0; col < cols; col++) {
+            grid[row][col] = value;
+        }
     }
     return grid;
 }
@@ -80,9 +80,9 @@ function getFrames(res, names)
 {
     var frames = [];
     for (var n = 0; n < names.length; n++) {
-	var frame = getTextures(res)[names[n]];
-	if (!frame) console.log("ERROR: missing frame " + names[n]);
-	frames.push(frame);
+        var frame = getTextures(res)[names[n]];
+        if (!frame) console.log("ERROR: missing frame " + names[n]);
+        frames.push(frame);
     }
     return frames;
 }
@@ -91,7 +91,7 @@ function getFrames(res, names)
 function updateDict(dict, other)
 {
     for (var key in other) {
-	dict[key] = other[key];
+        dict[key] = other[key];
     }
 }
 
@@ -113,22 +113,22 @@ function Sequence()
 {
     var args = arguments[0];
     for (var key in args) {
-	this[key] = args[key];
+        this[key] = args[key];
     }
     this.done = false;
     this.numSteps = arguments.length-1;
     this.labels = {};
     for (var n = 1; n < arguments.length; n++) {
-	// The sequence contains functions to call, and embedded strings to
-	// use as labels. (for looping, branching, etc)
-	if (arguments[n].constructor === String) {
-	    this.labels[arguments[n]] = n-1;
-	} else {
-	    // Note functions are assigned to this object, so that calling
-	    // them this way gives us access to 'this' inside.
-	    var name = "func_" + (n-1);
-	    this[name] = arguments[n];
-	}
+        // The sequence contains functions to call, and embedded strings to
+        // use as labels. (for looping, branching, etc)
+        if (arguments[n].constructor === String) {
+            this.labels[arguments[n]] = n-1;
+        } else {
+            // Note functions are assigned to this object, so that calling
+            // them this way gives us access to 'this' inside.
+            var name = "func_" + (n-1);
+            this[name] = arguments[n];
+        }
     }
     // The current state. This advances incrementally by default, and 
     // occasionally jumping randomly to another state.
@@ -142,26 +142,26 @@ Sequence.prototype.update = function(dt)
 {
     if (this.done) return;
     if (this.delay > 0) {
-	this.delay -= dt;
-	return;
+        this.delay -= dt;
+        return;
     }
     // Check if the current state is a function (or a label)
     var fname = "func_" + this.state;
     if (this[fname]) {
-	var ret = this[fname](dt);
-	if (ret === this.NEXT) {
-	    // Advance to the next state
-	    this.state++;
-	} else if (ret) {
-	    // Jump to another state
-	    this.state = this.labels[ret];
-	}
+        var ret = this[fname](dt);
+        if (ret === this.NEXT) {
+            // Advance to the next state
+            this.state++;
+        } else if (ret) {
+            // Jump to another state
+            this.state = this.labels[ret];
+        }
     } else {
-	// Skip over the label
-	this.state++;
+        // Skip over the label
+        this.state++;
     }
     if (this.state >= this.numSteps) {
-	this.done = true;
+        this.done = true;
     }
 }
 

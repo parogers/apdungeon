@@ -52,41 +52,41 @@ GroundItem.prototype.update = function(dt)
 {
     if (this.velh !== 0) 
     {
-	// First move the item into/out of the scene (Z-axis) and make sure
-	// we don't bump into anything.
-	if (this.velz !== 0) {
-	    var dz = this.velz*dt;
-	    var tile = this.level.bg.getTileAt(this.sprite.x, this.ypos+dz);
-	    // If we connect with a wall, don't bother bouncing off
-	    if (tile.solid) this.velz = 0;
-	    else {
-		this.ypos += dz;
-		this.sprite.zpos += dz;
-	    }
-	}
+        // First move the item into/out of the scene (Z-axis) and make sure
+        // we don't bump into anything.
+        if (this.velz !== 0) {
+            var dz = this.velz*dt;
+            var tile = this.level.bg.getTileAt(this.sprite.x, this.ypos+dz);
+            // If we connect with a wall, don't bother bouncing off
+            if (tile.solid) this.velz = 0;
+            else {
+                this.ypos += dz;
+                this.sprite.zpos += dz;
+            }
+        }
 
-	// Move the item left/right having it bounce off walls too. Note we
-	// check the "floor" position of the item instead of the sprite pos.
-	var dx = this.velx*dt;
-	var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.ypos);
-	if (tile.solid) {
-	    this.velx *= -1;
-	} else {
-	    this.sprite.x += dx;
-	}
-	this.velh += ITEM_GRAVITY*dt;
-	this.height -= this.velh*dt;
+        // Move the item left/right having it bounce off walls too. Note we
+        // check the "floor" position of the item instead of the sprite pos.
+        var dx = this.velx*dt;
+        var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.ypos);
+        if (tile.solid) {
+            this.velx *= -1;
+        } else {
+            this.sprite.x += dx;
+        }
+        this.velh += ITEM_GRAVITY*dt;
+        this.height -= this.velh*dt;
 
-	// Have the item bounce up/down until it comes to rest
-	if (this.height <= 0) {
-	    if (this.velh < 10) {
-		this.velh = 0;
-	    } else {
-		this.velh *= -this.bouncy;
-		this.height = 0;
-	    }
-	}
-	this.sprite.y = this.ypos - this.height;
+        // Have the item bounce up/down until it comes to rest
+        if (this.height <= 0) {
+            if (this.velh < 10) {
+                this.velh = 0;
+            } else {
+                this.velh *= -this.bouncy;
+                this.height = 0;
+            }
+        }
+        this.sprite.y = this.ypos - this.height;
     }
 }
 
@@ -96,9 +96,9 @@ GroundItem.prototype.handlePlayerCollision = function(player)
     // enough to the ground.
     if (this.height < 3 && this.velh >= 0) 
     {
-	if (this.item && player.handleTakeItem(this.item)) {
-	    this.level.removeThing(this);
-	}
+        if (this.item && player.handleTakeItem(this.item)) {
+            this.level.removeThing(this);
+        }
     }
 }
 

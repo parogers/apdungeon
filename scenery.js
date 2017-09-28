@@ -40,15 +40,15 @@ Scenery.prototype.update = function(dt)
     this.sprite.x += this.velx*dt;
     this.sprite.y += this.vely*dt;
     if (this.timer > 0) {
-	this.timer -= dt;
-	if (this.timer <= 0) {
-	    this.level.removeThing(this);
-	}
+        this.timer -= dt;
+        if (this.timer <= 0) {
+            this.level.removeThing(this);
+        }
     }
     if (this.frames.length > 1) {
-	this.frame += this.fps*dt;
-	var img = this.frames[(this.frame|0) % this.frames.length];
-	this.sprite.texture = img;
+        this.frame += this.fps*dt;
+        var img = this.frames[(this.frame|0) % this.frames.length];
+        this.sprite.texture = img;
     }
 }
 

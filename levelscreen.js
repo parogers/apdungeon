@@ -59,54 +59,54 @@ LevelScreen.prototype.update = function(dt)
 {
     switch(this.state) {
     case this.NEW_GAME:
-	// Generate a new level and player character
-	this.player = new Player();
-	this.player.sprite.x = 0;
-	this.player.sprite.y = 0;
-	this.levelNum = 0;
-	// Generate the first level
-	var level = LevelGenerator.generate(this.levelNum);
-	this.setLevel(level);
-	// Start playing it immediately
-	this.state = this.PLAYING;
-	// Start playing music (fade in). We call restart, which stops the
-	// previously play (if any), rewinds and starts again.
-	Utils.getMusic().restart();
-	Utils.getMusic().fadeIn(1);
-	break;
+        // Generate a new level and player character
+        this.player = new Player();
+        this.player.sprite.x = 0;
+        this.player.sprite.y = 0;
+        this.levelNum = 0;
+        // Generate the first level
+        var level = LevelGenerator.generate(this.levelNum);
+        this.setLevel(level);
+        // Start playing it immediately
+        this.state = this.PLAYING;
+        // Start playing music (fade in). We call restart, which stops the
+        // previously play (if any), rewinds and starts again.
+        Utils.getMusic().restart();
+        Utils.getMusic().fadeIn(1);
+        break;
 
     case this.PLAYING:
-	if (this.level.state === this.level.FINISHED) {
-	    // Proceed to the next level
-	    console.log("NEXT LEVEL");
-	    level = LevelGenerator.generate(++this.levelNum);
-	    this.setLevel(level);
-	} else if (this.player.dead) {
-	    // This triggers the game state machine to advance to the game
-	    // over screen. Note there is no stop for sound effects, only 
-	    // a pause function. (TODO - why?)
-	    Utils.getMusic().pause();
-	    this.state = this.GAME_OVER;
-	} else {
-	    if (this.level) this.level.update(dt);
-	    this.healthUI.update(dt);
-	    this.inventoryUI.update(dt);
-	    this.goMarker.update(dt);
-	}
-	break;
+        if (this.level.state === this.level.FINISHED) {
+            // Proceed to the next level
+            console.log("NEXT LEVEL");
+            level = LevelGenerator.generate(++this.levelNum);
+            this.setLevel(level);
+        } else if (this.player.dead) {
+            // This triggers the game state machine to advance to the game
+            // over screen. Note there is no stop for sound effects, only 
+            // a pause function. (TODO - why?)
+            Utils.getMusic().pause();
+            this.state = this.GAME_OVER;
+        } else {
+            if (this.level) this.level.update(dt);
+            this.healthUI.update(dt);
+            this.inventoryUI.update(dt);
+            this.goMarker.update(dt);
+        }
+        break;
 
     case this.NEXT_LEVEL:
-	break;
+        break;
 
     case this.GAME_OVER:
-	break;
+        break;
     }
 }
 
 LevelScreen.prototype.render = function()
 {
     if (this.level) {
-	Render.getRenderer().render(this.stage);
+        Render.getRenderer().render(this.stage);
     }
 }
 
@@ -114,7 +114,7 @@ LevelScreen.prototype.setLevel = function(level)
 {
     // Remove the previous level sprite container
     if (this.level) {
-	this.stage.removeChild(this.level.stage);
+        this.stage.removeChild(this.level.stage);
     }
     if (!level) return;
 

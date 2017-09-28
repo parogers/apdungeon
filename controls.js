@@ -76,64 +76,64 @@ GameControls.prototype.update = function()
 function attachKeyDown(controls)
 {
     window.addEventListener("keydown", function(event) {
-	switch(event.keyCode) {
-	case ARROW_UP:
-	    controls.up = true;
-	    break;
-	case ARROW_DOWN:
-	    controls.down = true;
-	    break;
-	case ARROW_LEFT:
-	    controls.left = true;
-	    break;
-	case ARROW_RIGHT:
-	    controls.right = true;
-	    break;
-	case PRIMARY:
-	case PRIMARY_ALT:
-	    controls.primary = true;
-	    break;
-	case SWAP:
-	    controls.swap = true;
-	    break;
-	case SPACE:
-	    controls.space = true;
-	case TEST_KEY:
-	    controls.testKey = true;
-	}
-	event.stopPropagation();
+        switch(event.keyCode) {
+        case ARROW_UP:
+            controls.up = true;
+            break;
+        case ARROW_DOWN:
+            controls.down = true;
+            break;
+        case ARROW_LEFT:
+            controls.left = true;
+            break;
+        case ARROW_RIGHT:
+            controls.right = true;
+            break;
+        case PRIMARY:
+        case PRIMARY_ALT:
+            controls.primary = true;
+            break;
+        case SWAP:
+            controls.swap = true;
+            break;
+        case SPACE:
+            controls.space = true;
+        case TEST_KEY:
+            controls.testKey = true;
+        }
+        event.stopPropagation();
     });
 }
 
 function attachKeyUp(controls)
 {
     window.addEventListener("keyup", function(event) {
-	switch(event.keyCode) {
-	case ARROW_UP:
-	    controls.up = false;
-	    break;
-	case ARROW_DOWN:
-	    controls.down = false;
-	    break;
-	case ARROW_LEFT:
-	    controls.left = false;
-	    break;
-	case ARROW_RIGHT:
-	    controls.right = false;
-	    break;
-	case PRIMARY:
-	case PRIMARY_ALT:
-	    controls.primary = false;
-	    break;
-	case SWAP:
-	    controls.swap = false;
-	    break;
-	case SPACE:
-	    controls.space = false;
-	case TEST_KEY:
-	    controls.testKey = false;
-	}
-	event.stopPropagation();
+        switch(event.keyCode) {
+        case ARROW_UP:
+            controls.up = false;
+            break;
+        case ARROW_DOWN:
+            controls.down = false;
+            break;
+        case ARROW_LEFT:
+            controls.left = false;
+            break;
+        case ARROW_RIGHT:
+            controls.right = false;
+            break;
+        case PRIMARY:
+        case PRIMARY_ALT:
+            controls.primary = false;
+            break;
+        case SWAP:
+            controls.swap = false;
+            break;
+        case SPACE:
+            controls.space = false;
+        case TEST_KEY:
+            controls.testKey = false;
+        }
+        event.stopPropagation();
     });
 }
 

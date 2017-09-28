@@ -59,8 +59,8 @@ function TitleScreen()
     this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
     this.bg.scale.set(
-	screenWidth/this.bg.texture.width,
-	screenHeight/this.bg.texture.height);
+        screenWidth/this.bg.texture.width,
+        screenHeight/this.bg.texture.height);
     this.stage.addChild(this.bg);
     this.delay = 0;
 
@@ -89,83 +89,83 @@ function TitleScreen()
     this.stage.addChild(txt);
 
     this.sequence = new Utils.Sequence(
-	{
-	    stage: this.stage,
-	    level: null,
-	    player: null
-	},
-	"start",
-	function(dt) {
-	    this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
-	    this.level.stage.x = -10;
-	    this.level.stage.y = screenHeight/2-5;
-	    this.stage.addChild(this.level.stage);
-	    // Note the screen position within the level (so we can know when
-	    // objects are offscreen)
-	    this.screenLeft = -this.level.stage.x;
-	    this.screenRight = this.screenLeft + screenWidth;
-	    // Create a dummy player to drive around
-	    this.player = new Player();
-	    this.player.cameraMovement = false;
-	    this.player.hasControl = false;
-	    this.player.sprite.x = 2;
-	    this.player.sprite.y = 20;
-	    this.level.addThing(this.player);
+        {
+            stage: this.stage,
+            level: null,
+            player: null
+        },
+        "start",
+        function(dt) {
+            this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
+            this.level.stage.x = -10;
+            this.level.stage.y = screenHeight/2-5;
+            this.stage.addChild(this.level.stage);
+            // Note the screen position within the level (so we can know when
+            // objects are offscreen)
+            this.screenLeft = -this.level.stage.x;
+            this.screenRight = this.screenLeft + screenWidth;
+            // Create a dummy player to drive around
+            this.player = new Player();
+            this.player.cameraMovement = false;
+            this.player.hasControl = false;
+            this.player.sprite.x = 2;
+            this.player.sprite.y = 20;
+            this.level.addThing(this.player);
 
-	    this.monster = new Scenery(
-		Utils.getFrames(RES.ENEMIES, Rat.FRAMES));
-	    this.monster.sprite.y = this.player.sprite.y;
-	    this.level.addThing(this.monster);
+            this.monster = new Scenery(
+                Utils.getFrames(RES.ENEMIES, Rat.FRAMES));
+            this.monster.sprite.y = this.player.sprite.y;
+            this.level.addThing(this.monster);
 
-	    this.monsterChoices = [
-		Rat.FRAMES,
-		Snake.FRAMES,
-		Scorpion.FRAMES,
-		SkelWarrior.FRAMES,
-		Goblin.FRAMES,
-		Ghost.FRAMES]
-	    this.monsterChoice = 0;
+            this.monsterChoices = [
+                Rat.FRAMES,
+                Snake.FRAMES,
+                Scorpion.FRAMES,
+                SkelWarrior.FRAMES,
+                Goblin.FRAMES,
+                Ghost.FRAMES]
+            this.monsterChoice = 0;
 
-	    return this.NEXT;
-	},
-	function(dt) {
-	    // Have the player run right offscreen
-	    this.player.dirx = 1;
-	    this.player.update(dt);
-	    if (this.player.sprite.x > this.screenRight+4) {
-		this.monster.sprite.x = this.screenRight+16;
-		return this.NEXT;
-	    }
-	},
-	"loop",
-	function(dt) {
-	    // Have the player run the other way chased by a monster
-	    this.player.dirx = -1;
-	    this.player.update(dt);
-	    this.monster.velx = -20;
-	    this.monster.update(dt);
-	    this.monster.faceDirection(-1);
-	    if (this.player.sprite.x < this.screenLeft-4) {
-		this.player.upgradeSword(Item.Table.SMALL_SWORD);
-		return this.NEXT;
-	    }
-	},
-	function(dt) {
-	    // Now the player chases the monster with a sword
-	    this.player.dirx = 1;
-	    this.player.update(dt);
-	    this.monster.velx = 20;
-	    this.monster.update(dt);
-	    this.monster.faceDirection(1);
-	    if (this.player.sprite.x > this.screenRight+4) {
-		// New monster chases the player
-		this.monsterChoice++;
-		var choice = this.monsterChoices[
-		    this.monsterChoice%this.monsterChoices.length];
-		this.monster.frames = Utils.getFrames(RES.ENEMIES, choice);
-		return "loop";
-	    }
-	}
+            return this.NEXT;
+        },
+        function(dt) {
+            // Have the player run right offscreen
+            this.player.dirx = 1;
+            this.player.update(dt);
+            if (this.player.sprite.x > this.screenRight+4) {
+                this.monster.sprite.x = this.screenRight+16;
+                return this.NEXT;
+            }
+        },
+        "loop",
+        function(dt) {
+            // Have the player run the other way chased by a monster
+            this.player.dirx = -1;
+            this.player.update(dt);
+            this.monster.velx = -20;
+            this.monster.update(dt);
+            this.monster.faceDirection(-1);
+            if (this.player.sprite.x < this.screenLeft-4) {
+                this.player.upgradeSword(Item.Table.SMALL_SWORD);
+                return this.NEXT;
+            }
+        },
+        function(dt) {
+            // Now the player chases the monster with a sword
+            this.player.dirx = 1;
+            this.player.update(dt);
+            this.monster.velx = 20;
+            this.monster.update(dt);
+            this.monster.faceDirection(1);
+            if (this.player.sprite.x > this.screenRight+4) {
+                // New monster chases the player
+                this.monsterChoice++;
+                var choice = this.monsterChoices[
+                    this.monsterChoice%this.monsterChoices.length];
+                this.monster.frames = Utils.getFrames(RES.ENEMIES, choice);
+                return "loop";
+            }
+        }
     );
 
 }
@@ -173,14 +173,14 @@ function TitleScreen()
 TitleScreen.prototype.update = function(dt)
 {
     if (this.delay > 0) {
-	this.delay -= dt;
-	return;
+        this.delay -= dt;
+        return;
     }
 
     this.sequence.update(dt);
 
     if (GameControls.getControls().space) {
-	this.state = this.NEW_GAME;
+        this.state = this.NEW_GAME;
     }
 }
 

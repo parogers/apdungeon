@@ -50,14 +50,12 @@ Item.prototype.isBow = function()
     return (this.type === Item.BOW);
 }
 
+// The various item types
 Item.OTHER = 0;
 Item.SWORD = 1;
 Item.BOW = 2;
 Item.ARMOUR = 3;
 Item.HEALTH = 4;
-
-// TODO - it would be nice to have item properties stored with the item.
-// (eg type of item, size, value, etc) But this is easy for demo purposes.
 
 // The list of takeable items. The values here are used to identify the items
 // as well as referring to images on the GROUND_ITEMS sprite sheet.

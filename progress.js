@@ -26,11 +26,11 @@ function ProgressBar(width, height, text)
     this.sprite = new PIXI.Container();
     this.barSprite = new PIXI.Sprite();
     this.textSprite = new PIXI.Text(
-	text, {fontFamily: 'Courier New', 
-	       fontSize: 20, 
-	       fill: 0xffffff,
-	       fontWeight: 'bold',
-	       align: 'center'});
+        text, {fontFamily: 'Courier New', 
+               fontSize: 20, 
+               fill: 0xffffff,
+               fontWeight: 'bold',
+               align: 'center'});
     this.textSprite.y = height+5;
     //this.textSprite.scale.y = 0.5;
     this.sprite.addChild(this.barSprite);

@@ -51,43 +51,43 @@ function GameState()
 GameState.prototype.update = function(dt)
 {
     if (this.screen) {
-	this.screen.update(dt);
+        this.screen.update(dt);
     }
 
     switch(this.state) {
     case this.SHOW_TITLE_SCREEN:
-	//this.state = this.NEW_GAME;
-	this.screen = new TitleScreen();
-	this.state = this.TITLE_SCREEN;
-	break;
+        //this.state = this.NEW_GAME;
+        this.screen = new TitleScreen();
+        this.state = this.TITLE_SCREEN;
+        break;
 
     case this.TITLE_SCREEN:
-	if (this.screen.state === this.screen.NEW_GAME) {
-	    this.state = this.NEW_GAME;
-	}
-	break;
+        if (this.screen.state === this.screen.NEW_GAME) {
+            this.state = this.NEW_GAME;
+        }
+        break;
 
     case this.NEW_GAME:
-	// Start a new game
-	this.screen = new LevelScreen();
-	this.state = this.PLAYING_GAME;
-	break;
+        // Start a new game
+        this.screen = new LevelScreen();
+        this.state = this.PLAYING_GAME;
+        break;
 
     case this.PLAYING_GAME:
-	// Wait until a game over happens
-	if (this.screen.state === this.screen.GAME_OVER) {
-	    // Transition to the game over screen
-	    this.screen = new GameOverScreen(this.screen);
-	    this.state = this.GAME_OVER;
-	}
-	break;
+        // Wait until a game over happens
+        if (this.screen.state === this.screen.GAME_OVER) {
+            // Transition to the game over screen
+            this.screen = new GameOverScreen(this.screen);
+            this.state = this.GAME_OVER;
+        }
+        break;
 
     case this.GAME_OVER:
-	// Wait until the player is finished with the game over screen
-	if (this.screen.state === this.screen.DONE) {
-	    this.state = this.NEW_GAME;
-	}
-	break;
+        // Wait until the player is finished with the game over screen
+        if (this.screen.state === this.screen.DONE) {
+            this.state = this.NEW_GAME;
+        }
+        break;
     }
 }
 
@@ -95,7 +95,7 @@ GameState.prototype.update = function(dt)
 GameState.prototype.render = function()
 {
     if (this.screen) {
-	this.screen.render();
+        this.screen.render();
     }
 }
 

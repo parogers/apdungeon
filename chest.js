@@ -44,25 +44,25 @@ function Chest(items, options)
 Chest.prototype.update = function(dt)
 {
     if (this.isOpen && this.timer > 0) {
-	this.timer -= dt;
-	if (this.timer <= 0) {
-	    // Eject the contents from the chest
-	    for (let item of this.items) {
-		var gnd = new GroundItem(
-		    item, 
-		    this.sprite.x+1*Utils.randUniform(0, 1), 
-		    this.sprite.y+2*Utils.randUniform(0.1, 1));
-		this.level.addThing(gnd);
-		var spd = Utils.randUniform(6, 12);
-		if (this.options && this.options.ejectX) {
-		    gnd.velx = this.options.ejectX*spd;
-		} else {
-		    gnd.velx = Utils.randomChoice([-1, 1])*spd;
-		}
-		gnd.velz = -Utils.randUniform(-2, 6);
-		gnd.velh = -30*Utils.randUniform(0.9, 1);
-	    }
-	}
+        this.timer -= dt;
+        if (this.timer <= 0) {
+            // Eject the contents from the chest
+            for (let item of this.items) {
+                var gnd = new GroundItem(
+                    item, 
+                    this.sprite.x+1*Utils.randUniform(0, 1), 
+                    this.sprite.y+2*Utils.randUniform(0.1, 1));
+                this.level.addThing(gnd);
+                var spd = Utils.randUniform(6, 12);
+                if (this.options && this.options.ejectX) {
+                    gnd.velx = this.options.ejectX*spd;
+                } else {
+                    gnd.velx = Utils.randomChoice([-1, 1])*spd;
+                }
+                gnd.velz = -Utils.randUniform(-2, 6);
+                gnd.velh = -30*Utils.randUniform(0.9, 1);
+            }
+        }
     }
 }
 
@@ -73,12 +73,12 @@ Chest.prototype.handleHit = function(x, y, dmg)
 Chest.prototype.handlePlayerCollision = function(player)
 {
     if (!this.isOpen) {
-	// Open the chest now and start a countdown timer before ejecting 
-	// the contents.
-	this.sprite.texture = this.openTexture;
-	this.isOpen = true;
-	this.timer = 0.25;
-	Utils.getSound(RES.CHEST_SND).play();
+        // Open the chest now and start a countdown timer before ejecting 
+        // the contents.
+        this.sprite.texture = this.openTexture;
+        this.isOpen = true;
+        this.timer = 0.25;
+        Utils.getSound(RES.CHEST_SND).play();
     }
 }
 

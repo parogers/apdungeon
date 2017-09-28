@@ -25,9 +25,9 @@ var GameControls = require("./controls");
 function Gate()
 {
     this.frames = [
-	Utils.getFrame(RES.MAPTILES, "gate_wall_1"),
-	Utils.getFrame(RES.MAPTILES, "gate_wall_2"),
-	Utils.getFrame(RES.MAPTILES, "gate_wall_3")
+        Utils.getFrame(RES.MAPTILES, "gate_wall_1"),
+        Utils.getFrame(RES.MAPTILES, "gate_wall_2"),
+        Utils.getFrame(RES.MAPTILES, "gate_wall_3")
     ];
     this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
     this.sprite = new PIXI.Sprite(this.frames[0]);
@@ -45,14 +45,14 @@ Gate.prototype.isOpen = function()
 Gate.prototype.startOpening = function()
 {
     if (this.frameNum < this.frames.length-1) {
-	this.moving = 1;
+        this.moving = 1;
     }
 }
 
 Gate.prototype.startClosing = function()
 {
     if (this.frameNum > 0) {
-	this.moving = -1;
+        this.moving = -1;
     }
 }
 
@@ -60,23 +60,23 @@ Gate.prototype.update = function(dt)
 {
     // The gate is opening or closing
     if (this.moving !== 0) {
-	var fnum = Math.round(2*this.frameNum);
-	this.frameNum += this.moving*this.fps*dt;
-	if (this.frameNum < 0) {
-	    // Finished closing
-	    this.frameNum = 0;
-	    this.moving = 0;
-	} else if (this.frameNum >= this.frames.length-1) {
-	    // Finished opening
-	    this.frameNum = this.frames.length-1;
-	    this.moving = 0;
-	}
-	// Make a "clicksh" noise as the gate is opening. (we do this every
-	// other frame to make it more obvious, hence the '2' here and above)
-	if (fnum !== Math.round(2*this.frameNum)) {
-	    Utils.getSound(RES.GATE_SND).volume = 0.20;
-	    Utils.getSound(RES.GATE_SND).play();
-	}
+        var fnum = Math.round(2*this.frameNum);
+        this.frameNum += this.moving*this.fps*dt;
+        if (this.frameNum < 0) {
+            // Finished closing
+            this.frameNum = 0;
+            this.moving = 0;
+        } else if (this.frameNum >= this.frames.length-1) {
+            // Finished opening
+            this.frameNum = this.frames.length-1;
+            this.moving = 0;
+        }
+        // Make a "clicksh" noise as the gate is opening. (we do this every
+        // other frame to make it more obvious, hence the '2' here and above)
+        if (fnum !== Math.round(2*this.frameNum)) {
+            Utils.getSound(RES.GATE_SND).volume = 0.20;
+            Utils.getSound(RES.GATE_SND).play();
+        }
     }
     this.sprite.texture = this.frames[Math.round(this.frameNum)|0];
 }
@@ -88,12 +88,12 @@ Gate.prototype.handleHit = function(x, y, dmg)
 Gate.prototype.handlePlayerCollision = function(player)
 {
     if (this.isOpen() && 
-	this === this.level.exitDoor && 
-	GameControls.getControls().up && 
-	Math.abs(player.sprite.y-this.sprite.y) < 5) 
+        this === this.level.exitDoor && 
+        GameControls.getControls().up && 
+        Math.abs(player.sprite.y-this.sprite.y) < 5) 
     {
-	// Next level
-	this.level.state = this.level.FINISHED;
+        // Next level
+        this.level.state = this.level.FINISHED;
     }
 }
 

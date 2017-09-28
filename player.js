@@ -69,11 +69,11 @@ function Player()
     this.cameraMovement = true;
 
     /*this.handleMonsterKilled(new Snake());
-    this.handleMonsterKilled(new Goblin());
-    this.handleMonsterKilled(new Rat());
-    this.handleMonsterKilled(new Scorpion());
-    this.handleMonsterKilled(new SkelWarrior());
-    this.handleMonsterKilled(new Ghost());*/
+      this.handleMonsterKilled(new Goblin());
+      this.handleMonsterKilled(new Rat());
+      this.handleMonsterKilled(new Scorpion());
+      this.handleMonsterKilled(new SkelWarrior());
+      this.handleMonsterKilled(new Ghost());*/
 
     // Define the hitbox
     this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
@@ -127,118 +127,118 @@ Player.prototype.update = function(dt)
 
     // Handle dying state animation
     if (this.dying) {
-	this.frame += 2.5*dt;
-	if (this.frame > this.dyingFrames.length-1) {
-	    this.frame = this.dyingFrames.length-1;
-	    this.dead = true;
-	}
-	var frame = this.dyingFrames[(this.frame)|0];
-	this.spriteChar.texture = frame;
-	return;
+        this.frame += 2.5*dt;
+        if (this.frame > this.dyingFrames.length-1) {
+            this.frame = this.dyingFrames.length-1;
+            this.dead = true;
+        }
+        var frame = this.dyingFrames[(this.frame)|0];
+        this.spriteChar.texture = frame;
+        return;
     }
 
     // Check if the player has just died
     if (this.health <= 0) {
-	this.dying = true;
-	this.frame = 0;
-	this.weaponSlot = null;
-	this.updatePlayerAppearance();
-	this.spriteChar.tint = NO_TINT;
-	// Bring the player corpse to the front (so it's rendered very 
-	// clearly overtop any other junk in the scene)
-	this.level.stage.removeChild(this.sprite);
-	this.level.stage.addChild(this.sprite);
-	return;
+        this.dying = true;
+        this.frame = 0;
+        this.weaponSlot = null;
+        this.updatePlayerAppearance();
+        this.spriteChar.tint = NO_TINT;
+        // Bring the player corpse to the front (so it's rendered very 
+        // clearly overtop any other junk in the scene)
+        this.level.stage.removeChild(this.sprite);
+        this.level.stage.addChild(this.sprite);
+        return;
     }
 
     var controls = GameControls.getControls();
 
     if (this.knockedTimer <= 0) {
-	if (this.hasControl) {
-	    dirx = controls.getX();
-	    diry = controls.getY();
-	} else {
-	    dirx = this.dirx;
-	    diry = this.diry;
-	}
+        if (this.hasControl) {
+            dirx = controls.getX();
+            diry = controls.getY();
+        } else {
+            dirx = this.dirx;
+            diry = this.diry;
+        }
     } else {
-	this.velx = this.knocked;
-	this.knockedTimer -= dt;
+        this.velx = this.knocked;
+        this.knockedTimer -= dt;
     }
 
     if (this.damageTimer > 0) {
-	this.damageTimer -= dt;
-	if (this.damageTimer <= 0 || 
-	    this.damageCooldown-this.damageTimer > 0.1) 
-	{
-	    // Stop flashing red
-	    this.spriteChar.tint = NO_TINT;
-	}
+        this.damageTimer -= dt;
+        if (this.damageTimer <= 0 || 
+            this.damageCooldown-this.damageTimer > 0.1) 
+        {
+            // Stop flashing red
+            this.spriteChar.tint = NO_TINT;
+        }
     }
     this.count += dt;
 
     if (dirx) {
-	// Handle walking left/right by mirroring the sprite
-	this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
-	this.velx = dirx * this.maxSpeed;
-	this.facing = Math.sign(dirx);
+        // Handle walking left/right by mirroring the sprite
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
+        this.velx = dirx * this.maxSpeed;
+        this.facing = Math.sign(dirx);
     } else {
-	this.velx *= 0.75;
+        this.velx *= 0.75;
     } 
 
     if (diry) {
-	this.vely = diry * this.maxSpeed;
+        this.vely = diry * this.maxSpeed;
     } else {
-	this.vely *= 0.75;
+        this.vely *= 0.75;
     }
 
     if (dirx || diry) {
-	this.frame += dt;
+        this.frame += dt;
     } else {
-	this.frame = 0;
+        this.frame = 0;
     }
 
     var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
     if (speed > this.maxSpeed) {
-	this.velx = this.velx * (this.maxSpeed/speed);
-	this.vely = this.vely * (this.maxSpeed/speed);
+        this.velx = this.velx * (this.maxSpeed/speed);
+        this.vely = this.vely * (this.maxSpeed/speed);
     }
     var w = this.spriteChar.texture.width*0.75;
 
     // Handle left/right movement
     if (this.velx) {
-	var x = this.sprite.x + this.velx*dt;
-	var left = this.level.bg.getTileAt(x-w/2, this.sprite.y);
-	var right = this.level.bg.getTileAt(x+w/2, this.sprite.y);
-	// Keep the player visible to the camera (unless camera mode disabled)
-	if (!left.solid && !right.solid && (
-	    !this.cameraMovement || (
-		x-w/2 >= this.level.camera.x && 
-		x+w/2 <= this.level.camera.x + this.level.camera.width))) {
-	    this.sprite.x = x;
-	} else {
-	    this.velx = 0;
-	}
+        var x = this.sprite.x + this.velx*dt;
+        var left = this.level.bg.getTileAt(x-w/2, this.sprite.y);
+        var right = this.level.bg.getTileAt(x+w/2, this.sprite.y);
+        // Keep the player visible to the camera (unless camera mode disabled)
+        if (!left.solid && !right.solid && (
+            !this.cameraMovement || (
+                x-w/2 >= this.level.camera.x && 
+                    x+w/2 <= this.level.camera.x + this.level.camera.width))) {
+            this.sprite.x = x;
+        } else {
+            this.velx = 0;
+        }
     }
     if (this.vely) {
-	var y = this.sprite.y + this.vely*dt;
-	var left = this.level.bg.getTileAt(this.sprite.x-w/2, y);
-	var right = this.level.bg.getTileAt(this.sprite.x+w/2, y);
-	if (!left.solid && !right.solid) {
-	    this.sprite.y = y;
-	} else {
-	    this.vely = 0;
-	}
+        var y = this.sprite.y + this.vely*dt;
+        var left = this.level.bg.getTileAt(this.sprite.x-w/2, y);
+        var right = this.level.bg.getTileAt(this.sprite.x+w/2, y);
+        if (!left.solid && !right.solid) {
+            this.sprite.y = y;
+        } else {
+            this.vely = 0;
+        }
     }
 
     // Make a splashy sound when we enter water
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.water) {
-	if (!this.waterSprite.visible) 
-	    Utils.getSound(RES.SPLASH_SND).play();
-	this.waterSprite.visible = true;
+        if (!this.waterSprite.visible) 
+            Utils.getSound(RES.SPLASH_SND).play();
+        this.waterSprite.visible = true;
     } else {
-	this.waterSprite.visible = false;
+        this.waterSprite.visible = false;
     }
 
     if (controls.testKey && !controls.lastTestKey) this.health = 0;
@@ -246,31 +246,31 @@ Player.prototype.update = function(dt)
     // Handle attacking
     if (this.weaponSlot && this.hasControl) 
     {
-	if (controls.primary && !controls.lastPrimary)
-	{
-	    // Just hit the attack button
-	    this.weaponSlot.startAttack();
-	}
-	if (!controls.primary && controls.lastPrimary)
-	{
-	    // Just released the attack button
-	    this.weaponSlot.stopAttack();
-	}
-	if (this.weaponSlot.update) this.weaponSlot.update(dt);
+        if (controls.primary && !controls.lastPrimary)
+        {
+            // Just hit the attack button
+            this.weaponSlot.startAttack();
+        }
+        if (!controls.primary && controls.lastPrimary)
+        {
+            // Just released the attack button
+            this.weaponSlot.stopAttack();
+        }
+        if (this.weaponSlot.update) this.weaponSlot.update(dt);
     }
 
     if (controls.swap && !controls.lastSwap) {
-	this.swapWeapons();
+        this.swapWeapons();
     }
 
     // Check for collisions with other things
     var hit = this.level.checkHitMany(
-	this.sprite.x, this.sprite.y, 
-	this.hitbox, this);
+        this.sprite.x, this.sprite.y, 
+        this.hitbox, this);
     for (var n = 0; n < hit.length; n++) {
-	if (hit[n].handlePlayerCollision) {
-	    hit[n].handlePlayerCollision(this);
-	}
+        if (hit[n].handlePlayerCollision) {
+            hit[n].handlePlayerCollision(this);
+        }
     }
 
     // Update animation
@@ -281,16 +281,16 @@ Player.prototype.update = function(dt)
 Player.prototype.setCharFrames = function(res, name)
 {
     this.frames = Utils.getFrames(
-	res, 
-	[name + "_south_1", 
-	 name + "_south_2", 
-	 name + "_south_3"]);
+        res, 
+        [name + "_south_1", 
+         name + "_south_2", 
+         name + "_south_3"]);
     this.lungeFrame = Utils.getFrame(res, name + "_lunge_1");
     this.dyingFrames = Utils.getFrames(
-	res, 
-	["melee1_dying_1", 
-	 "melee1_dying_2", 
-	 "melee1_dying_3"]);
+        res, 
+        ["melee1_dying_1", 
+         "melee1_dying_2", 
+         "melee1_dying_3"]);
 }
 
 Player.prototype.setArmour = function(item)
@@ -324,7 +324,7 @@ Player.prototype.upgradeSword = function(item)
 {
     // Switch over to the sword if we don't have a weapon equipped
     if (!this.weaponSlot) {
-	this.weaponSlot = this.swordWeaponSlot;
+        this.weaponSlot = this.swordWeaponSlot;
     }
     this.sword = item;
     this.updatePlayerAppearance();
@@ -334,7 +334,7 @@ Player.prototype.upgradeBow = function(item)
 {
     // Switch over to the bow if we don't have a weapon equipped
     if (!this.weaponSlot) {
-	this.weaponSlot = this.bowWeaponSlot;
+        this.weaponSlot = this.bowWeaponSlot;
     }
     this.bow = item;
     this.updatePlayerAppearance();
@@ -349,9 +349,9 @@ Player.prototype.upgradeArmour = function(item)
 Player.prototype.healDamage = function(amt)
 {
     if (this.health < this.maxHealth) {
-	this.health = Math.min(this.health+amt, this.maxHealth);
-	Utils.getSound(RES.POWERUP4_SND).volume = 1.25;
-	Utils.getSound(RES.POWERUP4_SND).play();
+        this.health = Math.min(this.health+amt, this.maxHealth);
+        Utils.getSound(RES.POWERUP4_SND).volume = 1.25;
+        Utils.getSound(RES.POWERUP4_SND).play();
     }
 }
 
@@ -359,47 +359,47 @@ Player.prototype.takeDamage = function(amt, src)
 {
     if (this.damageTimer <= 0) 
     {
-	// Adjust the damage parameters based on our armour
-	var cooldown = this.damageCooldown;
-	var knockedVel = 100;
-	var knockedTimer = 0.1;
+        // Adjust the damage parameters based on our armour
+        var cooldown = this.damageCooldown;
+        var knockedVel = 100;
+        var knockedTimer = 0.1;
 
-	if (this.armour === Item.Table.LEATHER_ARMOUR) {
-	    cooldown = this.damageCooldown*1.25;
-	    knockedVel = 90;
-	    knockedTimer = 0.08;
-	    if (Utils.randint(1, 4) === 1) {
-		if (amt > 1) amt--;
-	    }
-	} else if (this.armour === Item.Table.STEEL_ARMOUR) {
-	    cooldown = this.damageCooldown*1.5;
-	    knockedVel = 80;
-	    knockedTimer = 0.05;
-	    if (Utils.randint(1, 2) === 1) {
-		amt--;
-	    }
-	}
+        if (this.armour === Item.Table.LEATHER_ARMOUR) {
+            cooldown = this.damageCooldown*1.25;
+            knockedVel = 90;
+            knockedTimer = 0.08;
+            if (Utils.randint(1, 4) === 1) {
+                if (amt > 1) amt--;
+            }
+        } else if (this.armour === Item.Table.STEEL_ARMOUR) {
+            cooldown = this.damageCooldown*1.5;
+            knockedVel = 80;
+            knockedTimer = 0.05;
+            if (Utils.randint(1, 2) === 1) {
+                amt--;
+            }
+        }
 
-	Utils.getSound(RES.HIT_SND).play();
+        Utils.getSound(RES.HIT_SND).play();
 
-	// Take damage and have the player flash red for a moment
-	this.health -= amt;
-	this.damageTimer = this.damageCooldown;
-	this.spriteChar.tint = DAMAGE_TINT;
-	// Knock the player back a bit too
-	this.knocked = knockedVel*Math.sign(this.sprite.x - src.sprite.x);
-	this.knockedTimer = knockedTimer;
+        // Take damage and have the player flash red for a moment
+        this.health -= amt;
+        this.damageTimer = this.damageCooldown;
+        this.spriteChar.tint = DAMAGE_TINT;
+        // Knock the player back a bit too
+        this.knocked = knockedVel*Math.sign(this.sprite.x - src.sprite.x);
+        this.knockedTimer = knockedTimer;
     }
 }
 
 Player.prototype.swapWeapons = function()
 {
     if (this.weaponSlot === this.swordWeaponSlot && this.bow) {
-	this.weaponSlot = this.bowWeaponSlot;
-	this.updatePlayerAppearance();
+        this.weaponSlot = this.bowWeaponSlot;
+        this.updatePlayerAppearance();
     } else if (this.weaponSlot === this.bowWeaponSlot && this.sword) {
-	this.weaponSlot = this.swordWeaponSlot;
-	this.updatePlayerAppearance();
+        this.weaponSlot = this.swordWeaponSlot;
+        this.updatePlayerAppearance();
     }
 }
 
@@ -407,7 +407,7 @@ Player.prototype.swapWeapons = function()
 Player.prototype.handleMonsterKilled = function(monster)
 {
     if (this.kills[monster.name] === undefined) {
-	this.kills[monster.name] = {count: 0, img: monster.frames[0]};
+        this.kills[monster.name] = {count: 0, img: monster.frames[0]};
     }
     this.kills[monster.name].count++;
 }
@@ -418,36 +418,36 @@ Player.prototype.handleTakeItem = function(item)
 {
     // Check for an armour upgrade
     if (item.isArmour() && item.isBetter(this.armour)) {
-	this.upgradeArmour(item);
-	return true;
+        this.upgradeArmour(item);
+        return true;
     }
     // Check for a sword upgrade
     if (item.isSword() && item.isBetter(this.sword)) {
-	this.upgradeSword(item);
-	return true;
+        this.upgradeSword(item);
+        return true;
     }
     // Check for a bow upgrade
     if (item.isBow() && item.isBetter(this.bow)) {
-	this.upgradeBow(item);
-	return true;
+        this.upgradeBow(item);
+        return true;
     }
     // Consumable items
     switch (item) {
     case Item.Table.ARROW:
-	this.numArrows += 5;
-	break;
+        this.numArrows += 5;
+        break;
 
     case Item.Table.COIN:
-	this.numCoins++;
-	break;
+        this.numCoins++;
+        break;
 
     case Item.Table.SMALL_HEALTH:
-	this.healDamage(2);
-	break;
+        this.healDamage(2);
+        break;
 
     case Item.Table.LARGE_HEALTH:
-	this.healDamage(this.maxHealth);
-	break;
+        this.healDamage(this.maxHealth);
+        break;
     }
     Utils.getSound(RES.COIN_SND).play();
     return true;

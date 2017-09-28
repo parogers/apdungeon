@@ -62,8 +62,8 @@ Snake.FRAMES = ["snake_south_1", "snake_south_2"];
 Snake.prototype.getDropTable = function() 
 {
     return [[Item.Table.COIN, 2],
-	    [Item.Table.ARROW, 1],
-	    [Item.Table.SMALL_HEALTH, 1]];
+            [Item.Table.ARROW, 1],
+            [Item.Table.SMALL_HEALTH, 1]];
 }
 
 Snake.prototype.update = function(dt)
@@ -72,7 +72,7 @@ Snake.prototype.update = function(dt)
     else if (this.state === SNAKE_ATTACKING) this.updateAttacking(dt);
     else if (this.state === SNAKE_HURT) this.updateHurt(dt);
     else if (this.state === SNAKE_DEAD) {
-	this.level.removeThing(this);
+        this.level.removeThing(this);
     }
 }
 
@@ -89,9 +89,9 @@ Snake.prototype.updateIdle = function(dt)
     // Start attacking the player when they're close enough, and when
     // the snake is facing them.
     if (Math.abs(player.sprite.x-this.sprite.x) < this.level.camera.width/3 &&
-	this.facing*(player.sprite.x - this.sprite.x) > 0) 
+        this.facing*(player.sprite.x - this.sprite.x) > 0) 
     {
-	this.state = SNAKE_ATTACKING;
+        this.state = SNAKE_ATTACKING;
     }
 }
 
@@ -103,38 +103,38 @@ Snake.prototype.updateAttacking = function(dt)
     // Move towards the player for a bit. Note the snake moves in "steps"
     // so it will occasionally overshot the player before moving back again.
     if (this.travel > 0) {
-	dx = this.speed*dt*this.facing;
-	this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
-	this.travel -= Math.abs(dx);
+        dx = this.speed*dt*this.facing;
+        this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
+        this.travel -= Math.abs(dx);
     } else {
-	if (player.sprite.x < this.sprite.x) this.facing = -1;
-	else this.facing = 1;
-	this.travel = Utils.randint(16, 20);
+        if (player.sprite.x < this.sprite.x) this.facing = -1;
+        else this.facing = 1;
+        this.travel = Utils.randint(16, 20);
     }
 
     // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
     if (Math.abs(dist) > 10) {
-	dy = dt*4*Math.sign(dist);
+        dy = dt*4*Math.sign(dist);
     }
 
     // Check if the snake can move left/right
     var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
-	this.sprite.x += dx;
-	this.waterSprite.visible = tile.water;
+        this.sprite.x += dx;
+        this.waterSprite.visible = tile.water;
     }
 
     // Now check if it can move up/down. Doing this separately from the check
     // above means we can "slide" along walls and such.
     var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile2.solid) {
-	// Go a bit faster if we're just moving up/down
-	if (tile.solid) this.sprite.y += 1*dy;
-	else {
-	    this.sprite.y += dy;
-	    this.waterSprite.visible = tile2.water;
-	}
+        // Go a bit faster if we're just moving up/down
+        if (tile.solid) this.sprite.y += 1*dy;
+        else {
+            this.sprite.y += dy;
+            this.waterSprite.visible = tile2.water;
+        }
     }
     this.frame += 4*dt;
     this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
@@ -146,16 +146,16 @@ Snake.prototype.updateHurt = function(dt)
     this.snakeSprite.texture = this.frames[1];
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
-	var dx = this.knocked*dt;
-	var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
-	if (!tile.solid) {
-	    this.sprite.x += dx;
-	}
-	this.knockedTimer -= dt;
+        var dx = this.knocked*dt;
+        var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+        if (!tile.solid) {
+            this.sprite.x += dx;
+        }
+        this.knockedTimer -= dt;
     } else {
-	// Resume/start attacking
-	this.state = SNAKE_ATTACKING;
-	this.travel = 0;
+        // Resume/start attacking
+        this.state = SNAKE_ATTACKING;
+        this.travel = 0;
     }
 }
 
@@ -165,26 +165,26 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === SNAKE_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	Utils.getSound(RES.DEAD_SND).play();
-	this.state = SNAKE_DEAD;
-	// Drop a reward
-	this.level.handleTreasureDrop(
-	    this.getDropTable(), this.sprite.x, this.sprite.y);
-	player.handleMonsterKilled(this);
-	this.dead = true;
+        Utils.getSound(RES.DEAD_SND).play();
+        this.state = SNAKE_DEAD;
+        // Drop a reward
+        this.level.handleTreasureDrop(
+            this.getDropTable(), this.sprite.x, this.sprite.y);
+        player.handleMonsterKilled(this);
+        this.dead = true;
 
     } else {
-	Utils.getSound(RES.SNAKE_HURT_SND).play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*60;
-	this.knockedTimer = 0.1;
-	this.state = SNAKE_HURT;
+        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        this.knocked = Math.sign(this.sprite.x-srcx)*60;
+        this.knockedTimer = 0.1;
+        this.state = SNAKE_HURT;
     }
 
     // Add some random blood, but only if we're not currently in water
     // (looks better this way)
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
-	this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
+        this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
     }
     return true;
 }

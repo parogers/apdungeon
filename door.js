@@ -27,10 +27,10 @@ function Door()
 {
     Gate.call(this);
     this.frames = [
-	Utils.getFrame(RES.MAPTILES, "door1"),
-	Utils.getFrame(RES.MAPTILES, "door2"),
-	Utils.getFrame(RES.MAPTILES, "door3"),
-	Utils.getFrame(RES.MAPTILES, "door4")
+        Utils.getFrame(RES.MAPTILES, "door1"),
+        Utils.getFrame(RES.MAPTILES, "door2"),
+        Utils.getFrame(RES.MAPTILES, "door3"),
+        Utils.getFrame(RES.MAPTILES, "door4")
     ];
     this.fps = 3;
     this.sprite.anchor.set(0.5,1);

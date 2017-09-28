@@ -28,16 +28,16 @@ module.exports.configure = function(width, height, div)
     PIXI.ticker.shared.stop();
 
     renderer = PIXI.autoDetectRenderer({
-	width: width,
-	height: height,
-	//	antialias: true,
-	// Required to prevent flickering in Chrome on Android (others too?)
-	preserveDrawingBuffer: true,
-	//	clearBeforeRender: true
+        width: width,
+        height: height,
+        //    antialias: true,
+        // Required to prevent flickering in Chrome on Android (others too?)
+        preserveDrawingBuffer: true,
+        //    clearBeforeRender: true
     });
 
     if (div) {
-	div.appendChild(renderer.view);
+        div.appendChild(renderer.view);
     }
 }
 

@@ -108,19 +108,19 @@ Level.prototype.findClearSpace = function(x, y)
     var offset = 0;
     while(true)
     {
-	var north = this.bg.getTileAt(x, y + offset);
-	var south = this.bg.getTileAt(x, y - offset);
-	if (!north.solid) {
-	    return y + offset;
-	}
-	if (!south.solid) {
-	    return y - offset;
-	}
-	if (y + offset > this.getHeight() && y - offset < 0) {
-	    // We've gone completely outside the level - no space found
-	    return null;
-	}
-	offset += RES.TILE_HEIGHT;
+        var north = this.bg.getTileAt(x, y + offset);
+        var south = this.bg.getTileAt(x, y - offset);
+        if (!north.solid) {
+            return y + offset;
+        }
+        if (!south.solid) {
+            return y - offset;
+        }
+        if (y + offset > this.getHeight() && y - offset < 0) {
+            // We've gone completely outside the level - no space found
+            return null;
+        }
+        offset += RES.TILE_HEIGHT;
     }
 }
 
@@ -130,7 +130,7 @@ Level.prototype.addArena = function(arena)
 {
     this.arenas.push(arena);
     this.arenas.sort(function(a1, a2) {
-	return (a1.endx > a2.endx) - (a2.endx > a1.endx);
+        return (a1.endx > a2.endx) - (a2.endx > a1.endx);
     });
 }
 
@@ -140,80 +140,80 @@ Level.prototype.update = function(dt)
     var arena = this.arenas[this.arenaNum];
     switch(this.state) {
     case this.ACTIVE_ARENA:
-	// Wait for the current arena to be finished (ie player defeats 
-	// all the monsters)
-	if (arena.done) {
-	    if (this.arenaNum < this.arenas.length-1) {
-		// Show the "go forward" marker
-		//gamestate.screen.goMarker.show();
-		// Advance to the next arena
-		this.arenaNum++;
-		this.state = this.SHOWING_GO;
-	    } else {
-		// No more arenas - open the exit door
-		this.state = this.EXIT_OPEN;
-		if (this.exitDoor) this.exitDoor.startOpening();
-	    }
-	} else {
-	    arena.update(dt);
-	}
-	// Update the camera - the player has full mobility within the 
-	// start and stop bounds of the arena.
-	//var xpos = this.player.sprite.x - this.camera.width/2;
-	//xpos = Math.max(xpos, arena.startx);
-	//xpos = Math.min(xpos, arena.endx-this.camera.width);
-	break;
-	
+        // Wait for the current arena to be finished (ie player defeats 
+        // all the monsters)
+        if (arena.done) {
+            if (this.arenaNum < this.arenas.length-1) {
+                // Show the "go forward" marker
+                //gamestate.screen.goMarker.show();
+                // Advance to the next arena
+                this.arenaNum++;
+                this.state = this.SHOWING_GO;
+            } else {
+                // No more arenas - open the exit door
+                this.state = this.EXIT_OPEN;
+                if (this.exitDoor) this.exitDoor.startOpening();
+            }
+        } else {
+            arena.update(dt);
+        }
+        // Update the camera - the player has full mobility within the 
+        // start and stop bounds of the arena.
+        //var xpos = this.player.sprite.x - this.camera.width/2;
+        //xpos = Math.max(xpos, arena.startx);
+        //xpos = Math.min(xpos, arena.endx-this.camera.width);
+        break;
+        
     case this.SHOWING_GO:
-	// Wait for the player to move the level forward by "pushing" the
-	// edge of the screen.
-	if (this.player.sprite.x > this.camera.x + this.camera.width*0.8) {
-	    this.state = this.NEXT_ARENA;
-	    this.smoothTracking = true;
-	}
-	break;
+        // Wait for the player to move the level forward by "pushing" the
+        // edge of the screen.
+        if (this.player.sprite.x > this.camera.x + this.camera.width*0.8) {
+            this.state = this.NEXT_ARENA;
+            this.smoothTracking = true;
+        }
+        break;
 
     case this.NEXT_ARENA:
-	// Update the camera to track the player. Have the camera move
-	// smoothly towards the player to avoid jumping around.
-	var xpos = this.player.sprite.x - this.camera.width/2;
-	xpos = Math.max(xpos, 0);
-	xpos = Math.min(xpos, this.bg.sprite.width-this.camera.width);
-	if (this.smoothTracking) {
-	    var dirx = Math.sign(xpos-this.camera.x);
-	    this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
-	    if (dirx != Math.sign(xpos-this.camera.x)) {
-		// Overshot the target, stop smoothly tracking
-		this.smoothTracking = false;
-	    }
-	} else {
-	    this.camera.x = xpos;
-	}
+        // Update the camera to track the player. Have the camera move
+        // smoothly towards the player to avoid jumping around.
+        var xpos = this.player.sprite.x - this.camera.width/2;
+        xpos = Math.max(xpos, 0);
+        xpos = Math.min(xpos, this.bg.sprite.width-this.camera.width);
+        if (this.smoothTracking) {
+            var dirx = Math.sign(xpos-this.camera.x);
+            this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
+            if (dirx != Math.sign(xpos-this.camera.x)) {
+                // Overshot the target, stop smoothly tracking
+                this.smoothTracking = false;
+            }
+        } else {
+            this.camera.x = xpos;
+        }
 
-	// Also remove the go marker (if it's done animated) since the player
-	// already knows to move forward by now.
-	/*if (gamestate.screen.goMarker.sprite.visible && 
-	    gamestate.screen.goMarker.done) {
-	    gamestate.screen.goMarker.hide();
-	}*/
+        // Also remove the go marker (if it's done animated) since the player
+        // already knows to move forward by now.
+        /*if (gamestate.screen.goMarker.sprite.visible && 
+          gamestate.screen.goMarker.done) {
+          gamestate.screen.goMarker.hide();
+          }*/
 
-	// Wait for the player to move into the next arena
-	if (arena && this.camera.x + this.camera.width >= arena.endx)
-	{
-	    // Snap the camera into place and activate the next arena
-	    this.camera.x = arena.endx - this.camera.width;
-	    arena.activate();
-	    this.state = this.ACTIVE_ARENA;
-	    // If somehow the go marker is sticking around (maybe the player
-	    // is moving _really_ fast) remove it now, done or not.
-	    /*if (gamestate.screen.goMarker.sprite.visible) {
-		gamestate.screen.goMarker.hide();
-	    }*/
-	}
-	break;
+        // Wait for the player to move into the next arena
+        if (arena && this.camera.x + this.camera.width >= arena.endx)
+        {
+            // Snap the camera into place and activate the next arena
+            this.camera.x = arena.endx - this.camera.width;
+            arena.activate();
+            this.state = this.ACTIVE_ARENA;
+            // If somehow the go marker is sticking around (maybe the player
+            // is moving _really_ fast) remove it now, done or not.
+            /*if (gamestate.screen.goMarker.sprite.visible) {
+              gamestate.screen.goMarker.hide();
+              }*/
+        }
+        break;
 
     case this.EXIT_OPEN:
-	break;
+        break;
 
     }
 
@@ -228,7 +228,7 @@ Level.prototype.update = function(dt)
     this.stage.y = -this.camera.y;
     // Update everything in the level
     for (let thing of this.things) {
-	if (thing.update) thing.update(dt);
+        if (thing.update) thing.update(dt);
     }
 }
 
@@ -243,14 +243,14 @@ Level.prototype.checkHit = function(x, y, hitbox, ignore)
     //for (var n = 0; n < this.things.length; n++) 
     for (let thing of this.things)
     {
-	//thing = this.things[n];
-	if (thing !== ignore && thing.sprite && 
-	    thing.hitbox && thing.hitbox !== hitbox && 
-	    Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
-	    Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
-	{
-	    return thing;
-	}
+        //thing = this.things[n];
+        if (thing !== ignore && thing.sprite && 
+            thing.hitbox && thing.hitbox !== hitbox && 
+            Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
+            Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
+        {
+            return thing;
+        }
     }
     return null;
 }
@@ -267,14 +267,14 @@ Level.prototype.checkHitMany = function(x, y, hitbox, ignore)
     //for (var n = 0; n < this.things.length; n++) 
     for (let thing of this.things)
     {
-	//thing = this.things[n];
-	if (thing !== ignore && thing.sprite && 
-	    thing.hitbox && thing.hitbox !== hitbox && 
-	    Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
-	    Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
-	{
-	    hit.push(thing);
-	}
+        //thing = this.things[n];
+        if (thing !== ignore && thing.sprite && 
+            thing.hitbox && thing.hitbox !== hitbox && 
+            Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
+            Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
+        {
+            hit.push(thing);
+        }
     }
     return hit;
 }
@@ -285,7 +285,7 @@ Level.prototype.addThing = function(thing)
     thing.level = this;
     this.things.push(thing);
     if (thing.sprite) {
-	this.stage.addChild(thing.sprite);
+        this.stage.addChild(thing.sprite);
     }
 }
 
@@ -294,13 +294,13 @@ Level.prototype.removeThing = function(thing)
 {
     var i = this.things.indexOf(thing);
     if (i >= 0) {
-	this.things[i] = this.things[this.things.length-1];
-	this.things.pop();
-	thing.level = null;
+        this.things[i] = this.things[this.things.length-1];
+        this.things.pop();
+        thing.level = null;
     }
 
     if (thing.sprite && thing.sprite.parent) {
-	thing.sprite.parent.removeChild(thing.sprite);
+        thing.sprite.parent.removeChild(thing.sprite);
     }
 }
 
@@ -311,25 +311,25 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
     // and pick a random number up to that total.
     var total = 0;
     for (let entry of table) {
-	total += entry[1];
+        total += entry[1];
     }
     // Pick a random number, then iterate over the items and find what 
     // item it corresponds to.
     var pick = null;
     var num = Utils.randint(0, total);
     for (let entry of table) {
-	num -= entry[1];
-	if (num <= 0) {
-	    pick = entry[0];
-	    break;
-	}
+        num -= entry[1];
+        if (num <= 0) {
+            pick = entry[0];
+            break;
+        }
     }
     // Drop the item
     if (pick !== null) {
-	var gnd = new GroundItem(pick, x, y);
-	gnd.velx = 10*(x > this.camera.x ? -1 : 1);
-	gnd.velh = -40;
-	this.addThing(gnd);
+        var gnd = new GroundItem(pick, x, y);
+        gnd.velx = 10*(x > this.camera.x ? -1 : 1);
+        gnd.velh = -40;
+        this.addThing(gnd);
     }
 }
 

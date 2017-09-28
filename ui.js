@@ -31,32 +31,32 @@ function renderText(lines, options)
     var y = 1;
     for (var row = 0; row < lines.length; row++) 
     {
-	var x = 1;
-	var msg = lines[row];
-	var height = 0;
-	for (var n = 0; n < msg.length; n++) 
-	{
-	    var sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
-	    sprite.anchor.set(0,0);
-	    sprite.x = x;
-	    sprite.y = y;
-	    // Make spaces a bit more narrow (looks better)
-	    if (msg[n] === " ") x += (sprite.width+1)/2;
-	    else x += sprite.width+1;
-	    cnt.addChild(sprite);
-	    height = Math.max(height, sprite.height);
-	}
-	maxWidth = Math.max(maxWidth, x);
-	y += height+1;
+        var x = 1;
+        var msg = lines[row];
+        var height = 0;
+        for (var n = 0; n < msg.length; n++) 
+        {
+            var sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
+            sprite.anchor.set(0,0);
+            sprite.x = x;
+            sprite.y = y;
+            // Make spaces a bit more narrow (looks better)
+            if (msg[n] === " ") x += (sprite.width+1)/2;
+            else x += sprite.width+1;
+            cnt.addChild(sprite);
+            height = Math.max(height, sprite.height);
+        }
+        maxWidth = Math.max(maxWidth, x);
+        y += height+1;
     }
 
     if (options && options.blackBG) {
-	var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
-	bg.scale.set(maxWidth/bg.width, y/bg.height);
-	cnt.addChild(bg);
-	cnt.children.unshift(cnt.children.pop());
-	// TODO - why doesn't this work for render textures?
-	//renderer.backgroundColor = 0x000000;
+        var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
+        bg.scale.set(maxWidth/bg.width, y/bg.height);
+        cnt.addChild(bg);
+        cnt.children.unshift(cnt.children.pop());
+        // TODO - why doesn't this work for render textures?
+        //renderer.backgroundColor = 0x000000;
     }
 
     var renderTexture = PIXI.RenderTexture.create(maxWidth, y);
@@ -78,7 +78,7 @@ function HealthUI(levelScreen)
     this.emptyHeart = Utils.getFrame(RES.UI, "empty_heart");
 
     for (var n = 0; n < 3; n++) {
-	this.addHeart();
+        this.addHeart();
     }
 }
 
@@ -91,8 +91,8 @@ HealthUI.prototype.addHeart = function()
 
     var x = -this.hearts.length*(this.fullHeart.width+1);
     for (let heart of this.hearts) {
-	heart.x = x;
-	x += (this.fullHeart.width+1);
+        heart.x = x;
+        x += (this.fullHeart.width+1);
     }
 }
 
@@ -100,7 +100,7 @@ HealthUI.prototype.addHeart = function()
 HealthUI.prototype.removeHeart = function()
 {
     if (this.hearts.length > 0) {
-	this.sprite.removeChild(this.hearts.pop());
+        this.sprite.removeChild(this.hearts.pop());
     }
 }
 
@@ -110,23 +110,23 @@ HealthUI.prototype.update = function(dt)
     if (!player) return;
     // Add hearts to match the player's max health
     while (this.hearts.length < Math.floor(player.maxHealth/2)) {
-	this.addHeart();
+        this.addHeart();
     }
     // Remove hearts to match the player's max health
     while (this.hearts.length > Math.floor(player.maxHealth/2)) {
-	this.removeHeart();
+        this.removeHeart();
     }
     // Synchronize the hearts to reflect the player's health
     for (var n = 0; n < this.hearts.length; n++) {
-	var img = null;
-	if (n < Math.floor(player.health/2)) {
-	    img = this.fullHeart;
-	} else if (n < Math.floor((player.health+1)/2)) {
-	    img = this.halfHeart;
-	} else {
-	    img = this.emptyHeart;
-	}
-	this.hearts[n].texture = img;
+        var img = null;
+        if (n < Math.floor(player.health/2)) {
+            img = this.fullHeart;
+        } else if (n < Math.floor((player.health+1)/2)) {
+            img = this.halfHeart;
+        } else {
+            img = this.emptyHeart;
+        }
+        this.hearts[n].texture = img;
     }
 }
 
@@ -143,7 +143,7 @@ function ItemSlotUI(item, args)
     this.item = item;
     this.count = 0;
     this.itemSprite = new PIXI.Sprite(
-	Utils.getFrame(RES.GROUND_ITEMS, item.image));
+        Utils.getFrame(RES.GROUND_ITEMS, item.image));
     this.itemSprite.anchor.set(0.5, 0.5);
     this.itemSprite.x = 0.5;
     this.itemSprite.y = -0.5;
@@ -157,13 +157,13 @@ function ItemSlotUI(item, args)
 
     if (args && args.showCount) 
     {
-	var img = renderText("--");
-	this.textSprite = new PIXI.Sprite(img);
-	this.textSprite.anchor.set(0.5, 0.5);
-	this.textSprite.x = 0.5;
-	this.textSprite.y = 6.5;
-	this.textSprite.scale.set(0.75);
-	this.sprite.addChild(this.textSprite);
+        var img = renderText("--");
+        this.textSprite = new PIXI.Sprite(img);
+        this.textSprite.anchor.set(0.5, 0.5);
+        this.textSprite.x = 0.5;
+        this.textSprite.y = 6.5;
+        this.textSprite.scale.set(0.75);
+        this.sprite.addChild(this.textSprite);
     }
 }
 
@@ -171,10 +171,10 @@ ItemSlotUI.prototype.setCount = function(count)
 {
     if (this.textSprite && this.count !== count)
     {
-	this.count = count;
-	if (count === 0) count = "--";
-	else if (count < 9) count = "0" + count;
-	this.textSprite.texture = renderText(""+count);
+        this.count = count;
+        if (count === 0) count = "--";
+        else if (count < 9) count = "0" + count;
+        this.textSprite.texture = renderText(""+count);
     }
 }
 
@@ -183,8 +183,8 @@ ItemSlotUI.prototype.setItem = function(item)
     // If no item is specified, use the item passed to the constructor instead
     if (item === Item.Table.NONE) item = this.baseItem;
     if (this.item !== item) {
-	this.item = item;
-	this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
+        this.item = item;
+        this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
     }
 }
 
@@ -202,24 +202,24 @@ function InventoryUI(levelScreen)
     this.bowSlot = new ItemSlotUI(Item.Table.NO_BOW, {x: -0.5});
     this.arrowSlot = new ItemSlotUI(Item.Table.ARROW, {showCount: true});
     this.coinSlot = new ItemSlotUI(
-	Item.Table.COIN, {
-	    showCount: true,
-	    x: -0.5,
-	    y: 0.5
-	});
+        Item.Table.COIN, {
+            showCount: true,
+            x: -0.5,
+            y: 0.5
+        });
 
     this.slots = [
-	this.armourSlot,
-	this.swordSlot,
-	this.bowSlot,
-	this.arrowSlot,
-	this.coinSlot,
+        this.armourSlot,
+        this.swordSlot,
+        this.bowSlot,
+        this.arrowSlot,
+        this.coinSlot,
     ];
     var x = 0;
     for (let slot of this.slots) {
-	this.sprite.addChild(slot.sprite);
-	slot.sprite.x = x;
-	x += (slot.slotSprite.texture.width+1);
+        this.sprite.addChild(slot.sprite);
+        slot.sprite.x = x;
+        x += (slot.slotSprite.texture.width+1);
     }
 }
 

@@ -49,12 +49,12 @@ function start()
     gamestate = new GameState();
 
     function progresscb(loader, resource) {
-	console.log("loading: " + resource.url + 
-		    " (" + (loader.progress|0) + "%)"); 
-	progress.update(loader.progress/100.0);
-	requestAnimationFrame(function() {
-	    Render.getRenderer().render(stage);
-	});
+        console.log("loading: " + resource.url + 
+                    " (" + (loader.progress|0) + "%)"); 
+        progress.update(loader.progress/100.0);
+        requestAnimationFrame(function() {
+            Render.getRenderer().render(stage);
+        });
     }
     // Add a random query string when loading the JSON files below. This avoids
     // persistent caching problems, where the browser (eg FF) uses the cached
@@ -62,18 +62,18 @@ function start()
     var now = (new Date()).getTime();
     PIXI.loader.defaultQueryString = "nocache=" + now;
     PIXI.loader
-	.add(RES.MALE_MELEE)
-	.add(RES.FEMALE_MELEE)
-	.add(RES.NPC_TILESET)
-	.add(RES.MAPTILES)
-	.add(RES.ENEMIES)
-	.add(RES.WEAPONS)
-	.add(RES.GROUND_ITEMS)
-	.add(RES.UI)
-	.add(RES.DRAGON)
-	//.add({name: "hit", url: "media/hit.wav"})
-	.on("progress", progresscb)
-	.load(graphicsLoaded);
+        .add(RES.MALE_MELEE)
+        .add(RES.FEMALE_MELEE)
+        .add(RES.NPC_TILESET)
+        .add(RES.MAPTILES)
+        .add(RES.ENEMIES)
+        .add(RES.WEAPONS)
+        .add(RES.GROUND_ITEMS)
+        .add(RES.UI)
+        .add(RES.DRAGON)
+    //.add({name: "hit", url: "media/hit.wav"})
+        .on("progress", progresscb)
+        .load(graphicsLoaded);
 }
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
@@ -92,16 +92,16 @@ function gameLoop()
     var now = (new Date()).getTime()/1000.0;
     var dt = 0;
     if (lastTime) {
-	var dt = Math.min(1.0/30, now - lastTime);
-	//dt /= 4;
+        var dt = Math.min(1.0/30, now - lastTime);
+        //dt /= 4;
     }
     lastTime = now;
 
     fps++;
     if (now-lastCheck >= 2) {
-	//console.log(fps/(now-lastCheck));
-	lastCheck = now;
-	fps = 0;
+        //console.log(fps/(now-lastCheck));
+        lastCheck = now;
+        fps = 0;
     }
 
     gamestate.update(dt);
@@ -114,33 +114,33 @@ function graphicsLoaded()
 {
     sounds.whenLoaded = audioLoaded;
     sounds.onFailed = function(source) {
-	console.log("Failed to load audio file: " + source);
+        console.log("Failed to load audio file: " + source);
     };
     // Show and update the new progress bar for loading audio
     progress.setText("LOADING AUDIO...");
     sounds.onProgress = function(percent) {
-	progress.update(percent/100.0);
-	requestAnimationFrame(function() {
-	    Render.getRenderer().render(stage);
-	});
+        progress.update(percent/100.0);
+        requestAnimationFrame(function() {
+            Render.getRenderer().render(stage);
+        });
     };
     sounds.load([
-	RES.ATTACK_SWORD_SND,
-	RES.SNAKE_HURT_SND,
-	RES.DEAD_SND,
-	RES.ARROW_DING_SND,
-	RES.SPLASH_SND,
-	RES.GO_SND,
-	RES.HIT_SND,
-	RES.COIN_SND,
-	RES.GATE_SND,
-	RES.DROP_SND,
-	RES.POWERUP1_SND,
-	RES.POWERUP2_SND,
-	RES.POWERUP3_SND,
-	RES.POWERUP4_SND,
-	RES.CHEST_SND,
-	RES.GAME_MUSIC
+        RES.ATTACK_SWORD_SND,
+        RES.SNAKE_HURT_SND,
+        RES.DEAD_SND,
+        RES.ARROW_DING_SND,
+        RES.SPLASH_SND,
+        RES.GO_SND,
+        RES.HIT_SND,
+        RES.COIN_SND,
+        RES.GATE_SND,
+        RES.DROP_SND,
+        RES.POWERUP1_SND,
+        RES.POWERUP2_SND,
+        RES.POWERUP3_SND,
+        RES.POWERUP4_SND,
+        RES.CHEST_SND,
+        RES.GAME_MUSIC
     ]);
 }
 
@@ -154,10 +154,10 @@ function setup()
 {
     for (name in PIXI.loader.resources) 
     {
-	var err = PIXI.loader.resources[name].error;
-	if (err) {
-	    console.log("Failed to load image: " + name + " (" + err + ")");
-	}
+        var err = PIXI.loader.resources[name].error;
+        if (err) {
+            console.log("Failed to load image: " + name + " (" + err + ")");
+        }
     }
 
     //stage.removeChild(progress.sprite);

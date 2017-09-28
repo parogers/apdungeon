@@ -41,8 +41,8 @@ function Arena(level, width, endx)
     this.startx = 0;
     this.endx = 0;
     if (width !== undefined && endx !== undefined) {
-	this.startx = endx - width;
-	this.endx = endx;
+        this.startx = endx - width;
+        this.endx = endx;
     }
     // The rounds to play through (Round instances)
     this.rounds = [];
@@ -59,28 +59,28 @@ Arena.prototype.update = function(dt)
     if (this.done) return;
     if (this.finishing)
     {
-	// This arena is finished, but we wait a bit of time befoer displaying
-	// the go marker for the player to advance.
-	if (this.doneDelay > 0) {
-	    this.doneDelay -= dt;
-	    return;
-	}
-	this.done = true;
-	return;
+        // This arena is finished, but we wait a bit of time befoer displaying
+        // the go marker for the player to advance.
+        if (this.doneDelay > 0) {
+            this.doneDelay -= dt;
+            return;
+        }
+        this.done = true;
+        return;
     }
 
     if (this.round === -1 || this.rounds[this.round].done) 
     {
-	if (this.round < this.rounds.length-1) 
-	{
-	    // Spawn in monsters for the next round
-	    this.round++;
-	    //this.rounds[this.round].activate();
-	} else {
-	    this.finishing = true;
-	}
+        if (this.round < this.rounds.length-1) 
+        {
+            // Spawn in monsters for the next round
+            this.round++;
+            //this.rounds[this.round].activate();
+        } else {
+            this.finishing = true;
+        }
     } else {
-	this.rounds[this.round].update(dt);
+        this.rounds[this.round].update(dt);
     }
 }
 
@@ -111,36 +111,36 @@ Round.prototype.update = function(dt)
 {
     // Move spawns over to the 'running' queue
     if (this.spawns.length > 0) {
-	if (this.spawns[0].roundDelay > 0) {
-	    // Still waiting for the next spawn to start
-	    this.spawns[0].roundDelay -= dt;
-	} else {
-	    var spawn = this.spawns.shift();
-	    spawn.activate();
-	    this.running.push(spawn);
-	}
+        if (this.spawns[0].roundDelay > 0) {
+            // Still waiting for the next spawn to start
+            this.spawns[0].roundDelay -= dt;
+        } else {
+            var spawn = this.spawns.shift();
+            spawn.activate();
+            this.running.push(spawn);
+        }
     }
 
-/*
-    if (!this.activated) 
-    {
-	// Wait a bit before activating the round
-	if (this.delay > 0) {
-	    this.delay -= dt;
-	    return;
-	}
-	// Activate all the spawners in this round
-	for (spawn of this.spawns) {
-	    spawn.activate();
-	}
-	this.activated = true;
-    }
-*/
+    /*
+      if (!this.activated) 
+      {
+      // Wait a bit before activating the round
+      if (this.delay > 0) {
+      this.delay -= dt;
+      return;
+      }
+      // Activate all the spawners in this round
+      for (spawn of this.spawns) {
+      spawn.activate();
+      }
+      this.activated = true;
+      }
+    */
     // Wait for all the monsters to die
     this.done = (this.spawns.length === 0);
     for (let spawn of this.running) {
-	if (spawn.update) spawn.update(dt);
-	if (!spawn.monster.dead) this.done = false;
+        if (spawn.update) spawn.update(dt);
+        if (!spawn.monster.dead) this.done = false;
     }
 }
 
@@ -174,17 +174,17 @@ Spawn.prototype.activate = function()
 {
     // Start the monster somewhere off screen either left or right
     this.monster.sprite.x = this.level.camera.x + this.level.camera.width/2 + 
-	this.direction*(this.level.camera.width/2+4);
+        this.direction*(this.level.camera.width/2+4);
     var offset = 0;
 
     // Find some clear space to spawn the monster (ie don't spawn in a wall)
     var y = this.level.findClearSpace(this.monster.sprite.x, this.ypos);
     if (y === null) {
-	console.log("WARNING: can't spawn monster near " + this.ypos);
-	this.monster.dead = true;
+        console.log("WARNING: can't spawn monster near " + this.ypos);
+        this.monster.dead = true;
     } else {
-	this.monster.sprite.y = y;
-	this.level.addThing(this.monster);
+        this.monster.sprite.y = y;
+        this.level.addThing(this.monster);
     }
 }
 
@@ -213,21 +213,21 @@ GateSpawn.prototype.update = function(dt)
     // Wait for the gate to finish opening
     if (!this.spawned && this.gate.isOpen())
     {
-	// Spawn in the monster, overtop the opened gate
-	this.spawned = true;
-	this.level.addThing(this.monster);
-	this.monster.sprite.x = this.gate.sprite.x + 
-	    this.gate.sprite.texture.width/2;
-	this.monster.sprite.y = this.gate.sprite.y + 
-	    this.gate.sprite.texture.height;
+        // Spawn in the monster, overtop the opened gate
+        this.spawned = true;
+        this.level.addThing(this.monster);
+        this.monster.sprite.x = this.gate.sprite.x + 
+            this.gate.sprite.texture.width/2;
+        this.monster.sprite.y = this.gate.sprite.y + 
+            this.gate.sprite.texture.height;
     } 
     else if (this.spawned && this.closeDelay > 0)
     {
-	// Wait a bit before closing the gate again
-	this.closeDelay -= dt;
-	if (this.closeDelay <= 0) {
-	    this.gate.startClosing();
-	}
+        // Wait a bit before closing the gate again
+        this.closeDelay -= dt;
+        if (this.closeDelay <= 0) {
+            this.gate.startClosing();
+        }
     }
 }
 
@@ -261,9 +261,9 @@ DropSpawn.prototype.activate = function()
 {
     var y = this.level.findClearSpace(this.xpos, this.ypos);
     if (y === null) {
-	console.log("WARNING: can't spawn monster near " + this.ypos);
-	this.monster.dead = true;
-	return;
+        console.log("WARNING: can't spawn monster near " + this.ypos);
+        this.monster.dead = true;
+        return;
     }
     this.ypos = y;
     this.shadow.sprite.y = y;
@@ -279,25 +279,25 @@ DropSpawn.prototype.update = function(dt)
     // Wait a bit before dropping the monster
     if (this.timer > 0) 
     {
-	this.timer -= dt;
-	if (this.timer <= 0) {
-	    // Start the drop
-	    this.level.addThing(this.falling);
-	    Utils.getSound(RES.DROP_SND).volume = 0.25;
-	    Utils.getSound(RES.DROP_SND).play();
-	}
-	return;
+        this.timer -= dt;
+        if (this.timer <= 0) {
+            // Start the drop
+            this.level.addThing(this.falling);
+            Utils.getSound(RES.DROP_SND).volume = 0.25;
+            Utils.getSound(RES.DROP_SND).play();
+        }
+        return;
     }
     this.falling.sprite.y += this.fallSpeed*dt;
     if (this.falling.sprite.y > this.ypos) 
     {
-	// Hit the ground - spawn in the monster
-	this.level.removeThing(this.shadow);
-	this.level.removeThing(this.falling);
-	this.level.addThing(this.monster);
-	this.monster.sprite.x = this.xpos;
-	this.monster.sprite.y = this.ypos;
-	this.done = true;
+        // Hit the ground - spawn in the monster
+        this.level.removeThing(this.shadow);
+        this.level.removeThing(this.falling);
+        this.level.addThing(this.monster);
+        this.monster.sprite.x = this.xpos;
+        this.monster.sprite.y = this.ypos;
+        this.done = true;
     }
 }
 
@@ -330,13 +330,13 @@ WaterSpawn.prototype.update = function(dt)
 {
     // Wait for a bit of time before spawning the monster
     if (this.spawnDelay > 0) {
-	this.spawnDelay -= dt;
-	if (this.spawnDelay <= 0) {
-	    this.level.removeThing(this.water);
-	    this.level.addThing(this.monster);
-	    this.monster.sprite.x = this.xpos;
-	    this.monster.sprite.y = this.ypos;
-	}
+        this.spawnDelay -= dt;
+        if (this.spawnDelay <= 0) {
+            this.level.removeThing(this.water);
+            this.level.addThing(this.monster);
+            this.monster.sprite.x = this.xpos;
+            this.monster.sprite.y = this.ypos;
+        }
     }
 }
 

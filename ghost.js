@@ -58,7 +58,7 @@ Ghost.FRAMES = ["ghost_south_1", "ghost_south_2"];
 Ghost.prototype.getDropTable = function() 
 {
     return [[Item.Table.SMALL_HEALTH, 1],
-	    [Item.Table.LARGE_HEALTH, 5]];
+            [Item.Table.LARGE_HEALTH, 5]];
 }
 
 Ghost.prototype.update = function(dt)
@@ -66,7 +66,7 @@ Ghost.prototype.update = function(dt)
     if (this.state === GHOST_ATTACKING) this.updateAttacking(dt);
     else if (this.state === GHOST_HURT) this.updateHurt(dt);
     else if (this.state === GHOST_DEAD) {
-	this.level.removeThing(this);
+        this.level.removeThing(this);
     }
 }
 
@@ -85,8 +85,8 @@ Ghost.prototype.updateAttacking = function(dt)
 
     var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
     if (speed > this.maxSpeed) {
-	this.velx = this.maxSpeed*this.velx/speed;
-	this.vely = this.maxSpeed*this.vely/speed;
+        this.velx = this.maxSpeed*this.velx/speed;
+        this.vely = this.maxSpeed*this.vely/speed;
     }
 
     this.sprite.x += this.velx*dt;//+Math.cos(this.frame);
@@ -100,16 +100,16 @@ Ghost.prototype.updateHurt = function(dt)
 {
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
-	var dx = this.knocked*dt;
-	var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
-	if (!tile.solid) {
-	    this.sprite.x += dx;
-	}
-	this.knockedTimer -= dt;
+        var dx = this.knocked*dt;
+        var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+        if (!tile.solid) {
+            this.sprite.x += dx;
+        }
+        this.knockedTimer -= dt;
     } else {
-	// Resume/start attacking
-	this.state = GHOST_ATTACKING;
-	this.travel = 0;
+        // Resume/start attacking
+        this.state = GHOST_ATTACKING;
+        this.travel = 0;
     }
 }
 
@@ -119,19 +119,19 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === GHOST_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-	Utils.getSound(RES.DEAD_SND).play();
-	this.state = GHOST_DEAD;
-	// Drop a reward
-	this.level.handleTreasureDrop(
-	    this.getDropTable(), this.sprite.x, this.sprite.y);
-	player.handleMonsterKilled(this);
-	this.dead = true;
+        Utils.getSound(RES.DEAD_SND).play();
+        this.state = GHOST_DEAD;
+        // Drop a reward
+        this.level.handleTreasureDrop(
+            this.getDropTable(), this.sprite.x, this.sprite.y);
+        player.handleMonsterKilled(this);
+        this.dead = true;
 
     } else {
-	Utils.getSound(RES.SNAKE_HURT_SND).play();
-	this.knocked = Math.sign(this.sprite.x-srcx)*100;
-	this.knockedTimer = 0.1;
-	this.state = GHOST_HURT;
+        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        this.knocked = Math.sign(this.sprite.x-srcx)*100;
+        this.knockedTimer = 0.1;
+        this.state = GHOST_HURT;
     }
     return true;
 }

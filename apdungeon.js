@@ -116,19 +116,19 @@ Round.prototype.update = function (dt) {
     }
 
     /*
-        if (!this.activated) 
-        {
-    	// Wait a bit before activating the round
-    	if (this.delay > 0) {
-    	    this.delay -= dt;
-    	    return;
-    	}
-    	// Activate all the spawners in this round
-    	for (spawn of this.spawns) {
-    	    spawn.activate();
-    	}
-    	this.activated = true;
-        }
+      if (!this.activated) 
+      {
+      // Wait a bit before activating the round
+      if (this.delay > 0) {
+      this.delay -= dt;
+      return;
+      }
+      // Activate all the spawners in this round
+      for (spawn of this.spawns) {
+      spawn.activate();
+      }
+      this.activated = true;
+      }
     */
     // Wait for all the monsters to die
     this.done = this.spawns.length === 0;
@@ -492,70 +492,70 @@ var GroundItem = require("./grounditem");
  * options.ejectX - a particular X direction to eject the items 
  * */
 function Chest(items, options) {
-  this.openTexture = Utils.getFrame(RES.MAPTILES, "chest_open");
-  this.closedTexture = Utils.getFrame(RES.MAPTILES, "chest_closed");
-  this.sprite = new PIXI.Sprite(this.closedTexture);
-  this.sprite.anchor.set(0.5, 0.75);
-  this.isOpen = false;
-  this.timer = 0;
-  this.items = items;
-  this.options = options;
-  this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    this.openTexture = Utils.getFrame(RES.MAPTILES, "chest_open");
+    this.closedTexture = Utils.getFrame(RES.MAPTILES, "chest_closed");
+    this.sprite = new PIXI.Sprite(this.closedTexture);
+    this.sprite.anchor.set(0.5, 0.75);
+    this.isOpen = false;
+    this.timer = 0;
+    this.items = items;
+    this.options = options;
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
 }
 
 Chest.prototype.update = function (dt) {
-  if (this.isOpen && this.timer > 0) {
-    this.timer -= dt;
-    if (this.timer <= 0) {
-      // Eject the contents from the chest
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+    if (this.isOpen && this.timer > 0) {
+        this.timer -= dt;
+        if (this.timer <= 0) {
+            // Eject the contents from the chest
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-      try {
-        for (var _iterator = this.items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var item = _step.value;
+            try {
+                for (var _iterator = this.items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
 
-          var gnd = new GroundItem(item, this.sprite.x + 1 * Utils.randUniform(0, 1), this.sprite.y + 2 * Utils.randUniform(0.1, 1));
-          this.level.addThing(gnd);
-          var spd = Utils.randUniform(6, 12);
-          if (this.options && this.options.ejectX) {
-            gnd.velx = this.options.ejectX * spd;
-          } else {
-            gnd.velx = Utils.randomChoice([-1, 1]) * spd;
-          }
-          gnd.velz = -Utils.randUniform(-2, 6);
-          gnd.velh = -30 * Utils.randUniform(0.9, 1);
+                    var gnd = new GroundItem(item, this.sprite.x + 1 * Utils.randUniform(0, 1), this.sprite.y + 2 * Utils.randUniform(0.1, 1));
+                    this.level.addThing(gnd);
+                    var spd = Utils.randUniform(6, 12);
+                    if (this.options && this.options.ejectX) {
+                        gnd.velx = this.options.ejectX * spd;
+                    } else {
+                        gnd.velx = Utils.randomChoice([-1, 1]) * spd;
+                    }
+                    gnd.velz = -Utils.randUniform(-2, 6);
+                    gnd.velh = -30 * Utils.randUniform(0.9, 1);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
     }
-  }
 };
 
 Chest.prototype.handleHit = function (x, y, dmg) {};
 
 Chest.prototype.handlePlayerCollision = function (player) {
-  if (!this.isOpen) {
-    // Open the chest now and start a countdown timer before ejecting 
-    // the contents.
-    this.sprite.texture = this.openTexture;
-    this.isOpen = true;
-    this.timer = 0.25;
-    Utils.getSound(RES.CHEST_SND).play();
-  }
+    if (!this.isOpen) {
+        // Open the chest now and start a countdown timer before ejecting 
+        // the contents.
+        this.sprite.texture = this.openTexture;
+        this.isOpen = true;
+        this.timer = 0.25;
+        Utils.getSound(RES.CHEST_SND).play();
+    }
 };
 
 module.exports = Chest;
@@ -787,153 +787,153 @@ var GameControls = require("./controls");
  * should be passed in. This screen will make a gradual transition from 
  * the level scene to a general game over screen, showing stats etc */
 function GameOverScreen(levelScreen) {
-			// The various states we can be in:
-			// Making a transition between the level and a black screen
-			this.TRANSITION_TO_GAMEOVER = 1;
-			// Showing the kill counts
-			this.SHOWING_KILLS = 2;
-			// Show message asking player to press a key
-			this.SHOW_CONTINUE_TEXT = 3;
-			// Waiting for user to press a key
-			this.WAITING = 4;
-			// Done showing the game over screen
-			this.DONE = 5;
+    // The various states we can be in:
+    // Making a transition between the level and a black screen
+    this.TRANSITION_TO_GAMEOVER = 1;
+    // Showing the kill counts
+    this.SHOWING_KILLS = 2;
+    // Show message asking player to press a key
+    this.SHOW_CONTINUE_TEXT = 3;
+    // Waiting for user to press a key
+    this.WAITING = 4;
+    // Done showing the game over screen
+    this.DONE = 5;
 
-			this.screenHeight = 80;
-			var scale = Render.getRenderer().height / this.screenHeight;
+    this.screenHeight = 80;
+    var scale = Render.getRenderer().height / this.screenHeight;
 
-			this.screenWidth = Render.getRenderer().width / scale;
+    this.screenWidth = Render.getRenderer().width / scale;
 
-			this.levelScreen = levelScreen;
-			this.state = this.TRANSITION_TO_GAMEOVER;
+    this.levelScreen = levelScreen;
+    this.state = this.TRANSITION_TO_GAMEOVER;
 
-			this.stage = new PIXI.Container();
-			this.stage.scale.set(scale);
-			this.stage.addChild(levelScreen.stage);
-			levelScreen.stage.scale.set(levelScreen.stage.scale.x / scale);
+    this.stage = new PIXI.Container();
+    this.stage.scale.set(scale);
+    this.stage.addChild(levelScreen.stage);
+    levelScreen.stage.scale.set(levelScreen.stage.scale.x / scale);
 
-			// Create a black sprite that covers the screen
-			this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
-			this.bg.anchor.set(0, 0);
-			this.bg.scale.set(this.screenWidth / this.bg.texture.width, this.screenHeight / this.bg.texture.height);
-			this.bg.alpha = 0;
-			this.timer = 0;
-			this.delay = 0.25;
+    // Create a black sprite that covers the screen
+    this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
+    this.bg.anchor.set(0, 0);
+    this.bg.scale.set(this.screenWidth / this.bg.texture.width, this.screenHeight / this.bg.texture.height);
+    this.bg.alpha = 0;
+    this.timer = 0;
+    this.delay = 0.25;
 
-			// Build a list of kill stats, in sorted order
-			this.row = 0;
-			this.col = 0;
-			this.killStats = [];
-			var names = Object.keys(levelScreen.player.kills);
-			var _iteratorNormalCompletion = true;
-			var _didIteratorError = false;
-			var _iteratorError = undefined;
+    // Build a list of kill stats, in sorted order
+    this.row = 0;
+    this.col = 0;
+    this.killStats = [];
+    var names = Object.keys(levelScreen.player.kills);
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-			try {
-						for (var _iterator = names[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-									var name = _step.value;
+    try {
+        for (var _iterator = names[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var name = _step.value;
 
-									var stat = levelScreen.player.kills[name];
-									this.killStats.push({
-												count: stat.count,
-												img: stat.img,
-												name: name
-									});
-						}
-			} catch (err) {
-						_didIteratorError = true;
-						_iteratorError = err;
-			} finally {
-						try {
-									if (!_iteratorNormalCompletion && _iterator.return) {
-												_iterator.return();
-									}
-						} finally {
-									if (_didIteratorError) {
-												throw _iteratorError;
-									}
-						}
-			}
+            var stat = levelScreen.player.kills[name];
+            this.killStats.push({
+                count: stat.count,
+                img: stat.img,
+                name: name
+            });
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
 
-			this.stage.addChild(this.bg);
+    this.stage.addChild(this.bg);
 }
 
 GameOverScreen.prototype.update = function (dt) {
-			if (this.delay > 0) {
-						this.delay -= dt;
-						return;
-			}
+    if (this.delay > 0) {
+        this.delay -= dt;
+        return;
+    }
 
-			switch (this.state) {
-						case this.TRANSITION_TO_GAMEOVER:
-									// Transitioning from the level to a blank screen. The curve here is
-									// chosen so that the fade starts out quickly, then slows down as it
-									// approaches full black.
-									this.timer += dt;
-									this.bg.alpha = Math.pow(this.timer / 1.25, 0.5);
-									if (this.bg.alpha > 1) {
-												// Background is now fully black. Show the game over text
-												this.bg.alpha = 1;
-												var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "game-over-text"));
-												txt.anchor.set(0.5, 0.5);
-												txt.x = this.screenWidth / 2;
-												txt.y = this.screenHeight / 8;
-												this.stage.addChild(txt);
-												this.state = this.SHOWING_KILLS;
-												this.delay = 0.75;
-									}
-									break;
+    switch (this.state) {
+        case this.TRANSITION_TO_GAMEOVER:
+            // Transitioning from the level to a blank screen. The curve here is
+            // chosen so that the fade starts out quickly, then slows down as it
+            // approaches full black.
+            this.timer += dt;
+            this.bg.alpha = Math.pow(this.timer / 1.25, 0.5);
+            if (this.bg.alpha > 1) {
+                // Background is now fully black. Show the game over text
+                this.bg.alpha = 1;
+                var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "game-over-text"));
+                txt.anchor.set(0.5, 0.5);
+                txt.x = this.screenWidth / 2;
+                txt.y = this.screenHeight / 8;
+                this.stage.addChild(txt);
+                this.state = this.SHOWING_KILLS;
+                this.delay = 0.75;
+            }
+            break;
 
-						case this.SHOWING_KILLS:
-									while (this.killStats.length > 0) {
-												// Show the next killed monster
-												var xpos = 10 + this.col * this.screenWidth / 2;
-												var ypos = 30 + this.row * 11;
-												var stat = this.killStats.shift();
-												var monster = new PIXI.Sprite(stat.img);
-												monster.anchor.set(0.5, 1);
-												monster.x = xpos;
-												monster.y = ypos;
-												this.stage.addChild(monster);
+        case this.SHOWING_KILLS:
+            while (this.killStats.length > 0) {
+                // Show the next killed monster
+                var xpos = 10 + this.col * this.screenWidth / 2;
+                var ypos = 30 + this.row * 11;
+                var stat = this.killStats.shift();
+                var monster = new PIXI.Sprite(stat.img);
+                monster.anchor.set(0.5, 1);
+                monster.x = xpos;
+                monster.y = ypos;
+                this.stage.addChild(monster);
 
-												// Show the name
-												var msg = stat.name.toUpperCase() + " *" + stat.count;
-												var txt = new PIXI.Sprite(UI.renderText(msg));
-												txt.x = xpos + 8;
-												txt.y = ypos;
-												txt.anchor.set(0, 1);
-												txt.scale.set(0.65);
-												this.stage.addChild(txt);
+                // Show the name
+                var msg = stat.name.toUpperCase() + " *" + stat.count;
+                var txt = new PIXI.Sprite(UI.renderText(msg));
+                txt.x = xpos + 8;
+                txt.y = ypos;
+                txt.anchor.set(0, 1);
+                txt.scale.set(0.65);
+                this.stage.addChild(txt);
 
-												this.col++;
-												if (this.col > 1) {
-															this.row++;
-															this.col = 0;
-												}
-									}
-									this.state = this.SHOW_CONTINUE_TEXT;
-									this.delay = 1;
-									break;
+                this.col++;
+                if (this.col > 1) {
+                    this.row++;
+                    this.col = 0;
+                }
+            }
+            this.state = this.SHOW_CONTINUE_TEXT;
+            this.delay = 1;
+            break;
 
-						case this.SHOW_CONTINUE_TEXT:
-									var txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO CONTINUE"));
-									txt.anchor.set(0.5, 0.5);
-									txt.x = this.screenWidth / 2;
-									txt.y = this.screenHeight - 15;
-									this.stage.addChild(txt);
-									this.state = this.WAITING;
-									break;
+        case this.SHOW_CONTINUE_TEXT:
+            var txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO CONTINUE"));
+            txt.anchor.set(0.5, 0.5);
+            txt.x = this.screenWidth / 2;
+            txt.y = this.screenHeight - 15;
+            this.stage.addChild(txt);
+            this.state = this.WAITING;
+            break;
 
-						case this.WAITING:
-									if (GameControls.getControls().space) {
-												this.state = this.DONE;
-									}
-									break;
-			}
+        case this.WAITING:
+            if (GameControls.getControls().space) {
+                this.state = this.DONE;
+            }
+            break;
+    }
 };
 
 GameOverScreen.prototype.render = function () {
-			Render.getRenderer().render(this.stage);
+    Render.getRenderer().render(this.stage);
 };
 
 module.exports = GameOverScreen;
@@ -969,74 +969,74 @@ var GameOverScreen = require("./gameover");
  * between game states. */
 
 function GameState() {
-   // Loading assets and showing the loading screen
-   this.LOADING = 1;
-   // Show the title screen
-   this.SHOW_TITLE_SCREEN = 2;
-   // Showing the title screen - waiting for player to start
-   this.TITLE_SCREEN = 3;
-   // Playing through a level
-   this.PLAYING_GAME = 4;
-   // Showing the "next level" transition screen
-   this.NEXT_SCREEN = 5;
-   // Showing the game over screen
-   this.GAME_OVER = 6;
-   // Starting a new game
-   this.NEW_GAME = 7;
+    // Loading assets and showing the loading screen
+    this.LOADING = 1;
+    // Show the title screen
+    this.SHOW_TITLE_SCREEN = 2;
+    // Showing the title screen - waiting for player to start
+    this.TITLE_SCREEN = 3;
+    // Playing through a level
+    this.PLAYING_GAME = 4;
+    // Showing the "next level" transition screen
+    this.NEXT_SCREEN = 5;
+    // Showing the game over screen
+    this.GAME_OVER = 6;
+    // Starting a new game
+    this.NEW_GAME = 7;
 
-   this.state = this.SHOW_TITLE_SCREEN;
-   this.screen = null;
+    this.state = this.SHOW_TITLE_SCREEN;
+    this.screen = null;
 }
 
 /* Called every render frame to update the overall game state, transition
  * between states and otherwise manage things at a high level. */
 GameState.prototype.update = function (dt) {
-   if (this.screen) {
-      this.screen.update(dt);
-   }
+    if (this.screen) {
+        this.screen.update(dt);
+    }
 
-   switch (this.state) {
-      case this.SHOW_TITLE_SCREEN:
-         //this.state = this.NEW_GAME;
-         this.screen = new TitleScreen();
-         this.state = this.TITLE_SCREEN;
-         break;
+    switch (this.state) {
+        case this.SHOW_TITLE_SCREEN:
+            //this.state = this.NEW_GAME;
+            this.screen = new TitleScreen();
+            this.state = this.TITLE_SCREEN;
+            break;
 
-      case this.TITLE_SCREEN:
-         if (this.screen.state === this.screen.NEW_GAME) {
-            this.state = this.NEW_GAME;
-         }
-         break;
+        case this.TITLE_SCREEN:
+            if (this.screen.state === this.screen.NEW_GAME) {
+                this.state = this.NEW_GAME;
+            }
+            break;
 
-      case this.NEW_GAME:
-         // Start a new game
-         this.screen = new LevelScreen();
-         this.state = this.PLAYING_GAME;
-         break;
+        case this.NEW_GAME:
+            // Start a new game
+            this.screen = new LevelScreen();
+            this.state = this.PLAYING_GAME;
+            break;
 
-      case this.PLAYING_GAME:
-         // Wait until a game over happens
-         if (this.screen.state === this.screen.GAME_OVER) {
-            // Transition to the game over screen
-            this.screen = new GameOverScreen(this.screen);
-            this.state = this.GAME_OVER;
-         }
-         break;
+        case this.PLAYING_GAME:
+            // Wait until a game over happens
+            if (this.screen.state === this.screen.GAME_OVER) {
+                // Transition to the game over screen
+                this.screen = new GameOverScreen(this.screen);
+                this.state = this.GAME_OVER;
+            }
+            break;
 
-      case this.GAME_OVER:
-         // Wait until the player is finished with the game over screen
-         if (this.screen.state === this.screen.DONE) {
-            this.state = this.NEW_GAME;
-         }
-         break;
-   }
+        case this.GAME_OVER:
+            // Wait until the player is finished with the game over screen
+            if (this.screen.state === this.screen.DONE) {
+                this.state = this.NEW_GAME;
+            }
+            break;
+    }
 };
 
 /* Called to render the current game state */
 GameState.prototype.render = function () {
-   if (this.screen) {
-      this.screen.render();
-   }
+    if (this.screen) {
+        this.screen.render();
+    }
 };
 
 module.exports = GameState;
@@ -1177,78 +1177,78 @@ var Rat = SnakeLike.Rat;
 var Scorpion = SnakeLike.Scorpion;
 
 function monsterEntry(klass, score, addScore) {
-			return {
-						klass: klass,
-						score: score,
-						addScore: addScore
-			};
+    return {
+        klass: klass,
+        score: score,
+        addScore: addScore
+    };
 }
 
 /* Returns some random treasures for a chest */
 function randomTreasures(levelNum) {
-			switch (randint(1, 10)) {
-						case 1:
-									return [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
-						case 2:
-									return [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
-						case 3:
-									if (levelNum < 2) return [Item.Table.SMALL_BOW, Item.Table.ARROW];else return [Item.Table.LARGE_BOW];
-						case 4:
-									if (levelNum < 2) return [Item.Table.LEATHER_ARMOUR];else return [Item.Table.STEEL_ARMOUR];
-						case 5:
-									return [Item.Table.SMALL_HEALTH, Item.Table.SMALL_HEALTH, Item.Table.ARROW, Item.Table.ARROW];
-						case 6:
-						case 7:
-									return [Item.Table.COIN, Item.Table.COIN, Item.Table.SMALL_HEALTH];
-						case 8:
-									return [Item.Table.COIN, Item.Table.COIN, Item.Table.LARGE_HEALTH];
-						case 9:
-									return [Item.Table.LARGE_SWORD];
-						case 10:
-									return [Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW, Item.Table.COIN, Item.Table.COIN];
-			}
+    switch (randint(1, 10)) {
+        case 1:
+            return [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
+        case 2:
+            return [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
+        case 3:
+            if (levelNum < 2) return [Item.Table.SMALL_BOW, Item.Table.ARROW];else return [Item.Table.LARGE_BOW];
+        case 4:
+            if (levelNum < 2) return [Item.Table.LEATHER_ARMOUR];else return [Item.Table.STEEL_ARMOUR];
+        case 5:
+            return [Item.Table.SMALL_HEALTH, Item.Table.SMALL_HEALTH, Item.Table.ARROW, Item.Table.ARROW];
+        case 6:
+        case 7:
+            return [Item.Table.COIN, Item.Table.COIN, Item.Table.SMALL_HEALTH];
+        case 8:
+            return [Item.Table.COIN, Item.Table.COIN, Item.Table.LARGE_HEALTH];
+        case 9:
+            return [Item.Table.LARGE_SWORD];
+        case 10:
+            return [Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW, Item.Table.COIN, Item.Table.COIN];
+    }
 }
 
 // Returns a list of randomly chosen monsters that fall within the budget
 function chooseMonsters(budget) {
-			var monsterTable = [monsterEntry(Snake, 1, 1), monsterEntry(Rat, 1, 1), monsterEntry(Scorpion, 2, 1), monsterEntry(Goblin, 3, 2), monsterEntry(SkelWarrior, 4, 3), monsterEntry(Ghost, 5, 4)];
+    var monsterTable = [monsterEntry(Snake, 1, 1), monsterEntry(Rat, 1, 1), monsterEntry(Scorpion, 2, 1), monsterEntry(Goblin, 3, 2), monsterEntry(SkelWarrior, 4, 3), monsterEntry(Ghost, 5, 4)];
 
-			var picks = [];
-			while (true) {
-						// Compile a list of monster options to choose from
-						var options = [];
-						var _iteratorNormalCompletion = true;
-						var _didIteratorError = false;
-						var _iteratorError = undefined;
+    var picks = [];
+    while (true) {
+        // Compile a list of monster options to choose from
+        var options = [];
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
-						try {
-									for (var _iterator = monsterTable[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-												var entry = _step.value;
+        try {
+            for (var _iterator = monsterTable[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var entry = _step.value;
 
-												if (entry.score <= budget) options.push(entry);
-									}
-						} catch (err) {
-									_didIteratorError = true;
-									_iteratorError = err;
-						} finally {
-									try {
-												if (!_iteratorNormalCompletion && _iterator.return) {
-															_iterator.return();
-												}
-									} finally {
-												if (_didIteratorError) {
-															throw _iteratorError;
-												}
-									}
-						}
+                if (entry.score <= budget) options.push(entry);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                    _iterator.return();
+                }
+            } finally {
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
 
-						if (options.length === 0) break;
-						// Pick a monster at random
-						var opt = randomChoice(options);
-						picks.push(opt.klass);
-						budget -= opt.score;
-			}
-			return picks;
+        if (options.length === 0) break;
+        // Pick a monster at random
+        var opt = randomChoice(options);
+        picks.push(opt.klass);
+        budget -= opt.score;
+    }
+    return picks;
 }
 
 /**************/
@@ -1258,91 +1258,91 @@ function chooseMonsters(budget) {
 /* A thing to handle the player entering a level. (door opens, player walks
  * through the door, looks around, door closes, level starts) */
 function EnterScene(door) {
-			// Waiting for the cutscene to start
-			this.IDLE = 0;
-			// The cutscene has started
-			this.START = 1;
-			// Waiting for the door to finish opening
-			this.OPENING_DOOR = 2;
-			// Waiting for the player to enter the level
-			this.PLAYER_ENTERING = 3;
-			// Player is looking around
-			this.PLAYER_LOOK_LEFT = 4;
-			this.PLAYER_LOOK_RIGHT = 5;
+    // Waiting for the cutscene to start
+    this.IDLE = 0;
+    // The cutscene has started
+    this.START = 1;
+    // Waiting for the door to finish opening
+    this.OPENING_DOOR = 2;
+    // Waiting for the player to enter the level
+    this.PLAYER_ENTERING = 3;
+    // Player is looking around
+    this.PLAYER_LOOK_LEFT = 4;
+    this.PLAYER_LOOK_RIGHT = 5;
 
-			this.door = door;
-			// No sprite associated with this thing
-			this.sprite = null;
-			this.state = this.IDLE;
-			this.timer = 0;
-			this.travelTime = 0;
+    this.door = door;
+    // No sprite associated with this thing
+    this.sprite = null;
+    this.state = this.IDLE;
+    this.timer = 0;
+    this.travelTime = 0;
 }
 
 EnterScene.prototype.update = function (dt) {
-			if (this.timer > 0) {
-						this.timer -= dt;
-						return;
-			}
+    if (this.timer > 0) {
+        this.timer -= dt;
+        return;
+    }
 
-			var player = this.level.player;
+    var player = this.level.player;
 
-			switch (this.state) {
-						case this.IDLE:
-									// Position the player behind the level so they're hidden, and centered 
-									// on the door so the camera renders in the right place.
-									player.sprite.x = this.door.sprite.x;
-									player.sprite.y = this.door.sprite.y + 1;
-									player.sprite.zpos = Level.BEHIND_BACKGROUND_POS;
-									player.hasControl = false;
-									this.timer = 0.75;
-									this.state = this.START;
-									break;
+    switch (this.state) {
+        case this.IDLE:
+            // Position the player behind the level so they're hidden, and centered 
+            // on the door so the camera renders in the right place.
+            player.sprite.x = this.door.sprite.x;
+            player.sprite.y = this.door.sprite.y + 1;
+            player.sprite.zpos = Level.BEHIND_BACKGROUND_POS;
+            player.hasControl = false;
+            this.timer = 0.75;
+            this.state = this.START;
+            break;
 
-						case this.START:
-									// Start the door opening
-									this.door.startOpening();
-									this.state = this.OPENING_DOOR;
-									break;
+        case this.START:
+            // Start the door opening
+            this.door.startOpening();
+            this.state = this.OPENING_DOOR;
+            break;
 
-						case this.OPENING_DOOR:
-									// Waiting for the door to open
-									if (this.door.isOpen()) {
-												player.sprite.zpos = undefined;
-												this.state = this.PLAYER_ENTERING;
-												this.timer = 0.4;
-												this.travelTime = 0.6;
-									}
-									break;
+        case this.OPENING_DOOR:
+            // Waiting for the door to open
+            if (this.door.isOpen()) {
+                player.sprite.zpos = undefined;
+                this.state = this.PLAYER_ENTERING;
+                this.timer = 0.4;
+                this.travelTime = 0.6;
+            }
+            break;
 
-						case this.PLAYER_ENTERING:
-									// Player walking some ways into the level
-									player.diry = 0.5;
-									this.travelTime -= dt;
-									if (this.travelTime <= 0) {
-												this.state = this.PLAYER_LOOK_LEFT;
-												this.timer = 0.5;
-												this.door.startClosing();
-												player.dirx = 0;
-												player.diry = 0;
-									} else if (this.travelTime < 0.35) {
-												player.dirx = 0.25;
-									}
-									break;
+        case this.PLAYER_ENTERING:
+            // Player walking some ways into the level
+            player.diry = 0.5;
+            this.travelTime -= dt;
+            if (this.travelTime <= 0) {
+                this.state = this.PLAYER_LOOK_LEFT;
+                this.timer = 0.5;
+                this.door.startClosing();
+                player.dirx = 0;
+                player.diry = 0;
+            } else if (this.travelTime < 0.35) {
+                player.dirx = 0.25;
+            }
+            break;
 
-						case this.PLAYER_LOOK_LEFT:
-									player.faceDirection(-1);
-									this.state = this.PLAYER_LOOK_RIGHT;
-									this.timer = 1;
-									break;
+        case this.PLAYER_LOOK_LEFT:
+            player.faceDirection(-1);
+            this.state = this.PLAYER_LOOK_RIGHT;
+            this.timer = 1;
+            break;
 
-						case this.PLAYER_LOOK_RIGHT:
-									player.faceDirection(1);
-									player.hasControl = true;
-									this.timer = 0.5;
-									// Done!
-									this.level.removeThing(this);
-									break;
-			}
+        case this.PLAYER_LOOK_RIGHT:
+            player.faceDirection(1);
+            player.hasControl = true;
+            this.timer = 0.5;
+            // Done!
+            this.level.removeThing(this);
+            break;
+    }
 };
 
 /* Functions */
@@ -1350,281 +1350,281 @@ EnterScene.prototype.update = function (dt) {
 module.exports = {};
 
 module.exports.generate = function (levelNum) {
-			// Generate the floor and top wall across the level
-			var length = 100;
-			var grid = Utils.createGrid(5, length);
-			for (var row = 0; row < grid.rows; row++) {
-						for (var col = 0; col < grid.cols; col++) {
-									var n = Math.random();
-									if (n < 0.5) grid[0][col] = "brick_wall_m";else if (n < 0.8) grid[0][col] = "mossy_wall_m";else grid[0][col] = "broken_wall_m";
-									grid[row][col] = "smooth_floor_m";
-						}
-			}
+    // Generate the floor and top wall across the level
+    var length = 100;
+    var grid = Utils.createGrid(5, length);
+    for (var row = 0; row < grid.rows; row++) {
+        for (var col = 0; col < grid.cols; col++) {
+            var n = Math.random();
+            if (n < 0.5) grid[0][col] = "brick_wall_m";else if (n < 0.8) grid[0][col] = "mossy_wall_m";else grid[0][col] = "broken_wall_m";
+            grid[row][col] = "smooth_floor_m";
+        }
+    }
 
-			// Add a random spot of water somewhere
-			var w = randint(4, 8);
-			var pos = randint(10, grid.cols - 2 - w);
-			for (var row = 1; row < grid.rows; row++) {
-						for (var col = pos - randint(0, 2); col < pos + w + randint(0, 2); col++) {
-									grid[row][col] = "water";
-						}
-			} // Add random outcropping of wall sections
-			var pos = 0;
-			if (levelNum === 0) {
-						// Leave a large, empty space in the first level to make room for
-						// a starter chest and some NPCs
-						pos += 10;
-			}
-			while (true) {
-						pos += randint(5, 10);
-						// Leave space at the end of the level
-						if (pos >= grid.cols - 12) break;
+    // Add a random spot of water somewhere
+    var w = randint(4, 8);
+    var pos = randint(10, grid.cols - 2 - w);
+    for (var row = 1; row < grid.rows; row++) {
+        for (var col = pos - randint(0, 2); col < pos + w + randint(0, 2); col++) {
+            grid[row][col] = "water";
+        }
+    } // Add random outcropping of wall sections
+    var pos = 0;
+    if (levelNum === 0) {
+        // Leave a large, empty space in the first level to make room for
+        // a starter chest and some NPCs
+        pos += 10;
+    }
+    while (true) {
+        pos += randint(5, 10);
+        // Leave space at the end of the level
+        if (pos >= grid.cols - 12) break;
 
-						var w = 1;
-						if (Math.random() < 0.5) {
-									w = randint(3, 5);
-						}
-						if (pos + w >= grid.cols) w = 0;
+        var w = 1;
+        if (Math.random() < 0.5) {
+            w = randint(3, 5);
+        }
+        if (pos + w >= grid.cols) w = 0;
 
-						var depth = randomChoice([1, 1, 2, 2, 3]);
-						for (var col = 0; col < w; col++) {
-									for (var row = 0; row < depth; row++) {
-												if (row == 0) grid[row][pos + col] = "wall_behind";else grid[row][pos + col] = "wall_behind2";
-									}
-									grid[depth][pos + col] = "smooth_wall_m";
-						}
-						pos += w;
-			}
+        var depth = randomChoice([1, 1, 2, 2, 3]);
+        for (var col = 0; col < w; col++) {
+            for (var row = 0; row < depth; row++) {
+                if (row == 0) grid[row][pos + col] = "wall_behind";else grid[row][pos + col] = "wall_behind2";
+            }
+            grid[depth][pos + col] = "smooth_wall_m";
+        }
+        pos += w;
+    }
 
-			// Add a vertical wall to either side of the level
-			for (var row = 0; row < grid.rows - 1; row++) {
-						grid[row][0] = "wall_behind2";
-						grid[row][grid.cols - 1] = "wall_behind2";
-			}
-			grid[0][0] = "wall_behind";
-			grid[0][grid.cols - 1] = "wall_behind";
-			grid[grid.rows - 1][0] = "smooth_wall_m";
-			grid[grid.rows - 1][grid.cols - 1] = "smooth_wall_m";
+    // Add a vertical wall to either side of the level
+    for (var row = 0; row < grid.rows - 1; row++) {
+        grid[row][0] = "wall_behind2";
+        grid[row][grid.cols - 1] = "wall_behind2";
+    }
+    grid[0][0] = "wall_behind";
+    grid[0][grid.cols - 1] = "wall_behind";
+    grid[grid.rows - 1][0] = "smooth_wall_m";
+    grid[grid.rows - 1][grid.cols - 1] = "smooth_wall_m";
 
-			// Build a big sprite for the tiled map
-			var bg = new TiledBackground(RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT, Utils.getTextures(RES.MAPTILES), grid);
-			var level = new Level(bg);
+    // Build a big sprite for the tiled map
+    var bg = new TiledBackground(RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT, Utils.getTextures(RES.MAPTILES), grid);
+    var level = new Level(bg);
 
-			// Now add some random gates throughout the level
-			var pos = 0;
-			while (true) {
-						if (Math.random() < 0.6 && pos > 0) {
-									// Find the bottom-most section of wall
-									var found = -1;
-									for (var row = grid.rows - 1; row >= 0; row--) {
-												if (grid[row][pos] && grid[row][pos] !== "wall_behind" && grid[row][pos] !== "wall_behind2" && grid[row][pos].indexOf("wall") !== -1) {
-															found = row;
-															break;
-												}
-									}
-									if (found !== -1) {
-												var gate = new Gate();
-												gate.sprite.x = pos * RES.TILE_WIDTH;
-												gate.sprite.y = found * RES.TILE_HEIGHT;
-												level.addThing(gate);
-									}
-						}
-						pos += randint(5, 15);
-						if (pos >= grid.cols - 5) break;
-			}
+    // Now add some random gates throughout the level
+    var pos = 0;
+    while (true) {
+        if (Math.random() < 0.6 && pos > 0) {
+            // Find the bottom-most section of wall
+            var found = -1;
+            for (var row = grid.rows - 1; row >= 0; row--) {
+                if (grid[row][pos] && grid[row][pos] !== "wall_behind" && grid[row][pos] !== "wall_behind2" && grid[row][pos].indexOf("wall") !== -1) {
+                    found = row;
+                    break;
+                }
+            }
+            if (found !== -1) {
+                var gate = new Gate();
+                gate.sprite.x = pos * RES.TILE_WIDTH;
+                gate.sprite.y = found * RES.TILE_HEIGHT;
+                level.addThing(gate);
+            }
+        }
+        pos += randint(5, 15);
+        if (pos >= grid.cols - 5) break;
+    }
 
-			// Break the level down into "arena" sections where the player gets
-			// to fight monsters. We start with an arena at the very end of the 
-			// level, then work backwards from there.
-			var endx = level.getWidth() - 1;
-			var arenaWidth = level.camera.width;
-			// The starting monster "budget" for this level. Harder monsters cost
-			// more and multiples of the same monster may have an additional
-			// cost. Each round is populated with monsters that fall within this 
-			// budget. This is gradually reduced working backwards through the 
-			// level to make earlier rounds a little easier.
-			var budget = (levelNum + 1) * 6;
-			while (endx > arenaWidth * 1.75) {
-						var arena = new Arena.Arena(level, arenaWidth, endx);
-						level.addArena(arena);
+    // Break the level down into "arena" sections where the player gets
+    // to fight monsters. We start with an arena at the very end of the 
+    // level, then work backwards from there.
+    var endx = level.getWidth() - 1;
+    var arenaWidth = level.camera.width;
+    // The starting monster "budget" for this level. Harder monsters cost
+    // more and multiples of the same monster may have an additional
+    // cost. Each round is populated with monsters that fall within this 
+    // budget. This is gradually reduced working backwards through the 
+    // level to make earlier rounds a little easier.
+    var budget = (levelNum + 1) * 6;
+    while (endx > arenaWidth * 1.75) {
+        var arena = new Arena.Arena(level, arenaWidth, endx);
+        level.addArena(arena);
 
-						// Find the visible gates (for gate spawning below)
-						var gates = [];
-						var _iteratorNormalCompletion2 = true;
-						var _didIteratorError2 = false;
-						var _iteratorError2 = undefined;
+        // Find the visible gates (for gate spawning below)
+        var gates = [];
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
 
-						try {
-									for (var _iterator2 = level.things[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-												var thing = _step2.value;
+        try {
+            for (var _iterator2 = level.things[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var thing = _step2.value;
 
-												if (thing instanceof Gate && thing.sprite.x > arena.startx && thing.sprite.x < arena.endx) {
-															gates.push(thing);
-												}
-									}
+                if (thing instanceof Gate && thing.sprite.x > arena.startx && thing.sprite.x < arena.endx) {
+                    gates.push(thing);
+                }
+            }
 
-									// Higher levels have more rounds per arena on average
-						} catch (err) {
-									_didIteratorError2 = true;
-									_iteratorError2 = err;
-						} finally {
-									try {
-												if (!_iteratorNormalCompletion2 && _iterator2.return) {
-															_iterator2.return();
-												}
-									} finally {
-												if (_didIteratorError2) {
-															throw _iteratorError2;
-												}
-									}
-						}
+            // Higher levels have more rounds per arena on average
+        } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                    _iterator2.return();
+                }
+            } finally {
+                if (_didIteratorError2) {
+                    throw _iteratorError2;
+                }
+            }
+        }
 
-						for (var rnum = 0; rnum < randint(2, 4 + levelNum); rnum++) {
-									var round = new Arena.Round(randUniform(0.5, 1));
-									var monsters = null;
+        for (var rnum = 0; rnum < randint(2, 4 + levelNum); rnum++) {
+            var round = new Arena.Round(randUniform(0.5, 1));
+            var monsters = null;
 
-									if (rnum === 0 && levelNum === 0 && endx === level.getWidth() - 1) {
-												// Lots of rats!
-												monsters = [];
-												for (var n = 0; n < randint(10, 20); n++) {
-															monsters.push(Rat);
-												}
-									} else {
-												monsters = chooseMonsters(budget);
-									}
+            if (rnum === 0 && levelNum === 0 && endx === level.getWidth() - 1) {
+                // Lots of rats!
+                monsters = [];
+                for (var n = 0; n < randint(10, 20); n++) {
+                    monsters.push(Rat);
+                }
+            } else {
+                monsters = chooseMonsters(budget);
+            }
 
-									var _iteratorNormalCompletion3 = true;
-									var _didIteratorError3 = false;
-									var _iteratorError3 = undefined;
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
 
-									try {
-												for (var _iterator3 = monsters[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-															var klass = _step3.value;
+            try {
+                for (var _iterator3 = monsters[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var klass = _step3.value;
 
-															var spawn = null;
-															var ypos = randUniform(0, level.camera.height);
-															var style = randint(1, 5);
+                    var spawn = null;
+                    var ypos = randUniform(0, level.camera.height);
+                    var style = randint(1, 5);
 
-															if (style === 1 && klass !== Ghost) {
-																		var xpos = randint(arena.startx + 20, arena.endx - 20);
-																		spawn = new Arena.DropSpawn(level, new klass(), xpos, ypos);
-															} else if (style === 2 && gates.length > 0) {
-																		spawn = new Arena.GateSpawn(level, new klass(), randomChoice(gates));
-															} else {
-																		var xdir = randomChoice([-1, 1]);
-																		if (endx >= level.getWidth() - 1) xdir = -1;
-																		spawn = new Arena.Spawn(level, new klass(), xdir, ypos);
-															}
-															round.addSpawn(spawn, randUniform(0, 1));
-												}
-									} catch (err) {
-												_didIteratorError3 = true;
-												_iteratorError3 = err;
-									} finally {
-												try {
-															if (!_iteratorNormalCompletion3 && _iterator3.return) {
-																		_iterator3.return();
-															}
-												} finally {
-															if (_didIteratorError3) {
-																		throw _iteratorError3;
-															}
-												}
-									}
+                    if (style === 1 && klass !== Ghost) {
+                        var xpos = randint(arena.startx + 20, arena.endx - 20);
+                        spawn = new Arena.DropSpawn(level, new klass(), xpos, ypos);
+                    } else if (style === 2 && gates.length > 0) {
+                        spawn = new Arena.GateSpawn(level, new klass(), randomChoice(gates));
+                    } else {
+                        var xdir = randomChoice([-1, 1]);
+                        if (endx >= level.getWidth() - 1) xdir = -1;
+                        spawn = new Arena.Spawn(level, new klass(), xdir, ypos);
+                    }
+                    round.addSpawn(spawn, randUniform(0, 1));
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
 
-									arena.rounds.push(round);
-						}
-						// Randomly add a chest into the arena
-						if (randint(1, 10) < 7) {
-									// Find some clear space to add it
-									var xpos = randint(arena.startx + 30, arena.endx - 30);
-									var ypos = randint(10, level.getHeight() - 30);
+            arena.rounds.push(round);
+        }
+        // Randomly add a chest into the arena
+        if (randint(1, 10) < 7) {
+            // Find some clear space to add it
+            var xpos = randint(arena.startx + 30, arena.endx - 30);
+            var ypos = randint(10, level.getHeight() - 30);
 
-									ypos = level.findClearSpace(xpos, ypos);
-									if (ypos !== null) {
-												var chest = new Chest(randomTreasures(levelNum));
-												chest.sprite.x = xpos;
-												chest.sprite.y = ypos;
-												level.addThing(chest);
-									}
-						}
-						// Skip some space to the previous arena (working backwards)
-						endx -= arenaWidth * randUniform(1, 1.25) | 0;
-						// Decrease the monster 'budget' so the arenas are slightly easier
-						if (budget > 3) budget--;
-			}
+            ypos = level.findClearSpace(xpos, ypos);
+            if (ypos !== null) {
+                var chest = new Chest(randomTreasures(levelNum));
+                chest.sprite.x = xpos;
+                chest.sprite.y = ypos;
+                level.addThing(chest);
+            }
+        }
+        // Skip some space to the previous arena (working backwards)
+        endx -= arenaWidth * randUniform(1, 1.25) | 0;
+        // Decrease the monster 'budget' so the arenas are slightly easier
+        if (budget > 3) budget--;
+    }
 
-			// Add random coins scattered throughout the level
-			for (var n = 0; n < randint(10, 20); n++) {
-						var xpos = randint(level.camera.width + 10, level.getWidth() - 10);
-						var ypos = randint(10, level.getHeight() - 10);
-						ypos = level.findClearSpace(xpos, ypos);
-						if (ypos !== null) {
-									var coin = new GroundItem(Item.Table.COIN, xpos, ypos);
-									level.addThing(coin);
-						}
-			}
+    // Add random coins scattered throughout the level
+    for (var n = 0; n < randint(10, 20); n++) {
+        var xpos = randint(level.camera.width + 10, level.getWidth() - 10);
+        var ypos = randint(10, level.getHeight() - 10);
+        ypos = level.findClearSpace(xpos, ypos);
+        if (ypos !== null) {
+            var coin = new GroundItem(Item.Table.COIN, xpos, ypos);
+            level.addThing(coin);
+        }
+    }
 
-			// Add some health potions in the second half of the level
-			for (var n = 0; n < randint(1, 5); n++) {
-						var xpos = randint(level.getWidth() / 2, level.getWidth() - 10);
-						var ypos = randint(10, level.getHeight() - 10);
-						ypos = level.findClearSpace(xpos, ypos);
-						if (ypos !== null) {
-									var coin = new GroundItem(Item.Table.SMALL_HEALTH, xpos, ypos);
-									level.addThing(coin);
-						}
-			}
+    // Add some health potions in the second half of the level
+    for (var n = 0; n < randint(1, 5); n++) {
+        var xpos = randint(level.getWidth() / 2, level.getWidth() - 10);
+        var ypos = randint(10, level.getHeight() - 10);
+        ypos = level.findClearSpace(xpos, ypos);
+        if (ypos !== null) {
+            var coin = new GroundItem(Item.Table.SMALL_HEALTH, xpos, ypos);
+            level.addThing(coin);
+        }
+    }
 
-			if (levelNum === 0) {
-						// First level in the game. Add a chest of starter items. Have the 
-						// chest eject items to the right away from the first NPC. (so none
-						// of the items become hidden behind)
-						var items = [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.SMALL_SWORD];
-						var chest = new Chest(items, { ejectX: 1 });
-						chest.sprite.x = 60;
-						chest.sprite.y = 24;
-						level.addThing(chest);
+    if (levelNum === 0) {
+        // First level in the game. Add a chest of starter items. Have the 
+        // chest eject items to the right away from the first NPC. (so none
+        // of the items become hidden behind)
+        var items = [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.SMALL_SWORD];
+        var chest = new Chest(items, { ejectX: 1 });
+        chest.sprite.x = 60;
+        chest.sprite.y = 24;
+        level.addThing(chest);
 
-						// Add an NPC to give the player some dialog
-						var npc = new NPC();
-						npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
-						npc.sprite.x = 46;
-						npc.sprite.y = 25;
-						level.addThing(npc);
+        // Add an NPC to give the player some dialog
+        var npc = new NPC();
+        npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
+        npc.sprite.x = 46;
+        npc.sprite.y = 25;
+        level.addThing(npc);
 
-						// Add an NPC to give the player some dialog
-						var npc = new NPC("npc3_south_1");
-						npc.setDialog("GOOD LUCK!");
-						npc.sprite.x = 80;
-						npc.sprite.y = 40;
-						level.addThing(npc);
-			}
+        // Add an NPC to give the player some dialog
+        var npc = new NPC("npc3_south_1");
+        npc.setDialog("GOOD LUCK!");
+        npc.sprite.x = 80;
+        npc.sprite.y = 40;
+        level.addThing(npc);
+    }
 
-			// Add a door to enter the level
-			var door = new Door();
-			door.sprite.x = 20;
-			door.sprite.y = 12.8;
-			level.addThing(door);
+    // Add a door to enter the level
+    var door = new Door();
+    door.sprite.x = 20;
+    door.sprite.y = 12.8;
+    level.addThing(door);
 
-			var scn = new EnterScene(door);
-			level.addThing(scn);
+    var scn = new EnterScene(door);
+    level.addThing(scn);
 
-			// Add a door to exit the level
-			var door = new Door();
-			door.sprite.x = level.getWidth() - 24;
-			door.sprite.y = 12.8;
-			level.exitDoor = door;
-			//door.startOpening();
-			level.addThing(door);
+    // Add a door to exit the level
+    var door = new Door();
+    door.sprite.x = level.getWidth() - 24;
+    door.sprite.y = 12.8;
+    level.exitDoor = door;
+    //door.startOpening();
+    level.addThing(door);
 
-			return level;
+    return level;
 };
 
 module.exports.generateEmpty = function (rows, cols, value) {
-			var grid = Utils.createGrid(rows, cols, value);
-			var bg = new TiledBackground(RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT, Utils.getTextures(RES.MAPTILES), grid);
-			return new Level(bg);
+    var grid = Utils.createGrid(rows, cols, value);
+    var bg = new TiledBackground(RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT, Utils.getTextures(RES.MAPTILES), grid);
+    return new Level(bg);
 };
 
 },{"./arena":1,"./bg":2,"./chest":3,"./door":5,"./gate":8,"./ghost":10,"./goblin":11,"./grounditem":13,"./item":14,"./level":15,"./npc":18,"./res":22,"./skel_warrior":24,"./snake":25,"./utils":29}],10:[function(require,module,exports){
@@ -1809,258 +1809,258 @@ var GOBLIN_GRAVITY = 200;
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
 function Goblin(state) {
-   this.name = "Goblin";
-   this.idleFrame = Utils.getFrame(RES.ENEMIES, "goblin_south_1");
-   this.frames = Utils.getFrames(RES.ENEMIES, Goblin.FRAMES);
-   this.speed = 16;
-   this.health = 3;
-   this.frame = 0;
-   this.facing = 1;
-   // The horizontal and vertical jumping speeds
-   this.jumpVerSpeed = 50;
-   this.jumpHorSpeed = 24;
-   this.dead = false;
-   // How high we're off the ground (when jumping)
-   this.height = 0;
-   // Our Y-position when we started jumping
-   this.jumpStartY = 0;
-   // Our current vertical velocity (when jumping)
-   this.velh = 0;
-   // When approaching the player, how far to keep distance
-   this.approachDist = 30;
-   // At what distance to the player we should do our jump attack
-   this.jumpDist = 20;
-   // When in the approach state, used to determine when to jump at the player
-   this.jumpTimeout = 1.5;
-   this.jumpTimer = 0;
-   // The sprite container holding the monster and splash sprite
-   this.sprite = new PIXI.Container();
-   // The actual goblin sprite
-   this.goblinSprite = new PIXI.Sprite(this.frames[0]);
-   this.goblinSprite.anchor.set(0.5, 6.5 / 8);
-   this.sprite.addChild(this.goblinSprite);
-   // Make the splash/water sprite
-   this.waterSprite = Utils.createSplashSprite();
-   this.waterSprite.y = -0.75;
-   this.sprite.addChild(this.waterSprite);
-   this.knocked = 0;
-   this.knockedTimer = 0;
-   this.state = state || GOBLIN_APPROACH;
-   this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
+    this.name = "Goblin";
+    this.idleFrame = Utils.getFrame(RES.ENEMIES, "goblin_south_1");
+    this.frames = Utils.getFrames(RES.ENEMIES, Goblin.FRAMES);
+    this.speed = 14;
+    this.health = 3;
+    this.frame = 0;
+    this.facing = 1;
+    // The horizontal and vertical jumping speeds
+    this.jumpVerSpeed = 50;
+    this.jumpHorSpeed = 24;
+    this.dead = false;
+    // How high we're off the ground (when jumping)
+    this.height = 0;
+    // Our Y-position when we started jumping
+    this.jumpStartY = 0;
+    // Our current vertical velocity (when jumping)
+    this.velh = 0;
+    // When approaching the player, how far to keep distance
+    this.approachDist = 30;
+    // At what distance to the player we should do our jump attack
+    this.jumpDist = 20;
+    // When in the approach state, used to determine when to jump at the player
+    this.jumpTimeout = 1.5;
+    this.jumpTimer = 0;
+    // The sprite container holding the monster and splash sprite
+    this.sprite = new PIXI.Container();
+    // The actual goblin sprite
+    this.goblinSprite = new PIXI.Sprite(this.frames[0]);
+    this.goblinSprite.anchor.set(0.5, 6.5 / 8);
+    this.sprite.addChild(this.goblinSprite);
+    // Make the splash/water sprite
+    this.waterSprite = Utils.createSplashSprite();
+    this.waterSprite.y = -0.75;
+    this.sprite.addChild(this.waterSprite);
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = state || GOBLIN_APPROACH;
+    this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
 }
 
 Goblin.FRAMES = ["goblin_south_2", "goblin_south_3"];
 
 Goblin.prototype.getDropTable = function () {
-   return [[Item.Table.COIN, 8], [Item.Table.SMALL_HEALTH, 6], [Item.Table.ARROW, 4], [Item.Table.STEEL_ARMOUR, 1], [Item.Table.LARGE_BOW, 1]];
+    return [[Item.Table.COIN, 8], [Item.Table.SMALL_HEALTH, 6], [Item.Table.ARROW, 4], [Item.Table.STEEL_ARMOUR, 1], [Item.Table.LARGE_BOW, 1]];
 };
 
 Goblin.prototype.update = function (dt) {
-   switch (this.state) {
-      case GOBLIN_ATTACKING:
-         this.updateAttacking(dt);
-         break;
-      case GOBLIN_START_JUMP:
-         // Jump at the player
-         this.sprite.zpos = this.sprite.y;
-         this.height = 0;
-         this.jumpStartY = this.sprite.y;
-         this.velh = this.jumpVerSpeed;
-         this.waterSprite.visible = false;
-         this.state = GOBLIN_JUMPING;
-         break;
-      case GOBLIN_JUMPING:
-         this.updateJumping(dt);
-         break;
-      case GOBLIN_APPROACH:
-         this.updateApproach(dt);
-         break;
-      case GOBLIN_HURT:
-         this.updateHurt(dt);
-         break;
-      case GOBLIN_DEAD:
-         this.level.removeThing(this);
-         break;
-   }
+    switch (this.state) {
+        case GOBLIN_ATTACKING:
+            this.updateAttacking(dt);
+            break;
+        case GOBLIN_START_JUMP:
+            // Jump at the player
+            this.sprite.zpos = this.sprite.y;
+            this.height = 0;
+            this.jumpStartY = this.sprite.y;
+            this.velh = this.jumpVerSpeed;
+            this.waterSprite.visible = false;
+            this.state = GOBLIN_JUMPING;
+            break;
+        case GOBLIN_JUMPING:
+            this.updateJumping(dt);
+            break;
+        case GOBLIN_APPROACH:
+            this.updateApproach(dt);
+            break;
+        case GOBLIN_HURT:
+            this.updateHurt(dt);
+            break;
+        case GOBLIN_DEAD:
+            this.level.removeThing(this);
+            break;
+    }
 };
 
 Goblin.prototype.updateJumping = function (dt) {
-   this.velh -= GOBLIN_GRAVITY * dt;
-   this.height += this.velh * dt;
-   if (this.height <= 0) {
-      // Hit the ground. Go back to carefully approaching the player. Also
-      // we snap the Y-position to the ground to avoid cumulative rounding
-      // errors if we jump repeatedly.
-      this.sprite.y = this.jumpStartY;
-      this.state = GOBLIN_APPROACH;
-      return;
-   }
-   this.sprite.y = this.jumpStartY - this.height;
+    this.velh -= GOBLIN_GRAVITY * dt;
+    this.height += this.velh * dt;
+    if (this.height <= 0) {
+        // Hit the ground. Go back to carefully approaching the player. Also
+        // we snap the Y-position to the ground to avoid cumulative rounding
+        // errors if we jump repeatedly.
+        this.sprite.y = this.jumpStartY;
+        this.state = GOBLIN_APPROACH;
+        return;
+    }
+    this.sprite.y = this.jumpStartY - this.height;
 
-   // Check if we can move where we want to
-   var x = this.sprite.x + this.facing * this.jumpHorSpeed * dt;
-   var tile = this.level.bg.getTileAt(x, this.jumpStartY);
-   if (!tile.solid) {
-      this.sprite.x = x;
-   }
+    // Check if we can move where we want to
+    var x = this.sprite.x + this.facing * this.jumpHorSpeed * dt;
+    var tile = this.level.bg.getTileAt(x, this.jumpStartY);
+    if (!tile.solid) {
+        this.sprite.x = x;
+    }
 };
 
 Goblin.prototype.updateAttacking = function (dt) {
-   // Rush towards the player
-   var player = this.level.player;
-   var dx = 0,
-       dy = 0;
+    // Rush towards the player
+    var player = this.level.player;
+    var dx = 0,
+        dy = 0;
 
-   if (player.sprite.x > this.sprite.x) {
-      dx = 2 * this.speed * dt;
-      this.facing = 1;
-   } else {
-      dx = -2 * this.speed * dt;
-      this.facing = -1;
-   }
-   this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
+    if (player.sprite.x > this.sprite.x) {
+        dx = 1.5 * this.speed * dt;
+        this.facing = 1;
+    } else {
+        dx = -1.5 * this.speed * dt;
+        this.facing = -1;
+    }
+    this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
 
-   // Go back to a careful approach if the player is facing us (note the
-   // goblin always faces the player)
-   if (player.facing * this.facing < 0) {
-      this.state = GOBLIN_APPROACH;
-      return;
-   }
+    // Go back to a careful approach if the player is facing us (note the
+    // goblin always faces the player)
+    if (player.facing * this.facing < 0) {
+        this.state = GOBLIN_APPROACH;
+        return;
+    }
 
-   if (Math.abs(this.sprite.x - player.sprite.x) < this.jumpDist) {
-      this.state = GOBLIN_START_JUMP;
-      return;
-   }
+    if (Math.abs(this.sprite.x - player.sprite.x) < this.jumpDist) {
+        this.state = GOBLIN_START_JUMP;
+        return;
+    }
 
-   // Move up/down towards the player more slowly (and don't overshoot)
-   var dist = player.sprite.y - this.sprite.y;
-   if (Math.abs(dist) > 5) {
-      dy = dt * 20 * Math.sign(dist);
-   }
+    // Move up/down towards the player more slowly (and don't overshoot)
+    var dist = player.sprite.y - this.sprite.y;
+    if (Math.abs(dist) > 5) {
+        dy = dt * 20 * Math.sign(dist);
+    }
 
-   // Check if we can move left/right
-   var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
-   if (!tile.solid) {
-      this.sprite.x += dx;
-      this.waterSprite.visible = tile.water;
-   }
+    // Check if we can move left/right
+    var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
+    if (!tile.solid) {
+        this.sprite.x += dx;
+        this.waterSprite.visible = tile.water;
+    }
 
-   // Now check if it can move up/down. Doing this separately from the check
-   // above means we can "slide" along walls and such.
-   var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
-   if (!tile2.solid) {
-      // Go a bit faster if we're just moving up/down
-      if (tile.solid) this.sprite.y += 3 * dy;else {
-         this.sprite.y += dy;
-         this.waterSprite.visible = tile2.water;
-      }
-   }
-   this.frame += 4 * dt;
-   this.goblinSprite.texture = this.frames[this.frame % this.frames.length | 0];
+    // Now check if it can move up/down. Doing this separately from the check
+    // above means we can "slide" along walls and such.
+    var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
+    if (!tile2.solid) {
+        // Go a bit faster if we're just moving up/down
+        if (tile.solid) this.sprite.y += 3 * dy;else {
+            this.sprite.y += dy;
+            this.waterSprite.visible = tile2.water;
+        }
+    }
+    this.frame += 4 * dt;
+    this.goblinSprite.texture = this.frames[this.frame % this.frames.length | 0];
 };
 
 Goblin.prototype.updateApproach = function (dt) {
-   // Move towards the player, but try to keep a fixed distance away. 
-   // Initially the target is set to the player's position, plus/minus
-   // a fixed offset.
-   var player = this.level.player;
-   var targetx = 0;
+    // Move towards the player, but try to keep a fixed distance away. 
+    // Initially the target is set to the player's position, plus/minus
+    // a fixed offset.
+    var player = this.level.player;
+    var targetx = 0;
 
-   if (this.sprite.x < player.sprite.x) {
-      targetx = player.sprite.x - this.approachDist;
-      this.facing = 1;
-   } else if (this.sprite.x > player.sprite.x) {
-      targetx = player.sprite.x + this.approachDist;
-      this.facing = -1;
-   }
-   this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
+    if (this.sprite.x < player.sprite.x) {
+        targetx = player.sprite.x - this.approachDist;
+        this.facing = 1;
+    } else if (this.sprite.x > player.sprite.x) {
+        targetx = player.sprite.x + this.approachDist;
+        this.facing = -1;
+    }
+    this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
 
-   // Rush the player for an attack, if they're facing away from us
-   // (note the goblin always faces the player)
-   if (player.facing * this.facing > 0) {
-      this.state = GOBLIN_ATTACKING;
-      return;
-   }
+    // Rush the player for an attack, if they're facing away from us
+    // (note the goblin always faces the player)
+    if (player.facing * this.facing > 0) {
+        this.state = GOBLIN_ATTACKING;
+        return;
+    }
 
-   this.jumpTimer += dt;
-   if (this.jumpTimer > this.jumpTimeout) {
-      this.jumpTimer = 0;
-      this.state = GOBLIN_START_JUMP;
-      return;
-   }
+    this.jumpTimer += dt;
+    if (this.jumpTimer > this.jumpTimeout) {
+        this.jumpTimer = 0;
+        this.state = GOBLIN_START_JUMP;
+        return;
+    }
 
-   // Add a bit of variation to the target position, so the goblin kind of
-   // waivers back and forth making it a bit harder to hit.
-   var dx = 0;
-   var dy = 0;
-   targetx += 15 * Math.cos(this.frame / 4);
-   if (Math.abs(this.sprite.x - targetx) > 2) {
-      dx = this.speed * dt * Math.sign(targetx - this.sprite.x);
-   }
+    // Add a bit of variation to the target position, so the goblin kind of
+    // waivers back and forth making it a bit harder to hit.
+    var dx = 0;
+    var dy = 0;
+    targetx += 15 * Math.cos(this.frame / 4);
+    if (Math.abs(this.sprite.x - targetx) > 2) {
+        dx = this.speed * dt * Math.sign(targetx - this.sprite.x);
+    }
 
-   // Move up/down towards the player more slowly (and don't overshoot)
-   var dist = player.sprite.y + 50 * Math.sin(this.frame / 2) - this.sprite.y;
-   if (Math.abs(dist) > 2) {
-      dy = dt * 30 * Math.sign(dist);
-   }
-   // Check if we can move where we want to
-   var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y + dy);
-   if (!tile.solid) {
-      this.sprite.x += dx;
-      this.sprite.y += dy;
-      this.waterSprite.visible = tile.water;
-   }
-   this.frame += 4 * dt;
-   this.goblinSprite.texture = this.frames[this.frame % this.frames.length | 0];
+    // Move up/down towards the player more slowly (and don't overshoot)
+    var dist = player.sprite.y + 50 * Math.sin(this.frame / 2) - this.sprite.y;
+    if (Math.abs(dist) > 2) {
+        dy = dt * 30 * Math.sign(dist);
+    }
+    // Check if we can move where we want to
+    var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y + dy);
+    if (!tile.solid) {
+        this.sprite.x += dx;
+        this.sprite.y += dy;
+        this.waterSprite.visible = tile.water;
+    }
+    this.frame += 4 * dt;
+    this.goblinSprite.texture = this.frames[this.frame % this.frames.length | 0];
 };
 
 Goblin.prototype.updateHurt = function (dt) {
-   // Slide backwards from the hit
-   if (this.knockedTimer > 0) {
-      var dx = this.knocked * dt;
-      var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
-      if (!tile.solid) {
-         this.sprite.x += dx;
-      }
-      this.knockedTimer -= dt;
-   } else {
-      // Resume/start attacking
-      this.state = GOBLIN_APPROACH;
-      // Also increase the rate of jumping at the player (when approaching)
-      this.jumpTimeout *= 0.5;
-   }
+    // Slide backwards from the hit
+    if (this.knockedTimer > 0) {
+        var dx = this.knocked * dt;
+        var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
+        if (!tile.solid) {
+            this.sprite.x += dx;
+        }
+        this.knockedTimer -= dt;
+    } else {
+        // Resume/start attacking
+        this.state = GOBLIN_APPROACH;
+        // Also increase the rate of jumping at the player (when approaching)
+        this.jumpTimeout *= 0.5;
+    }
 };
 
 Goblin.prototype.handleHit = function (srcx, srcy, dmg) {
-   var player = this.level.player;
+    var player = this.level.player;
 
-   if (this.state === GOBLIN_DEAD) return false;
-   this.health -= 1;
-   if (this.health <= 0) {
-      Utils.getSound(RES.DEAD_SND).play();
-      this.state = GOBLIN_DEAD;
-      // Drop a reward
-      this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
-      player.handleMonsterKilled(this);
-      this.dead = true;
-   } else {
-      Utils.getSound(RES.SNAKE_HURT_SND).play();
-      this.knocked = Math.sign(this.sprite.x - srcx) * 60;
-      this.knockedTimer = 0.1;
-      this.state = GOBLIN_HURT;
-   }
+    if (this.state === GOBLIN_DEAD) return false;
+    this.health -= 1;
+    if (this.health <= 0) {
+        Utils.getSound(RES.DEAD_SND).play();
+        this.state = GOBLIN_DEAD;
+        // Drop a reward
+        this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
+        player.handleMonsterKilled(this);
+        this.dead = true;
+    } else {
+        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        this.knocked = Math.sign(this.sprite.x - srcx) * 60;
+        this.knockedTimer = 0.1;
+        this.state = GOBLIN_HURT;
+    }
 
-   // Add some random blood, but only if we're not currently in water
-   // (looks better this way)
-   var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
-   if (!tile.water) {
-      this.level.createBloodSpatter(this.sprite.x, this.sprite.y - 1);
-   }
-   return true;
+    // Add some random blood, but only if we're not currently in water
+    // (looks better this way)
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    if (!tile.water) {
+        this.level.createBloodSpatter(this.sprite.x, this.sprite.y - 1);
+    }
+    return true;
 };
 
 Goblin.prototype.handlePlayerCollision = function (player) {
-   player.takeDamage(2, this);
+    player.takeDamage(2, this);
 };
 
 module.exports = Goblin;
@@ -2096,59 +2096,59 @@ var Utils = require("./utils");
  * then change it's appearance accordingly (eg play go animation) */
 
 function GoMarker(screen) {
-   this.screen = screen;
-   this.frames = [Utils.getFrame(RES.UI, "go1"), Utils.getFrame(RES.UI, "go2")];
-   this.sprite = new PIXI.Sprite(this.frames[0]);
-   this.sprite.anchor.set(1, 0);
-   this.timer = 0;
-   this.dings = 3;
-   this.frameNum = 0;
-   this.done = true;
-   this.sprite.visible = false;
+    this.screen = screen;
+    this.frames = [Utils.getFrame(RES.UI, "go1"), Utils.getFrame(RES.UI, "go2")];
+    this.sprite = new PIXI.Sprite(this.frames[0]);
+    this.sprite.anchor.set(1, 0);
+    this.timer = 0;
+    this.dings = 3;
+    this.frameNum = 0;
+    this.done = true;
+    this.sprite.visible = false;
 }
 
 GoMarker.prototype.show = function () {
-   this.done = false;
-   this.timer = 0;
-   this.dings = 3;
-   this.frameNum = 0;
-   this.sprite.visible = true;
-   this.sprite.texture = this.frames[0];
+    this.done = false;
+    this.timer = 0;
+    this.dings = 3;
+    this.frameNum = 0;
+    this.sprite.visible = true;
+    this.sprite.texture = this.frames[0];
 };
 
 GoMarker.prototype.hide = function () {
-   this.done = true;
-   this.sprite.visible = false;
+    this.done = true;
+    this.sprite.visible = false;
 };
 
 GoMarker.prototype.update = function (dt) {
-   var level = this.screen.level;
-   if (!this.sprite.visible) {
-      // Become visible if the level is ready to advance to the next arena
-      if (level.state === level.SHOWING_GO) {
-         this.show();
-      }
-      return;
-   }
+    var level = this.screen.level;
+    if (!this.sprite.visible) {
+        // Become visible if the level is ready to advance to the next arena
+        if (level.state === level.SHOWING_GO) {
+            this.show();
+        }
+        return;
+    }
 
-   if (this.done) {
-      // Hide when the player is advancing to the next arena
-      if (level.state !== level.SHOWING_GO) {
-         this.hide();
-      }
-      return;
-   }
+    if (this.done) {
+        // Hide when the player is advancing to the next arena
+        if (level.state !== level.SHOWING_GO) {
+            this.hide();
+        }
+        return;
+    }
 
-   var next = this.timer + dt;
-   if (this.timer < 0.3 && next >= 0.3) {
-      if (this.dings-- > 0) Utils.getSound(RES.GO_SND).play();else this.done = true;
-      this.frameNum = 1;
-   } else if (this.timer < 1 && next >= 1) {
-      this.frameNum = 0;
-      next = 0;
-   }
-   this.timer = next;
-   this.sprite.texture = this.frames[this.frameNum];
+    var next = this.timer + dt;
+    if (this.timer < 0.3 && next >= 0.3) {
+        if (this.dings-- > 0) Utils.getSound(RES.GO_SND).play();else this.done = true;
+        this.frameNum = 1;
+    } else if (this.timer < 1 && next >= 1) {
+        this.frameNum = 0;
+        next = 0;
+    }
+    this.timer = next;
+    this.sprite.texture = this.frames[this.frameNum];
 };
 
 GoMarker.prototype.handleHit = function (x, y, dmg) {};
@@ -2190,72 +2190,72 @@ var ITEM_GRAVITY = 120;
 /**************/
 
 function GroundItem(item, x, y) {
-  var img = Utils.getFrame(RES.GROUND_ITEMS, item.image);
-  this.sprite = new PIXI.Sprite(img);
-  this.sprite.anchor.set(0.5, 0.6);
-  this.height = 0;
-  this.sprite.x = x;
-  this.sprite.y = y;
-  this.ypos = y;
-  this.item = item;
-  // Make the render depth fixed here, otherwise as the item bounces it
-  // will seem like it's moving back into the scene. (ie disappears behind
-  // other sprites)
-  this.sprite.zpos = y;
-  this.velx = 0;
-  this.velz = 0;
-  this.velh = 0;
-  this.bouncy = 0.5;
-  this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    var img = Utils.getFrame(RES.GROUND_ITEMS, item.image);
+    this.sprite = new PIXI.Sprite(img);
+    this.sprite.anchor.set(0.5, 0.6);
+    this.height = 0;
+    this.sprite.x = x;
+    this.sprite.y = y;
+    this.ypos = y;
+    this.item = item;
+    // Make the render depth fixed here, otherwise as the item bounces it
+    // will seem like it's moving back into the scene. (ie disappears behind
+    // other sprites)
+    this.sprite.zpos = y;
+    this.velx = 0;
+    this.velz = 0;
+    this.velh = 0;
+    this.bouncy = 0.5;
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
 }
 
 GroundItem.prototype.update = function (dt) {
-  if (this.velh !== 0) {
-    // First move the item into/out of the scene (Z-axis) and make sure
-    // we don't bump into anything.
-    if (this.velz !== 0) {
-      var dz = this.velz * dt;
-      var tile = this.level.bg.getTileAt(this.sprite.x, this.ypos + dz);
-      // If we connect with a wall, don't bother bouncing off
-      if (tile.solid) this.velz = 0;else {
-        this.ypos += dz;
-        this.sprite.zpos += dz;
-      }
-    }
+    if (this.velh !== 0) {
+        // First move the item into/out of the scene (Z-axis) and make sure
+        // we don't bump into anything.
+        if (this.velz !== 0) {
+            var dz = this.velz * dt;
+            var tile = this.level.bg.getTileAt(this.sprite.x, this.ypos + dz);
+            // If we connect with a wall, don't bother bouncing off
+            if (tile.solid) this.velz = 0;else {
+                this.ypos += dz;
+                this.sprite.zpos += dz;
+            }
+        }
 
-    // Move the item left/right having it bounce off walls too. Note we
-    // check the "floor" position of the item instead of the sprite pos.
-    var dx = this.velx * dt;
-    var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.ypos);
-    if (tile.solid) {
-      this.velx *= -1;
-    } else {
-      this.sprite.x += dx;
-    }
-    this.velh += ITEM_GRAVITY * dt;
-    this.height -= this.velh * dt;
+        // Move the item left/right having it bounce off walls too. Note we
+        // check the "floor" position of the item instead of the sprite pos.
+        var dx = this.velx * dt;
+        var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.ypos);
+        if (tile.solid) {
+            this.velx *= -1;
+        } else {
+            this.sprite.x += dx;
+        }
+        this.velh += ITEM_GRAVITY * dt;
+        this.height -= this.velh * dt;
 
-    // Have the item bounce up/down until it comes to rest
-    if (this.height <= 0) {
-      if (this.velh < 10) {
-        this.velh = 0;
-      } else {
-        this.velh *= -this.bouncy;
-        this.height = 0;
-      }
+        // Have the item bounce up/down until it comes to rest
+        if (this.height <= 0) {
+            if (this.velh < 10) {
+                this.velh = 0;
+            } else {
+                this.velh *= -this.bouncy;
+                this.height = 0;
+            }
+        }
+        this.sprite.y = this.ypos - this.height;
     }
-    this.sprite.y = this.ypos - this.height;
-  }
 };
 
 GroundItem.prototype.handlePlayerCollision = function (player) {
-  // The player takes the item if it's falling down (or resting) and close
-  // enough to the ground.
-  if (this.height < 3 && this.velh >= 0) {
-    if (this.item && player.handleTakeItem(this.item)) {
-      this.level.removeThing(this);
+    // The player takes the item if it's falling down (or resting) and close
+    // enough to the ground.
+    if (this.height < 3 && this.velh >= 0) {
+        if (this.item && player.handleTakeItem(this.item)) {
+            this.level.removeThing(this);
+        }
     }
-  }
 };
 
 module.exports = GroundItem;
@@ -2311,14 +2311,12 @@ Item.prototype.isBow = function () {
     return this.type === Item.BOW;
 };
 
+// The various item types
 Item.OTHER = 0;
 Item.SWORD = 1;
 Item.BOW = 2;
 Item.ARMOUR = 3;
 Item.HEALTH = 4;
-
-// TODO - it would be nice to have item properties stored with the item.
-// (eg type of item, size, value, etc) But this is easy for demo purposes.
 
 // The list of takeable items. The values here are used to identify the items
 // as well as referring to images on the GROUND_ITEMS sprite sheet.
@@ -2375,10 +2373,10 @@ var GroundItem = require("./grounditem");
 /**********/
 
 function Camera(w, h) {
-   this.x = 0;
-   this.y = 0;
-   this.width = w;
-   this.height = h;
+    this.x = 0;
+    this.y = 0;
+    this.width = w;
+    this.height = h;
 }
 
 //Camera.autoFit
@@ -2390,42 +2388,42 @@ function Camera(w, h) {
 // Helper function for sorting sprites by depth, so sprites in the backround
 // are drawn below sprites in the foreground.
 function compareDepth(s1, s2) {
-   var z1 = s1.zpos || s1.y;
-   var z2 = s2.zpos || s2.y;
-   return (z1 > z2) - (z2 > z1);
+    var z1 = s1.zpos || s1.y;
+    var z2 = s2.zpos || s2.y;
+    return (z1 > z2) - (z2 > z1);
 }
 
 function Level(bg) {
-   // The various level states:
-   // Player is within an active arena
-   this.ACTIVE_ARENA = 1;
-   // Showing the go arrow, indicating the player should advance forward
-   this.SHOWING_GO = 2;
-   // Player is moving towards next arena (not active yet)
-   this.NEXT_ARENA = 3;
-   // All monsters defeated - exit is open
-   this.EXIT_OPEN = 4;
-   // Player has passed through the exit
-   this.FINISHED = 5;
+    // The various level states:
+    // Player is within an active arena
+    this.ACTIVE_ARENA = 1;
+    // Showing the go arrow, indicating the player should advance forward
+    this.SHOWING_GO = 2;
+    // Player is moving towards next arena (not active yet)
+    this.NEXT_ARENA = 3;
+    // All monsters defeated - exit is open
+    this.EXIT_OPEN = 4;
+    // Player has passed through the exit
+    this.FINISHED = 5;
 
-   this.camera = new Camera(100, 65);
-   this.player = null;
-   this.stage = null;
-   this.state = this.NEXT_ARENA;
-   // The background sprite (TiledBackground)
-   this.bg = bg;
-   this.bg.zpos = Level.BACKGROUND_POS;
-   // List of enemies, interactable objects etc and the player
-   this.things = [];
-   // The PIXI container for everything we want to draw
-   this.stage = new PIXI.Container();
-   this.stage.addChild(this.bg.sprite);
-   // List of arenas in this level (Arena instances)
-   this.arenas = [];
-   // Current active arena (number)
-   this.arenaNum = 0;
-   this.smoothTracking = true;
-   this.exitDoor = null;
+    this.camera = new Camera(100, 65);
+    this.player = null;
+    this.stage = null;
+    this.state = this.NEXT_ARENA;
+    // The background sprite (TiledBackground)
+    this.bg = bg;
+    this.bg.zpos = Level.BACKGROUND_POS;
+    // List of enemies, interactable objects etc and the player
+    this.things = [];
+    // The PIXI container for everything we want to draw
+    this.stage = new PIXI.Container();
+    this.stage.addChild(this.bg.sprite);
+    // List of arenas in this level (Arena instances)
+    this.arenas = [];
+    // Current active arena (number)
+    this.arenaNum = 0;
+    this.smoothTracking = true;
+    this.exitDoor = null;
 }
 
 Level.BEHIND_BACKGROUND_POS = -1;
@@ -2435,349 +2433,349 @@ Level.FRONT_POS = 10000;
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function () {
-   return this.bg.sprite.width;
+    return this.bg.sprite.width;
 };
 
 // Returns the height of the level in pixels (ie render size)
 Level.prototype.getHeight = function () {
-   return this.bg.sprite.height;
+    return this.bg.sprite.height;
 };
 
 /* Find some clear space to spawn a thing at the given location. This code
  * looks up/down until it finds the first pixel of free space. Returns the
  * y-position of that free space. */
 Level.prototype.findClearSpace = function (x, y) {
-   var offset = 0;
-   while (true) {
-      var north = this.bg.getTileAt(x, y + offset);
-      var south = this.bg.getTileAt(x, y - offset);
-      if (!north.solid) {
-         return y + offset;
-      }
-      if (!south.solid) {
-         return y - offset;
-      }
-      if (y + offset > this.getHeight() && y - offset < 0) {
-         // We've gone completely outside the level - no space found
-         return null;
-      }
-      offset += RES.TILE_HEIGHT;
-   }
+    var offset = 0;
+    while (true) {
+        var north = this.bg.getTileAt(x, y + offset);
+        var south = this.bg.getTileAt(x, y - offset);
+        if (!north.solid) {
+            return y + offset;
+        }
+        if (!south.solid) {
+            return y - offset;
+        }
+        if (y + offset > this.getHeight() && y - offset < 0) {
+            // We've gone completely outside the level - no space found
+            return null;
+        }
+        offset += RES.TILE_HEIGHT;
+    }
 };
 
 /* Adds an arena to this level. This function also maintains the correct
  * ordering of arenas sorted by ending position. */
 Level.prototype.addArena = function (arena) {
-   this.arenas.push(arena);
-   this.arenas.sort(function (a1, a2) {
-      return (a1.endx > a2.endx) - (a2.endx > a1.endx);
-   });
+    this.arenas.push(arena);
+    this.arenas.sort(function (a1, a2) {
+        return (a1.endx > a2.endx) - (a2.endx > a1.endx);
+    });
 };
 
 // Called every frame to update the general level state
 Level.prototype.update = function (dt) {
-   var arena = this.arenas[this.arenaNum];
-   switch (this.state) {
-      case this.ACTIVE_ARENA:
-         // Wait for the current arena to be finished (ie player defeats 
-         // all the monsters)
-         if (arena.done) {
-            if (this.arenaNum < this.arenas.length - 1) {
-               // Show the "go forward" marker
-               //gamestate.screen.goMarker.show();
-               // Advance to the next arena
-               this.arenaNum++;
-               this.state = this.SHOWING_GO;
+    var arena = this.arenas[this.arenaNum];
+    switch (this.state) {
+        case this.ACTIVE_ARENA:
+            // Wait for the current arena to be finished (ie player defeats 
+            // all the monsters)
+            if (arena.done) {
+                if (this.arenaNum < this.arenas.length - 1) {
+                    // Show the "go forward" marker
+                    //gamestate.screen.goMarker.show();
+                    // Advance to the next arena
+                    this.arenaNum++;
+                    this.state = this.SHOWING_GO;
+                } else {
+                    // No more arenas - open the exit door
+                    this.state = this.EXIT_OPEN;
+                    if (this.exitDoor) this.exitDoor.startOpening();
+                }
             } else {
-               // No more arenas - open the exit door
-               this.state = this.EXIT_OPEN;
-               if (this.exitDoor) this.exitDoor.startOpening();
+                arena.update(dt);
             }
-         } else {
-            arena.update(dt);
-         }
-         // Update the camera - the player has full mobility within the 
-         // start and stop bounds of the arena.
-         //var xpos = this.player.sprite.x - this.camera.width/2;
-         //xpos = Math.max(xpos, arena.startx);
-         //xpos = Math.min(xpos, arena.endx-this.camera.width);
-         break;
+            // Update the camera - the player has full mobility within the 
+            // start and stop bounds of the arena.
+            //var xpos = this.player.sprite.x - this.camera.width/2;
+            //xpos = Math.max(xpos, arena.startx);
+            //xpos = Math.min(xpos, arena.endx-this.camera.width);
+            break;
 
-      case this.SHOWING_GO:
-         // Wait for the player to move the level forward by "pushing" the
-         // edge of the screen.
-         if (this.player.sprite.x > this.camera.x + this.camera.width * 0.8) {
-            this.state = this.NEXT_ARENA;
-            this.smoothTracking = true;
-         }
-         break;
-
-      case this.NEXT_ARENA:
-         // Update the camera to track the player. Have the camera move
-         // smoothly towards the player to avoid jumping around.
-         var xpos = this.player.sprite.x - this.camera.width / 2;
-         xpos = Math.max(xpos, 0);
-         xpos = Math.min(xpos, this.bg.sprite.width - this.camera.width);
-         if (this.smoothTracking) {
-            var dirx = Math.sign(xpos - this.camera.x);
-            this.camera.x += dt * 1.25 * this.player.maxSpeed * dirx;
-            if (dirx != Math.sign(xpos - this.camera.x)) {
-               // Overshot the target, stop smoothly tracking
-               this.smoothTracking = false;
+        case this.SHOWING_GO:
+            // Wait for the player to move the level forward by "pushing" the
+            // edge of the screen.
+            if (this.player.sprite.x > this.camera.x + this.camera.width * 0.8) {
+                this.state = this.NEXT_ARENA;
+                this.smoothTracking = true;
             }
-         } else {
-            this.camera.x = xpos;
-         }
+            break;
 
-         // Also remove the go marker (if it's done animated) since the player
-         // already knows to move forward by now.
-         /*if (gamestate.screen.goMarker.sprite.visible && 
-             gamestate.screen.goMarker.done) {
-             gamestate.screen.goMarker.hide();
-         }*/
+        case this.NEXT_ARENA:
+            // Update the camera to track the player. Have the camera move
+            // smoothly towards the player to avoid jumping around.
+            var xpos = this.player.sprite.x - this.camera.width / 2;
+            xpos = Math.max(xpos, 0);
+            xpos = Math.min(xpos, this.bg.sprite.width - this.camera.width);
+            if (this.smoothTracking) {
+                var dirx = Math.sign(xpos - this.camera.x);
+                this.camera.x += dt * 1.25 * this.player.maxSpeed * dirx;
+                if (dirx != Math.sign(xpos - this.camera.x)) {
+                    // Overshot the target, stop smoothly tracking
+                    this.smoothTracking = false;
+                }
+            } else {
+                this.camera.x = xpos;
+            }
 
-         // Wait for the player to move into the next arena
-         if (arena && this.camera.x + this.camera.width >= arena.endx) {
-            // Snap the camera into place and activate the next arena
-            this.camera.x = arena.endx - this.camera.width;
-            arena.activate();
-            this.state = this.ACTIVE_ARENA;
-            // If somehow the go marker is sticking around (maybe the player
-            // is moving _really_ fast) remove it now, done or not.
-            /*if (gamestate.screen.goMarker.sprite.visible) {
-            gamestate.screen.goMarker.hide();
-            }*/
-         }
-         break;
+            // Also remove the go marker (if it's done animated) since the player
+            // already knows to move forward by now.
+            /*if (gamestate.screen.goMarker.sprite.visible && 
+              gamestate.screen.goMarker.done) {
+              gamestate.screen.goMarker.hide();
+              }*/
 
-      case this.EXIT_OPEN:
-         break;
+            // Wait for the player to move into the next arena
+            if (arena && this.camera.x + this.camera.width >= arena.endx) {
+                // Snap the camera into place and activate the next arena
+                this.camera.x = arena.endx - this.camera.width;
+                arena.activate();
+                this.state = this.ACTIVE_ARENA;
+                // If somehow the go marker is sticking around (maybe the player
+                // is moving _really_ fast) remove it now, done or not.
+                /*if (gamestate.screen.goMarker.sprite.visible) {
+                  gamestate.screen.goMarker.hide();
+                  }*/
+            }
+            break;
 
-   }
+        case this.EXIT_OPEN:
+            break;
 
-   // TODO - this could be better optimized by despawning things that are
-   // no longer visible. (ie blood spatters etc)
+    }
 
-   // Re-sort the sprites by Z-depth so things are rendered in the correct
-   // order.
-   this.stage.children.sort(compareDepth);
-   // Position the camera
-   this.stage.x = -this.camera.x;
-   this.stage.y = -this.camera.y;
-   // Update everything in the level
-   var _iteratorNormalCompletion = true;
-   var _didIteratorError = false;
-   var _iteratorError = undefined;
+    // TODO - this could be better optimized by despawning things that are
+    // no longer visible. (ie blood spatters etc)
 
-   try {
-      for (var _iterator = this.things[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-         var thing = _step.value;
+    // Re-sort the sprites by Z-depth so things are rendered in the correct
+    // order.
+    this.stage.children.sort(compareDepth);
+    // Position the camera
+    this.stage.x = -this.camera.x;
+    this.stage.y = -this.camera.y;
+    // Update everything in the level
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-         if (thing.update) thing.update(dt);
-      }
-   } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-         }
-      } finally {
-         if (_didIteratorError) {
-            throw _iteratorError;
-         }
-      }
-   }
+    try {
+        for (var _iterator = this.things[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var thing = _step.value;
+
+            if (thing.update) thing.update(dt);
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
 };
 
 /* Check if the given hitbox, at the given position, overlaps with any thing 
  * in the level. Can also supply a thing to ignore when making the check. 
  * This function is used to determine if a projectile strikes a target. */
 Level.prototype.checkHit = function (x, y, hitbox, ignore) {
-   var xp = x + hitbox.x,
-       yp = y + hitbox.y;
-   var w = hitbox.w,
-       h = hitbox.h;
-   //var thing = null;
-   //for (var n = 0; n < this.things.length; n++) 
-   var _iteratorNormalCompletion2 = true;
-   var _didIteratorError2 = false;
-   var _iteratorError2 = undefined;
+    var xp = x + hitbox.x,
+        yp = y + hitbox.y;
+    var w = hitbox.w,
+        h = hitbox.h;
+    //var thing = null;
+    //for (var n = 0; n < this.things.length; n++) 
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
-   try {
-      for (var _iterator2 = this.things[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-         var thing = _step2.value;
+    try {
+        for (var _iterator2 = this.things[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var thing = _step2.value;
 
-         //thing = this.things[n];
-         if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
-            return thing;
-         }
-      }
-   } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-         }
-      } finally {
-         if (_didIteratorError2) {
-            throw _iteratorError2;
-         }
-      }
-   }
+            //thing = this.things[n];
+            if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
+                return thing;
+            }
+        }
+    } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+            }
+        } finally {
+            if (_didIteratorError2) {
+                throw _iteratorError2;
+            }
+        }
+    }
 
-   return null;
+    return null;
 };
 
 /* Returns a list of things that overlap with the given hitbox at a given
  * position within the level. (useful for checking if the player has collided
  * with any monsters) */
 Level.prototype.checkHitMany = function (x, y, hitbox, ignore) {
-   var xp = x + hitbox.x,
-       yp = y + hitbox.y;
-   var w = hitbox.w,
-       h = hitbox.h;
-   //var thing = null;
-   var hit = [];
-   //for (var n = 0; n < this.things.length; n++) 
-   var _iteratorNormalCompletion3 = true;
-   var _didIteratorError3 = false;
-   var _iteratorError3 = undefined;
+    var xp = x + hitbox.x,
+        yp = y + hitbox.y;
+    var w = hitbox.w,
+        h = hitbox.h;
+    //var thing = null;
+    var hit = [];
+    //for (var n = 0; n < this.things.length; n++) 
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
-   try {
-      for (var _iterator3 = this.things[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-         var thing = _step3.value;
+    try {
+        for (var _iterator3 = this.things[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var thing = _step3.value;
 
-         //thing = this.things[n];
-         if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
-            hit.push(thing);
-         }
-      }
-   } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion3 && _iterator3.return) {
-            _iterator3.return();
-         }
-      } finally {
-         if (_didIteratorError3) {
-            throw _iteratorError3;
-         }
-      }
-   }
+            //thing = this.things[n];
+            if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
+                hit.push(thing);
+            }
+        }
+    } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
+            }
+        } finally {
+            if (_didIteratorError3) {
+                throw _iteratorError3;
+            }
+        }
+    }
 
-   return hit;
+    return hit;
 };
 
 // Add a 'thing' to the level and it's sprite to the render stage
 Level.prototype.addThing = function (thing) {
-   thing.level = this;
-   this.things.push(thing);
-   if (thing.sprite) {
-      this.stage.addChild(thing.sprite);
-   }
+    thing.level = this;
+    this.things.push(thing);
+    if (thing.sprite) {
+        this.stage.addChild(thing.sprite);
+    }
 };
 
 // Remove a 'thing' remove the level and it's sprite from the stage
 Level.prototype.removeThing = function (thing) {
-   var i = this.things.indexOf(thing);
-   if (i >= 0) {
-      this.things[i] = this.things[this.things.length - 1];
-      this.things.pop();
-      thing.level = null;
-   }
+    var i = this.things.indexOf(thing);
+    if (i >= 0) {
+        this.things[i] = this.things[this.things.length - 1];
+        this.things.pop();
+        thing.level = null;
+    }
 
-   if (thing.sprite && thing.sprite.parent) {
-      thing.sprite.parent.removeChild(thing.sprite);
-   }
+    if (thing.sprite && thing.sprite.parent) {
+        thing.sprite.parent.removeChild(thing.sprite);
+    }
 };
 
 Level.prototype.handleTreasureDrop = function (table, x, y) {
-   // Pick an item entry from the table, using a weighted probability pick
-   // Entries look like: [item_number, weight]. First sum all the weights
-   // and pick a random number up to that total.
-   var total = 0;
-   var _iteratorNormalCompletion4 = true;
-   var _didIteratorError4 = false;
-   var _iteratorError4 = undefined;
+    // Pick an item entry from the table, using a weighted probability pick
+    // Entries look like: [item_number, weight]. First sum all the weights
+    // and pick a random number up to that total.
+    var total = 0;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
-   try {
-      for (var _iterator4 = table[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-         var entry = _step4.value;
+    try {
+        for (var _iterator4 = table[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var entry = _step4.value;
 
-         total += entry[1];
-      }
-      // Pick a random number, then iterate over the items and find what 
-      // item it corresponds to.
-   } catch (err) {
-      _didIteratorError4 = true;
-      _iteratorError4 = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
-         }
-      } finally {
-         if (_didIteratorError4) {
-            throw _iteratorError4;
-         }
-      }
-   }
+            total += entry[1];
+        }
+        // Pick a random number, then iterate over the items and find what 
+        // item it corresponds to.
+    } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
+            }
+        } finally {
+            if (_didIteratorError4) {
+                throw _iteratorError4;
+            }
+        }
+    }
 
-   var pick = null;
-   var num = Utils.randint(0, total);
-   var _iteratorNormalCompletion5 = true;
-   var _didIteratorError5 = false;
-   var _iteratorError5 = undefined;
+    var pick = null;
+    var num = Utils.randint(0, total);
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
 
-   try {
-      for (var _iterator5 = table[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-         var _entry = _step5.value;
+    try {
+        for (var _iterator5 = table[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var _entry = _step5.value;
 
-         num -= _entry[1];
-         if (num <= 0) {
-            pick = _entry[0];
-            break;
-         }
-      }
-      // Drop the item
-   } catch (err) {
-      _didIteratorError5 = true;
-      _iteratorError5 = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion5 && _iterator5.return) {
-            _iterator5.return();
-         }
-      } finally {
-         if (_didIteratorError5) {
-            throw _iteratorError5;
-         }
-      }
-   }
+            num -= _entry[1];
+            if (num <= 0) {
+                pick = _entry[0];
+                break;
+            }
+        }
+        // Drop the item
+    } catch (err) {
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                _iterator5.return();
+            }
+        } finally {
+            if (_didIteratorError5) {
+                throw _iteratorError5;
+            }
+        }
+    }
 
-   if (pick !== null) {
-      var gnd = new GroundItem(pick, x, y);
-      gnd.velx = 10 * (x > this.camera.x ? -1 : 1);
-      gnd.velh = -40;
-      this.addThing(gnd);
-   }
+    if (pick !== null) {
+        var gnd = new GroundItem(pick, x, y);
+        gnd.velx = 10 * (x > this.camera.x ? -1 : 1);
+        gnd.velh = -40;
+        this.addThing(gnd);
+    }
 };
 
 Level.prototype.createBloodSpatter = function (x, y, imgs) {
-   var txt = Utils.randomChoice(imgs || ["blood1", "blood2", "blood3"]);
-   var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAPTILES, txt));
-   sprite.zpos = Level.FLOOR_POS;
-   sprite.anchor.set(0.5, 0.5);
-   sprite.x = x;
-   sprite.y = y;
-   this.stage.addChild(sprite);
-   return sprite;
+    var txt = Utils.randomChoice(imgs || ["blood1", "blood2", "blood3"]);
+    var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAPTILES, txt));
+    sprite.zpos = Level.FLOOR_POS;
+    sprite.anchor.set(0.5, 0.5);
+    sprite.x = x;
+    sprite.y = y;
+    this.stage.addChild(sprite);
+    return sprite;
 };
 
 module.exports = Level;
@@ -2820,110 +2818,110 @@ var Utils = require("./utils");
  * includes the level itself, PIXI container (staging area for rendering),
  * and the UI elements. (health bar, etc) */
 function LevelScreen() {
-   // The various states this screen can be in
-   this.NEW_GAME = 1;
-   this.PLAYING = 2;
-   this.NEXT_LEVEL = 3;
-   this.GAME_OVER = 4;
+    // The various states this screen can be in
+    this.NEW_GAME = 1;
+    this.PLAYING = 2;
+    this.NEXT_LEVEL = 3;
+    this.GAME_OVER = 4;
 
-   this.levelNum = 0;
-   this.level = null;
-   this.state = this.NEW_GAME;
+    this.levelNum = 0;
+    this.level = null;
+    this.state = this.NEW_GAME;
 
-   this.stage = new PIXI.Container();
+    this.stage = new PIXI.Container();
 
-   this.healthUI = new UI.HealthUI(this);
-   this.inventoryUI = new UI.InventoryUI(this);
-   this.goMarker = new GoMarker(this);
+    this.healthUI = new UI.HealthUI(this);
+    this.inventoryUI = new UI.InventoryUI(this);
+    this.goMarker = new GoMarker(this);
 
-   this.stage.addChild(this.healthUI.sprite);
-   this.stage.addChild(this.inventoryUI.sprite);
-   this.stage.addChild(this.goMarker.sprite);
+    this.stage.addChild(this.healthUI.sprite);
+    this.stage.addChild(this.inventoryUI.sprite);
+    this.stage.addChild(this.goMarker.sprite);
 }
 
 LevelScreen.prototype.update = function (dt) {
-   switch (this.state) {
-      case this.NEW_GAME:
-         // Generate a new level and player character
-         this.player = new Player();
-         this.player.sprite.x = 0;
-         this.player.sprite.y = 0;
-         this.levelNum = 0;
-         // Generate the first level
-         var level = LevelGenerator.generate(this.levelNum);
-         this.setLevel(level);
-         // Start playing it immediately
-         this.state = this.PLAYING;
-         // Start playing music (fade in). We call restart, which stops the
-         // previously play (if any), rewinds and starts again.
-         Utils.getMusic().restart();
-         Utils.getMusic().fadeIn(1);
-         break;
-
-      case this.PLAYING:
-         if (this.level.state === this.level.FINISHED) {
-            // Proceed to the next level
-            console.log("NEXT LEVEL");
-            level = LevelGenerator.generate(++this.levelNum);
+    switch (this.state) {
+        case this.NEW_GAME:
+            // Generate a new level and player character
+            this.player = new Player();
+            this.player.sprite.x = 0;
+            this.player.sprite.y = 0;
+            this.levelNum = 0;
+            // Generate the first level
+            var level = LevelGenerator.generate(this.levelNum);
             this.setLevel(level);
-         } else if (this.player.dead) {
-            // This triggers the game state machine to advance to the game
-            // over screen. Note there is no stop for sound effects, only 
-            // a pause function. (TODO - why?)
-            Utils.getMusic().pause();
-            this.state = this.GAME_OVER;
-         } else {
-            if (this.level) this.level.update(dt);
-            this.healthUI.update(dt);
-            this.inventoryUI.update(dt);
-            this.goMarker.update(dt);
-         }
-         break;
+            // Start playing it immediately
+            this.state = this.PLAYING;
+            // Start playing music (fade in). We call restart, which stops the
+            // previously play (if any), rewinds and starts again.
+            Utils.getMusic().restart();
+            Utils.getMusic().fadeIn(1);
+            break;
 
-      case this.NEXT_LEVEL:
-         break;
+        case this.PLAYING:
+            if (this.level.state === this.level.FINISHED) {
+                // Proceed to the next level
+                console.log("NEXT LEVEL");
+                level = LevelGenerator.generate(++this.levelNum);
+                this.setLevel(level);
+            } else if (this.player.dead) {
+                // This triggers the game state machine to advance to the game
+                // over screen. Note there is no stop for sound effects, only 
+                // a pause function. (TODO - why?)
+                Utils.getMusic().pause();
+                this.state = this.GAME_OVER;
+            } else {
+                if (this.level) this.level.update(dt);
+                this.healthUI.update(dt);
+                this.inventoryUI.update(dt);
+                this.goMarker.update(dt);
+            }
+            break;
 
-      case this.GAME_OVER:
-         break;
-   }
+        case this.NEXT_LEVEL:
+            break;
+
+        case this.GAME_OVER:
+            break;
+    }
 };
 
 LevelScreen.prototype.render = function () {
-   if (this.level) {
-      Render.getRenderer().render(this.stage);
-   }
+    if (this.level) {
+        Render.getRenderer().render(this.stage);
+    }
 };
 
 LevelScreen.prototype.setLevel = function (level) {
-   // Remove the previous level sprite container
-   if (this.level) {
-      this.stage.removeChild(this.level.stage);
-   }
-   if (!level) return;
+    // Remove the previous level sprite container
+    if (this.level) {
+        this.stage.removeChild(this.level.stage);
+    }
+    if (!level) return;
 
-   var scale = Render.getRenderer().height / level.camera.height;
+    var scale = Render.getRenderer().height / level.camera.height;
 
-   // Revise the camera width to fill the available horizontal space
-   level.camera.width = Render.getRenderer().width / scale;
+    // Revise the camera width to fill the available horizontal space
+    level.camera.width = Render.getRenderer().width / scale;
 
-   this.stage.scale.set(scale);
-   this.stage.addChild(level.stage);
-   // Move the level (container) sprite to the start of the list of
-   // child sprites, so it gets rendered before anything else.
-   // (ie UI elements are drawn on top of the level)
-   this.stage.children.unshift(this.stage.children.pop());
-   this.level = level;
-   // Position the UI just below the level render area
-   this.healthUI.sprite.x = level.camera.width - 1;
-   this.healthUI.sprite.y = level.getHeight() - 1;
-   this.inventoryUI.sprite.x = 6;
-   this.inventoryUI.sprite.y = level.getHeight() + 3;
-   // Put the go marker in the top-right corner of the level area
-   this.goMarker.sprite.x = level.camera.width - 1;
-   this.goMarker.sprite.y = 2;
-   this.level.player = this.player;
-   this.level.addThing(this.player);
-   this.level.update(0);
+    this.stage.scale.set(scale);
+    this.stage.addChild(level.stage);
+    // Move the level (container) sprite to the start of the list of
+    // child sprites, so it gets rendered before anything else.
+    // (ie UI elements are drawn on top of the level)
+    this.stage.children.unshift(this.stage.children.pop());
+    this.level = level;
+    // Position the UI just below the level render area
+    this.healthUI.sprite.x = level.camera.width - 1;
+    this.healthUI.sprite.y = level.getHeight() - 1;
+    this.inventoryUI.sprite.x = 6;
+    this.inventoryUI.sprite.y = level.getHeight() + 3;
+    // Put the go marker in the top-right corner of the level area
+    this.goMarker.sprite.x = level.camera.width - 1;
+    this.goMarker.sprite.y = 2;
+    this.level.player = this.player;
+    this.level.addThing(this.player);
+    this.level.update(0);
 };
 
 module.exports = LevelScreen;
@@ -2963,38 +2961,38 @@ var stage = null;
 var progress = null;
 
 function start() {
-   var div = document.getElementById("canvas_area");
-   div.focus();
+    var div = document.getElementById("canvas_area");
+    div.focus();
 
-   Render.configure(660, 400, div);
+    Render.configure(660, 400, div);
 
-   //renderer = new PIXI.CanvasRenderer(550, 400);
-   stage = new PIXI.Container();
+    //renderer = new PIXI.CanvasRenderer(550, 400);
+    stage = new PIXI.Container();
 
-   progress = new ProgressBar(200, 20, "LOADING IMAGES...");
-   progress.sprite.x = 100;
-   progress.sprite.y = 100;
-   stage.addChild(progress.sprite);
+    progress = new ProgressBar(200, 20, "LOADING IMAGES...");
+    progress.sprite.x = 100;
+    progress.sprite.y = 100;
+    stage.addChild(progress.sprite);
 
-   GameControls.configure();
+    GameControls.configure();
 
-   gamestate = new GameState();
+    gamestate = new GameState();
 
-   function progresscb(loader, resource) {
-      console.log("loading: " + resource.url + " (" + (loader.progress | 0) + "%)");
-      progress.update(loader.progress / 100.0);
-      requestAnimationFrame(function () {
-         Render.getRenderer().render(stage);
-      });
-   }
-   // Add a random query string when loading the JSON files below. This avoids
-   // persistent caching problems, where the browser (eg FF) uses the cached
-   // without checking in with the server first.
-   var now = new Date().getTime();
-   PIXI.loader.defaultQueryString = "nocache=" + now;
-   PIXI.loader.add(RES.MALE_MELEE).add(RES.FEMALE_MELEE).add(RES.NPC_TILESET).add(RES.MAPTILES).add(RES.ENEMIES).add(RES.WEAPONS).add(RES.GROUND_ITEMS).add(RES.UI).add(RES.DRAGON)
-   //.add({name: "hit", url: "media/hit.wav"})
-   .on("progress", progresscb).load(graphicsLoaded);
+    function progresscb(loader, resource) {
+        console.log("loading: " + resource.url + " (" + (loader.progress | 0) + "%)");
+        progress.update(loader.progress / 100.0);
+        requestAnimationFrame(function () {
+            Render.getRenderer().render(stage);
+        });
+    }
+    // Add a random query string when loading the JSON files below. This avoids
+    // persistent caching problems, where the browser (eg FF) uses the cached
+    // without checking in with the server first.
+    var now = new Date().getTime();
+    PIXI.loader.defaultQueryString = "nocache=" + now;
+    PIXI.loader.add(RES.MALE_MELEE).add(RES.FEMALE_MELEE).add(RES.NPC_TILESET).add(RES.MAPTILES).add(RES.ENEMIES).add(RES.WEAPONS).add(RES.GROUND_ITEMS).add(RES.UI).add(RES.DRAGON)
+    //.add({name: "hit", url: "media/hit.wav"})
+    .on("progress", progresscb).load(graphicsLoaded);
 }
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
@@ -3009,68 +3007,68 @@ var lastCheck = 0;
 var fps = 0;
 var lastTime = null;
 function gameLoop() {
-   var now = new Date().getTime() / 1000.0;
-   var dt = 0;
-   if (lastTime) {
-      var dt = Math.min(1.0 / 30, now - lastTime);
-      //dt /= 4;
-   }
-   lastTime = now;
+    var now = new Date().getTime() / 1000.0;
+    var dt = 0;
+    if (lastTime) {
+        var dt = Math.min(1.0 / 30, now - lastTime);
+        //dt /= 4;
+    }
+    lastTime = now;
 
-   fps++;
-   if (now - lastCheck >= 2) {
-      //console.log(fps/(now-lastCheck));
-      lastCheck = now;
-      fps = 0;
-   }
+    fps++;
+    if (now - lastCheck >= 2) {
+        //console.log(fps/(now-lastCheck));
+        lastCheck = now;
+        fps = 0;
+    }
 
-   gamestate.update(dt);
-   GameControls.update();
-   gamestate.render();
-   requestAnimationFrame(gameLoop);
+    gamestate.update(dt);
+    GameControls.update();
+    gamestate.render();
+    requestAnimationFrame(gameLoop);
 }
 
 function graphicsLoaded() {
-   sounds.whenLoaded = audioLoaded;
-   sounds.onFailed = function (source) {
-      console.log("Failed to load audio file: " + source);
-   };
-   // Show and update the new progress bar for loading audio
-   progress.setText("LOADING AUDIO...");
-   sounds.onProgress = function (percent) {
-      progress.update(percent / 100.0);
-      requestAnimationFrame(function () {
-         Render.getRenderer().render(stage);
-      });
-   };
-   sounds.load([RES.ATTACK_SWORD_SND, RES.SNAKE_HURT_SND, RES.DEAD_SND, RES.ARROW_DING_SND, RES.SPLASH_SND, RES.GO_SND, RES.HIT_SND, RES.COIN_SND, RES.GATE_SND, RES.DROP_SND, RES.POWERUP1_SND, RES.POWERUP2_SND, RES.POWERUP3_SND, RES.POWERUP4_SND, RES.CHEST_SND, RES.GAME_MUSIC]);
+    sounds.whenLoaded = audioLoaded;
+    sounds.onFailed = function (source) {
+        console.log("Failed to load audio file: " + source);
+    };
+    // Show and update the new progress bar for loading audio
+    progress.setText("LOADING AUDIO...");
+    sounds.onProgress = function (percent) {
+        progress.update(percent / 100.0);
+        requestAnimationFrame(function () {
+            Render.getRenderer().render(stage);
+        });
+    };
+    sounds.load([RES.ATTACK_SWORD_SND, RES.SNAKE_HURT_SND, RES.DEAD_SND, RES.ARROW_DING_SND, RES.SPLASH_SND, RES.GO_SND, RES.HIT_SND, RES.COIN_SND, RES.GATE_SND, RES.DROP_SND, RES.POWERUP1_SND, RES.POWERUP2_SND, RES.POWERUP3_SND, RES.POWERUP4_SND, RES.CHEST_SND, RES.GAME_MUSIC]);
 }
 
 function audioLoaded() {
-   /* TODO - error handling here */
-   setup();
+    /* TODO - error handling here */
+    setup();
 }
 
 function setup() {
-   for (name in PIXI.loader.resources) {
-      var err = PIXI.loader.resources[name].error;
-      if (err) {
-         console.log("Failed to load image: " + name + " (" + err + ")");
-      }
-   }
+    for (name in PIXI.loader.resources) {
+        var err = PIXI.loader.resources[name].error;
+        if (err) {
+            console.log("Failed to load image: " + name + " (" + err + ")");
+        }
+    }
 
-   //stage.removeChild(progress.sprite);
-   stage.children = [];
+    //stage.removeChild(progress.sprite);
+    stage.children = [];
 
-   Utils.getMusic().loop = true;
-   Utils.getMusic().volume = 0.5;
+    Utils.getMusic().loop = true;
+    Utils.getMusic().volume = 0.5;
 
-   requestAnimationFrame(gameLoop);
+    requestAnimationFrame(gameLoop);
 }
 
 module.exports = {
-   gamestate: gamestate,
-   start: start
+    gamestate: gamestate,
+    start: start
 };
 
 },{"./controls":4,"./gamestate":7,"./progress":20,"./render":21,"./res":22,"./utils":29}],18:[function(require,module,exports){
@@ -3185,393 +3183,393 @@ var DAMAGE_TINT = 0xFF0000;
 var NO_TINT = 0xFFFFFF;
 
 function Player() {
-   this.sprite = null;
-   this.velx = 0;
-   this.vely = 0;
-   this.accelx = 0;
-   this.accely = 0;
-   this.frame = 0;
-   this.frames = null;
-   this.lungeFrame = null;
-   this.count = 0;
-   this.facing = 1;
-   // Player health in half hearts. This should always be a multiple of two
-   this.maxHealth = 10;
-   this.health = this.maxHealth;
-   this.maxSpeed = 40; // pixels/second
-   // Inventory stuff
-   this.numCoins = 0;
-   this.numArrows = 0;
-   this.armour = Item.Table.NONE;
-   this.bow = Item.Table.NONE;
-   this.sword = Item.Table.NONE;
-   // Whether the user has free control over the player (set to false 
-   // during a cutscene)
-   this.hasControl = true;
-   this.dirx = 0;
-   this.diry = 0;
-   // Process of dying (showing animation)
-   this.dying = false;
-   // Actually dead
-   this.dead = false;
-   // The number of kills (stored by monster name). Also stores the 
-   // image of the monster (for displaying stats later)
-   //     {count: ZZZ, img: ZZZ}
-   this.kills = {};
+    this.sprite = null;
+    this.velx = 0;
+    this.vely = 0;
+    this.accelx = 0;
+    this.accely = 0;
+    this.frame = 0;
+    this.frames = null;
+    this.lungeFrame = null;
+    this.count = 0;
+    this.facing = 1;
+    // Player health in half hearts. This should always be a multiple of two
+    this.maxHealth = 10;
+    this.health = this.maxHealth;
+    this.maxSpeed = 40; // pixels/second
+    // Inventory stuff
+    this.numCoins = 0;
+    this.numArrows = 0;
+    this.armour = Item.Table.NONE;
+    this.bow = Item.Table.NONE;
+    this.sword = Item.Table.NONE;
+    // Whether the user has free control over the player (set to false 
+    // during a cutscene)
+    this.hasControl = true;
+    this.dirx = 0;
+    this.diry = 0;
+    // Process of dying (showing animation)
+    this.dying = false;
+    // Actually dead
+    this.dead = false;
+    // The number of kills (stored by monster name). Also stores the 
+    // image of the monster (for displaying stats later)
+    //     {count: ZZZ, img: ZZZ}
+    this.kills = {};
 
-   // Whether the player movement is restricted by the camera position.
-   // Disabled during cut scenes and whatnot.
-   this.cameraMovement = true;
+    // Whether the player movement is restricted by the camera position.
+    // Disabled during cut scenes and whatnot.
+    this.cameraMovement = true;
 
-   /*this.handleMonsterKilled(new Snake());
-   this.handleMonsterKilled(new Goblin());
-   this.handleMonsterKilled(new Rat());
-   this.handleMonsterKilled(new Scorpion());
-   this.handleMonsterKilled(new SkelWarrior());
-   this.handleMonsterKilled(new Ghost());*/
+    /*this.handleMonsterKilled(new Snake());
+      this.handleMonsterKilled(new Goblin());
+      this.handleMonsterKilled(new Rat());
+      this.handleMonsterKilled(new Scorpion());
+      this.handleMonsterKilled(new SkelWarrior());
+      this.handleMonsterKilled(new Ghost());*/
 
-   // Define the hitbox
-   this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
+    // Define the hitbox
+    this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
 
-   this.setCharFrames(RES.FEMALE_MELEE, "melee1");
-   /* Setup a PIXI container to hold the player sprite, and any other 
-    * equipment they're carrying. */
-   this.sprite = new PIXI.Container();
-   // Setup the player sprite (texture comes later)
-   this.spriteChar = new PIXI.Sprite();
-   this.spriteChar.anchor.set(0.5, 1);
-   this.sprite.addChild(this.spriteChar);
-   // Setup the sprite for when the player is treading water
-   this.waterSprite = Utils.createSplashSprite();
-   this.waterSprite.y = -1.5;
-   this.sprite.addChild(this.waterSprite);
+    this.setCharFrames(RES.FEMALE_MELEE, "melee1");
+    /* Setup a PIXI container to hold the player sprite, and any other 
+     * equipment they're carrying. */
+    this.sprite = new PIXI.Container();
+    // Setup the player sprite (texture comes later)
+    this.spriteChar = new PIXI.Sprite();
+    this.spriteChar.anchor.set(0.5, 1);
+    this.sprite.addChild(this.spriteChar);
+    // Setup the sprite for when the player is treading water
+    this.waterSprite = Utils.createSplashSprite();
+    this.waterSprite.y = -1.5;
+    this.sprite.addChild(this.waterSprite);
 
-   // Minimum amount of time after taking damage, until the player can be
-   // damaged again.
-   this.damageCooldown = 1;
-   // The timer used for tracking the cooldown
-   this.damageTimer = 0;
+    // Minimum amount of time after taking damage, until the player can be
+    // damaged again.
+    this.damageCooldown = 1;
+    // The timer used for tracking the cooldown
+    this.damageTimer = 0;
 
-   this.weaponSlot = null;
+    this.weaponSlot = null;
 
-   // Knockback timer and speed
-   this.knockedTimer = 0;
-   this.knocked = 0;
-   // Weapon slots are used to manage the weapon sprite. (ie attack and
-   // running animations, etc) We add both slot sprites to the player sprite,
-   // then use the 'visible' flag to control which is rendered.
-   this.bowWeaponSlot = new WeaponSlot.Bow(this);
-   this.swordWeaponSlot = new WeaponSlot.Sword(this);
-   this.sprite.addChild(this.bowWeaponSlot.sprite);
-   this.sprite.addChild(this.swordWeaponSlot.sprite);
-   this.bowWeaponSlot.sprite.visible = false;
-   this.swordWeaponSlot.sprite.visible = false;
+    // Knockback timer and speed
+    this.knockedTimer = 0;
+    this.knocked = 0;
+    // Weapon slots are used to manage the weapon sprite. (ie attack and
+    // running animations, etc) We add both slot sprites to the player sprite,
+    // then use the 'visible' flag to control which is rendered.
+    this.bowWeaponSlot = new WeaponSlot.Bow(this);
+    this.swordWeaponSlot = new WeaponSlot.Sword(this);
+    this.sprite.addChild(this.bowWeaponSlot.sprite);
+    this.sprite.addChild(this.swordWeaponSlot.sprite);
+    this.bowWeaponSlot.sprite.visible = false;
+    this.swordWeaponSlot.sprite.visible = false;
 }
 
 Player.prototype.faceDirection = function (dirx) {
-   this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
+    this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
 };
 
 Player.prototype.update = function (dt) {
-   var dirx = 0;
-   var diry = 0;
+    var dirx = 0;
+    var diry = 0;
 
-   if (this.dead) return;
+    if (this.dead) return;
 
-   // Handle dying state animation
-   if (this.dying) {
-      this.frame += 2.5 * dt;
-      if (this.frame > this.dyingFrames.length - 1) {
-         this.frame = this.dyingFrames.length - 1;
-         this.dead = true;
-      }
-      var frame = this.dyingFrames[this.frame | 0];
-      this.spriteChar.texture = frame;
-      return;
-   }
+    // Handle dying state animation
+    if (this.dying) {
+        this.frame += 2.5 * dt;
+        if (this.frame > this.dyingFrames.length - 1) {
+            this.frame = this.dyingFrames.length - 1;
+            this.dead = true;
+        }
+        var frame = this.dyingFrames[this.frame | 0];
+        this.spriteChar.texture = frame;
+        return;
+    }
 
-   // Check if the player has just died
-   if (this.health <= 0) {
-      this.dying = true;
-      this.frame = 0;
-      this.weaponSlot = null;
-      this.updatePlayerAppearance();
-      this.spriteChar.tint = NO_TINT;
-      // Bring the player corpse to the front (so it's rendered very 
-      // clearly overtop any other junk in the scene)
-      this.level.stage.removeChild(this.sprite);
-      this.level.stage.addChild(this.sprite);
-      return;
-   }
+    // Check if the player has just died
+    if (this.health <= 0) {
+        this.dying = true;
+        this.frame = 0;
+        this.weaponSlot = null;
+        this.updatePlayerAppearance();
+        this.spriteChar.tint = NO_TINT;
+        // Bring the player corpse to the front (so it's rendered very 
+        // clearly overtop any other junk in the scene)
+        this.level.stage.removeChild(this.sprite);
+        this.level.stage.addChild(this.sprite);
+        return;
+    }
 
-   var controls = GameControls.getControls();
+    var controls = GameControls.getControls();
 
-   if (this.knockedTimer <= 0) {
-      if (this.hasControl) {
-         dirx = controls.getX();
-         diry = controls.getY();
-      } else {
-         dirx = this.dirx;
-         diry = this.diry;
-      }
-   } else {
-      this.velx = this.knocked;
-      this.knockedTimer -= dt;
-   }
+    if (this.knockedTimer <= 0) {
+        if (this.hasControl) {
+            dirx = controls.getX();
+            diry = controls.getY();
+        } else {
+            dirx = this.dirx;
+            diry = this.diry;
+        }
+    } else {
+        this.velx = this.knocked;
+        this.knockedTimer -= dt;
+    }
 
-   if (this.damageTimer > 0) {
-      this.damageTimer -= dt;
-      if (this.damageTimer <= 0 || this.damageCooldown - this.damageTimer > 0.1) {
-         // Stop flashing red
-         this.spriteChar.tint = NO_TINT;
-      }
-   }
-   this.count += dt;
+    if (this.damageTimer > 0) {
+        this.damageTimer -= dt;
+        if (this.damageTimer <= 0 || this.damageCooldown - this.damageTimer > 0.1) {
+            // Stop flashing red
+            this.spriteChar.tint = NO_TINT;
+        }
+    }
+    this.count += dt;
 
-   if (dirx) {
-      // Handle walking left/right by mirroring the sprite
-      this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
-      this.velx = dirx * this.maxSpeed;
-      this.facing = Math.sign(dirx);
-   } else {
-      this.velx *= 0.75;
-   }
+    if (dirx) {
+        // Handle walking left/right by mirroring the sprite
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
+        this.velx = dirx * this.maxSpeed;
+        this.facing = Math.sign(dirx);
+    } else {
+        this.velx *= 0.75;
+    }
 
-   if (diry) {
-      this.vely = diry * this.maxSpeed;
-   } else {
-      this.vely *= 0.75;
-   }
+    if (diry) {
+        this.vely = diry * this.maxSpeed;
+    } else {
+        this.vely *= 0.75;
+    }
 
-   if (dirx || diry) {
-      this.frame += dt;
-   } else {
-      this.frame = 0;
-   }
+    if (dirx || diry) {
+        this.frame += dt;
+    } else {
+        this.frame = 0;
+    }
 
-   var speed = Math.sqrt(this.velx * this.velx + this.vely * this.vely);
-   if (speed > this.maxSpeed) {
-      this.velx = this.velx * (this.maxSpeed / speed);
-      this.vely = this.vely * (this.maxSpeed / speed);
-   }
-   var w = this.spriteChar.texture.width * 0.75;
+    var speed = Math.sqrt(this.velx * this.velx + this.vely * this.vely);
+    if (speed > this.maxSpeed) {
+        this.velx = this.velx * (this.maxSpeed / speed);
+        this.vely = this.vely * (this.maxSpeed / speed);
+    }
+    var w = this.spriteChar.texture.width * 0.75;
 
-   // Handle left/right movement
-   if (this.velx) {
-      var x = this.sprite.x + this.velx * dt;
-      var left = this.level.bg.getTileAt(x - w / 2, this.sprite.y);
-      var right = this.level.bg.getTileAt(x + w / 2, this.sprite.y);
-      // Keep the player visible to the camera (unless camera mode disabled)
-      if (!left.solid && !right.solid && (!this.cameraMovement || x - w / 2 >= this.level.camera.x && x + w / 2 <= this.level.camera.x + this.level.camera.width)) {
-         this.sprite.x = x;
-      } else {
-         this.velx = 0;
-      }
-   }
-   if (this.vely) {
-      var y = this.sprite.y + this.vely * dt;
-      var left = this.level.bg.getTileAt(this.sprite.x - w / 2, y);
-      var right = this.level.bg.getTileAt(this.sprite.x + w / 2, y);
-      if (!left.solid && !right.solid) {
-         this.sprite.y = y;
-      } else {
-         this.vely = 0;
-      }
-   }
+    // Handle left/right movement
+    if (this.velx) {
+        var x = this.sprite.x + this.velx * dt;
+        var left = this.level.bg.getTileAt(x - w / 2, this.sprite.y);
+        var right = this.level.bg.getTileAt(x + w / 2, this.sprite.y);
+        // Keep the player visible to the camera (unless camera mode disabled)
+        if (!left.solid && !right.solid && (!this.cameraMovement || x - w / 2 >= this.level.camera.x && x + w / 2 <= this.level.camera.x + this.level.camera.width)) {
+            this.sprite.x = x;
+        } else {
+            this.velx = 0;
+        }
+    }
+    if (this.vely) {
+        var y = this.sprite.y + this.vely * dt;
+        var left = this.level.bg.getTileAt(this.sprite.x - w / 2, y);
+        var right = this.level.bg.getTileAt(this.sprite.x + w / 2, y);
+        if (!left.solid && !right.solid) {
+            this.sprite.y = y;
+        } else {
+            this.vely = 0;
+        }
+    }
 
-   // Make a splashy sound when we enter water
-   var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
-   if (tile.water) {
-      if (!this.waterSprite.visible) Utils.getSound(RES.SPLASH_SND).play();
-      this.waterSprite.visible = true;
-   } else {
-      this.waterSprite.visible = false;
-   }
+    // Make a splashy sound when we enter water
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    if (tile.water) {
+        if (!this.waterSprite.visible) Utils.getSound(RES.SPLASH_SND).play();
+        this.waterSprite.visible = true;
+    } else {
+        this.waterSprite.visible = false;
+    }
 
-   if (controls.testKey && !controls.lastTestKey) this.health = 0;
+    if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
-   // Handle attacking
-   if (this.weaponSlot && this.hasControl) {
-      if (controls.primary && !controls.lastPrimary) {
-         // Just hit the attack button
-         this.weaponSlot.startAttack();
-      }
-      if (!controls.primary && controls.lastPrimary) {
-         // Just released the attack button
-         this.weaponSlot.stopAttack();
-      }
-      if (this.weaponSlot.update) this.weaponSlot.update(dt);
-   }
+    // Handle attacking
+    if (this.weaponSlot && this.hasControl) {
+        if (controls.primary && !controls.lastPrimary) {
+            // Just hit the attack button
+            this.weaponSlot.startAttack();
+        }
+        if (!controls.primary && controls.lastPrimary) {
+            // Just released the attack button
+            this.weaponSlot.stopAttack();
+        }
+        if (this.weaponSlot.update) this.weaponSlot.update(dt);
+    }
 
-   if (controls.swap && !controls.lastSwap) {
-      this.swapWeapons();
-   }
+    if (controls.swap && !controls.lastSwap) {
+        this.swapWeapons();
+    }
 
-   // Check for collisions with other things
-   var hit = this.level.checkHitMany(this.sprite.x, this.sprite.y, this.hitbox, this);
-   for (var n = 0; n < hit.length; n++) {
-      if (hit[n].handlePlayerCollision) {
-         hit[n].handlePlayerCollision(this);
-      }
-   }
+    // Check for collisions with other things
+    var hit = this.level.checkHitMany(this.sprite.x, this.sprite.y, this.hitbox, this);
+    for (var n = 0; n < hit.length; n++) {
+        if (hit[n].handlePlayerCollision) {
+            hit[n].handlePlayerCollision(this);
+        }
+    }
 
-   // Update animation
-   var frame = this.frames[(this.frame * 10 | 0) % this.frames.length];
-   this.spriteChar.texture = frame;
+    // Update animation
+    var frame = this.frames[(this.frame * 10 | 0) % this.frames.length];
+    this.spriteChar.texture = frame;
 };
 
 Player.prototype.setCharFrames = function (res, name) {
-   this.frames = Utils.getFrames(res, [name + "_south_1", name + "_south_2", name + "_south_3"]);
-   this.lungeFrame = Utils.getFrame(res, name + "_lunge_1");
-   this.dyingFrames = Utils.getFrames(res, ["melee1_dying_1", "melee1_dying_2", "melee1_dying_3"]);
+    this.frames = Utils.getFrames(res, [name + "_south_1", name + "_south_2", name + "_south_3"]);
+    this.lungeFrame = Utils.getFrame(res, name + "_lunge_1");
+    this.dyingFrames = Utils.getFrames(res, ["melee1_dying_1", "melee1_dying_2", "melee1_dying_3"]);
 };
 
 Player.prototype.setArmour = function (item) {
-   // Change the player appearance based on their armour
-   this.armour = item;
-   this.updatePlayerAppearance();
+    // Change the player appearance based on their armour
+    this.armour = item;
+    this.updatePlayerAppearance();
 };
 
 Player.prototype.updatePlayerAppearance = function () {
-   // Update the player character sprite, based on the armour we're wearing
-   var img = "melee1";
-   if (this.armour === Item.Table.LEATHER_ARMOUR) img = "melee2";else if (this.armour == Item.Table.STEEL_ARMOUR) img = "melee3";
-   this.setCharFrames(RES.FEMALE_MELEE, img);
-   // Update the sword sprite
-   // ...
-   // Update the bow sprite
-   // ...
-   var b = this.weaponSlot === this.bowWeaponSlot;
-   this.bowWeaponSlot.sprite.visible = b;
+    // Update the player character sprite, based on the armour we're wearing
+    var img = "melee1";
+    if (this.armour === Item.Table.LEATHER_ARMOUR) img = "melee2";else if (this.armour == Item.Table.STEEL_ARMOUR) img = "melee3";
+    this.setCharFrames(RES.FEMALE_MELEE, img);
+    // Update the sword sprite
+    // ...
+    // Update the bow sprite
+    // ...
+    var b = this.weaponSlot === this.bowWeaponSlot;
+    this.bowWeaponSlot.sprite.visible = b;
 
-   var b = this.weaponSlot === this.swordWeaponSlot;
-   this.swordWeaponSlot.sprite.visible = b;
+    var b = this.weaponSlot === this.swordWeaponSlot;
+    this.swordWeaponSlot.sprite.visible = b;
 
-   if (this.weaponSlot) this.weaponSlot.update(0);
+    if (this.weaponSlot) this.weaponSlot.update(0);
 };
 
 Player.prototype.upgradeSword = function (item) {
-   // Switch over to the sword if we don't have a weapon equipped
-   if (!this.weaponSlot) {
-      this.weaponSlot = this.swordWeaponSlot;
-   }
-   this.sword = item;
-   this.updatePlayerAppearance();
+    // Switch over to the sword if we don't have a weapon equipped
+    if (!this.weaponSlot) {
+        this.weaponSlot = this.swordWeaponSlot;
+    }
+    this.sword = item;
+    this.updatePlayerAppearance();
 };
 
 Player.prototype.upgradeBow = function (item) {
-   // Switch over to the bow if we don't have a weapon equipped
-   if (!this.weaponSlot) {
-      this.weaponSlot = this.bowWeaponSlot;
-   }
-   this.bow = item;
-   this.updatePlayerAppearance();
+    // Switch over to the bow if we don't have a weapon equipped
+    if (!this.weaponSlot) {
+        this.weaponSlot = this.bowWeaponSlot;
+    }
+    this.bow = item;
+    this.updatePlayerAppearance();
 };
 
 Player.prototype.upgradeArmour = function (item) {
-   this.setArmour(item);
-   Utils.getSound(RES.POWERUP2_SND).play();
+    this.setArmour(item);
+    Utils.getSound(RES.POWERUP2_SND).play();
 };
 
 Player.prototype.healDamage = function (amt) {
-   if (this.health < this.maxHealth) {
-      this.health = Math.min(this.health + amt, this.maxHealth);
-      Utils.getSound(RES.POWERUP4_SND).volume = 1.25;
-      Utils.getSound(RES.POWERUP4_SND).play();
-   }
+    if (this.health < this.maxHealth) {
+        this.health = Math.min(this.health + amt, this.maxHealth);
+        Utils.getSound(RES.POWERUP4_SND).volume = 1.25;
+        Utils.getSound(RES.POWERUP4_SND).play();
+    }
 };
 
 Player.prototype.takeDamage = function (amt, src) {
-   if (this.damageTimer <= 0) {
-      // Adjust the damage parameters based on our armour
-      var cooldown = this.damageCooldown;
-      var knockedVel = 100;
-      var knockedTimer = 0.1;
+    if (this.damageTimer <= 0) {
+        // Adjust the damage parameters based on our armour
+        var cooldown = this.damageCooldown;
+        var knockedVel = 100;
+        var knockedTimer = 0.1;
 
-      if (this.armour === Item.Table.LEATHER_ARMOUR) {
-         cooldown = this.damageCooldown * 1.25;
-         knockedVel = 90;
-         knockedTimer = 0.08;
-         if (Utils.randint(1, 4) === 1) {
-            if (amt > 1) amt--;
-         }
-      } else if (this.armour === Item.Table.STEEL_ARMOUR) {
-         cooldown = this.damageCooldown * 1.5;
-         knockedVel = 80;
-         knockedTimer = 0.05;
-         if (Utils.randint(1, 2) === 1) {
-            amt--;
-         }
-      }
+        if (this.armour === Item.Table.LEATHER_ARMOUR) {
+            cooldown = this.damageCooldown * 1.25;
+            knockedVel = 90;
+            knockedTimer = 0.08;
+            if (Utils.randint(1, 4) === 1) {
+                if (amt > 1) amt--;
+            }
+        } else if (this.armour === Item.Table.STEEL_ARMOUR) {
+            cooldown = this.damageCooldown * 1.5;
+            knockedVel = 80;
+            knockedTimer = 0.05;
+            if (Utils.randint(1, 2) === 1) {
+                amt--;
+            }
+        }
 
-      Utils.getSound(RES.HIT_SND).play();
+        Utils.getSound(RES.HIT_SND).play();
 
-      // Take damage and have the player flash red for a moment
-      this.health -= amt;
-      this.damageTimer = this.damageCooldown;
-      this.spriteChar.tint = DAMAGE_TINT;
-      // Knock the player back a bit too
-      this.knocked = knockedVel * Math.sign(this.sprite.x - src.sprite.x);
-      this.knockedTimer = knockedTimer;
-   }
+        // Take damage and have the player flash red for a moment
+        this.health -= amt;
+        this.damageTimer = this.damageCooldown;
+        this.spriteChar.tint = DAMAGE_TINT;
+        // Knock the player back a bit too
+        this.knocked = knockedVel * Math.sign(this.sprite.x - src.sprite.x);
+        this.knockedTimer = knockedTimer;
+    }
 };
 
 Player.prototype.swapWeapons = function () {
-   if (this.weaponSlot === this.swordWeaponSlot && this.bow) {
-      this.weaponSlot = this.bowWeaponSlot;
-      this.updatePlayerAppearance();
-   } else if (this.weaponSlot === this.bowWeaponSlot && this.sword) {
-      this.weaponSlot = this.swordWeaponSlot;
-      this.updatePlayerAppearance();
-   }
+    if (this.weaponSlot === this.swordWeaponSlot && this.bow) {
+        this.weaponSlot = this.bowWeaponSlot;
+        this.updatePlayerAppearance();
+    } else if (this.weaponSlot === this.bowWeaponSlot && this.sword) {
+        this.weaponSlot = this.swordWeaponSlot;
+        this.updatePlayerAppearance();
+    }
 };
 
 /* Called when a monster (thing) is killed by the player */
 Player.prototype.handleMonsterKilled = function (monster) {
-   if (this.kills[monster.name] === undefined) {
-      this.kills[monster.name] = { count: 0, img: monster.frames[0] };
-   }
-   this.kills[monster.name].count++;
+    if (this.kills[monster.name] === undefined) {
+        this.kills[monster.name] = { count: 0, img: monster.frames[0] };
+    }
+    this.kills[monster.name].count++;
 };
 
 /* Called when the player walks over a takeable item (GroundItem). The item
  * is passed in here. (eg Item.Table.ZZZ) */
 Player.prototype.handleTakeItem = function (item) {
-   // Check for an armour upgrade
-   if (item.isArmour() && item.isBetter(this.armour)) {
-      this.upgradeArmour(item);
-      return true;
-   }
-   // Check for a sword upgrade
-   if (item.isSword() && item.isBetter(this.sword)) {
-      this.upgradeSword(item);
-      return true;
-   }
-   // Check for a bow upgrade
-   if (item.isBow() && item.isBetter(this.bow)) {
-      this.upgradeBow(item);
-      return true;
-   }
-   // Consumable items
-   switch (item) {
-      case Item.Table.ARROW:
-         this.numArrows += 5;
-         break;
+    // Check for an armour upgrade
+    if (item.isArmour() && item.isBetter(this.armour)) {
+        this.upgradeArmour(item);
+        return true;
+    }
+    // Check for a sword upgrade
+    if (item.isSword() && item.isBetter(this.sword)) {
+        this.upgradeSword(item);
+        return true;
+    }
+    // Check for a bow upgrade
+    if (item.isBow() && item.isBetter(this.bow)) {
+        this.upgradeBow(item);
+        return true;
+    }
+    // Consumable items
+    switch (item) {
+        case Item.Table.ARROW:
+            this.numArrows += 5;
+            break;
 
-      case Item.Table.COIN:
-         this.numCoins++;
-         break;
+        case Item.Table.COIN:
+            this.numCoins++;
+            break;
 
-      case Item.Table.SMALL_HEALTH:
-         this.healDamage(2);
-         break;
+        case Item.Table.SMALL_HEALTH:
+            this.healDamage(2);
+            break;
 
-      case Item.Table.LARGE_HEALTH:
-         this.healDamage(this.maxHealth);
-         break;
-   }
-   Utils.getSound(RES.COIN_SND).play();
-   return true;
+        case Item.Table.LARGE_HEALTH:
+            this.healDamage(this.maxHealth);
+            break;
+    }
+    Utils.getSound(RES.COIN_SND).play();
+    return true;
 };
 
 module.exports = Player;
@@ -3671,10 +3669,10 @@ module.exports.configure = function (width, height, div) {
     renderer = PIXI.autoDetectRenderer({
         width: width,
         height: height,
-        //	antialias: true,
+        //    antialias: true,
         // Required to prevent flickering in Chrome on Android (others too?)
         preserveDrawingBuffer: true
-        //	clearBeforeRender: true
+        //    clearBeforeRender: true
     });
 
     if (div) {
@@ -3840,246 +3838,246 @@ var SKEL_WARRIOR_DEAD = 6;
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
 function SkelWarrior(state) {
-   this.name = "Skeleton";
-   this.idleFrame = Utils.getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
-   this.frames = Utils.getFrames(RES.ENEMIES, SkelWarrior.FRAMES);
-   this.speed = 20;
-   this.health = 3;
-   this.frame = 0;
-   this.facing = 1;
-   this.dead = false;
-   // When approaching the player, how far to keep distance
-   this.approachDist = 30;
-   this.timer = null;
-   this.counter = 0;
-   // The sprite container holding the monster and splash sprite
-   this.sprite = new PIXI.Container(this.frames[0]);
-   // The actual goblin sprite
-   this.monsterSprite = new PIXI.Sprite();
-   this.monsterSprite.anchor.set(0.5, 6.5 / 8);
-   this.sprite.addChild(this.monsterSprite);
-   // Make the splash/water sprite
-   this.waterSprite = Utils.createSplashSprite();
-   this.waterSprite.y = -0.5;
-   this.sprite.addChild(this.waterSprite);
-   this.knocked = 0;
-   this.knockedTimer = 0;
-   this.state = state || SKEL_WARRIOR_START_APPROACH;
-   this.hitbox = new Thing.Hitbox(0, -1, 6, 8);
+    this.name = "Skeleton";
+    this.idleFrame = Utils.getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
+    this.frames = Utils.getFrames(RES.ENEMIES, SkelWarrior.FRAMES);
+    this.speed = 20;
+    this.health = 3;
+    this.frame = 0;
+    this.facing = 1;
+    this.dead = false;
+    // When approaching the player, how far to keep distance
+    this.approachDist = 30;
+    this.timer = null;
+    this.counter = 0;
+    // The sprite container holding the monster and splash sprite
+    this.sprite = new PIXI.Container(this.frames[0]);
+    // The actual goblin sprite
+    this.monsterSprite = new PIXI.Sprite();
+    this.monsterSprite.anchor.set(0.5, 6.5 / 8);
+    this.sprite.addChild(this.monsterSprite);
+    // Make the splash/water sprite
+    this.waterSprite = Utils.createSplashSprite();
+    this.waterSprite.y = -0.5;
+    this.sprite.addChild(this.waterSprite);
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = state || SKEL_WARRIOR_START_APPROACH;
+    this.hitbox = new Thing.Hitbox(0, -1, 6, 8);
 }
 
 SkelWarrior.FRAMES = ["skeleton_warrior_south_2", "skeleton_warrior_south_3"];
 
 SkelWarrior.prototype.getDropTable = function () {
-   return [[Item.Table.LARGE_HEALTH, 5], [Item.Table.LEATHER_ARMOUR, 1], [Item.Table.SMALL_BOW, 1]];
+    return [[Item.Table.LARGE_HEALTH, 5], [Item.Table.LEATHER_ARMOUR, 1], [Item.Table.SMALL_BOW, 1]];
 };
 
 SkelWarrior.prototype.update = function (dt) {
-   switch (this.state) {
-      case SKEL_WARRIOR_ATTACKING:
-         this.updateAttacking(dt);
-         break;
+    switch (this.state) {
+        case SKEL_WARRIOR_ATTACKING:
+            this.updateAttacking(dt);
+            break;
 
-      case SKEL_WARRIOR_POST_ATTACK:
-         this.timer -= dt;
-         if (this.timer <= 0) {
-            this.state = SKEL_WARRIOR_START_APPROACH;
-         }
-         break;
+        case SKEL_WARRIOR_POST_ATTACK:
+            this.timer -= dt;
+            if (this.timer <= 0) {
+                this.state = SKEL_WARRIOR_START_APPROACH;
+            }
+            break;
 
-      case SKEL_WARRIOR_START_APPROACH:
-         this.timer = null;
-         this.state = SKEL_WARRIOR_APPROACH;
-         break;
+        case SKEL_WARRIOR_START_APPROACH:
+            this.timer = null;
+            this.state = SKEL_WARRIOR_APPROACH;
+            break;
 
-      case SKEL_WARRIOR_APPROACH:
-         this.updateApproach(dt);
-         break;
+        case SKEL_WARRIOR_APPROACH:
+            this.updateApproach(dt);
+            break;
 
-      case SKEL_WARRIOR_HURT:
-         this.updateHurt(dt);
-         break;
+        case SKEL_WARRIOR_HURT:
+            this.updateHurt(dt);
+            break;
 
-      case SKEL_WARRIOR_DEAD:
-         this.level.removeThing(this);
-         break;
-   }
+        case SKEL_WARRIOR_DEAD:
+            this.level.removeThing(this);
+            break;
+    }
 };
 
 SkelWarrior.prototype.updateAttacking = function (dt) {
-   // Pause before attacking
-   if (this.timer > 0) {
-      this.timer -= dt;
-      return;
-   }
+    // Pause before attacking
+    if (this.timer > 0) {
+        this.timer -= dt;
+        return;
+    }
 
-   // Rush towards the player
-   var player = this.level.player;
-   var dx = 0,
-       dy = 0;
+    // Rush towards the player
+    var player = this.level.player;
+    var dx = 0,
+        dy = 0;
 
-   if (player.sprite.x > this.sprite.x) {
-      dx = 2.5 * this.speed * dt;
-      this.facing = 1;
-   } else {
-      dx = -2.5 * this.speed * dt;
-      this.facing = -1;
-   }
-   this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
+    if (player.sprite.x > this.sprite.x) {
+        dx = 2.5 * this.speed * dt;
+        this.facing = 1;
+    } else {
+        dx = -2.5 * this.speed * dt;
+        this.facing = -1;
+    }
+    this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
 
-   if (Math.abs(this.sprite.x - player.sprite.x) < 5) {
-      // Hit the player
-      // ...
-      this.timer = 0.25;
-      this.state = SKEL_WARRIOR_POST_ATTACK;
-      return;
-   }
+    if (Math.abs(this.sprite.x - player.sprite.x) < 5) {
+        // Hit the player
+        // ...
+        this.timer = 0.25;
+        this.state = SKEL_WARRIOR_POST_ATTACK;
+        return;
+    }
 
-   // Move up/down towards the player more slowly (and don't overshoot)
-   var dist = player.sprite.y - this.sprite.y;
-   if (Math.abs(dist) > 2) {
-      dy = dt * this.speed * Math.sign(dist) / 2.0;
-   }
+    // Move up/down towards the player more slowly (and don't overshoot)
+    var dist = player.sprite.y - this.sprite.y;
+    if (Math.abs(dist) > 2) {
+        dy = dt * this.speed * Math.sign(dist) / 2.0;
+    }
 
-   // Check if we can move left/right
-   var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
-   if (!tile.solid) {
-      this.sprite.x += dx;
-      this.waterSprite.visible = tile.water;
-   }
+    // Check if we can move left/right
+    var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
+    if (!tile.solid) {
+        this.sprite.x += dx;
+        this.waterSprite.visible = tile.water;
+    }
 
-   // Now check if it can move up/down. Doing this separately from the check
-   // above means we can "slide" along walls and such.
-   var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
-   if (!tile2.solid) {
-      // Go a bit faster if we're just moving up/down
-      if (tile.solid) this.sprite.y += 3 * dy;else {
-         this.sprite.y += dy;
-         this.waterSprite.visible = tile2.water;
-      }
-   }
-   this.frame += 4 * dt;
-   this.monsterSprite.texture = this.frames[this.frame % this.frames.length | 0];
+    // Now check if it can move up/down. Doing this separately from the check
+    // above means we can "slide" along walls and such.
+    var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
+    if (!tile2.solid) {
+        // Go a bit faster if we're just moving up/down
+        if (tile.solid) this.sprite.y += 3 * dy;else {
+            this.sprite.y += dy;
+            this.waterSprite.visible = tile2.water;
+        }
+    }
+    this.frame += 4 * dt;
+    this.monsterSprite.texture = this.frames[this.frame % this.frames.length | 0];
 };
 
 SkelWarrior.prototype.updateApproach = function (dt) {
-   // Move towards the player, but try to keep a fixed distance away. 
-   // Initially the target is set to the player's position, plus/minus
-   // a fixed offset.
-   var player = this.level.player;
-   var targetx = 0;
-   if (this.sprite.x < player.sprite.x) {
-      targetx = player.sprite.x - this.approachDist;
-      this.facing = 1;
-   } else if (this.sprite.x > player.sprite.x) {
-      targetx = player.sprite.x + this.approachDist;
-      this.facing = -1;
-   }
-   this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
+    // Move towards the player, but try to keep a fixed distance away. 
+    // Initially the target is set to the player's position, plus/minus
+    // a fixed offset.
+    var player = this.level.player;
+    var targetx = 0;
+    if (this.sprite.x < player.sprite.x) {
+        targetx = player.sprite.x - this.approachDist;
+        this.facing = 1;
+    } else if (this.sprite.x > player.sprite.x) {
+        targetx = player.sprite.x + this.approachDist;
+        this.facing = -1;
+    }
+    this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
 
-   // Rush the player for an attack, if they're facing away from us
-   // (note the goblin always faces the player)
-   /*if (player.facing*this.facing > 0) {
-   this.state = SKEL_WARRIOR_ATTACKING;
-   return;
-   }*/
+    // Rush the player for an attack, if they're facing away from us
+    // (note the goblin always faces the player)
+    /*if (player.facing*this.facing > 0) {
+      this.state = SKEL_WARRIOR_ATTACKING;
+      return;
+      }*/
 
-   if (this.timer === null) {
-      var dist = Math.abs(this.sprite.x - player.sprite.x);
-      if (dist >= this.approachDist * 0.9 && dist <= this.approachDist * 1.1) {
-         this.timer = 1.5;
-      }
-   } else {
-      // Attack the player after a while
-      this.timer -= dt;
-      if (this.timer <= 0) {
-         this.state = SKEL_WARRIOR_ATTACKING;
-         this.timer = 0.4;
-         return;
-      }
-   }
+    if (this.timer === null) {
+        var dist = Math.abs(this.sprite.x - player.sprite.x);
+        if (dist >= this.approachDist * 0.9 && dist <= this.approachDist * 1.1) {
+            this.timer = 1.5;
+        }
+    } else {
+        // Attack the player after a while
+        this.timer -= dt;
+        if (this.timer <= 0) {
+            this.state = SKEL_WARRIOR_ATTACKING;
+            this.timer = 0.4;
+            return;
+        }
+    }
 
-   // Add a bit of variation to the target position, so the goblin kind of
-   // waivers back and forth making it a bit harder to hit.
-   var dx = 0;
-   var dy = 0;
-   targetx += 20 * Math.cos(this.frame / 6);
-   if (Math.abs(this.sprite.x - targetx) > 2) {
-      dx = dt * Math.sign(targetx - this.sprite.x);
-   }
+    // Add a bit of variation to the target position, so the goblin kind of
+    // waivers back and forth making it a bit harder to hit.
+    var dx = 0;
+    var dy = 0;
+    targetx += 20 * Math.cos(this.frame / 6);
+    if (Math.abs(this.sprite.x - targetx) > 2) {
+        dx = dt * Math.sign(targetx - this.sprite.x);
+    }
 
-   // Move more slowly when going backwards
-   var speed = this.speed;
-   if (this.facing * dx < 0) speed = this.speed / 1.5;
+    // Move more slowly when going backwards
+    var speed = this.speed;
+    if (this.facing * dx < 0) speed = this.speed / 1.5;
 
-   // Move up/down towards the player as well. Raising sine to a higher power
-   // makes the vertical oscillations more "tight". (ie less smooth)
-   var targety = player.sprite.y + 35 * Math.pow(Math.sin(this.frame / 4), 2) - 20;
-   var dist = targety - this.sprite.y;
-   if (Math.abs(dist) > 1) {
-      dy = dt * Math.sign(dist);
-   }
-   dx *= speed;
-   dy *= speed;
-   // Check if we can move horizontally (checked separately from vertical 
-   // movement to prevent us from getting stuck)
-   var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
-   if (!tile.solid) {
-      this.sprite.x += dx;
-      this.waterSprite.visible = tile.water;
-   }
-   // Handle vertical movement
-   var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
-   if (!tile.solid) {
-      this.sprite.y += dy;
-      this.waterSprite.visible = tile.water;
-   }
-   this.frame += 4 * dt;
-   this.monsterSprite.texture = this.frames[this.frame % this.frames.length | 0];
+    // Move up/down towards the player as well. Raising sine to a higher power
+    // makes the vertical oscillations more "tight". (ie less smooth)
+    var targety = player.sprite.y + 35 * Math.pow(Math.sin(this.frame / 4), 2) - 20;
+    var dist = targety - this.sprite.y;
+    if (Math.abs(dist) > 1) {
+        dy = dt * Math.sign(dist);
+    }
+    dx *= speed;
+    dy *= speed;
+    // Check if we can move horizontally (checked separately from vertical 
+    // movement to prevent us from getting stuck)
+    var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
+    if (!tile.solid) {
+        this.sprite.x += dx;
+        this.waterSprite.visible = tile.water;
+    }
+    // Handle vertical movement
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
+    if (!tile.solid) {
+        this.sprite.y += dy;
+        this.waterSprite.visible = tile.water;
+    }
+    this.frame += 4 * dt;
+    this.monsterSprite.texture = this.frames[this.frame % this.frames.length | 0];
 };
 
 SkelWarrior.prototype.updateHurt = function (dt) {
-   // Slide backwards from the hit
-   if (this.knockedTimer > 0) {
-      var dx = this.knocked * dt;
-      var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
-      if (!tile.solid) {
-         this.sprite.x += dx;
-      }
-      this.knockedTimer -= dt;
-   } else {
-      this.state = SKEL_WARRIOR_APPROACH;
-   }
+    // Slide backwards from the hit
+    if (this.knockedTimer > 0) {
+        var dx = this.knocked * dt;
+        var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
+        if (!tile.solid) {
+            this.sprite.x += dx;
+        }
+        this.knockedTimer -= dt;
+    } else {
+        this.state = SKEL_WARRIOR_APPROACH;
+    }
 };
 
 SkelWarrior.prototype.handleHit = function (srcx, srcy, dmg) {
-   var player = this.level.player;
-   if (this.state === SKEL_WARRIOR_DEAD) return false;
-   this.health -= 1;
-   if (this.health <= 0) {
-      Utils.getSound(RES.DEAD_SND).play();
-      this.state = SKEL_WARRIOR_DEAD;
-      // Drop a reward
-      this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
-      player.handleMonsterKilled(this);
-      this.dead = true;
-   } else {
-      Utils.getSound(RES.SNAKE_HURT_SND).play();
-      this.knocked = Math.sign(this.sprite.x - srcx) * 60;
-      this.knockedTimer = 0.1;
-      this.state = SKEL_WARRIOR_HURT;
-   }
+    var player = this.level.player;
+    if (this.state === SKEL_WARRIOR_DEAD) return false;
+    this.health -= 1;
+    if (this.health <= 0) {
+        Utils.getSound(RES.DEAD_SND).play();
+        this.state = SKEL_WARRIOR_DEAD;
+        // Drop a reward
+        this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
+        player.handleMonsterKilled(this);
+        this.dead = true;
+    } else {
+        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        this.knocked = Math.sign(this.sprite.x - srcx) * 60;
+        this.knockedTimer = 0.1;
+        this.state = SKEL_WARRIOR_HURT;
+    }
 
-   // Add some random dust, but only if we're not currently in water
-   var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
-   if (!tile.water) {
-      this.level.createBloodSpatter(this.sprite.x, this.sprite.y - 1, ["dust1", "dust2", "dust3", "dust4"]);
-   }
-   return true;
+    // Add some random dust, but only if we're not currently in water
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    if (!tile.water) {
+        this.level.createBloodSpatter(this.sprite.x, this.sprite.y - 1, ["dust1", "dust2", "dust3", "dust4"]);
+    }
+    return true;
 };
 
 SkelWarrior.prototype.handlePlayerCollision = function (player) {
-   player.takeDamage(2, this);
+    player.takeDamage(2, this);
 };
 
 module.exports = SkelWarrior;
@@ -4121,148 +4119,148 @@ var SNAKE_HURT = 2;
 var SNAKE_DEAD = 3;
 
 function Snake(state) {
-   this.name = "Snake";
-   this.frames = Utils.getFrames(RES.ENEMIES, Snake.FRAMES);
-   this.speed = 16;
-   this.health = 3;
-   this.frame = 0;
-   this.facing = 1;
-   this.dead = false;
-   this.travel = 0;
-   // The sprite container holding the snake and splash sprite
-   this.sprite = new PIXI.Container();
-   // The actual snake sprite
-   this.snakeSprite = new PIXI.Sprite(this.frames[0]);
-   this.snakeSprite.anchor.set(0.5, 6.5 / 8);
-   this.sprite.addChild(this.snakeSprite);
-   // Make the splash/water sprite
-   this.waterSprite = Utils.createSplashSprite();
-   this.waterSprite.y = -1.25;
-   this.sprite.addChild(this.waterSprite);
-   this.knocked = 0;
-   this.knockedTimer = 0;
-   this.state = state || SNAKE_ATTACKING;
-   this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
+    this.name = "Snake";
+    this.frames = Utils.getFrames(RES.ENEMIES, Snake.FRAMES);
+    this.speed = 16;
+    this.health = 3;
+    this.frame = 0;
+    this.facing = 1;
+    this.dead = false;
+    this.travel = 0;
+    // The sprite container holding the snake and splash sprite
+    this.sprite = new PIXI.Container();
+    // The actual snake sprite
+    this.snakeSprite = new PIXI.Sprite(this.frames[0]);
+    this.snakeSprite.anchor.set(0.5, 6.5 / 8);
+    this.sprite.addChild(this.snakeSprite);
+    // Make the splash/water sprite
+    this.waterSprite = Utils.createSplashSprite();
+    this.waterSprite.y = -1.25;
+    this.sprite.addChild(this.waterSprite);
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = state || SNAKE_ATTACKING;
+    this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
 }
 
 Snake.FRAMES = ["snake_south_1", "snake_south_2"];
 
 Snake.prototype.getDropTable = function () {
-   return [[Item.Table.COIN, 2], [Item.Table.ARROW, 1], [Item.Table.SMALL_HEALTH, 1]];
+    return [[Item.Table.COIN, 2], [Item.Table.ARROW, 1], [Item.Table.SMALL_HEALTH, 1]];
 };
 
 Snake.prototype.update = function (dt) {
-   if (this.state === SNAKE_IDLE) this.updateIdle(dt);else if (this.state === SNAKE_ATTACKING) this.updateAttacking(dt);else if (this.state === SNAKE_HURT) this.updateHurt(dt);else if (this.state === SNAKE_DEAD) {
-      this.level.removeThing(this);
-   }
+    if (this.state === SNAKE_IDLE) this.updateIdle(dt);else if (this.state === SNAKE_ATTACKING) this.updateAttacking(dt);else if (this.state === SNAKE_HURT) this.updateHurt(dt);else if (this.state === SNAKE_DEAD) {
+        this.level.removeThing(this);
+    }
 };
 
 Snake.prototype.updateIdle = function (dt) {
-   var player = this.level.player;
-   this.frame += 2 * dt;
-   this.snakeSprite.texture = this.frames[this.frame % this.frames.length | 0];
+    var player = this.level.player;
+    this.frame += 2 * dt;
+    this.snakeSprite.texture = this.frames[this.frame % this.frames.length | 0];
 
-   // Turn left/right searching for the player
-   this.facing = Math.sign(Math.cos(this.frame / 10));
-   this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
+    // Turn left/right searching for the player
+    this.facing = Math.sign(Math.cos(this.frame / 10));
+    this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
 
-   // Start attacking the player when they're close enough, and when
-   // the snake is facing them.
-   if (Math.abs(player.sprite.x - this.sprite.x) < this.level.camera.width / 3 && this.facing * (player.sprite.x - this.sprite.x) > 0) {
-      this.state = SNAKE_ATTACKING;
-   }
+    // Start attacking the player when they're close enough, and when
+    // the snake is facing them.
+    if (Math.abs(player.sprite.x - this.sprite.x) < this.level.camera.width / 3 && this.facing * (player.sprite.x - this.sprite.x) > 0) {
+        this.state = SNAKE_ATTACKING;
+    }
 };
 
 Snake.prototype.updateAttacking = function (dt) {
-   var dx = 0,
-       dy = 0;
-   var player = this.level.player;
+    var dx = 0,
+        dy = 0;
+    var player = this.level.player;
 
-   // Move towards the player for a bit. Note the snake moves in "steps"
-   // so it will occasionally overshot the player before moving back again.
-   if (this.travel > 0) {
-      dx = this.speed * dt * this.facing;
-      this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
-      this.travel -= Math.abs(dx);
-   } else {
-      if (player.sprite.x < this.sprite.x) this.facing = -1;else this.facing = 1;
-      this.travel = Utils.randint(16, 20);
-   }
+    // Move towards the player for a bit. Note the snake moves in "steps"
+    // so it will occasionally overshot the player before moving back again.
+    if (this.travel > 0) {
+        dx = this.speed * dt * this.facing;
+        this.sprite.scale.x = this.facing * Math.abs(this.sprite.scale.x);
+        this.travel -= Math.abs(dx);
+    } else {
+        if (player.sprite.x < this.sprite.x) this.facing = -1;else this.facing = 1;
+        this.travel = Utils.randint(16, 20);
+    }
 
-   // Move up/down towards the player more slowly (and don't overshoot)
-   var dist = player.sprite.y - this.sprite.y;
-   if (Math.abs(dist) > 10) {
-      dy = dt * 4 * Math.sign(dist);
-   }
+    // Move up/down towards the player more slowly (and don't overshoot)
+    var dist = player.sprite.y - this.sprite.y;
+    if (Math.abs(dist) > 10) {
+        dy = dt * 4 * Math.sign(dist);
+    }
 
-   // Check if the snake can move left/right
-   var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
-   if (!tile.solid) {
-      this.sprite.x += dx;
-      this.waterSprite.visible = tile.water;
-   }
+    // Check if the snake can move left/right
+    var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
+    if (!tile.solid) {
+        this.sprite.x += dx;
+        this.waterSprite.visible = tile.water;
+    }
 
-   // Now check if it can move up/down. Doing this separately from the check
-   // above means we can "slide" along walls and such.
-   var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
-   if (!tile2.solid) {
-      // Go a bit faster if we're just moving up/down
-      if (tile.solid) this.sprite.y += 1 * dy;else {
-         this.sprite.y += dy;
-         this.waterSprite.visible = tile2.water;
-      }
-   }
-   this.frame += 4 * dt;
-   this.snakeSprite.texture = this.frames[this.frame % this.frames.length | 0];
+    // Now check if it can move up/down. Doing this separately from the check
+    // above means we can "slide" along walls and such.
+    var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y + dy);
+    if (!tile2.solid) {
+        // Go a bit faster if we're just moving up/down
+        if (tile.solid) this.sprite.y += 1 * dy;else {
+            this.sprite.y += dy;
+            this.waterSprite.visible = tile2.water;
+        }
+    }
+    this.frame += 4 * dt;
+    this.snakeSprite.texture = this.frames[this.frame % this.frames.length | 0];
 };
 
 Snake.prototype.updateHurt = function (dt) {
-   // The snake keeps its eyes closed while hurt
-   this.snakeSprite.texture = this.frames[1];
-   // Slide backwards from the hit
-   if (this.knockedTimer > 0) {
-      var dx = this.knocked * dt;
-      var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
-      if (!tile.solid) {
-         this.sprite.x += dx;
-      }
-      this.knockedTimer -= dt;
-   } else {
-      // Resume/start attacking
-      this.state = SNAKE_ATTACKING;
-      this.travel = 0;
-   }
+    // The snake keeps its eyes closed while hurt
+    this.snakeSprite.texture = this.frames[1];
+    // Slide backwards from the hit
+    if (this.knockedTimer > 0) {
+        var dx = this.knocked * dt;
+        var tile = this.level.bg.getTileAt(this.sprite.x + dx, this.sprite.y);
+        if (!tile.solid) {
+            this.sprite.x += dx;
+        }
+        this.knockedTimer -= dt;
+    } else {
+        // Resume/start attacking
+        this.state = SNAKE_ATTACKING;
+        this.travel = 0;
+    }
 };
 
 Snake.prototype.handleHit = function (srcx, srcy, dmg) {
-   var player = this.level.player;
-   if (this.state === SNAKE_DEAD) return false;
-   this.health -= 1;
-   if (this.health <= 0) {
-      Utils.getSound(RES.DEAD_SND).play();
-      this.state = SNAKE_DEAD;
-      // Drop a reward
-      this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
-      player.handleMonsterKilled(this);
-      this.dead = true;
-   } else {
-      Utils.getSound(RES.SNAKE_HURT_SND).play();
-      this.knocked = Math.sign(this.sprite.x - srcx) * 60;
-      this.knockedTimer = 0.1;
-      this.state = SNAKE_HURT;
-   }
+    var player = this.level.player;
+    if (this.state === SNAKE_DEAD) return false;
+    this.health -= 1;
+    if (this.health <= 0) {
+        Utils.getSound(RES.DEAD_SND).play();
+        this.state = SNAKE_DEAD;
+        // Drop a reward
+        this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
+        player.handleMonsterKilled(this);
+        this.dead = true;
+    } else {
+        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        this.knocked = Math.sign(this.sprite.x - srcx) * 60;
+        this.knockedTimer = 0.1;
+        this.state = SNAKE_HURT;
+    }
 
-   // Add some random blood, but only if we're not currently in water
-   // (looks better this way)
-   var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
-   if (!tile.water) {
-      this.level.createBloodSpatter(this.sprite.x, this.sprite.y - 1);
-   }
-   return true;
+    // Add some random blood, but only if we're not currently in water
+    // (looks better this way)
+    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    if (!tile.water) {
+        this.level.createBloodSpatter(this.sprite.x, this.sprite.y - 1);
+    }
+    return true;
 };
 
 Snake.prototype.handlePlayerCollision = function (player) {
-   player.takeDamage(1, this);
+    player.takeDamage(1, this);
 };
 
 /* Other snake-like things */
@@ -4272,19 +4270,19 @@ Snake.prototype.handlePlayerCollision = function (player) {
 /*******/
 
 function Rat() {
-   Snake.call(this);
-   this.name = "Rat";
-   this.frames = Utils.getFrames(RES.ENEMIES, Rat.FRAMES);
-   this.health = 1;
-   this.speed = 20;
-   this.frame = 0;
-   this.facing = 1;
-   this.travel = 20;
-   this.knocked = 0;
-   this.knockedTimer = 0;
-   this.state = SNAKE_ATTACKING;
-   this.snakeSprite.texture = this.frames[0];
-   this.waterSprite.y = -0.9;
+    Snake.call(this);
+    this.name = "Rat";
+    this.frames = Utils.getFrames(RES.ENEMIES, Rat.FRAMES);
+    this.health = 1;
+    this.speed = 20;
+    this.frame = 0;
+    this.facing = 1;
+    this.travel = 20;
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = SNAKE_ATTACKING;
+    this.snakeSprite.texture = this.frames[0];
+    this.waterSprite.y = -0.9;
 }
 
 Rat.FRAMES = ["rat_south_1", "rat_south_2"];
@@ -4296,19 +4294,19 @@ Rat.prototype = Object.create(Snake.prototype);
 /************/
 
 function Scorpion() {
-   Snake.call(this);
-   this.name = "Scorpion";
-   this.frames = Utils.getFrames(RES.ENEMIES, Scorpion.FRAMES);
-   this.health = 4;
-   this.speed = 10;
-   this.frame = 0;
-   this.facing = 1;
-   this.travel = 20;
-   this.knocked = 0;
-   this.knockedTimer = 0;
-   this.state = SNAKE_ATTACKING;
-   this.snakeSprite.texture = this.frames[0];
-   this.waterSprite.y = -0.85;
+    Snake.call(this);
+    this.name = "Scorpion";
+    this.frames = Utils.getFrames(RES.ENEMIES, Scorpion.FRAMES);
+    this.health = 4;
+    this.speed = 10;
+    this.frame = 0;
+    this.facing = 1;
+    this.travel = 20;
+    this.knocked = 0;
+    this.knockedTimer = 0;
+    this.state = SNAKE_ATTACKING;
+    this.snakeSprite.texture = this.frames[0];
+    this.waterSprite.y = -0.85;
 }
 
 Scorpion.FRAMES = ["scorpion_south_1", "scorpion_south_2"];
@@ -4316,9 +4314,9 @@ Scorpion.FRAMES = ["scorpion_south_1", "scorpion_south_2"];
 Scorpion.prototype = Object.create(Snake.prototype);
 
 module.exports = {
-   Snake: Snake,
-   Rat: Rat,
-   Scorpion: Scorpion
+    Snake: Snake,
+    Rat: Rat,
+    Scorpion: Scorpion
 };
 
 },{"./item":14,"./res":22,"./thing":26,"./utils":29}],26:[function(require,module,exports){
@@ -4420,135 +4418,135 @@ var Rat = SnakeLike.Rat;
 var Scorpion = SnakeLike.Scorpion;
 
 function TitleScreen() {
-	// Playing through the intro sequence (looping)
-	this.PLAYING_INTRO = 1;
-	// Player wants to start a new game
-	this.NEW_GAME = 2;
+    // Playing through the intro sequence (looping)
+    this.PLAYING_INTRO = 1;
+    // Player wants to start a new game
+    this.NEW_GAME = 2;
 
-	// The (native) height of the title screen before scaling
-	var screenHeight = 80;
-	// Calculate the native-to-screen scaling so that the title screen fits
-	// the available vertical space.
-	var scale = Render.getRenderer().height / screenHeight;
+    // The (native) height of the title screen before scaling
+    var screenHeight = 80;
+    // Calculate the native-to-screen scaling so that the title screen fits
+    // the available vertical space.
+    var scale = Render.getRenderer().height / screenHeight;
 
-	// Now figure out how wide the screen is (to fill the space)
-	var screenWidth = Render.getRenderer().width / scale;
+    // Now figure out how wide the screen is (to fill the space)
+    var screenWidth = Render.getRenderer().width / scale;
 
-	// The PIXI container for rendering the scene
-	this.stage = new PIXI.Container();
-	this.stage.scale.set(scale);
-	this.state = this.PLAYING_INTRO;
+    // The PIXI container for rendering the scene
+    this.stage = new PIXI.Container();
+    this.stage.scale.set(scale);
+    this.state = this.PLAYING_INTRO;
 
-	this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
-	this.bg.anchor.set(0, 0);
-	this.bg.scale.set(screenWidth / this.bg.texture.width, screenHeight / this.bg.texture.height);
-	this.stage.addChild(this.bg);
-	this.delay = 0;
+    this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
+    this.bg.anchor.set(0, 0);
+    this.bg.scale.set(screenWidth / this.bg.texture.width, screenHeight / this.bg.texture.height);
+    this.stage.addChild(this.bg);
+    this.delay = 0;
 
-	var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
-	txt.anchor.set(0.5, 0.5);
-	txt.tint = 0xFF0000;
-	//txt.x = getRenderer().width/2;
-	txt.x = screenWidth / 2;
-	txt.y = screenHeight / 5;
-	this.stage.addChild(txt);
+    var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
+    txt.anchor.set(0.5, 0.5);
+    txt.tint = 0xFF0000;
+    //txt.x = getRenderer().width/2;
+    txt.x = screenWidth / 2;
+    txt.y = screenHeight / 5;
+    this.stage.addChild(txt);
 
-	txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
-	txt.anchor.set(0.5, 0.5);
-	txt.tint = 0xFF0000;
-	//txt.x = getRenderer().width/2;
-	txt.x = screenWidth / 2;
-	txt.y = screenHeight / 5 + 15;
-	this.stage.addChild(txt);
+    txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
+    txt.anchor.set(0.5, 0.5);
+    txt.tint = 0xFF0000;
+    //txt.x = getRenderer().width/2;
+    txt.x = screenWidth / 2;
+    txt.y = screenHeight / 5 + 15;
+    this.stage.addChild(txt);
 
-	txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
-	txt.scale.set(0.75);
-	txt.anchor.set(0.5, 0.5);
-	txt.tint = 0xFF0000;
-	txt.x = screenWidth / 2; //getRenderer().width/2;
-	txt.y = 6 * screenHeight / 7; //getRenderer().height-50;
-	this.stage.addChild(txt);
+    txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
+    txt.scale.set(0.75);
+    txt.anchor.set(0.5, 0.5);
+    txt.tint = 0xFF0000;
+    txt.x = screenWidth / 2; //getRenderer().width/2;
+    txt.y = 6 * screenHeight / 7; //getRenderer().height-50;
+    this.stage.addChild(txt);
 
-	this.sequence = new Utils.Sequence({
-		stage: this.stage,
-		level: null,
-		player: null
-	}, "start", function (dt) {
-		this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
-		this.level.stage.x = -10;
-		this.level.stage.y = screenHeight / 2 - 5;
-		this.stage.addChild(this.level.stage);
-		// Note the screen position within the level (so we can know when
-		// objects are offscreen)
-		this.screenLeft = -this.level.stage.x;
-		this.screenRight = this.screenLeft + screenWidth;
-		// Create a dummy player to drive around
-		this.player = new Player();
-		this.player.cameraMovement = false;
-		this.player.hasControl = false;
-		this.player.sprite.x = 2;
-		this.player.sprite.y = 20;
-		this.level.addThing(this.player);
+    this.sequence = new Utils.Sequence({
+        stage: this.stage,
+        level: null,
+        player: null
+    }, "start", function (dt) {
+        this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
+        this.level.stage.x = -10;
+        this.level.stage.y = screenHeight / 2 - 5;
+        this.stage.addChild(this.level.stage);
+        // Note the screen position within the level (so we can know when
+        // objects are offscreen)
+        this.screenLeft = -this.level.stage.x;
+        this.screenRight = this.screenLeft + screenWidth;
+        // Create a dummy player to drive around
+        this.player = new Player();
+        this.player.cameraMovement = false;
+        this.player.hasControl = false;
+        this.player.sprite.x = 2;
+        this.player.sprite.y = 20;
+        this.level.addThing(this.player);
 
-		this.monster = new Scenery(Utils.getFrames(RES.ENEMIES, Rat.FRAMES));
-		this.monster.sprite.y = this.player.sprite.y;
-		this.level.addThing(this.monster);
+        this.monster = new Scenery(Utils.getFrames(RES.ENEMIES, Rat.FRAMES));
+        this.monster.sprite.y = this.player.sprite.y;
+        this.level.addThing(this.monster);
 
-		this.monsterChoices = [Rat.FRAMES, Snake.FRAMES, Scorpion.FRAMES, SkelWarrior.FRAMES, Goblin.FRAMES, Ghost.FRAMES];
-		this.monsterChoice = 0;
+        this.monsterChoices = [Rat.FRAMES, Snake.FRAMES, Scorpion.FRAMES, SkelWarrior.FRAMES, Goblin.FRAMES, Ghost.FRAMES];
+        this.monsterChoice = 0;
 
-		return this.NEXT;
-	}, function (dt) {
-		// Have the player run right offscreen
-		this.player.dirx = 1;
-		this.player.update(dt);
-		if (this.player.sprite.x > this.screenRight + 4) {
-			this.monster.sprite.x = this.screenRight + 16;
-			return this.NEXT;
-		}
-	}, "loop", function (dt) {
-		// Have the player run the other way chased by a monster
-		this.player.dirx = -1;
-		this.player.update(dt);
-		this.monster.velx = -20;
-		this.monster.update(dt);
-		this.monster.faceDirection(-1);
-		if (this.player.sprite.x < this.screenLeft - 4) {
-			this.player.upgradeSword(Item.Table.SMALL_SWORD);
-			return this.NEXT;
-		}
-	}, function (dt) {
-		// Now the player chases the monster with a sword
-		this.player.dirx = 1;
-		this.player.update(dt);
-		this.monster.velx = 20;
-		this.monster.update(dt);
-		this.monster.faceDirection(1);
-		if (this.player.sprite.x > this.screenRight + 4) {
-			// New monster chases the player
-			this.monsterChoice++;
-			var choice = this.monsterChoices[this.monsterChoice % this.monsterChoices.length];
-			this.monster.frames = Utils.getFrames(RES.ENEMIES, choice);
-			return "loop";
-		}
-	});
+        return this.NEXT;
+    }, function (dt) {
+        // Have the player run right offscreen
+        this.player.dirx = 1;
+        this.player.update(dt);
+        if (this.player.sprite.x > this.screenRight + 4) {
+            this.monster.sprite.x = this.screenRight + 16;
+            return this.NEXT;
+        }
+    }, "loop", function (dt) {
+        // Have the player run the other way chased by a monster
+        this.player.dirx = -1;
+        this.player.update(dt);
+        this.monster.velx = -20;
+        this.monster.update(dt);
+        this.monster.faceDirection(-1);
+        if (this.player.sprite.x < this.screenLeft - 4) {
+            this.player.upgradeSword(Item.Table.SMALL_SWORD);
+            return this.NEXT;
+        }
+    }, function (dt) {
+        // Now the player chases the monster with a sword
+        this.player.dirx = 1;
+        this.player.update(dt);
+        this.monster.velx = 20;
+        this.monster.update(dt);
+        this.monster.faceDirection(1);
+        if (this.player.sprite.x > this.screenRight + 4) {
+            // New monster chases the player
+            this.monsterChoice++;
+            var choice = this.monsterChoices[this.monsterChoice % this.monsterChoices.length];
+            this.monster.frames = Utils.getFrames(RES.ENEMIES, choice);
+            return "loop";
+        }
+    });
 }
 
 TitleScreen.prototype.update = function (dt) {
-	if (this.delay > 0) {
-		this.delay -= dt;
-		return;
-	}
+    if (this.delay > 0) {
+        this.delay -= dt;
+        return;
+    }
 
-	this.sequence.update(dt);
+    this.sequence.update(dt);
 
-	if (GameControls.getControls().space) {
-		this.state = this.NEW_GAME;
-	}
+    if (GameControls.getControls().space) {
+        this.state = this.NEW_GAME;
+    }
 };
 
 TitleScreen.prototype.render = function () {
-	Render.getRenderer().render(this.stage);
+    Render.getRenderer().render(this.stage);
 };
 
 module.exports = TitleScreen;
@@ -4581,41 +4579,41 @@ var Render = require("./render");
 var Item = require("./item");
 
 function renderText(lines, options) {
-   if (!(lines instanceof Array)) lines = [lines];
+    if (!(lines instanceof Array)) lines = [lines];
 
-   var maxWidth = 0;
-   var cnt = new PIXI.Container();
-   var y = 1;
-   for (var row = 0; row < lines.length; row++) {
-      var x = 1;
-      var msg = lines[row];
-      var height = 0;
-      for (var n = 0; n < msg.length; n++) {
-         var sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
-         sprite.anchor.set(0, 0);
-         sprite.x = x;
-         sprite.y = y;
-         // Make spaces a bit more narrow (looks better)
-         if (msg[n] === " ") x += (sprite.width + 1) / 2;else x += sprite.width + 1;
-         cnt.addChild(sprite);
-         height = Math.max(height, sprite.height);
-      }
-      maxWidth = Math.max(maxWidth, x);
-      y += height + 1;
-   }
+    var maxWidth = 0;
+    var cnt = new PIXI.Container();
+    var y = 1;
+    for (var row = 0; row < lines.length; row++) {
+        var x = 1;
+        var msg = lines[row];
+        var height = 0;
+        for (var n = 0; n < msg.length; n++) {
+            var sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
+            sprite.anchor.set(0, 0);
+            sprite.x = x;
+            sprite.y = y;
+            // Make spaces a bit more narrow (looks better)
+            if (msg[n] === " ") x += (sprite.width + 1) / 2;else x += sprite.width + 1;
+            cnt.addChild(sprite);
+            height = Math.max(height, sprite.height);
+        }
+        maxWidth = Math.max(maxWidth, x);
+        y += height + 1;
+    }
 
-   if (options && options.blackBG) {
-      var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
-      bg.scale.set(maxWidth / bg.width, y / bg.height);
-      cnt.addChild(bg);
-      cnt.children.unshift(cnt.children.pop());
-      // TODO - why doesn't this work for render textures?
-      //renderer.backgroundColor = 0x000000;
-   }
+    if (options && options.blackBG) {
+        var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
+        bg.scale.set(maxWidth / bg.width, y / bg.height);
+        cnt.addChild(bg);
+        cnt.children.unshift(cnt.children.pop());
+        // TODO - why doesn't this work for render textures?
+        //renderer.backgroundColor = 0x000000;
+    }
 
-   var renderTexture = PIXI.RenderTexture.create(maxWidth, y);
-   Render.getRenderer().render(cnt, renderTexture);
-   return renderTexture;
+    var renderTexture = PIXI.RenderTexture.create(maxWidth, y);
+    Render.getRenderer().render(cnt, renderTexture);
+    return renderTexture;
 }
 
 /************/
@@ -4623,82 +4621,82 @@ function renderText(lines, options) {
 /************/
 
 function HealthUI(levelScreen) {
-   this.levelScreen = levelScreen;
-   this.sprite = new PIXI.Container();
-   this.hearts = [];
-   this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
-   this.halfHeart = Utils.getFrame(RES.UI, "half_heart");
-   this.emptyHeart = Utils.getFrame(RES.UI, "empty_heart");
+    this.levelScreen = levelScreen;
+    this.sprite = new PIXI.Container();
+    this.hearts = [];
+    this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
+    this.halfHeart = Utils.getFrame(RES.UI, "half_heart");
+    this.emptyHeart = Utils.getFrame(RES.UI, "empty_heart");
 
-   for (var n = 0; n < 3; n++) {
-      this.addHeart();
-   }
+    for (var n = 0; n < 3; n++) {
+        this.addHeart();
+    }
 }
 
 // Adds a heart to the UI
 HealthUI.prototype.addHeart = function () {
-   var heart = new PIXI.Sprite(this.fullHeart);
-   this.hearts.push(heart);
-   this.sprite.addChild(heart);
+    var heart = new PIXI.Sprite(this.fullHeart);
+    this.hearts.push(heart);
+    this.sprite.addChild(heart);
 
-   var x = -this.hearts.length * (this.fullHeart.width + 1);
-   var _iteratorNormalCompletion = true;
-   var _didIteratorError = false;
-   var _iteratorError = undefined;
+    var x = -this.hearts.length * (this.fullHeart.width + 1);
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-   try {
-      for (var _iterator = this.hearts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-         var _heart = _step.value;
+    try {
+        for (var _iterator = this.hearts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var _heart = _step.value;
 
-         _heart.x = x;
-         x += this.fullHeart.width + 1;
-      }
-   } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-         }
-      } finally {
-         if (_didIteratorError) {
-            throw _iteratorError;
-         }
-      }
-   }
+            _heart.x = x;
+            x += this.fullHeart.width + 1;
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
 };
 
 // Removes the last heart from this UI
 HealthUI.prototype.removeHeart = function () {
-   if (this.hearts.length > 0) {
-      this.sprite.removeChild(this.hearts.pop());
-   }
+    if (this.hearts.length > 0) {
+        this.sprite.removeChild(this.hearts.pop());
+    }
 };
 
 HealthUI.prototype.update = function (dt) {
-   var player = this.levelScreen.player;
-   if (!player) return;
-   // Add hearts to match the player's max health
-   while (this.hearts.length < Math.floor(player.maxHealth / 2)) {
-      this.addHeart();
-   }
-   // Remove hearts to match the player's max health
-   while (this.hearts.length > Math.floor(player.maxHealth / 2)) {
-      this.removeHeart();
-   }
-   // Synchronize the hearts to reflect the player's health
-   for (var n = 0; n < this.hearts.length; n++) {
-      var img = null;
-      if (n < Math.floor(player.health / 2)) {
-         img = this.fullHeart;
-      } else if (n < Math.floor((player.health + 1) / 2)) {
-         img = this.halfHeart;
-      } else {
-         img = this.emptyHeart;
-      }
-      this.hearts[n].texture = img;
-   }
+    var player = this.levelScreen.player;
+    if (!player) return;
+    // Add hearts to match the player's max health
+    while (this.hearts.length < Math.floor(player.maxHealth / 2)) {
+        this.addHeart();
+    }
+    // Remove hearts to match the player's max health
+    while (this.hearts.length > Math.floor(player.maxHealth / 2)) {
+        this.removeHeart();
+    }
+    // Synchronize the hearts to reflect the player's health
+    for (var n = 0; n < this.hearts.length; n++) {
+        var img = null;
+        if (n < Math.floor(player.health / 2)) {
+            img = this.fullHeart;
+        } else if (n < Math.floor((player.health + 1) / 2)) {
+            img = this.halfHeart;
+        } else {
+            img = this.emptyHeart;
+        }
+        this.hearts[n].texture = img;
+    }
 };
 
 /**************/
@@ -4708,48 +4706,48 @@ HealthUI.prototype.update = function (dt) {
 // A single inventory slot, showing the picture of an item (from the tile
 // sheet GROUND_ITEMS) and optionally a quantity value below.
 function ItemSlotUI(item, args) {
-   this.sprite = new PIXI.Container();
-   this.baseItem = item;
-   this.item = item;
-   this.count = 0;
-   this.itemSprite = new PIXI.Sprite(Utils.getFrame(RES.GROUND_ITEMS, item.image));
-   this.itemSprite.anchor.set(0.5, 0.5);
-   this.itemSprite.x = 0.5;
-   this.itemSprite.y = -0.5;
-   this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "small_slot"));
-   this.slotSprite.anchor.set(0.5, 0.5);
-   this.sprite.addChild(this.slotSprite);
-   this.sprite.addChild(this.itemSprite);
+    this.sprite = new PIXI.Container();
+    this.baseItem = item;
+    this.item = item;
+    this.count = 0;
+    this.itemSprite = new PIXI.Sprite(Utils.getFrame(RES.GROUND_ITEMS, item.image));
+    this.itemSprite.anchor.set(0.5, 0.5);
+    this.itemSprite.x = 0.5;
+    this.itemSprite.y = -0.5;
+    this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "small_slot"));
+    this.slotSprite.anchor.set(0.5, 0.5);
+    this.sprite.addChild(this.slotSprite);
+    this.sprite.addChild(this.itemSprite);
 
-   if (args && args.x) this.itemSprite.x += args.x;
-   if (args && args.y) this.itemSprite.y += args.y;
+    if (args && args.x) this.itemSprite.x += args.x;
+    if (args && args.y) this.itemSprite.y += args.y;
 
-   if (args && args.showCount) {
-      var img = renderText("--");
-      this.textSprite = new PIXI.Sprite(img);
-      this.textSprite.anchor.set(0.5, 0.5);
-      this.textSprite.x = 0.5;
-      this.textSprite.y = 6.5;
-      this.textSprite.scale.set(0.75);
-      this.sprite.addChild(this.textSprite);
-   }
+    if (args && args.showCount) {
+        var img = renderText("--");
+        this.textSprite = new PIXI.Sprite(img);
+        this.textSprite.anchor.set(0.5, 0.5);
+        this.textSprite.x = 0.5;
+        this.textSprite.y = 6.5;
+        this.textSprite.scale.set(0.75);
+        this.sprite.addChild(this.textSprite);
+    }
 }
 
 ItemSlotUI.prototype.setCount = function (count) {
-   if (this.textSprite && this.count !== count) {
-      this.count = count;
-      if (count === 0) count = "--";else if (count < 9) count = "0" + count;
-      this.textSprite.texture = renderText("" + count);
-   }
+    if (this.textSprite && this.count !== count) {
+        this.count = count;
+        if (count === 0) count = "--";else if (count < 9) count = "0" + count;
+        this.textSprite.texture = renderText("" + count);
+    }
 };
 
 ItemSlotUI.prototype.setItem = function (item) {
-   // If no item is specified, use the item passed to the constructor instead
-   if (item === Item.Table.NONE) item = this.baseItem;
-   if (this.item !== item) {
-      this.item = item;
-      this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
-   }
+    // If no item is specified, use the item passed to the constructor instead
+    if (item === Item.Table.NONE) item = this.baseItem;
+    if (this.item !== item) {
+        this.item = item;
+        this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
+    }
 };
 
 /***************/
@@ -4758,65 +4756,65 @@ ItemSlotUI.prototype.setItem = function (item) {
 
 // Show the player inventory as a set of item slots (ItemSlotUI instances)
 function InventoryUI(levelScreen) {
-   this.levelScreen = levelScreen;
-   this.sprite = new PIXI.Container();
-   this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
-   this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
-   this.bowSlot = new ItemSlotUI(Item.Table.NO_BOW, { x: -0.5 });
-   this.arrowSlot = new ItemSlotUI(Item.Table.ARROW, { showCount: true });
-   this.coinSlot = new ItemSlotUI(Item.Table.COIN, {
-      showCount: true,
-      x: -0.5,
-      y: 0.5
-   });
+    this.levelScreen = levelScreen;
+    this.sprite = new PIXI.Container();
+    this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
+    this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
+    this.bowSlot = new ItemSlotUI(Item.Table.NO_BOW, { x: -0.5 });
+    this.arrowSlot = new ItemSlotUI(Item.Table.ARROW, { showCount: true });
+    this.coinSlot = new ItemSlotUI(Item.Table.COIN, {
+        showCount: true,
+        x: -0.5,
+        y: 0.5
+    });
 
-   this.slots = [this.armourSlot, this.swordSlot, this.bowSlot, this.arrowSlot, this.coinSlot];
-   var x = 0;
-   var _iteratorNormalCompletion2 = true;
-   var _didIteratorError2 = false;
-   var _iteratorError2 = undefined;
+    this.slots = [this.armourSlot, this.swordSlot, this.bowSlot, this.arrowSlot, this.coinSlot];
+    var x = 0;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
-   try {
-      for (var _iterator2 = this.slots[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-         var slot = _step2.value;
+    try {
+        for (var _iterator2 = this.slots[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var slot = _step2.value;
 
-         this.sprite.addChild(slot.sprite);
-         slot.sprite.x = x;
-         x += slot.slotSprite.texture.width + 1;
-      }
-   } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-         }
-      } finally {
-         if (_didIteratorError2) {
-            throw _iteratorError2;
-         }
-      }
-   }
+            this.sprite.addChild(slot.sprite);
+            slot.sprite.x = x;
+            x += slot.slotSprite.texture.width + 1;
+        }
+    } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+            }
+        } finally {
+            if (_didIteratorError2) {
+                throw _iteratorError2;
+            }
+        }
+    }
 }
 
 InventoryUI.prototype.update = function (dt) {
-   var player = this.levelScreen.player;
-   if (!player) return;
+    var player = this.levelScreen.player;
+    if (!player) return;
 
-   // TODO - use an event/listener system instead of doing this
-   this.armourSlot.setItem(player.armour);
-   this.swordSlot.setItem(player.sword);
-   this.bowSlot.setItem(player.bow);
-   this.arrowSlot.setCount(player.numArrows);
-   this.coinSlot.setCount(player.numCoins);
+    // TODO - use an event/listener system instead of doing this
+    this.armourSlot.setItem(player.armour);
+    this.swordSlot.setItem(player.sword);
+    this.bowSlot.setItem(player.bow);
+    this.arrowSlot.setCount(player.numArrows);
+    this.coinSlot.setCount(player.numCoins);
 };
 
 module.exports = {
-   renderText: renderText,
-   HealthUI: HealthUI,
-   InventoryUI: InventoryUI,
-   ItemSlotUI: ItemSlotUI
+    renderText: renderText,
+    HealthUI: HealthUI,
+    InventoryUI: InventoryUI,
+    ItemSlotUI: ItemSlotUI
 };
 
 },{"./item":14,"./render":21,"./res":22,"./utils":29}],29:[function(require,module,exports){
@@ -5026,84 +5024,84 @@ var ARROW_DISAPPEAR = 2;
 /*********/
 
 function SwordWeaponSlot(player) {
-   // Setup the weapon sprite (texture will come later)
-   this.sprite = new PIXI.Sprite();
-   //this.weaponSprite.anchor.set(6.5/8, 4/8.); // bow
-   this.sprite.anchor.set(4. / 8, 3.9 / 8); // sword
-   //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
-   // Sprite position (relative to the player) and rotation
-   this.sprite.x = 2.5;
-   this.sprite.y = -4;
-   this.sprite.rotation = -Math.PI / 3;
-   this.attackCooldown = 0;
-   this.weaponReach = 3.25;
-   this.player = player;
-   this.hitbox = new Thing.Hitbox(0, -4, 10, 6);
-   // Which weapon texture is currently displayed
-   this.textureName = null;
-   this.setTexture("sword2");
+    // Setup the weapon sprite (texture will come later)
+    this.sprite = new PIXI.Sprite();
+    //this.weaponSprite.anchor.set(6.5/8, 4/8.); // bow
+    this.sprite.anchor.set(4. / 8, 3.9 / 8); // sword
+    //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
+    // Sprite position (relative to the player) and rotation
+    this.sprite.x = 2.5;
+    this.sprite.y = -4;
+    this.sprite.rotation = -Math.PI / 3;
+    this.attackCooldown = 0;
+    this.weaponReach = 3.25;
+    this.player = player;
+    this.hitbox = new Thing.Hitbox(0, -4, 10, 6);
+    // Which weapon texture is currently displayed
+    this.textureName = null;
+    this.setTexture("sword2");
 }
 
 SwordWeaponSlot.prototype.update = function (dt) {
-   if (this.attackCooldown > 0) {
-      this.attackCooldown -= dt;
-      if (this.attackCooldown <= 0) {
-         this.sprite.x = 2.5;
-         this.sprite.rotation = -Math.PI / 3;
-      }
-   }
+    if (this.attackCooldown > 0) {
+        this.attackCooldown -= dt;
+        if (this.attackCooldown <= 0) {
+            this.sprite.x = 2.5;
+            this.sprite.rotation = -Math.PI / 3;
+        }
+    }
 
-   /* Staff placement */
-   /*this.weaponSprite.x = 3.4*SCALE;
-     this.weaponSprite.y = -4*SCALE;
-     this.weaponSprite.rotation = 0;*/
+    /* Staff placement */
+    /*this.weaponSprite.x = 3.4*SCALE;
+      this.weaponSprite.y = -4*SCALE;
+      this.weaponSprite.rotation = 0;*/
 };
 
 // Set which sword to display. The sprite is taken from the WEAPONS sheet
 SwordWeaponSlot.prototype.setTexture = function (name) {
-   if (this.textureName !== name) {
-      this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
-      this.textureName = name;
-   }
+    if (this.textureName !== name) {
+        this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
+        this.textureName = name;
+    }
 };
 
 SwordWeaponSlot.prototype.startAttack = function () {
-   if (this.attackCooldown > 0) return;
+    if (this.attackCooldown > 0) return;
 
-   Utils.getSound(RES.ATTACK_SWORD_SND).play();
-   this.sprite.rotation = 0;
-   this.sprite.x = 3.5;
+    Utils.getSound(RES.ATTACK_SWORD_SND).play();
+    this.sprite.rotation = 0;
+    this.sprite.x = 3.5;
 
-   var lst = this.player.level.checkHitMany(this.player.sprite.x + this.player.facing * this.weaponReach, this.player.sprite.y, this.hitbox, this.player);
+    var lst = this.player.level.checkHitMany(this.player.sprite.x + this.player.facing * this.weaponReach, this.player.sprite.y, this.hitbox, this.player);
 
-   var _iteratorNormalCompletion = true;
-   var _didIteratorError = false;
-   var _iteratorError = undefined;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-   try {
-      for (var _iterator = lst[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-         var hit = _step.value;
+    try {
+        for (var _iterator = lst[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var hit = _step.value;
 
-         if (hit.handleHit) {
-            hit.handleHit(this.player.sprite.x, this.player.sprite.y, 1);
-         }
-      }
-   } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-   } finally {
-      try {
-         if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-         }
-      } finally {
-         if (_didIteratorError) {
-            throw _iteratorError;
-         }
-      }
-   }
+            if (hit.handleHit) {
+                hit.handleHit(this.player.sprite.x, this.player.sprite.y, 1);
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
 
-   this.attackCooldown = 0.15;
+    this.attackCooldown = 0.15;
 };
 
 SwordWeaponSlot.prototype.stopAttack = function () {};
@@ -5113,121 +5111,121 @@ SwordWeaponSlot.prototype.stopAttack = function () {};
 /*******/
 
 function BowWeaponSlot(player) {
-   // Setup the weapon sprite (texture will come later)
-   this.sprite = new PIXI.Sprite();
-   this.sprite.anchor.set(6.5 / 8, 4 / 8.); // bow
-   //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
-   // Sprite position (relative to the player) and rotation
-   this.player = player;
-   this.attackCooldown = 0;
-   this.textureName = null;
-   this.setTexture("bow1");
+    // Setup the weapon sprite (texture will come later)
+    this.sprite = new PIXI.Sprite();
+    this.sprite.anchor.set(6.5 / 8, 4 / 8.); // bow
+    //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
+    // Sprite position (relative to the player) and rotation
+    this.player = player;
+    this.attackCooldown = 0;
+    this.textureName = null;
+    this.setTexture("bow1");
 }
 
 BowWeaponSlot.prototype.update = function (dt) {
-   if (this.attackCooldown <= 0) {
-      /* Have the bow rock back and forth as the player moves. */
-      this.sprite.rotation = Math.PI / 5 + Math.PI / 40 * Math.cos(10 * this.player.frame);
-      this.sprite.x = 3.0;
-      this.sprite.y = -2.5;
-   } else {
-      this.sprite.rotation = 0;
-      this.sprite.x = 3;
-      this.sprite.y = -3.25;
-      this.attackCooldown -= dt;
-   }
-   /* Staff placement */
-   /*this.weaponSprite.x = 3.4*SCALE;
-     this.weaponSprite.y = -4*SCALE;
-     this.weaponSprite.rotation = 0;*/
+    if (this.attackCooldown <= 0) {
+        /* Have the bow rock back and forth as the player moves. */
+        this.sprite.rotation = Math.PI / 5 + Math.PI / 40 * Math.cos(10 * this.player.frame);
+        this.sprite.x = 3.0;
+        this.sprite.y = -2.5;
+    } else {
+        this.sprite.rotation = 0;
+        this.sprite.x = 3;
+        this.sprite.y = -3.25;
+        this.attackCooldown -= dt;
+    }
+    /* Staff placement */
+    /*this.weaponSprite.x = 3.4*SCALE;
+      this.weaponSprite.y = -4*SCALE;
+      this.weaponSprite.rotation = 0;*/
 };
 
 // Set which bow to display. The sprite is taken from the WEAPONS sheet
 BowWeaponSlot.prototype.setTexture = function (name) {
-   if (this.textureName !== name) {
-      this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
-      this.textureName = name;
-   }
+    if (this.textureName !== name) {
+        this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
+        this.textureName = name;
+    }
 };
 
 BowWeaponSlot.prototype.startAttack = function () {
-   // Make sure we have an arrow to fire
-   if (this.player.numArrows <= 0) return;
-   if (this.attackCooldown > 0) return;
-   Utils.getSound(RES.ATTACK_SWORD_SND).play();
-   this.attackCooldown = 0.2;
+    // Make sure we have an arrow to fire
+    if (this.player.numArrows <= 0) return;
+    if (this.attackCooldown > 0) return;
+    Utils.getSound(RES.ATTACK_SWORD_SND).play();
+    this.attackCooldown = 0.2;
 
-   this.player.numArrows--;
+    this.player.numArrows--;
 
-   var arrow = new Arrow(this.player, this.player.sprite.x, this.player.sprite.y + this.sprite.y, this.player.facing * 100, 0, Math.abs(this.sprite.y));
-   //level.things.push(arrow);
-   //level.stage.addChild(arrow.sprite);
-   this.player.level.addThing(arrow);
+    var arrow = new Arrow(this.player, this.player.sprite.x, this.player.sprite.y + this.sprite.y, this.player.facing * 100, 0, Math.abs(this.sprite.y));
+    //level.things.push(arrow);
+    //level.stage.addChild(arrow.sprite);
+    this.player.level.addThing(arrow);
 };
 
 BowWeaponSlot.prototype.stopAttack = function () {};
 
 function Arrow(owner, x, y, velx, vely, height) {
-   this.owner = owner;
-   this.sprite = new PIXI.Sprite(Utils.getFrame(RES.WEAPONS, "arrow"));
-   this.sprite.anchor.set(0.5, 0.5);
-   this.sprite.scale.x = Math.sign(velx);
-   this.sprite.scale.y = 1;
-   this.sprite.x = x;
-   this.sprite.y = y;
-   this.velx = velx;
-   this.vely = vely;
-   this.height = height;
-   this.state = ARROW_FLIGHT;
-   this.timer = 0;
-   this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    this.owner = owner;
+    this.sprite = new PIXI.Sprite(Utils.getFrame(RES.WEAPONS, "arrow"));
+    this.sprite.anchor.set(0.5, 0.5);
+    this.sprite.scale.x = Math.sign(velx);
+    this.sprite.scale.y = 1;
+    this.sprite.x = x;
+    this.sprite.y = y;
+    this.velx = velx;
+    this.vely = vely;
+    this.height = height;
+    this.state = ARROW_FLIGHT;
+    this.timer = 0;
+    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
 }
 
 Arrow.prototype.update = function (dt) {
-   var level = this.owner.level;
-   if (this.state === ARROW_FLIGHT) {
-      this.sprite.x += this.velx * dt;
-      this.sprite.y += this.vely * dt;
-      // The arrow disappears when it's no longer visible
-      if (this.sprite.x < level.camera.x || this.sprite.x > level.camera.x + level.camera.width) {
-         level.removeThing(this);
-      }
-      // Check if the arrow hits a wall
-      var tile = level.bg.getTileAt(this.sprite.x + Math.sign(this.velx) * 4, this.sprite.y + this.height);
-      if (tile.solid) {
-         this.velx *= -0.25;
-         this.vely = 0;
-         this.state = ARROW_FALLING;
-         Utils.getSound(RES.ARROW_DING_SND).volume = 0.4;
-         Utils.getSound(RES.ARROW_DING_SND).play();
-         return;
-      }
-      // Now check if we've hit an enemy
-      var other = level.checkHit(this.sprite.x, this.sprite.y, this.hitbox, this.owner);
-      if (other && other.handleHit) {
-         var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
-         if (ret === true) {
+    var level = this.owner.level;
+    if (this.state === ARROW_FLIGHT) {
+        this.sprite.x += this.velx * dt;
+        this.sprite.y += this.vely * dt;
+        // The arrow disappears when it's no longer visible
+        if (this.sprite.x < level.camera.x || this.sprite.x > level.camera.x + level.camera.width) {
             level.removeThing(this);
-         }
-      }
-   } else if (this.state === ARROW_FALLING) {
-      this.vely -= 700 * dt;
-      this.height += this.vely * dt;
-      this.sprite.x += this.velx * dt;
-      this.sprite.y -= this.vely * dt;
-      if (this.height <= 0) {
-         this.timer = 1;
-         this.state = ARROW_DISAPPEAR;
-      }
-   } else {
-      this.timer -= dt;
-      if (this.timer <= 0) level.removeThing(this);
-   }
+        }
+        // Check if the arrow hits a wall
+        var tile = level.bg.getTileAt(this.sprite.x + Math.sign(this.velx) * 4, this.sprite.y + this.height);
+        if (tile.solid) {
+            this.velx *= -0.25;
+            this.vely = 0;
+            this.state = ARROW_FALLING;
+            Utils.getSound(RES.ARROW_DING_SND).volume = 0.4;
+            Utils.getSound(RES.ARROW_DING_SND).play();
+            return;
+        }
+        // Now check if we've hit an enemy
+        var other = level.checkHit(this.sprite.x, this.sprite.y, this.hitbox, this.owner);
+        if (other && other.handleHit) {
+            var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
+            if (ret === true) {
+                level.removeThing(this);
+            }
+        }
+    } else if (this.state === ARROW_FALLING) {
+        this.vely -= 700 * dt;
+        this.height += this.vely * dt;
+        this.sprite.x += this.velx * dt;
+        this.sprite.y -= this.vely * dt;
+        if (this.height <= 0) {
+            this.timer = 1;
+            this.state = ARROW_DISAPPEAR;
+        }
+    } else {
+        this.timer -= dt;
+        if (this.timer <= 0) level.removeThing(this);
+    }
 };
 
 module.exports = {
-   Bow: BowWeaponSlot,
-   Sword: SwordWeaponSlot
+    Bow: BowWeaponSlot,
+    Sword: SwordWeaponSlot
 };
 
 },{"./res":22,"./thing":26,"./utils":29}]},{},[17])(17)
