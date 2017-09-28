@@ -44,8 +44,7 @@ function start()
     progress.sprite.y = 100;
     stage.addChild(progress.sprite);
 
-    controls = new GameControls();
-    controls.attach();
+    GameControls.configure();
 
     gamestate = new GameState();
 
@@ -106,7 +105,7 @@ function gameLoop()
     }
 
     gamestate.update(dt);
-    controls.update();
+    GameControls.update();
     gamestate.render();
     requestAnimationFrame(gameLoop)
 }

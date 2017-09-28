@@ -21,6 +21,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Render = require("./render");
 var UI = require("./ui");
+var GameControls = require("./controls");
 var LevelGenerator = require("./genlevel");
 var Player = require("./player");
 var Item = require("./item");
@@ -178,7 +179,7 @@ TitleScreen.prototype.update = function(dt)
 
     this.sequence.update(dt);
 
-    if (controls.space) {
+    if (GameControls.getControls().space) {
 	this.state = this.NEW_GAME;
     }
 }

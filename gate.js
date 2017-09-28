@@ -20,6 +20,7 @@
 var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
+var GameControls = require("./controls");
 
 function Gate()
 {
@@ -87,8 +88,8 @@ Gate.prototype.handleHit = function(x, y, dmg)
 Gate.prototype.handlePlayerCollision = function()
 {
     if (this.isOpen() && 
-	controls.up && 
 	this === this.level.exitDoor && 
+	GameControls.getControls().up && 
 	Math.abs(player.sprite.y-this.sprite.y) < 5) 
     {
 	// Next level

@@ -28,6 +28,8 @@ ARROW_DOWN = 40;
 
 TEST_KEY = 75;
 
+var controls = null;
+
 function GameControls()
 {
     this.up = false;
@@ -141,4 +143,19 @@ GameControls.prototype.attach = function()
     attachKeyUp(this);
 }
 
-module.exports = GameControls;
+module.exports = {};
+module.exports.configure = function()
+{
+    controls = new GameControls();
+    controls.attach();
+}
+
+module.exports.update = function()
+{
+    controls.update();
+}
+
+module.exports.getControls = function()
+{
+    return controls;
+}

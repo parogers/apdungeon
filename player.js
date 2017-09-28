@@ -21,7 +21,8 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Item = require("./item");
 var Thing = require("./thing");
-var WeaponSlot = require("./weaponslot")
+var WeaponSlot = require("./weaponslot");
+var GameControls = require("./controls");
 
 // What tint of colour to use when the player takes damage
 var DAMAGE_TINT = 0xFF0000;
@@ -149,6 +150,8 @@ Player.prototype.update = function(dt)
 	this.level.stage.addChild(this.sprite);
 	return;
     }
+
+    var controls = GameControls.getControls();
 
     if (this.knockedTimer <= 0) {
 	if (this.hasControl) {
