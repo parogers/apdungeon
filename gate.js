@@ -85,7 +85,7 @@ Gate.prototype.handleHit = function(x, y, dmg)
 {
 }
 
-Gate.prototype.handlePlayerCollision = function()
+Gate.prototype.handlePlayerCollision = function(player)
 {
     if (this.isOpen() && 
 	this === this.level.exitDoor && 

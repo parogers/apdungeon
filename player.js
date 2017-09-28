@@ -269,7 +269,7 @@ Player.prototype.update = function(dt)
 	this.hitbox, this);
     for (var n = 0; n < hit.length; n++) {
 	if (hit[n].handlePlayerCollision) {
-	    hit[n].handlePlayerCollision();
+	    hit[n].handlePlayerCollision(this);
 	}
     }
 

@@ -47,7 +47,7 @@ Chest.prototype.update = function(dt)
 	this.timer -= dt;
 	if (this.timer <= 0) {
 	    // Eject the contents from the chest
-	    for (item of this.items) {
+	    for (let item of this.items) {
 		var gnd = new GroundItem(
 		    item, 
 		    this.sprite.x+1*Utils.randUniform(0, 1), 
@@ -70,7 +70,7 @@ Chest.prototype.handleHit = function(x, y, dmg)
 {
 }
 
-Chest.prototype.handlePlayerCollision = function()
+Chest.prototype.handlePlayerCollision = function(player)
 {
     if (!this.isOpen) {
 	// Open the chest now and start a countdown timer before ejecting 

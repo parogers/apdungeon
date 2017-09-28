@@ -93,7 +93,7 @@ GoMarker.prototype.handleHit = function(x, y, dmg)
 {
 }
 
-GoMarker.prototype.handlePlayerCollision = function()
+GoMarker.prototype.handlePlayerCollision = function(player)
 {
 }
 

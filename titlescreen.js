@@ -64,7 +64,7 @@ function TitleScreen()
     this.stage.addChild(this.bg);
     this.delay = 0;
 
-    txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
+    var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;

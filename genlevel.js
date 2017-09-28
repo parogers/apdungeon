@@ -99,7 +99,7 @@ function chooseMonsters(budget)
     {
 	// Compile a list of monster options to choose from
 	var options = [];
-	for (entry of monsterTable) {
+	for (let entry of monsterTable) {
 	    if (entry.score <= budget) options.push(entry);
 	}
 	if (options.length === 0) break;
@@ -145,6 +145,8 @@ EnterScene.prototype.update = function(dt)
 	this.timer -= dt;
 	return;
     }
+
+    let player = this.level.player;
 
     switch(this.state) {
     case this.IDLE:
@@ -324,7 +326,7 @@ module.exports.generate = function(levelNum)
 
 	// Find the visible gates (for gate spawning below)
 	var gates = [];
-	for (thing of level.things) {
+	for (let thing of level.things) {
 	    if (thing instanceof Gate &&
 		thing.sprite.x > arena.startx && 
 		thing.sprite.x < arena.endx)
@@ -350,7 +352,7 @@ module.exports.generate = function(levelNum)
 		monsters = chooseMonsters(budget);
 	    }
 
-	    for (klass of monsters) 
+	    for (let klass of monsters) 
 	    {
 		var spawn = null;
 		var ypos = randUniform(0, level.camera.height);

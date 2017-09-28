@@ -138,7 +138,7 @@ Round.prototype.update = function(dt)
 */
     // Wait for all the monsters to die
     this.done = (this.spawns.length === 0);
-    for (spawn of this.running) {
+    for (let spawn of this.running) {
 	if (spawn.update) spawn.update(dt);
 	if (!spawn.monster.dead) this.done = false;
     }

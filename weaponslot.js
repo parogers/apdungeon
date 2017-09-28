@@ -87,7 +87,7 @@ SwordWeaponSlot.prototype.startAttack = function()
 	this.player.sprite.y,
 	this.hitbox, this.player);
 
-    for (hit of lst) {
+    for (let hit of lst) {
 	if (hit.handleHit) {
 	    hit.handleHit(this.player.sprite.x, 
 			  this.player.sprite.y, 1);

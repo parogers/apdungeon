@@ -149,7 +149,9 @@ Goblin.prototype.updateJumping = function(dt)
 Goblin.prototype.updateAttacking = function(dt)
 {
     // Rush towards the player
-    var dx = 0, dy = 0;
+    let player = this.level.player;
+    let dx = 0, dy = 0;
+
     if (player.sprite.x > this.sprite.x) {
 	dx = 2*this.speed*dt;
 	this.facing = 1;
@@ -204,7 +206,9 @@ Goblin.prototype.updateApproach = function(dt)
     // Move towards the player, but try to keep a fixed distance away. 
     // Initially the target is set to the player's position, plus/minus
     // a fixed offset.
-    var targetx = 0;
+    let player = this.level.player;
+    let targetx = 0;
+
     if (this.sprite.x < player.sprite.x) {
 	targetx = player.sprite.x - this.approachDist;
 	this.facing = 1;
@@ -273,6 +277,8 @@ Goblin.prototype.updateHurt = function(dt)
 
 Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 {
+    let player = this.level.player;
+
     if (this.state === GOBLIN_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
@@ -300,7 +306,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
     return true;
 }
 
-Goblin.prototype.handlePlayerCollision = function()
+Goblin.prototype.handlePlayerCollision = function(player)
 {
     player.takeDamage(2, this);
 }

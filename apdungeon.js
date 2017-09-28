@@ -1,4 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.apdungeon = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -130,9 +132,30 @@ Round.prototype.update = function (dt) {
     */
     // Wait for all the monsters to die
     this.done = this.spawns.length === 0;
-    for (spawn of this.running) {
-        if (spawn.update) spawn.update(dt);
-        if (!spawn.monster.dead) this.done = false;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = this.running[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var _spawn = _step.value;
+
+            if (_spawn.update) _spawn.update(dt);
+            if (!_spawn.monster.dead) this.done = false;
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
     }
 };
 
@@ -322,6 +345,8 @@ module.exports = {
 };
 
 },{"./level":15,"./res":22,"./scenery":23,"./utils":29}],2:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -410,8 +435,9 @@ TiledBackground.prototype.checkHit = function (x, y, w) {
     var row = y / this.tileHeight | 0;
     var col1 = x / this.tileWidth | 0;
     var col2 = (x + w) / this.tileWidth | 0;
-    for (var col = col1; col <= col2; col++) if (this.solid[row] && this.solid[row][col]) return true;
-    return false;
+    for (var col = col1; col <= col2; col++) {
+        if (this.solid[row] && this.solid[row][col]) return true;
+    }return false;
 };
 
 TiledBackground.prototype.getTileAt = function (x, y) {
@@ -433,6 +459,8 @@ TiledBackground.prototype.getHeight = function () {
 module.exports = TiledBackground;
 
 },{"./render":21,"./utils":29}],3:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -480,17 +508,38 @@ Chest.prototype.update = function (dt) {
     this.timer -= dt;
     if (this.timer <= 0) {
       // Eject the contents from the chest
-      for (item of this.items) {
-        var gnd = new GroundItem(item, this.sprite.x + 1 * Utils.randUniform(0, 1), this.sprite.y + 2 * Utils.randUniform(0.1, 1));
-        this.level.addThing(gnd);
-        var spd = Utils.randUniform(6, 12);
-        if (this.options && this.options.ejectX) {
-          gnd.velx = this.options.ejectX * spd;
-        } else {
-          gnd.velx = Utils.randomChoice([-1, 1]) * spd;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var item = _step.value;
+
+          var gnd = new GroundItem(item, this.sprite.x + 1 * Utils.randUniform(0, 1), this.sprite.y + 2 * Utils.randUniform(0.1, 1));
+          this.level.addThing(gnd);
+          var spd = Utils.randUniform(6, 12);
+          if (this.options && this.options.ejectX) {
+            gnd.velx = this.options.ejectX * spd;
+          } else {
+            gnd.velx = Utils.randomChoice([-1, 1]) * spd;
+          }
+          gnd.velz = -Utils.randUniform(-2, 6);
+          gnd.velh = -30 * Utils.randUniform(0.9, 1);
         }
-        gnd.velz = -Utils.randUniform(-2, 6);
-        gnd.velh = -30 * Utils.randUniform(0.9, 1);
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
       }
     }
   }
@@ -498,7 +547,7 @@ Chest.prototype.update = function (dt) {
 
 Chest.prototype.handleHit = function (x, y, dmg) {};
 
-Chest.prototype.handlePlayerCollision = function () {
+Chest.prototype.handlePlayerCollision = function (player) {
   if (!this.isOpen) {
     // Open the chest now and start a countdown timer before ejecting 
     // the contents.
@@ -512,6 +561,8 @@ Chest.prototype.handlePlayerCollision = function () {
 module.exports = Chest;
 
 },{"./grounditem":13,"./res":22,"./thing":26,"./utils":29}],4:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -531,16 +582,16 @@ module.exports = Chest;
  * See LICENSE.txt for the full text of the license.
  */
 
-PRIMARY = 90;
-PRIMARY_ALT = 65;
-SWAP = 88;
-SPACE = 32;
-ARROW_UP = 38;
-ARROW_LEFT = 37;
-ARROW_RIGHT = 39;
-ARROW_DOWN = 40;
+var PRIMARY = 90;
+var PRIMARY_ALT = 65;
+var SWAP = 88;
+var SPACE = 32;
+var ARROW_UP = 38;
+var ARROW_LEFT = 37;
+var ARROW_RIGHT = 39;
+var ARROW_DOWN = 40;
 
-TEST_KEY = 75;
+var TEST_KEY = 75;
 
 var controls = null;
 
@@ -665,6 +716,8 @@ module.exports.getControls = function () {
 };
 
 },{}],5:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -703,6 +756,8 @@ Door.prototype = Object.create(Gate.prototype);
 module.exports = Door;
 
 },{"./gate":8,"./res":22,"./utils":29}],6:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -726,6 +781,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Render = require("./render");
 var UI = require("./ui");
+var GameControls = require("./controls");
 
 /* Displays a game over screen. The LevelScreen that caused the game over
  * should be passed in. This screen will make a gradual transition from 
@@ -769,13 +825,34 @@ function GameOverScreen(levelScreen) {
 			this.col = 0;
 			this.killStats = [];
 			var names = Object.keys(levelScreen.player.kills);
-			for (var name of names) {
-						var stat = levelScreen.player.kills[name];
-						this.killStats.push({
-									count: stat.count,
-									img: stat.img,
-									name: name
-						});
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+						for (var _iterator = names[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+									var name = _step.value;
+
+									var stat = levelScreen.player.kills[name];
+									this.killStats.push({
+												count: stat.count,
+												img: stat.img,
+												name: name
+									});
+						}
+			} catch (err) {
+						_didIteratorError = true;
+						_iteratorError = err;
+			} finally {
+						try {
+									if (!_iteratorNormalCompletion && _iterator.return) {
+												_iterator.return();
+									}
+						} finally {
+									if (_didIteratorError) {
+												throw _iteratorError;
+									}
+						}
 			}
 
 			this.stage.addChild(this.bg);
@@ -848,7 +925,7 @@ GameOverScreen.prototype.update = function (dt) {
 									break;
 
 						case this.WAITING:
-									if (controls.space) {
+									if (GameControls.getControls().space) {
 												this.state = this.DONE;
 									}
 									break;
@@ -861,7 +938,9 @@ GameOverScreen.prototype.render = function () {
 
 module.exports = GameOverScreen;
 
-},{"./render":21,"./res":22,"./ui":28,"./utils":29}],7:[function(require,module,exports){
+},{"./controls":4,"./render":21,"./res":22,"./ui":28,"./utils":29}],7:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -963,6 +1042,8 @@ GameState.prototype.render = function () {
 module.exports = GameState;
 
 },{"./gameover":6,"./levelscreen":16,"./titlescreen":27}],8:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -1039,7 +1120,7 @@ Gate.prototype.update = function (dt) {
 
 Gate.prototype.handleHit = function (x, y, dmg) {};
 
-Gate.prototype.handlePlayerCollision = function () {
+Gate.prototype.handlePlayerCollision = function (player) {
     if (this.isOpen() && this === this.level.exitDoor && GameControls.getControls().up && Math.abs(player.sprite.y - this.sprite.y) < 5) {
         // Next level
         this.level.state = this.level.FINISHED;
@@ -1049,6 +1130,8 @@ Gate.prototype.handlePlayerCollision = function () {
 module.exports = Gate;
 
 },{"./controls":4,"./res":22,"./thing":26,"./utils":29}],9:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -1134,9 +1217,31 @@ function chooseMonsters(budget) {
 			while (true) {
 						// Compile a list of monster options to choose from
 						var options = [];
-						for (entry of monsterTable) {
-									if (entry.score <= budget) options.push(entry);
+						var _iteratorNormalCompletion = true;
+						var _didIteratorError = false;
+						var _iteratorError = undefined;
+
+						try {
+									for (var _iterator = monsterTable[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+												var entry = _step.value;
+
+												if (entry.score <= budget) options.push(entry);
+									}
+						} catch (err) {
+									_didIteratorError = true;
+									_iteratorError = err;
+						} finally {
+									try {
+												if (!_iteratorNormalCompletion && _iterator.return) {
+															_iterator.return();
+												}
+									} finally {
+												if (_didIteratorError) {
+															throw _iteratorError;
+												}
+									}
 						}
+
 						if (options.length === 0) break;
 						// Pick a monster at random
 						var opt = randomChoice(options);
@@ -1178,6 +1283,8 @@ EnterScene.prototype.update = function (dt) {
 						this.timer -= dt;
 						return;
 			}
+
+			var player = this.level.player;
 
 			switch (this.state) {
 						case this.IDLE:
@@ -1257,9 +1364,11 @@ module.exports.generate = function (levelNum) {
 			// Add a random spot of water somewhere
 			var w = randint(4, 8);
 			var pos = randint(10, grid.cols - 2 - w);
-			for (var row = 1; row < grid.rows; row++) for (var col = pos - randint(0, 2); col < pos + w + randint(0, 2); col++) grid[row][col] = "water";
-
-			// Add random outcropping of wall sections
+			for (var row = 1; row < grid.rows; row++) {
+						for (var col = pos - randint(0, 2); col < pos + w + randint(0, 2); col++) {
+									grid[row][col] = "water";
+						}
+			} // Add random outcropping of wall sections
 			var pos = 0;
 			if (levelNum === 0) {
 						// Leave a large, empty space in the first level to make room for
@@ -1341,13 +1450,35 @@ module.exports.generate = function (levelNum) {
 
 						// Find the visible gates (for gate spawning below)
 						var gates = [];
-						for (thing of level.things) {
-									if (thing instanceof Gate && thing.sprite.x > arena.startx && thing.sprite.x < arena.endx) {
-												gates.push(thing);
+						var _iteratorNormalCompletion2 = true;
+						var _didIteratorError2 = false;
+						var _iteratorError2 = undefined;
+
+						try {
+									for (var _iterator2 = level.things[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+												var thing = _step2.value;
+
+												if (thing instanceof Gate && thing.sprite.x > arena.startx && thing.sprite.x < arena.endx) {
+															gates.push(thing);
+												}
+									}
+
+									// Higher levels have more rounds per arena on average
+						} catch (err) {
+									_didIteratorError2 = true;
+									_iteratorError2 = err;
+						} finally {
+									try {
+												if (!_iteratorNormalCompletion2 && _iterator2.return) {
+															_iterator2.return();
+												}
+									} finally {
+												if (_didIteratorError2) {
+															throw _iteratorError2;
+												}
 									}
 						}
 
-						// Higher levels have more rounds per arena on average
 						for (var rnum = 0; rnum < randint(2, 4 + levelNum); rnum++) {
 									var round = new Arena.Round(randUniform(0.5, 1));
 									var monsters = null;
@@ -1362,23 +1493,45 @@ module.exports.generate = function (levelNum) {
 												monsters = chooseMonsters(budget);
 									}
 
-									for (klass of monsters) {
-												var spawn = null;
-												var ypos = randUniform(0, level.camera.height);
-												var style = randint(1, 5);
+									var _iteratorNormalCompletion3 = true;
+									var _didIteratorError3 = false;
+									var _iteratorError3 = undefined;
 
-												if (style === 1 && klass !== Ghost) {
-															var xpos = randint(arena.startx + 20, arena.endx - 20);
-															spawn = new Arena.DropSpawn(level, new klass(), xpos, ypos);
-												} else if (style === 2 && gates.length > 0) {
-															spawn = new Arena.GateSpawn(level, new klass(), randomChoice(gates));
-												} else {
-															var xdir = randomChoice([-1, 1]);
-															if (endx >= level.getWidth() - 1) xdir = -1;
-															spawn = new Arena.Spawn(level, new klass(), xdir, ypos);
+									try {
+												for (var _iterator3 = monsters[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+															var klass = _step3.value;
+
+															var spawn = null;
+															var ypos = randUniform(0, level.camera.height);
+															var style = randint(1, 5);
+
+															if (style === 1 && klass !== Ghost) {
+																		var xpos = randint(arena.startx + 20, arena.endx - 20);
+																		spawn = new Arena.DropSpawn(level, new klass(), xpos, ypos);
+															} else if (style === 2 && gates.length > 0) {
+																		spawn = new Arena.GateSpawn(level, new klass(), randomChoice(gates));
+															} else {
+																		var xdir = randomChoice([-1, 1]);
+																		if (endx >= level.getWidth() - 1) xdir = -1;
+																		spawn = new Arena.Spawn(level, new klass(), xdir, ypos);
+															}
+															round.addSpawn(spawn, randUniform(0, 1));
 												}
-												round.addSpawn(spawn, randUniform(0, 1));
+									} catch (err) {
+												_didIteratorError3 = true;
+												_iteratorError3 = err;
+									} finally {
+												try {
+															if (!_iteratorNormalCompletion3 && _iterator3.return) {
+																		_iterator3.return();
+															}
+												} finally {
+															if (_didIteratorError3) {
+																		throw _iteratorError3;
+															}
+												}
 									}
+
 									arena.rounds.push(round);
 						}
 						// Randomly add a chest into the arena
@@ -1475,6 +1628,8 @@ module.exports.generateEmpty = function (rows, cols, value) {
 };
 
 },{"./arena":1,"./bg":2,"./chest":3,"./door":5,"./gate":8,"./ghost":10,"./goblin":11,"./grounditem":13,"./item":14,"./level":15,"./npc":18,"./res":22,"./skel_warrior":24,"./snake":25,"./utils":29}],10:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -1542,9 +1697,11 @@ Ghost.prototype.update = function (dt) {
 };
 
 Ghost.prototype.updateAttacking = function (dt) {
+    var player = this.level.player;
     var accelx = player.sprite.x - this.sprite.x;
     var accely = player.sprite.y - this.sprite.y;
     var mag = Math.sqrt(accelx * accelx + accely * accely);
+
     accelx = this.accel * accelx / mag;
     accely = this.accel * accely / mag;
 
@@ -1581,6 +1738,7 @@ Ghost.prototype.updateHurt = function (dt) {
 };
 
 Ghost.prototype.handleHit = function (srcx, srcy, dmg) {
+    var player = this.level.player;
     if (this.state === GHOST_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
@@ -1599,13 +1757,15 @@ Ghost.prototype.handleHit = function (srcx, srcy, dmg) {
     return true;
 };
 
-Ghost.prototype.handlePlayerCollision = function () {
+Ghost.prototype.handlePlayerCollision = function (player) {
     player.takeDamage(4, this);
 };
 
 module.exports = Ghost;
 
 },{"./item":14,"./res":22,"./thing":26,"./utils":29}],11:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -1747,8 +1907,10 @@ Goblin.prototype.updateJumping = function (dt) {
 
 Goblin.prototype.updateAttacking = function (dt) {
    // Rush towards the player
+   var player = this.level.player;
    var dx = 0,
        dy = 0;
+
    if (player.sprite.x > this.sprite.x) {
       dx = 2 * this.speed * dt;
       this.facing = 1;
@@ -1801,7 +1963,9 @@ Goblin.prototype.updateApproach = function (dt) {
    // Move towards the player, but try to keep a fixed distance away. 
    // Initially the target is set to the player's position, plus/minus
    // a fixed offset.
+   var player = this.level.player;
    var targetx = 0;
+
    if (this.sprite.x < player.sprite.x) {
       targetx = player.sprite.x - this.approachDist;
       this.facing = 1;
@@ -1868,6 +2032,8 @@ Goblin.prototype.updateHurt = function (dt) {
 };
 
 Goblin.prototype.handleHit = function (srcx, srcy, dmg) {
+   var player = this.level.player;
+
    if (this.state === GOBLIN_DEAD) return false;
    this.health -= 1;
    if (this.health <= 0) {
@@ -1893,13 +2059,15 @@ Goblin.prototype.handleHit = function (srcx, srcy, dmg) {
    return true;
 };
 
-Goblin.prototype.handlePlayerCollision = function () {
+Goblin.prototype.handlePlayerCollision = function (player) {
    player.takeDamage(2, this);
 };
 
 module.exports = Goblin;
 
 },{"./item":14,"./res":22,"./thing":26,"./utils":29}],12:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -1985,11 +2153,13 @@ GoMarker.prototype.update = function (dt) {
 
 GoMarker.prototype.handleHit = function (x, y, dmg) {};
 
-GoMarker.prototype.handlePlayerCollision = function () {};
+GoMarker.prototype.handlePlayerCollision = function (player) {};
 
 module.exports = GoMarker;
 
 },{"./res":22,"./utils":29}],13:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -2078,7 +2248,7 @@ GroundItem.prototype.update = function (dt) {
   }
 };
 
-GroundItem.prototype.handlePlayerCollision = function () {
+GroundItem.prototype.handlePlayerCollision = function (player) {
   // The player takes the item if it's falling down (or resting) and close
   // enough to the ground.
   if (this.height < 3 && this.velh >= 0) {
@@ -2091,6 +2261,8 @@ GroundItem.prototype.handlePlayerCollision = function () {
 module.exports = GroundItem;
 
 },{"./res":22,"./thing":26,"./utils":29}],14:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -2171,6 +2343,8 @@ Item.Table = {
 module.exports = Item;
 
 },{"./res":22,"./utils":29}],15:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -2391,8 +2565,29 @@ Level.prototype.update = function (dt) {
    this.stage.x = -this.camera.x;
    this.stage.y = -this.camera.y;
    // Update everything in the level
-   for (thing of this.things) {
-      if (thing.update) thing.update(dt);
+   var _iteratorNormalCompletion = true;
+   var _didIteratorError = false;
+   var _iteratorError = undefined;
+
+   try {
+      for (var _iterator = this.things[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+         var thing = _step.value;
+
+         if (thing.update) thing.update(dt);
+      }
+   } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+         }
+      } finally {
+         if (_didIteratorError) {
+            throw _iteratorError;
+         }
+      }
    }
 };
 
@@ -2406,12 +2601,34 @@ Level.prototype.checkHit = function (x, y, hitbox, ignore) {
        h = hitbox.h;
    //var thing = null;
    //for (var n = 0; n < this.things.length; n++) 
-   for (thing of this.things) {
-      //thing = this.things[n];
-      if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
-         return thing;
+   var _iteratorNormalCompletion2 = true;
+   var _didIteratorError2 = false;
+   var _iteratorError2 = undefined;
+
+   try {
+      for (var _iterator2 = this.things[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+         var thing = _step2.value;
+
+         //thing = this.things[n];
+         if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
+            return thing;
+         }
+      }
+   } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+         }
+      } finally {
+         if (_didIteratorError2) {
+            throw _iteratorError2;
+         }
       }
    }
+
    return null;
 };
 
@@ -2426,12 +2643,34 @@ Level.prototype.checkHitMany = function (x, y, hitbox, ignore) {
    //var thing = null;
    var hit = [];
    //for (var n = 0; n < this.things.length; n++) 
-   for (thing of this.things) {
-      //thing = this.things[n];
-      if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
-         hit.push(thing);
+   var _iteratorNormalCompletion3 = true;
+   var _didIteratorError3 = false;
+   var _iteratorError3 = undefined;
+
+   try {
+      for (var _iterator3 = this.things[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+         var thing = _step3.value;
+
+         //thing = this.things[n];
+         if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
+            hit.push(thing);
+         }
+      }
+   } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+         }
+      } finally {
+         if (_didIteratorError3) {
+            throw _iteratorError3;
+         }
       }
    }
+
    return hit;
 };
 
@@ -2463,21 +2702,65 @@ Level.prototype.handleTreasureDrop = function (table, x, y) {
    // Entries look like: [item_number, weight]. First sum all the weights
    // and pick a random number up to that total.
    var total = 0;
-   for (entry of table) {
-      total += entry[1];
-   }
-   // Pick a random number, then iterate over the items and find what 
-   // item it corresponds to.
-   var pick = null;
-   var num = Utils.randint(0, total);
-   for (entry of table) {
-      num -= entry[1];
-      if (num <= 0) {
-         pick = entry[0];
-         break;
+   var _iteratorNormalCompletion4 = true;
+   var _didIteratorError4 = false;
+   var _iteratorError4 = undefined;
+
+   try {
+      for (var _iterator4 = table[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+         var entry = _step4.value;
+
+         total += entry[1];
+      }
+      // Pick a random number, then iterate over the items and find what 
+      // item it corresponds to.
+   } catch (err) {
+      _didIteratorError4 = true;
+      _iteratorError4 = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
+         }
+      } finally {
+         if (_didIteratorError4) {
+            throw _iteratorError4;
+         }
       }
    }
-   // Drop the item
+
+   var pick = null;
+   var num = Utils.randint(0, total);
+   var _iteratorNormalCompletion5 = true;
+   var _didIteratorError5 = false;
+   var _iteratorError5 = undefined;
+
+   try {
+      for (var _iterator5 = table[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+         var _entry = _step5.value;
+
+         num -= _entry[1];
+         if (num <= 0) {
+            pick = _entry[0];
+            break;
+         }
+      }
+      // Drop the item
+   } catch (err) {
+      _didIteratorError5 = true;
+      _iteratorError5 = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
+         }
+      } finally {
+         if (_didIteratorError5) {
+            throw _iteratorError5;
+         }
+      }
+   }
+
    if (pick !== null) {
       var gnd = new GroundItem(pick, x, y);
       gnd.velx = 10 * (x > this.camera.x ? -1 : 1);
@@ -2500,6 +2783,8 @@ Level.prototype.createBloodSpatter = function (x, y, imgs) {
 module.exports = Level;
 
 },{"./genlevel":9,"./grounditem":13,"./render":21,"./res":22,"./utils":29}],16:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -2547,8 +2832,8 @@ function LevelScreen() {
 
    this.stage = new PIXI.Container();
 
-   this.healthUI = new UI.HealthUI();
-   this.inventoryUI = new UI.InventoryUI();
+   this.healthUI = new UI.HealthUI(this);
+   this.inventoryUI = new UI.InventoryUI(this);
    this.goMarker = new GoMarker(this);
 
    this.stage.addChild(this.healthUI.sprite);
@@ -2560,11 +2845,10 @@ LevelScreen.prototype.update = function (dt) {
    switch (this.state) {
       case this.NEW_GAME:
          // Generate a new level and player character
-         player = new Player();
-         player.sprite.x = 0;
-         player.sprite.y = 0;
+         this.player = new Player();
+         this.player.sprite.x = 0;
+         this.player.sprite.y = 0;
          this.levelNum = 0;
-         this.player = player;
          // Generate the first level
          var level = LevelGenerator.generate(this.levelNum);
          this.setLevel(level);
@@ -2645,6 +2929,8 @@ LevelScreen.prototype.setLevel = function (level) {
 module.exports = LevelScreen;
 
 },{"./genlevel":9,"./gomarker":12,"./level":15,"./player":19,"./render":21,"./ui":28,"./utils":29}],17:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -2782,15 +3068,14 @@ function setup() {
    requestAnimationFrame(gameLoop);
 }
 
-var Item = require("./item");
-
 module.exports = {
    gamestate: gamestate,
-   start: start,
-   Item: Item
+   start: start
 };
 
-},{"./controls":4,"./gamestate":7,"./item":14,"./progress":20,"./render":21,"./res":22,"./utils":29}],18:[function(require,module,exports){
+},{"./controls":4,"./gamestate":7,"./progress":20,"./render":21,"./res":22,"./utils":29}],18:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -2839,9 +3124,9 @@ NPC.prototype.setDialog = function (lines) {
 };
 
 NPC.prototype.update = function (dt) {
-    if (player.hasControl) {
+    if (this.level.player.hasControl) {
         // Always face the player
-        var dirx = Math.sign(player.sprite.x - this.sprite.x);
+        var dirx = Math.sign(this.level.player.sprite.x - this.sprite.x);
         this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x) * dirx;
     }
     if (this.visibleTimer > 0) {
@@ -2857,7 +3142,7 @@ NPC.prototype.handleHit = function (x, y, dmg) {
     this.handlePlayerCollision();
 };
 
-NPC.prototype.handlePlayerCollision = function () {
+NPC.prototype.handlePlayerCollision = function (player) {
     if (!this.textSprite.visible) {
         this.textSprite.visible = true;
     }
@@ -2867,6 +3152,8 @@ NPC.prototype.handlePlayerCollision = function () {
 module.exports = NPC;
 
 },{"./res":22,"./thing":26,"./ui":28,"./utils":29}],19:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -3124,7 +3411,7 @@ Player.prototype.update = function (dt) {
    var hit = this.level.checkHitMany(this.sprite.x, this.sprite.y, this.hitbox, this);
    for (var n = 0; n < hit.length; n++) {
       if (hit[n].handlePlayerCollision) {
-         hit[n].handlePlayerCollision();
+         hit[n].handlePlayerCollision(this);
       }
    }
 
@@ -3290,6 +3577,8 @@ Player.prototype.handleTakeItem = function (item) {
 module.exports = Player;
 
 },{"./controls":4,"./item":14,"./res":22,"./thing":26,"./utils":29,"./weaponslot":30}],20:[function(require,module,exports){
+'use strict';
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -3349,6 +3638,8 @@ ProgressBar.prototype.update = function (value) {
 module.exports = ProgressBar;
 
 },{}],21:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -3396,6 +3687,8 @@ module.exports.getRenderer = function () {
 };
 
 },{}],22:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -3451,6 +3744,8 @@ module.exports = {
 };
 
 },{}],23:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -3505,6 +3800,8 @@ Scenery.prototype.update = function (dt) {
 module.exports = Scenery;
 
 },{}],24:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -3617,8 +3914,10 @@ SkelWarrior.prototype.updateAttacking = function (dt) {
    }
 
    // Rush towards the player
+   var player = this.level.player;
    var dx = 0,
        dy = 0;
+
    if (player.sprite.x > this.sprite.x) {
       dx = 2.5 * this.speed * dt;
       this.facing = 1;
@@ -3667,6 +3966,7 @@ SkelWarrior.prototype.updateApproach = function (dt) {
    // Move towards the player, but try to keep a fixed distance away. 
    // Initially the target is set to the player's position, plus/minus
    // a fixed offset.
+   var player = this.level.player;
    var targetx = 0;
    if (this.sprite.x < player.sprite.x) {
       targetx = player.sprite.x - this.approachDist;
@@ -3753,6 +4053,7 @@ SkelWarrior.prototype.updateHurt = function (dt) {
 };
 
 SkelWarrior.prototype.handleHit = function (srcx, srcy, dmg) {
+   var player = this.level.player;
    if (this.state === SKEL_WARRIOR_DEAD) return false;
    this.health -= 1;
    if (this.health <= 0) {
@@ -3777,13 +4078,15 @@ SkelWarrior.prototype.handleHit = function (srcx, srcy, dmg) {
    return true;
 };
 
-SkelWarrior.prototype.handlePlayerCollision = function () {
+SkelWarrior.prototype.handlePlayerCollision = function (player) {
    player.takeDamage(2, this);
 };
 
 module.exports = SkelWarrior;
 
 },{"./item":14,"./res":22,"./thing":26,"./utils":29}],25:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -3855,6 +4158,7 @@ Snake.prototype.update = function (dt) {
 };
 
 Snake.prototype.updateIdle = function (dt) {
+   var player = this.level.player;
    this.frame += 2 * dt;
    this.snakeSprite.texture = this.frames[this.frame % this.frames.length | 0];
 
@@ -3872,6 +4176,7 @@ Snake.prototype.updateIdle = function (dt) {
 Snake.prototype.updateAttacking = function (dt) {
    var dx = 0,
        dy = 0;
+   var player = this.level.player;
 
    // Move towards the player for a bit. Note the snake moves in "steps"
    // so it will occasionally overshot the player before moving back again.
@@ -3930,6 +4235,7 @@ Snake.prototype.updateHurt = function (dt) {
 };
 
 Snake.prototype.handleHit = function (srcx, srcy, dmg) {
+   var player = this.level.player;
    if (this.state === SNAKE_DEAD) return false;
    this.health -= 1;
    if (this.health <= 0) {
@@ -3955,7 +4261,7 @@ Snake.prototype.handleHit = function (srcx, srcy, dmg) {
    return true;
 };
 
-Snake.prototype.handlePlayerCollision = function () {
+Snake.prototype.handlePlayerCollision = function (player) {
    player.takeDamage(1, this);
 };
 
@@ -4016,6 +4322,8 @@ module.exports = {
 };
 
 },{"./item":14,"./res":22,"./thing":26,"./utils":29}],26:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -4053,7 +4361,7 @@ Thing.prototype.update = function (dt) {};
 
 Thing.prototype.handleHit = function (x, y, dmg) {};
 
-Thing.prototype.handlePlayerCollision = function () {};
+Thing.prototype.handlePlayerCollision = function (player) {};
 
 /**********/
 /* Hitbox */
@@ -4072,6 +4380,8 @@ Thing.Hitbox = function (x, y, w, h) {
 module.exports = Thing;
 
 },{"./utils":29}],27:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -4135,7 +4445,7 @@ function TitleScreen() {
 	this.stage.addChild(this.bg);
 	this.delay = 0;
 
-	txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
+	var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
 	txt.anchor.set(0.5, 0.5);
 	txt.tint = 0xFF0000;
 	//txt.x = getRenderer().width/2;
@@ -4244,6 +4554,8 @@ TitleScreen.prototype.render = function () {
 module.exports = TitleScreen;
 
 },{"./controls":4,"./genlevel":9,"./ghost":10,"./goblin":11,"./item":14,"./player":19,"./render":21,"./res":22,"./scenery":23,"./skel_warrior":24,"./snake":25,"./ui":28,"./utils":29}],28:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -4310,7 +4622,8 @@ function renderText(lines, options) {
 /* HealthUI */
 /************/
 
-function HealthUI() {
+function HealthUI(levelScreen) {
+   this.levelScreen = levelScreen;
    this.sprite = new PIXI.Container();
    this.hearts = [];
    this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
@@ -4329,9 +4642,30 @@ HealthUI.prototype.addHeart = function () {
    this.sprite.addChild(heart);
 
    var x = -this.hearts.length * (this.fullHeart.width + 1);
-   for (heart of this.hearts) {
-      heart.x = x;
-      x += this.fullHeart.width + 1;
+   var _iteratorNormalCompletion = true;
+   var _didIteratorError = false;
+   var _iteratorError = undefined;
+
+   try {
+      for (var _iterator = this.hearts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+         var _heart = _step.value;
+
+         _heart.x = x;
+         x += this.fullHeart.width + 1;
+      }
+   } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+         }
+      } finally {
+         if (_didIteratorError) {
+            throw _iteratorError;
+         }
+      }
    }
 };
 
@@ -4343,6 +4677,8 @@ HealthUI.prototype.removeHeart = function () {
 };
 
 HealthUI.prototype.update = function (dt) {
+   var player = this.levelScreen.player;
+   if (!player) return;
    // Add hearts to match the player's max health
    while (this.hearts.length < Math.floor(player.maxHealth / 2)) {
       this.addHeart();
@@ -4421,7 +4757,8 @@ ItemSlotUI.prototype.setItem = function (item) {
 /***************/
 
 // Show the player inventory as a set of item slots (ItemSlotUI instances)
-function InventoryUI() {
+function InventoryUI(levelScreen) {
+   this.levelScreen = levelScreen;
    this.sprite = new PIXI.Container();
    this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
    this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
@@ -4435,14 +4772,38 @@ function InventoryUI() {
 
    this.slots = [this.armourSlot, this.swordSlot, this.bowSlot, this.arrowSlot, this.coinSlot];
    var x = 0;
-   for (slot of this.slots) {
-      this.sprite.addChild(slot.sprite);
-      slot.sprite.x = x;
-      x += slot.slotSprite.texture.width + 1;
+   var _iteratorNormalCompletion2 = true;
+   var _didIteratorError2 = false;
+   var _iteratorError2 = undefined;
+
+   try {
+      for (var _iterator2 = this.slots[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+         var slot = _step2.value;
+
+         this.sprite.addChild(slot.sprite);
+         slot.sprite.x = x;
+         x += slot.slotSprite.texture.width + 1;
+      }
+   } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+         }
+      } finally {
+         if (_didIteratorError2) {
+            throw _iteratorError2;
+         }
+      }
    }
 }
 
 InventoryUI.prototype.update = function (dt) {
+   var player = this.levelScreen.player;
+   if (!player) return;
+
    // TODO - use an event/listener system instead of doing this
    this.armourSlot.setItem(player.armour);
    this.swordSlot.setItem(player.sword);
@@ -4459,6 +4820,8 @@ module.exports = {
 };
 
 },{"./item":14,"./render":21,"./res":22,"./utils":29}],29:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -4513,7 +4876,7 @@ function createGrid(rows, cols, value) {
 
 // Returns a sprite used for monsters/player treading water
 function createSplashSprite() {
-    waterSprite = new PIXI.Sprite();
+    var waterSprite = new PIXI.Sprite();
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
     waterSprite.texture = getFrame(RES.MAPTILES, "treading_water");
@@ -4542,7 +4905,7 @@ function getFrames(res, names) {
 
 // Updates a dictionary with the contents of another dictionary
 function updateDict(dict, other) {
-    for (key in other) {
+    for (var key in other) {
         dict[key] = other[key];
     }
 }
@@ -4561,7 +4924,7 @@ function getMusic() {
 
 function Sequence() {
     var args = arguments[0];
-    for (key in args) {
+    for (var key in args) {
         this[key] = args[key];
     }
     this.done = false;
@@ -4629,6 +4992,8 @@ module.exports = {
 };
 
 },{"./res":22}],30:[function(require,module,exports){
+"use strict";
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -4711,11 +5076,33 @@ SwordWeaponSlot.prototype.startAttack = function () {
 
    var lst = this.player.level.checkHitMany(this.player.sprite.x + this.player.facing * this.weaponReach, this.player.sprite.y, this.hitbox, this.player);
 
-   for (hit of lst) {
-      if (hit.handleHit) {
-         hit.handleHit(this.player.sprite.x, this.player.sprite.y, 1);
+   var _iteratorNormalCompletion = true;
+   var _didIteratorError = false;
+   var _iteratorError = undefined;
+
+   try {
+      for (var _iterator = lst[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+         var hit = _step.value;
+
+         if (hit.handleHit) {
+            hit.handleHit(this.player.sprite.x, this.player.sprite.y, 1);
+         }
+      }
+   } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+   } finally {
+      try {
+         if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+         }
+      } finally {
+         if (_didIteratorError) {
+            throw _iteratorError;
+         }
       }
    }
+
    this.attackCooldown = 0.15;
 };
 

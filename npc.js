@@ -49,9 +49,9 @@ NPC.prototype.setDialog = function(lines)
 
 NPC.prototype.update = function(dt)
 {
-    if (player.hasControl) {
+    if (this.level.player.hasControl) {
 	// Always face the player
-	var dirx = Math.sign(player.sprite.x-this.sprite.x);
+	var dirx = Math.sign(this.level.player.sprite.x-this.sprite.x);
 	this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
     }
     if (this.visibleTimer > 0) {
@@ -68,7 +68,7 @@ NPC.prototype.handleHit = function(x, y, dmg)
     this.handlePlayerCollision();
 }
 
-NPC.prototype.handlePlayerCollision = function()
+NPC.prototype.handlePlayerCollision = function(player)
 {
     if (!this.textSprite.visible) {
 	this.textSprite.visible = true;

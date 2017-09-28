@@ -227,7 +227,7 @@ Level.prototype.update = function(dt)
     this.stage.x = -this.camera.x;
     this.stage.y = -this.camera.y;
     // Update everything in the level
-    for (thing of this.things) {
+    for (let thing of this.things) {
 	if (thing.update) thing.update(dt);
     }
 }
@@ -241,7 +241,7 @@ Level.prototype.checkHit = function(x, y, hitbox, ignore)
     var w = hitbox.w, h = hitbox.h;
     //var thing = null;
     //for (var n = 0; n < this.things.length; n++) 
-    for (thing of this.things)
+    for (let thing of this.things)
     {
 	//thing = this.things[n];
 	if (thing !== ignore && thing.sprite && 
@@ -265,7 +265,7 @@ Level.prototype.checkHitMany = function(x, y, hitbox, ignore)
     //var thing = null;
     var hit = [];
     //for (var n = 0; n < this.things.length; n++) 
-    for (thing of this.things)
+    for (let thing of this.things)
     {
 	//thing = this.things[n];
 	if (thing !== ignore && thing.sprite && 
@@ -310,14 +310,14 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
     // Entries look like: [item_number, weight]. First sum all the weights
     // and pick a random number up to that total.
     var total = 0;
-    for (entry of table) {
+    for (let entry of table) {
 	total += entry[1];
     }
     // Pick a random number, then iterate over the items and find what 
     // item it corresponds to.
     var pick = null;
     var num = Utils.randint(0, total);
-    for (entry of table) {
+    for (let entry of table) {
 	num -= entry[1];
 	if (num <= 0) {
 	    pick = entry[0];

@@ -78,6 +78,7 @@ Snake.prototype.update = function(dt)
 
 Snake.prototype.updateIdle = function(dt)
 {
+    let player = this.level.player;
     this.frame += 2*dt;
     this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
 
@@ -96,7 +97,8 @@ Snake.prototype.updateIdle = function(dt)
 
 Snake.prototype.updateAttacking = function(dt)
 {
-    var dx = 0, dy = 0;
+    let dx = 0, dy = 0;
+    let player = this.level.player;
 
     // Move towards the player for a bit. Note the snake moves in "steps"
     // so it will occasionally overshot the player before moving back again.
@@ -159,6 +161,7 @@ Snake.prototype.updateHurt = function(dt)
 
 Snake.prototype.handleHit = function(srcx, srcy, dmg)
 {
+    let player = this.level.player;
     if (this.state === SNAKE_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
@@ -186,7 +189,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
     return true;
 }
 
-Snake.prototype.handlePlayerCollision = function()
+Snake.prototype.handlePlayerCollision = function(player)
 {
     player.takeDamage(1, this);
 }

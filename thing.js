@@ -40,7 +40,7 @@ Thing.prototype.handleHit = function(x, y, dmg)
 {
 }
 
-Thing.prototype.handlePlayerCollision = function()
+Thing.prototype.handlePlayerCollision = function(player)
 {
 }
 

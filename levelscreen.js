@@ -46,8 +46,8 @@ function LevelScreen()
 
     this.stage = new PIXI.Container();
 
-    this.healthUI = new UI.HealthUI();
-    this.inventoryUI = new UI.InventoryUI();
+    this.healthUI = new UI.HealthUI(this);
+    this.inventoryUI = new UI.InventoryUI(this);
     this.goMarker = new GoMarker(this);
 
     this.stage.addChild(this.healthUI.sprite);
@@ -60,11 +60,10 @@ LevelScreen.prototype.update = function(dt)
     switch(this.state) {
     case this.NEW_GAME:
 	// Generate a new level and player character
-	player = new Player();
-	player.sprite.x = 0;
-	player.sprite.y = 0;
+	this.player = new Player();
+	this.player.sprite.x = 0;
+	this.player.sprite.y = 0;
 	this.levelNum = 0;
-	this.player = player;
 	// Generate the first level
 	var level = LevelGenerator.generate(this.levelNum);
 	this.setLevel(level);

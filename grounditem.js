@@ -90,7 +90,7 @@ GroundItem.prototype.update = function(dt)
     }
 }
 
-GroundItem.prototype.handlePlayerCollision = function()
+GroundItem.prototype.handlePlayerCollision = function(player)
 {
     // The player takes the item if it's falling down (or resting) and close
     // enough to the ground.

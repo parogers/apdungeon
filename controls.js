@@ -17,16 +17,16 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-PRIMARY = 90;
-PRIMARY_ALT = 65;
-SWAP = 88;
-SPACE = 32;
-ARROW_UP = 38;
-ARROW_LEFT = 37;
-ARROW_RIGHT = 39;
-ARROW_DOWN = 40;
+var PRIMARY = 90;
+var PRIMARY_ALT = 65;
+var SWAP = 88;
+var SPACE = 32;
+var ARROW_UP = 38;
+var ARROW_LEFT = 37;
+var ARROW_RIGHT = 39;
+var ARROW_DOWN = 40;
 
-TEST_KEY = 75;
+var TEST_KEY = 75;
 
 var controls = null;
 

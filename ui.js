@@ -68,8 +68,9 @@ function renderText(lines, options)
 /* HealthUI */
 /************/
 
-function HealthUI()
+function HealthUI(levelScreen)
 {
+    this.levelScreen = levelScreen;
     this.sprite = new PIXI.Container();
     this.hearts = [];
     this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
@@ -89,7 +90,7 @@ HealthUI.prototype.addHeart = function()
     this.sprite.addChild(heart);
 
     var x = -this.hearts.length*(this.fullHeart.width+1);
-    for (heart of this.hearts) {
+    for (let heart of this.hearts) {
 	heart.x = x;
 	x += (this.fullHeart.width+1);
     }
@@ -105,6 +106,8 @@ HealthUI.prototype.removeHeart = function()
 
 HealthUI.prototype.update = function(dt)
 {
+    let player = this.levelScreen.player;
+    if (!player) return;
     // Add hearts to match the player's max health
     while (this.hearts.length < Math.floor(player.maxHealth/2)) {
 	this.addHeart();
@@ -190,8 +193,9 @@ ItemSlotUI.prototype.setItem = function(item)
 /***************/
 
 // Show the player inventory as a set of item slots (ItemSlotUI instances)
-function InventoryUI()
+function InventoryUI(levelScreen)
 {
+    this.levelScreen = levelScreen;
     this.sprite = new PIXI.Container();
     this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
     this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
@@ -212,7 +216,7 @@ function InventoryUI()
 	this.coinSlot,
     ];
     var x = 0;
-    for (slot of this.slots) {
+    for (let slot of this.slots) {
 	this.sprite.addChild(slot.sprite);
 	slot.sprite.x = x;
 	x += (slot.slotSprite.texture.width+1);
@@ -221,6 +225,9 @@ function InventoryUI()
 
 InventoryUI.prototype.update = function(dt)
 {
+    let player = this.levelScreen.player;
+    if (!player) return;
+
     // TODO - use an event/listener system instead of doing this
     this.armourSlot.setItem(player.armour);
     this.swordSlot.setItem(player.sword);

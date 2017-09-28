@@ -72,9 +72,11 @@ Ghost.prototype.update = function(dt)
 
 Ghost.prototype.updateAttacking = function(dt)
 {
-    var accelx = player.sprite.x - this.sprite.x;
-    var accely = player.sprite.y - this.sprite.y;
-    var mag = Math.sqrt(accelx*accelx + accely*accely);
+    let player = this.level.player;
+    let accelx = player.sprite.x - this.sprite.x;
+    let accely = player.sprite.y - this.sprite.y;
+    let mag = Math.sqrt(accelx*accelx + accely*accely);
+
     accelx = this.accel*accelx/mag;
     accely = this.accel*accely/mag;
 
@@ -113,6 +115,7 @@ Ghost.prototype.updateHurt = function(dt)
 
 Ghost.prototype.handleHit = function(srcx, srcy, dmg)
 {
+    let player = this.level.player;
     if (this.state === GHOST_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
@@ -133,7 +136,7 @@ Ghost.prototype.handleHit = function(srcx, srcy, dmg)
     return true;
 }
 
-Ghost.prototype.handlePlayerCollision = function()
+Ghost.prototype.handlePlayerCollision = function(player)
 {
     player.takeDamage(4, this);
 }

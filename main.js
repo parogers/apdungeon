@@ -169,10 +169,7 @@ function setup()
     requestAnimationFrame(gameLoop)
 }
 
-var Item = require("./item");
-
 module.exports = {
     gamestate: gamestate,
-    start: start,
-    Item: Item
+    start: start
 };

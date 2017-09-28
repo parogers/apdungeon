@@ -117,7 +117,9 @@ SkelWarrior.prototype.updateAttacking = function(dt)
     }
 
     // Rush towards the player
-    var dx = 0, dy = 0;
+    let player = this.level.player;
+    let dx = 0, dy = 0;
+
     if (player.sprite.x > this.sprite.x) {
 	dx = 2.5*this.speed*dt;
 	this.facing = 1;
@@ -169,7 +171,8 @@ SkelWarrior.prototype.updateApproach = function(dt)
     // Move towards the player, but try to keep a fixed distance away. 
     // Initially the target is set to the player's position, plus/minus
     // a fixed offset.
-    var targetx = 0;
+    let player = this.level.player;
+    let targetx = 0;
     if (this.sprite.x < player.sprite.x) {
 	targetx = player.sprite.x - this.approachDist;
 	this.facing = 1;
@@ -258,6 +261,7 @@ SkelWarrior.prototype.updateHurt = function(dt)
 
 SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
 {
+    let player = this.level.player;
     if (this.state === SKEL_WARRIOR_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
@@ -286,7 +290,7 @@ SkelWarrior.prototype.handleHit = function(srcx, srcy, dmg)
     return true;
 }
 
-SkelWarrior.prototype.handlePlayerCollision = function()
+SkelWarrior.prototype.handlePlayerCollision = function(player)
 {
     player.takeDamage(2, this);
 }

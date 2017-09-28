@@ -21,6 +21,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Render = require("./render");
 var UI = require("./ui");
+var GameControls = require("./controls");
 
 /* Displays a game over screen. The LevelScreen that caused the game over
  * should be passed in. This screen will make a gradual transition from 
@@ -147,7 +148,7 @@ GameOverScreen.prototype.update = function(dt)
 	break;
 
     case this.WAITING:
-	if (controls.space) {
+	if (GameControls.getControls().space) {
 	    this.state = this.DONE;
 	}
 	break;

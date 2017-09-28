@@ -57,7 +57,7 @@ function createGrid(rows, cols, value)
 // Returns a sprite used for monsters/player treading water
 function createSplashSprite()
 {
-    waterSprite = new PIXI.Sprite();
+    var waterSprite = new PIXI.Sprite();
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
     waterSprite.texture = getFrame(RES.MAPTILES, "treading_water");
@@ -90,7 +90,7 @@ function getFrames(res, names)
 // Updates a dictionary with the contents of another dictionary
 function updateDict(dict, other)
 {
-    for (key in other) {
+    for (var key in other) {
 	dict[key] = other[key];
     }
 }
@@ -112,7 +112,7 @@ function getMusic()
 function Sequence()
 {
     var args = arguments[0];
-    for (key in args) {
+    for (var key in args) {
 	this[key] = args[key];
     }
     this.done = false;
