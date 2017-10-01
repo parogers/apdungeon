@@ -4851,7 +4851,7 @@ var GameUI = function () {
         this.container = new PIXI.Container();
         this.healthUI = new HealthUI(this);
         this.inventoryUI = new InventoryUI(this);
-        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown1"));
+        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
 
         this.container.addChild(this.bg);
         this.container.addChild(this.healthUI.sprite);
