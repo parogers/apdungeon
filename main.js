@@ -29,12 +29,12 @@ var gamestate = null;
 var stage = null;
 var progress = null;
 
-function start()
+function start(elementName)
 {
-    var div = document.getElementById("canvas_area");
+    var div = document.getElementById(elementName);
     div.focus();
 
-    Render.configure(660, 400, div);
+    Render.configure(div);
 
     //renderer = new PIXI.CanvasRenderer(550, 400);
     stage = new PIXI.Container();

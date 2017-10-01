@@ -22,14 +22,14 @@ var Utils = require("./utils");
 var Item = require("./item");
 var Thing = require("./thing");
 var WeaponSlot = require("./weaponslot");
-var GameControls = require("./controls");
 
 // What tint of colour to use when the player takes damage
 var DAMAGE_TINT = 0xFF0000;
 var NO_TINT = 0xFFFFFF;
 
-function Player()
+function Player(controls)
 {
+    this.controls = controls;
     this.sprite = null;
     this.velx = 0;
     this.vely = 0;
@@ -38,7 +38,6 @@ function Player()
     this.frame = 0;
     this.frames = null;
     this.lungeFrame = null;
-    this.count = 0;
     this.facing = 1;
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 10;
@@ -52,7 +51,7 @@ function Player()
     this.sword = Item.Table.NONE;
     // Whether the user has free control over the player (set to false 
     // during a cutscene)
-    this.hasControl = true;
+    //this.hasControl = true;
     this.dirx = 0;
     this.diry = 0;
     // Process of dying (showing animation)
@@ -67,13 +66,6 @@ function Player()
     // Whether the player movement is restricted by the camera position.
     // Disabled during cut scenes and whatnot.
     this.cameraMovement = true;
-
-    /*this.handleMonsterKilled(new Snake());
-      this.handleMonsterKilled(new Goblin());
-      this.handleMonsterKilled(new Rat());
-      this.handleMonsterKilled(new Scorpion());
-      this.handleMonsterKilled(new SkelWarrior());
-      this.handleMonsterKilled(new Ghost());*/
 
     // Define the hitbox
     this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
@@ -113,6 +105,7 @@ function Player()
     this.swordWeaponSlot.sprite.visible = false;
 }
 
+/* Have the player face the given direction */
 Player.prototype.faceDirection = function(dirx)
 {
     this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
@@ -151,19 +144,33 @@ Player.prototype.update = function(dt)
         return;
     }
 
-    var controls = GameControls.getControls();
+    // Handle attacking
+    if (this.controls.primary && !this.controls.lastPrimary)
+    {
+        // Just hit the attack button
+        this.startAttack();
+    }
+    if (!this.controls.primary && this.controls.lastPrimary)
+    {
+        // Just released the attack button
+        this.stopAttack();
+    }
+
+    if (this.controls.swap && !this.controls.lastSwap) {
+        this.swapWeapons();
+    }
 
     if (this.knockedTimer <= 0) {
-        if (this.hasControl) {
-            dirx = controls.getX();
-            diry = controls.getY();
-        } else {
-            dirx = this.dirx;
-            diry = this.diry;
-        }
+        dirx = this.controls.getX();
+        diry = this.controls.getY();
     } else {
         this.velx = this.knocked;
         this.knockedTimer -= dt;
+    }
+
+    //
+    if (this.weaponSlot && this.weaponSlot.update) {
+        this.weaponSlot.update(dt);
     }
 
     if (this.damageTimer > 0) {
@@ -175,11 +182,9 @@ Player.prototype.update = function(dt)
             this.spriteChar.tint = NO_TINT;
         }
     }
-    this.count += dt;
 
     if (dirx) {
-        // Handle walking left/right by mirroring the sprite
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
+        this.faceDirection(dirx);
         this.velx = dirx * this.maxSpeed;
         this.facing = Math.sign(dirx);
     } else {
@@ -200,8 +205,8 @@ Player.prototype.update = function(dt)
 
     var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
     if (speed > this.maxSpeed) {
-        this.velx = this.velx * (this.maxSpeed/speed);
-        this.vely = this.vely * (this.maxSpeed/speed);
+        this.velx *= this.maxSpeed/speed;
+        this.vely *= this.maxSpeed/speed;
     }
     var w = this.spriteChar.texture.width*0.75;
 
@@ -241,27 +246,7 @@ Player.prototype.update = function(dt)
         this.waterSprite.visible = false;
     }
 
-    if (controls.testKey && !controls.lastTestKey) this.health = 0;
-
-    // Handle attacking
-    if (this.weaponSlot && this.hasControl) 
-    {
-        if (controls.primary && !controls.lastPrimary)
-        {
-            // Just hit the attack button
-            this.weaponSlot.startAttack();
-        }
-        if (!controls.primary && controls.lastPrimary)
-        {
-            // Just released the attack button
-            this.weaponSlot.stopAttack();
-        }
-        if (this.weaponSlot.update) this.weaponSlot.update(dt);
-    }
-
-    if (controls.swap && !controls.lastSwap) {
-        this.swapWeapons();
-    }
+    //if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
     // Check for collisions with other things
     var hit = this.level.checkHitMany(
@@ -401,6 +386,18 @@ Player.prototype.swapWeapons = function()
         this.weaponSlot = this.swordWeaponSlot;
         this.updatePlayerAppearance();
     }
+}
+
+Player.prototype.startAttack = function()
+{
+    if (this.weaponSlot) 
+        this.weaponSlot.startAttack();
+}
+
+Player.prototype.stopAttack = function()
+{
+    if (this.weaponSlot) 
+        this.weaponSlot.stopAttack();
 }
 
 /* Called when a monster (thing) is killed by the player */

@@ -20,25 +20,29 @@
 var renderer = null;
 
 module.exports = {};
-module.exports.configure = function(width, height, div) 
+module.exports.configure = function(div) 
 {
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
     // Disable the ticker sinc we don't use it (rendering happens as needed)
     PIXI.ticker.shared.autoStart = false;
     PIXI.ticker.shared.stop();
 
+    let rect = div.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+        throw Error("Invalid size for renderer");
+    }
+
     renderer = PIXI.autoDetectRenderer({
-        width: width,
-        height: height,
-        //    antialias: true,
+        width: rect.width,
+        height: rect.height,
+        //antialias: true,
         // Required to prevent flickering in Chrome on Android (others too?)
         preserveDrawingBuffer: true,
-        //    clearBeforeRender: true
+        //clearBeforeRender: true
     });
 
-    if (div) {
-        div.appendChild(renderer.view);
-    }
+    div.innerHTML = "";
+    div.appendChild(renderer.view);
 }
 
 module.exports.getRenderer = function() {

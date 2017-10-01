@@ -563,6 +563,10 @@ module.exports = Chest;
 },{"./grounditem":13,"./res":22,"./thing":26,"./utils":29}],4:[function(require,module,exports){
 "use strict";
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -701,6 +705,33 @@ GameControls.prototype.attach = function () {
     attachKeyUp(this);
 };
 
+/******************/
+/* ManualControls */
+/******************/
+
+var ManualControls = function () {
+    function ManualControls() {
+        _classCallCheck(this, ManualControls);
+
+        this.dirx = 0;
+        this.diry = 0;
+    }
+
+    _createClass(ManualControls, [{
+        key: "getX",
+        value: function getX() {
+            return this.dirx;
+        }
+    }, {
+        key: "getY",
+        value: function getY() {
+            return this.diry;
+        }
+    }]);
+
+    return ManualControls;
+}();
+
 module.exports = {};
 module.exports.configure = function () {
     controls = new GameControls();
@@ -714,6 +745,8 @@ module.exports.update = function () {
 module.exports.getControls = function () {
     return controls;
 };
+
+module.exports.ManualControls = ManualControls;
 
 },{}],5:[function(require,module,exports){
 "use strict";
@@ -1167,6 +1200,7 @@ var Chest = require("./chest");
 var Item = require("./item");
 var GroundItem = require("./grounditem");
 var Utils = require("./utils");
+var GameControls = require("./controls");
 
 var randint = Utils.randint;
 var randomChoice = Utils.randomChoice;
@@ -1293,7 +1327,7 @@ EnterScene.prototype.update = function (dt) {
             player.sprite.x = this.door.sprite.x;
             player.sprite.y = this.door.sprite.y + 1;
             player.sprite.zpos = Level.BEHIND_BACKGROUND_POS;
-            player.hasControl = false;
+            player.controls = new GameControls.ManualControls();
             this.timer = 0.75;
             this.state = this.START;
             break;
@@ -1316,16 +1350,16 @@ EnterScene.prototype.update = function (dt) {
 
         case this.PLAYER_ENTERING:
             // Player walking some ways into the level
-            player.diry = 0.5;
+            player.controls.diry = 0.5;
             this.travelTime -= dt;
             if (this.travelTime <= 0) {
                 this.state = this.PLAYER_LOOK_LEFT;
                 this.timer = 0.5;
                 this.door.startClosing();
-                player.dirx = 0;
-                player.diry = 0;
+                player.controls.dirx = 0;
+                player.controls.diry = 0;
             } else if (this.travelTime < 0.35) {
-                player.dirx = 0.25;
+                player.controls.dirx = 0.25;
             }
             break;
 
@@ -1337,7 +1371,7 @@ EnterScene.prototype.update = function (dt) {
 
         case this.PLAYER_LOOK_RIGHT:
             player.faceDirection(1);
-            player.hasControl = true;
+            player.controls = GameControls.getControls();
             this.timer = 0.5;
             // Done!
             this.level.removeThing(this);
@@ -1627,7 +1661,7 @@ module.exports.generateEmpty = function (rows, cols, value) {
     return new Level(bg);
 };
 
-},{"./arena":1,"./bg":2,"./chest":3,"./door":5,"./gate":8,"./ghost":10,"./goblin":11,"./grounditem":13,"./item":14,"./level":15,"./npc":18,"./res":22,"./skel_warrior":24,"./snake":25,"./utils":29}],10:[function(require,module,exports){
+},{"./arena":1,"./bg":2,"./chest":3,"./controls":4,"./door":5,"./gate":8,"./ghost":10,"./goblin":11,"./grounditem":13,"./item":14,"./level":15,"./npc":18,"./res":22,"./skel_warrior":24,"./snake":25,"./utils":29}],10:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2809,6 +2843,7 @@ var GoMarker = require("./gomarker");
 var Player = require("./player");
 var Level = require("./level");
 var Utils = require("./utils");
+var GameControls = require("./controls");
 
 /***************/
 /* LevelScreen */
@@ -2843,7 +2878,7 @@ LevelScreen.prototype.update = function (dt) {
     switch (this.state) {
         case this.NEW_GAME:
             // Generate a new level and player character
-            this.player = new Player();
+            this.player = new Player(GameControls.getControls());
             this.player.sprite.x = 0;
             this.player.sprite.y = 0;
             this.levelNum = 0;
@@ -2926,7 +2961,7 @@ LevelScreen.prototype.setLevel = function (level) {
 
 module.exports = LevelScreen;
 
-},{"./genlevel":9,"./gomarker":12,"./level":15,"./player":19,"./render":21,"./ui":28,"./utils":29}],17:[function(require,module,exports){
+},{"./controls":4,"./genlevel":9,"./gomarker":12,"./level":15,"./player":19,"./render":21,"./ui":28,"./utils":29}],17:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2960,11 +2995,11 @@ var gamestate = null;
 var stage = null;
 var progress = null;
 
-function start() {
-    var div = document.getElementById("canvas_area");
+function start(elementName) {
+    var div = document.getElementById(elementName);
     div.focus();
 
-    Render.configure(660, 400, div);
+    Render.configure(div);
 
     //renderer = new PIXI.CanvasRenderer(550, 400);
     stage = new PIXI.Container();
@@ -3176,13 +3211,13 @@ var Utils = require("./utils");
 var Item = require("./item");
 var Thing = require("./thing");
 var WeaponSlot = require("./weaponslot");
-var GameControls = require("./controls");
 
 // What tint of colour to use when the player takes damage
 var DAMAGE_TINT = 0xFF0000;
 var NO_TINT = 0xFFFFFF;
 
-function Player() {
+function Player(controls) {
+    this.controls = controls;
     this.sprite = null;
     this.velx = 0;
     this.vely = 0;
@@ -3191,7 +3226,6 @@ function Player() {
     this.frame = 0;
     this.frames = null;
     this.lungeFrame = null;
-    this.count = 0;
     this.facing = 1;
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 10;
@@ -3205,7 +3239,7 @@ function Player() {
     this.sword = Item.Table.NONE;
     // Whether the user has free control over the player (set to false 
     // during a cutscene)
-    this.hasControl = true;
+    //this.hasControl = true;
     this.dirx = 0;
     this.diry = 0;
     // Process of dying (showing animation)
@@ -3220,13 +3254,6 @@ function Player() {
     // Whether the player movement is restricted by the camera position.
     // Disabled during cut scenes and whatnot.
     this.cameraMovement = true;
-
-    /*this.handleMonsterKilled(new Snake());
-      this.handleMonsterKilled(new Goblin());
-      this.handleMonsterKilled(new Rat());
-      this.handleMonsterKilled(new Scorpion());
-      this.handleMonsterKilled(new SkelWarrior());
-      this.handleMonsterKilled(new Ghost());*/
 
     // Define the hitbox
     this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
@@ -3266,6 +3293,7 @@ function Player() {
     this.swordWeaponSlot.sprite.visible = false;
 }
 
+/* Have the player face the given direction */
 Player.prototype.faceDirection = function (dirx) {
     this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
 };
@@ -3302,19 +3330,31 @@ Player.prototype.update = function (dt) {
         return;
     }
 
-    var controls = GameControls.getControls();
+    // Handle attacking
+    if (this.controls.primary && !this.controls.lastPrimary) {
+        // Just hit the attack button
+        this.startAttack();
+    }
+    if (!this.controls.primary && this.controls.lastPrimary) {
+        // Just released the attack button
+        this.stopAttack();
+    }
+
+    if (this.controls.swap && !this.controls.lastSwap) {
+        this.swapWeapons();
+    }
 
     if (this.knockedTimer <= 0) {
-        if (this.hasControl) {
-            dirx = controls.getX();
-            diry = controls.getY();
-        } else {
-            dirx = this.dirx;
-            diry = this.diry;
-        }
+        dirx = this.controls.getX();
+        diry = this.controls.getY();
     } else {
         this.velx = this.knocked;
         this.knockedTimer -= dt;
+    }
+
+    //
+    if (this.weaponSlot && this.weaponSlot.update) {
+        this.weaponSlot.update(dt);
     }
 
     if (this.damageTimer > 0) {
@@ -3324,11 +3364,9 @@ Player.prototype.update = function (dt) {
             this.spriteChar.tint = NO_TINT;
         }
     }
-    this.count += dt;
 
     if (dirx) {
-        // Handle walking left/right by mirroring the sprite
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
+        this.faceDirection(dirx);
         this.velx = dirx * this.maxSpeed;
         this.facing = Math.sign(dirx);
     } else {
@@ -3349,8 +3387,8 @@ Player.prototype.update = function (dt) {
 
     var speed = Math.sqrt(this.velx * this.velx + this.vely * this.vely);
     if (speed > this.maxSpeed) {
-        this.velx = this.velx * (this.maxSpeed / speed);
-        this.vely = this.vely * (this.maxSpeed / speed);
+        this.velx *= this.maxSpeed / speed;
+        this.vely *= this.maxSpeed / speed;
     }
     var w = this.spriteChar.texture.width * 0.75;
 
@@ -3386,24 +3424,7 @@ Player.prototype.update = function (dt) {
         this.waterSprite.visible = false;
     }
 
-    if (controls.testKey && !controls.lastTestKey) this.health = 0;
-
-    // Handle attacking
-    if (this.weaponSlot && this.hasControl) {
-        if (controls.primary && !controls.lastPrimary) {
-            // Just hit the attack button
-            this.weaponSlot.startAttack();
-        }
-        if (!controls.primary && controls.lastPrimary) {
-            // Just released the attack button
-            this.weaponSlot.stopAttack();
-        }
-        if (this.weaponSlot.update) this.weaponSlot.update(dt);
-    }
-
-    if (controls.swap && !controls.lastSwap) {
-        this.swapWeapons();
-    }
+    //if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
     // Check for collisions with other things
     var hit = this.level.checkHitMany(this.sprite.x, this.sprite.y, this.hitbox, this);
@@ -3524,6 +3545,14 @@ Player.prototype.swapWeapons = function () {
     }
 };
 
+Player.prototype.startAttack = function () {
+    if (this.weaponSlot) this.weaponSlot.startAttack();
+};
+
+Player.prototype.stopAttack = function () {
+    if (this.weaponSlot) this.weaponSlot.stopAttack();
+};
+
 /* Called when a monster (thing) is killed by the player */
 Player.prototype.handleMonsterKilled = function (monster) {
     if (this.kills[monster.name] === undefined) {
@@ -3574,7 +3603,7 @@ Player.prototype.handleTakeItem = function (item) {
 
 module.exports = Player;
 
-},{"./controls":4,"./item":14,"./res":22,"./thing":26,"./utils":29,"./weaponslot":30}],20:[function(require,module,exports){
+},{"./item":14,"./res":22,"./thing":26,"./utils":29,"./weaponslot":30}],20:[function(require,module,exports){
 'use strict';
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3660,24 +3689,28 @@ module.exports = ProgressBar;
 var renderer = null;
 
 module.exports = {};
-module.exports.configure = function (width, height, div) {
+module.exports.configure = function (div) {
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
     // Disable the ticker sinc we don't use it (rendering happens as needed)
     PIXI.ticker.shared.autoStart = false;
     PIXI.ticker.shared.stop();
 
+    var rect = div.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+        throw Error("Invalid size for renderer");
+    }
+
     renderer = PIXI.autoDetectRenderer({
-        width: width,
-        height: height,
-        //    antialias: true,
+        width: rect.width,
+        height: rect.height,
+        //antialias: true,
         // Required to prevent flickering in Chrome on Android (others too?)
         preserveDrawingBuffer: true
-        //    clearBeforeRender: true
+        //clearBeforeRender: true
     });
 
-    if (div) {
-        div.appendChild(renderer.view);
-    }
+    div.innerHTML = "";
+    div.appendChild(renderer.view);
 };
 
 module.exports.getRenderer = function () {
@@ -4417,6 +4450,10 @@ var Snake = SnakeLike.Snake;
 var Rat = SnakeLike.Rat;
 var Scorpion = SnakeLike.Scorpion;
 
+/***************/
+/* TitleScreen */
+/***************/
+
 function TitleScreen() {
     // Playing through the intro sequence (looping)
     this.PLAYING_INTRO = 1;
@@ -4481,24 +4518,25 @@ function TitleScreen() {
         this.screenLeft = -this.level.stage.x;
         this.screenRight = this.screenLeft + screenWidth;
         // Create a dummy player to drive around
-        this.player = new Player();
+        this.controls = new GameControls.ManualControls();
+        this.player = new Player(this.controls);
         this.player.cameraMovement = false;
-        this.player.hasControl = false;
+        //this.player.hasControl = false;
         this.player.sprite.x = 2;
         this.player.sprite.y = 20;
         this.level.addThing(this.player);
 
-        this.monster = new Scenery(Utils.getFrames(RES.ENEMIES, Rat.FRAMES));
-        this.monster.sprite.y = this.player.sprite.y;
-        this.level.addThing(this.monster);
-
         this.monsterChoices = [Rat.FRAMES, Snake.FRAMES, Scorpion.FRAMES, SkelWarrior.FRAMES, Goblin.FRAMES, Ghost.FRAMES];
         this.monsterChoice = 0;
+
+        this.monster = new Scenery(Utils.getFrames(RES.ENEMIES, this.monsterChoices[0]));
+        this.monster.sprite.y = this.player.sprite.y;
+        this.level.addThing(this.monster);
 
         return this.NEXT;
     }, function (dt) {
         // Have the player run right offscreen
-        this.player.dirx = 1;
+        this.controls.dirx = 1;
         this.player.update(dt);
         if (this.player.sprite.x > this.screenRight + 4) {
             this.monster.sprite.x = this.screenRight + 16;
@@ -4506,7 +4544,7 @@ function TitleScreen() {
         }
     }, "loop", function (dt) {
         // Have the player run the other way chased by a monster
-        this.player.dirx = -1;
+        this.controls.dirx = -1;
         this.player.update(dt);
         this.monster.velx = -20;
         this.monster.update(dt);
@@ -4517,7 +4555,7 @@ function TitleScreen() {
         }
     }, function (dt) {
         // Now the player chases the monster with a sword
-        this.player.dirx = 1;
+        this.controls.dirx = 1;
         this.player.update(dt);
         this.monster.velx = 20;
         this.monster.update(dt);

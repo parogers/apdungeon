@@ -33,6 +33,7 @@ var Chest = require("./chest");
 var Item = require("./item");
 var GroundItem = require("./grounditem");
 var Utils = require("./utils");
+var GameControls = require("./controls");
 
 var randint = Utils.randint;
 var randomChoice = Utils.randomChoice;
@@ -155,7 +156,7 @@ EnterScene.prototype.update = function(dt)
         player.sprite.x = this.door.sprite.x;
         player.sprite.y = this.door.sprite.y+1;
         player.sprite.zpos = Level.BEHIND_BACKGROUND_POS;
-        player.hasControl = false;
+        player.controls = new GameControls.ManualControls();
         this.timer = 0.75;
         this.state = this.START;
         break;
@@ -178,16 +179,16 @@ EnterScene.prototype.update = function(dt)
 
     case this.PLAYER_ENTERING:
         // Player walking some ways into the level
-        player.diry = 0.5;
+        player.controls.diry = 0.5;
         this.travelTime -= dt;
         if (this.travelTime <= 0) {
             this.state = this.PLAYER_LOOK_LEFT;
             this.timer = 0.5;
             this.door.startClosing();
-            player.dirx = 0;
-            player.diry = 0;
+            player.controls.dirx = 0;
+            player.controls.diry = 0;
         } else if (this.travelTime < 0.35) {
-            player.dirx = 0.25;
+            player.controls.dirx = 0.25;
         }
         break;
 
@@ -199,7 +200,7 @@ EnterScene.prototype.update = function(dt)
 
     case this.PLAYER_LOOK_RIGHT:
         player.faceDirection(1);
-        player.hasControl = true;
+        player.controls = GameControls.getControls();
         this.timer = 0.5;
         // Done!
         this.level.removeThing(this);

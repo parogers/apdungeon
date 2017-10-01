@@ -143,6 +143,26 @@ GameControls.prototype.attach = function()
     attachKeyUp(this);
 }
 
+/******************/
+/* ManualControls */
+/******************/
+
+class ManualControls
+{
+    constructor() {
+        this.dirx = 0;
+        this.diry = 0;
+    }
+
+    getX() {
+        return this.dirx;
+    }
+
+    getY() {
+        return this.diry;
+    }
+}
+
 module.exports = {};
 module.exports.configure = function()
 {
@@ -159,3 +179,6 @@ module.exports.getControls = function()
 {
     return controls;
 }
+
+module.exports.ManualControls = ManualControls;
+

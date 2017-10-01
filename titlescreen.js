@@ -35,6 +35,10 @@ var Snake = SnakeLike.Snake;
 var Rat = SnakeLike.Rat;
 var Scorpion = SnakeLike.Scorpion;
 
+/***************/
+/* TitleScreen */
+/***************/
+
 function TitleScreen()
 {
     // Playing through the intro sequence (looping)
@@ -105,17 +109,13 @@ function TitleScreen()
             this.screenLeft = -this.level.stage.x;
             this.screenRight = this.screenLeft + screenWidth;
             // Create a dummy player to drive around
-            this.player = new Player();
+            this.controls = new GameControls.ManualControls();
+            this.player = new Player(this.controls);
             this.player.cameraMovement = false;
-            this.player.hasControl = false;
+            //this.player.hasControl = false;
             this.player.sprite.x = 2;
             this.player.sprite.y = 20;
             this.level.addThing(this.player);
-
-            this.monster = new Scenery(
-                Utils.getFrames(RES.ENEMIES, Rat.FRAMES));
-            this.monster.sprite.y = this.player.sprite.y;
-            this.level.addThing(this.monster);
 
             this.monsterChoices = [
                 Rat.FRAMES,
@@ -126,11 +126,16 @@ function TitleScreen()
                 Ghost.FRAMES]
             this.monsterChoice = 0;
 
+            this.monster = new Scenery(
+                Utils.getFrames(RES.ENEMIES, this.monsterChoices[0]));
+            this.monster.sprite.y = this.player.sprite.y;
+            this.level.addThing(this.monster);
+
             return this.NEXT;
         },
         function(dt) {
             // Have the player run right offscreen
-            this.player.dirx = 1;
+            this.controls.dirx = 1;
             this.player.update(dt);
             if (this.player.sprite.x > this.screenRight+4) {
                 this.monster.sprite.x = this.screenRight+16;
@@ -140,7 +145,7 @@ function TitleScreen()
         "loop",
         function(dt) {
             // Have the player run the other way chased by a monster
-            this.player.dirx = -1;
+            this.controls.dirx = -1;
             this.player.update(dt);
             this.monster.velx = -20;
             this.monster.update(dt);
@@ -152,7 +157,7 @@ function TitleScreen()
         },
         function(dt) {
             // Now the player chases the monster with a sword
-            this.player.dirx = 1;
+            this.controls.dirx = 1;
             this.player.update(dt);
             this.monster.velx = 20;
             this.monster.update(dt);

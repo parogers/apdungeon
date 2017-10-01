@@ -24,6 +24,7 @@ var GoMarker = require("./gomarker");
 var Player = require("./player");
 var Level = require("./level");
 var Utils = require("./utils");
+var GameControls = require("./controls");
 
 /***************/
 /* LevelScreen */
@@ -60,7 +61,7 @@ LevelScreen.prototype.update = function(dt)
     switch(this.state) {
     case this.NEW_GAME:
         // Generate a new level and player character
-        this.player = new Player();
+        this.player = new Player(GameControls.getControls());
         this.player.sprite.x = 0;
         this.player.sprite.y = 0;
         this.levelNum = 0;
