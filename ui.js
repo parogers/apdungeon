@@ -53,8 +53,7 @@ function renderText(lines, options)
     if (options && options.blackBG) {
         var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
         bg.scale.set(maxWidth/bg.width, y/bg.height);
-        cnt.addChild(bg);
-        cnt.children.unshift(cnt.children.pop());
+        cnt.addChildAt(bg, 0);
         // TODO - why doesn't this work for render textures?
         //renderer.backgroundColor = 0x000000;
     }
@@ -68,9 +67,9 @@ function renderText(lines, options)
 /* HealthUI */
 /************/
 
-function HealthUI(levelScreen)
+function HealthUI()
 {
-    this.levelScreen = levelScreen;
+    this.player = null;
     this.sprite = new PIXI.Container();
     this.hearts = [];
     this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
@@ -106,22 +105,22 @@ HealthUI.prototype.removeHeart = function()
 
 HealthUI.prototype.update = function(dt)
 {
-    let player = this.levelScreen.player;
-    if (!player) return;
+    if (!this.player) return;
+
     // Add hearts to match the player's max health
-    while (this.hearts.length < Math.floor(player.maxHealth/2)) {
+    while (this.hearts.length < Math.floor(this.player.maxHealth/2)) {
         this.addHeart();
     }
     // Remove hearts to match the player's max health
-    while (this.hearts.length > Math.floor(player.maxHealth/2)) {
+    while (this.hearts.length > Math.floor(this.player.maxHealth/2)) {
         this.removeHeart();
     }
     // Synchronize the hearts to reflect the player's health
     for (var n = 0; n < this.hearts.length; n++) {
         var img = null;
-        if (n < Math.floor(player.health/2)) {
+        if (n < Math.floor(this.player.health/2)) {
             img = this.fullHeart;
-        } else if (n < Math.floor((player.health+1)/2)) {
+        } else if (n < Math.floor((this.player.health+1)/2)) {
             img = this.halfHeart;
         } else {
             img = this.emptyHeart;
@@ -144,11 +143,11 @@ function ItemSlotUI(item, args)
     this.count = 0;
     this.itemSprite = new PIXI.Sprite(
         Utils.getFrame(RES.GROUND_ITEMS, item.image));
-    this.itemSprite.anchor.set(0.5, 0.5);
+    this.itemSprite.anchor.set(0.5, 0);
     this.itemSprite.x = 0.5;
-    this.itemSprite.y = -0.5;
+    this.itemSprite.y = 0;
     this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "small_slot"));
-    this.slotSprite.anchor.set(0.5, 0.5);
+    this.slotSprite.anchor.set(0.5, 0);
     this.sprite.addChild(this.slotSprite);
     this.sprite.addChild(this.itemSprite);
 
@@ -160,8 +159,8 @@ function ItemSlotUI(item, args)
         var img = renderText("--");
         this.textSprite = new PIXI.Sprite(img);
         this.textSprite.anchor.set(0.5, 0.5);
-        this.textSprite.x = 0.5;
-        this.textSprite.y = 6.5;
+        this.textSprite.x = 0;
+        this.textSprite.y = 12;
         this.textSprite.scale.set(0.75);
         this.sprite.addChild(this.textSprite);
     }
@@ -193,9 +192,9 @@ ItemSlotUI.prototype.setItem = function(item)
 /***************/
 
 // Show the player inventory as a set of item slots (ItemSlotUI instances)
-function InventoryUI(levelScreen)
+function InventoryUI()
 {
-    this.levelScreen = levelScreen;
+    this.player = null;
     this.sprite = new PIXI.Container();
     this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
     this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
@@ -225,20 +224,60 @@ function InventoryUI(levelScreen)
 
 InventoryUI.prototype.update = function(dt)
 {
-    let player = this.levelScreen.player;
-    if (!player) return;
+    if (this.player) {
+        // TODO - use an event/listener system instead of doing this
+        this.armourSlot.setItem(this.player.armour);
+        this.swordSlot.setItem(this.player.sword);
+        this.bowSlot.setItem(this.player.bow);
+        this.arrowSlot.setCount(this.player.numArrows);
+        this.coinSlot.setCount(this.player.numCoins);
+    }
+}
 
-    // TODO - use an event/listener system instead of doing this
-    this.armourSlot.setItem(player.armour);
-    this.swordSlot.setItem(player.sword);
-    this.bowSlot.setItem(player.bow);
-    this.arrowSlot.setCount(player.numArrows);
-    this.coinSlot.setCount(player.numCoins);
+/**********/
+/* GameUI */
+/**********/
+
+class GameUI
+{
+    constructor() {
+        this.container = new PIXI.Container();
+        this.healthUI = new HealthUI(this);
+        this.inventoryUI = new InventoryUI(this);
+        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown1"));
+
+        this.container.addChild(this.bg);
+        this.container.addChild(this.healthUI.sprite);
+        this.container.addChild(this.inventoryUI.sprite);
+    }
+
+    setPlayer(player) {
+        this.healthUI.player = player;
+        this.inventoryUI.player = player;
+    }
+
+    update(dt) {
+        this.healthUI.update(dt);
+        this.inventoryUI.update(dt);
+    }
+
+    doLayout(x, y, width, height) {
+        this.container.x = x;
+        this.container.y = y;
+        this.healthUI.sprite.x = width;
+        this.healthUI.sprite.y = 1;
+        this.inventoryUI.sprite.x = 6;
+        this.inventoryUI.sprite.y = 1;
+        this.bg.scale.set(
+            width/this.bg.texture.width, 
+            height/this.bg.texture.height);
+    }
 }
 
 module.exports = {
     renderText: renderText,
     HealthUI: HealthUI,
     InventoryUI: InventoryUI,
-    ItemSlotUI: ItemSlotUI
+    ItemSlotUI: ItemSlotUI,
+    GameUI: GameUI
 };

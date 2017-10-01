@@ -395,7 +395,7 @@ Tileset.prototype.getTile = function (name) {
 function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid) {
     /* Create a texture large enough to hold all the tiles, plus a little extra
      * for the first row, in case it contains wall tiles. (taller) */
-    var renderTexture = PIXI.RenderTexture.create(grid[0].length * tileWidth, (grid.length + 1) * tileHeight);
+    var renderTexture = PIXI.RenderTexture.create(grid[0].length * tileWidth, (grid.length - 1) * tileHeight + wallHeight);
     var cnt = new PIXI.Container();
     this.solid = Utils.createGrid(grid.rows, grid.cols);
     for (var row = 0; row < grid.length; row++) {
@@ -425,21 +425,6 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid) {
     //this.sprite.scale.set(1.8);
 }
 
-TiledBackground.prototype.checkHit = function (x, y, w) {
-    return false;
-    var x = x - this.sprite.x;
-    var y = y - (this.sprite.y + this.tileHeight);
-    if (x < 0 || x > this.sprite.texture.width || y < 0 || y > this.sprite.texture.height - this.tileHeight) {
-        return true;
-    }
-    var row = y / this.tileHeight | 0;
-    var col1 = x / this.tileWidth | 0;
-    var col2 = (x + w) / this.tileWidth | 0;
-    for (var col = col1; col <= col2; col++) {
-        if (this.solid[row] && this.solid[row][col]) return true;
-    }return false;
-};
-
 TiledBackground.prototype.getTileAt = function (x, y) {
     // Account for the background offset, and also for the fact that the
     // first row of tiles are wall tiles. (ie taller)
@@ -448,7 +433,10 @@ TiledBackground.prototype.getTileAt = function (x, y) {
 
     var row = y / this.tileHeight | 0;
     var col = x / this.tileWidth | 0;
-    if (this.grid[row] && this.grid[row][col]) return this.tileset.getTile(this.grid[row][col]);
+    if (this.grid[row])
+        //return this.tileset.getTile(this.grid[row][col]);
+        return this.tileset.tiles[this.grid[row][col]] || this.tileset.wall;
+
     return this.tileset.wall;
 };
 
@@ -1019,6 +1007,12 @@ function GameState() {
 
     this.state = this.SHOW_TITLE_SCREEN;
     this.screen = null;
+
+    window.addEventListener("resize", function () {
+        div.style.width = window.innerWidth;
+        div.style.height = window.innerHeight;
+        Render.configure(div);
+    });
 }
 
 /* Called every render frame to update the overall game state, transition
@@ -2664,17 +2658,14 @@ Level.prototype.checkHit = function (x, y, hitbox, ignore) {
     return null;
 };
 
-/* Returns a list of things that overlap with the given hitbox at a given
- * position within the level. (useful for checking if the player has collided
- * with any monsters) */
-Level.prototype.checkHitMany = function (x, y, hitbox, ignore) {
-    var xp = x + hitbox.x,
-        yp = y + hitbox.y;
-    var w = hitbox.w,
-        h = hitbox.h;
-    //var thing = null;
-    var hit = [];
-    //for (var n = 0; n < this.things.length; n++) 
+/* Iterates over all things in this level, and calls the given function
+ * for each thing that overlaps with the given hitbox. */
+Level.prototype.forEachThingHit = function (x, y, hitbox, ignore, callback) {
+    var xp = x + hitbox.x;
+    var yp = y + hitbox.y;
+    var w = hitbox.w;
+    var h = hitbox.h;
+
     var _iteratorNormalCompletion3 = true;
     var _didIteratorError3 = false;
     var _iteratorError3 = undefined;
@@ -2683,9 +2674,8 @@ Level.prototype.checkHitMany = function (x, y, hitbox, ignore) {
         for (var _iterator3 = this.things[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var thing = _step3.value;
 
-            //thing = this.things[n];
             if (thing !== ignore && thing.sprite && thing.hitbox && thing.hitbox !== hitbox && Math.abs(xp - thing.sprite.x - thing.hitbox.x) < (w + thing.hitbox.w) / 2 && Math.abs(yp - thing.sprite.y - thing.hitbox.y) < (h + thing.hitbox.h) / 2) {
-                hit.push(thing);
+                callback(thing);
             }
         }
     } catch (err) {
@@ -2702,8 +2692,6 @@ Level.prototype.checkHitMany = function (x, y, hitbox, ignore) {
             }
         }
     }
-
-    return hit;
 };
 
 // Add a 'thing' to the level and it's sprite to the render stage
@@ -2865,13 +2853,16 @@ function LevelScreen() {
 
     this.stage = new PIXI.Container();
 
-    this.healthUI = new UI.HealthUI(this);
-    this.inventoryUI = new UI.InventoryUI(this);
     this.goMarker = new GoMarker(this);
-
-    this.stage.addChild(this.healthUI.sprite);
-    this.stage.addChild(this.inventoryUI.sprite);
+    this.gameUI = new UI.GameUI();
     this.stage.addChild(this.goMarker.sprite);
+    this.stage.addChild(this.gameUI.container);
+
+    window.addEventListener("resize", function () {
+        //div.style.width = window.innerWidth;
+        //div.style.height = window.innerHeight;
+        //Render.configure(div);
+    });
 }
 
 LevelScreen.prototype.update = function (dt) {
@@ -2907,8 +2898,7 @@ LevelScreen.prototype.update = function (dt) {
                 this.state = this.GAME_OVER;
             } else {
                 if (this.level) this.level.update(dt);
-                this.healthUI.update(dt);
-                this.inventoryUI.update(dt);
+                this.gameUI.update(dt);
                 this.goMarker.update(dt);
             }
             break;
@@ -2934,23 +2924,21 @@ LevelScreen.prototype.setLevel = function (level) {
     }
     if (!level) return;
 
-    var scale = Render.getRenderer().height / level.camera.height;
+    var scale = Math.min(Render.getRenderer().width / level.camera.width, Render.getRenderer().height / level.camera.height);
 
     // Revise the camera width to fill the available horizontal space
-    level.camera.width = Render.getRenderer().width / scale;
+    //level.camera.width = Render.getRenderer().width / scale;
 
     this.stage.scale.set(scale);
-    this.stage.addChild(level.stage);
-    // Move the level (container) sprite to the start of the list of
+    // Add the level (container) sprite to the start of the list of
     // child sprites, so it gets rendered before anything else.
     // (ie UI elements are drawn on top of the level)
-    this.stage.children.unshift(this.stage.children.pop());
+    this.stage.addChildAt(level.stage, 0);
     this.level = level;
-    // Position the UI just below the level render area
-    this.healthUI.sprite.x = level.camera.width - 1;
-    this.healthUI.sprite.y = level.getHeight() - 1;
-    this.inventoryUI.sprite.x = 6;
-    this.inventoryUI.sprite.y = level.getHeight() + 3;
+
+    this.gameUI.setPlayer(this.player);
+    this.gameUI.doLayout(0, level.getHeight(), level.camera.width, level.camera.height - level.getHeight());
+
     // Put the go marker in the top-right corner of the level area
     this.goMarker.sprite.x = level.camera.width - 1;
     this.goMarker.sprite.y = 2;
@@ -3291,6 +3279,12 @@ function Player(controls) {
     this.sprite.addChild(this.swordWeaponSlot.sprite);
     this.bowWeaponSlot.sprite.visible = false;
     this.swordWeaponSlot.sprite.visible = false;
+
+    this.handleCollisionCallback = function (thing) {
+        if (thing.handlePlayerCollision) {
+            thing.handlePlayerCollision(this);
+        }
+    }.bind(this);
 }
 
 /* Have the player face the given direction */
@@ -3404,6 +3398,7 @@ Player.prototype.update = function (dt) {
             this.velx = 0;
         }
     }
+    // Handle up/down movement
     if (this.vely) {
         var y = this.sprite.y + this.vely * dt;
         var left = this.level.bg.getTileAt(this.sprite.x - w / 2, y);
@@ -3427,12 +3422,7 @@ Player.prototype.update = function (dt) {
     //if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
     // Check for collisions with other things
-    var hit = this.level.checkHitMany(this.sprite.x, this.sprite.y, this.hitbox, this);
-    for (var n = 0; n < hit.length; n++) {
-        if (hit[n].handlePlayerCollision) {
-            hit[n].handlePlayerCollision(this);
-        }
-    }
+    this.level.forEachThingHit(this.sprite.x, this.sprite.y, this.hitbox, this, this.handleCollisionCallback);
 
     // Update animation
     var frame = this.frames[(this.frame * 10 | 0) % this.frames.length];
@@ -4222,7 +4212,7 @@ Snake.prototype.updateAttacking = function (dt) {
 
     // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
-    if (Math.abs(dist) > 10) {
+    if (Math.abs(dist) > 5) {
         dy = dt * 4 * Math.sign(dist);
     }
 
@@ -4592,6 +4582,10 @@ module.exports = TitleScreen;
 },{"./controls":4,"./genlevel":9,"./ghost":10,"./goblin":11,"./item":14,"./player":19,"./render":21,"./res":22,"./scenery":23,"./skel_warrior":24,"./snake":25,"./ui":28,"./utils":29}],28:[function(require,module,exports){
 "use strict";
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
  * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
  *
@@ -4643,8 +4637,7 @@ function renderText(lines, options) {
     if (options && options.blackBG) {
         var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
         bg.scale.set(maxWidth / bg.width, y / bg.height);
-        cnt.addChild(bg);
-        cnt.children.unshift(cnt.children.pop());
+        cnt.addChildAt(bg, 0);
         // TODO - why doesn't this work for render textures?
         //renderer.backgroundColor = 0x000000;
     }
@@ -4658,8 +4651,8 @@ function renderText(lines, options) {
 /* HealthUI */
 /************/
 
-function HealthUI(levelScreen) {
-    this.levelScreen = levelScreen;
+function HealthUI() {
+    this.player = null;
     this.sprite = new PIXI.Container();
     this.hearts = [];
     this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
@@ -4713,22 +4706,22 @@ HealthUI.prototype.removeHeart = function () {
 };
 
 HealthUI.prototype.update = function (dt) {
-    var player = this.levelScreen.player;
-    if (!player) return;
+    if (!this.player) return;
+
     // Add hearts to match the player's max health
-    while (this.hearts.length < Math.floor(player.maxHealth / 2)) {
+    while (this.hearts.length < Math.floor(this.player.maxHealth / 2)) {
         this.addHeart();
     }
     // Remove hearts to match the player's max health
-    while (this.hearts.length > Math.floor(player.maxHealth / 2)) {
+    while (this.hearts.length > Math.floor(this.player.maxHealth / 2)) {
         this.removeHeart();
     }
     // Synchronize the hearts to reflect the player's health
     for (var n = 0; n < this.hearts.length; n++) {
         var img = null;
-        if (n < Math.floor(player.health / 2)) {
+        if (n < Math.floor(this.player.health / 2)) {
             img = this.fullHeart;
-        } else if (n < Math.floor((player.health + 1) / 2)) {
+        } else if (n < Math.floor((this.player.health + 1) / 2)) {
             img = this.halfHeart;
         } else {
             img = this.emptyHeart;
@@ -4749,11 +4742,11 @@ function ItemSlotUI(item, args) {
     this.item = item;
     this.count = 0;
     this.itemSprite = new PIXI.Sprite(Utils.getFrame(RES.GROUND_ITEMS, item.image));
-    this.itemSprite.anchor.set(0.5, 0.5);
+    this.itemSprite.anchor.set(0.5, 0);
     this.itemSprite.x = 0.5;
-    this.itemSprite.y = -0.5;
+    this.itemSprite.y = 0;
     this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "small_slot"));
-    this.slotSprite.anchor.set(0.5, 0.5);
+    this.slotSprite.anchor.set(0.5, 0);
     this.sprite.addChild(this.slotSprite);
     this.sprite.addChild(this.itemSprite);
 
@@ -4764,8 +4757,8 @@ function ItemSlotUI(item, args) {
         var img = renderText("--");
         this.textSprite = new PIXI.Sprite(img);
         this.textSprite.anchor.set(0.5, 0.5);
-        this.textSprite.x = 0.5;
-        this.textSprite.y = 6.5;
+        this.textSprite.x = 0;
+        this.textSprite.y = 12;
         this.textSprite.scale.set(0.75);
         this.sprite.addChild(this.textSprite);
     }
@@ -4793,8 +4786,8 @@ ItemSlotUI.prototype.setItem = function (item) {
 /***************/
 
 // Show the player inventory as a set of item slots (ItemSlotUI instances)
-function InventoryUI(levelScreen) {
-    this.levelScreen = levelScreen;
+function InventoryUI() {
+    this.player = null;
     this.sprite = new PIXI.Container();
     this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
     this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
@@ -4837,22 +4830,68 @@ function InventoryUI(levelScreen) {
 }
 
 InventoryUI.prototype.update = function (dt) {
-    var player = this.levelScreen.player;
-    if (!player) return;
-
-    // TODO - use an event/listener system instead of doing this
-    this.armourSlot.setItem(player.armour);
-    this.swordSlot.setItem(player.sword);
-    this.bowSlot.setItem(player.bow);
-    this.arrowSlot.setCount(player.numArrows);
-    this.coinSlot.setCount(player.numCoins);
+    if (this.player) {
+        // TODO - use an event/listener system instead of doing this
+        this.armourSlot.setItem(this.player.armour);
+        this.swordSlot.setItem(this.player.sword);
+        this.bowSlot.setItem(this.player.bow);
+        this.arrowSlot.setCount(this.player.numArrows);
+        this.coinSlot.setCount(this.player.numCoins);
+    }
 };
+
+/**********/
+/* GameUI */
+/**********/
+
+var GameUI = function () {
+    function GameUI() {
+        _classCallCheck(this, GameUI);
+
+        this.container = new PIXI.Container();
+        this.healthUI = new HealthUI(this);
+        this.inventoryUI = new InventoryUI(this);
+        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown1"));
+
+        this.container.addChild(this.bg);
+        this.container.addChild(this.healthUI.sprite);
+        this.container.addChild(this.inventoryUI.sprite);
+    }
+
+    _createClass(GameUI, [{
+        key: "setPlayer",
+        value: function setPlayer(player) {
+            this.healthUI.player = player;
+            this.inventoryUI.player = player;
+        }
+    }, {
+        key: "update",
+        value: function update(dt) {
+            this.healthUI.update(dt);
+            this.inventoryUI.update(dt);
+        }
+    }, {
+        key: "doLayout",
+        value: function doLayout(x, y, width, height) {
+            this.container.x = x;
+            this.container.y = y;
+            this.healthUI.sprite.x = width;
+            this.healthUI.sprite.y = 1;
+            this.inventoryUI.sprite.x = 6;
+            this.inventoryUI.sprite.y = 1;
+            this.bg.scale.set(width / this.bg.texture.width, height / this.bg.texture.height);
+        }
+    }]);
+
+    return GameUI;
+}();
 
 module.exports = {
     renderText: renderText,
     HealthUI: HealthUI,
     InventoryUI: InventoryUI,
-    ItemSlotUI: ItemSlotUI
+    ItemSlotUI: ItemSlotUI,
+    GameUI: GameUI
 };
 
 },{"./item":14,"./render":21,"./res":22,"./utils":29}],29:[function(require,module,exports){
@@ -5078,6 +5117,12 @@ function SwordWeaponSlot(player) {
     // Which weapon texture is currently displayed
     this.textureName = null;
     this.setTexture("sword2");
+
+    this.handleHitCallback = function (hit) {
+        if (hit.handleHit) {
+            hit.handleHit(this.player.sprite.x, this.player.sprite.y, 1);
+        }
+    }.bind(this);
 }
 
 SwordWeaponSlot.prototype.update = function (dt) {
@@ -5109,37 +5154,9 @@ SwordWeaponSlot.prototype.startAttack = function () {
     Utils.getSound(RES.ATTACK_SWORD_SND).play();
     this.sprite.rotation = 0;
     this.sprite.x = 3.5;
-
-    var lst = this.player.level.checkHitMany(this.player.sprite.x + this.player.facing * this.weaponReach, this.player.sprite.y, this.hitbox, this.player);
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-        for (var _iterator = lst[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var hit = _step.value;
-
-            if (hit.handleHit) {
-                hit.handleHit(this.player.sprite.x, this.player.sprite.y, 1);
-            }
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
-    }
-
     this.attackCooldown = 0.15;
+
+    this.player.level.forEachThingHit(this.player.sprite.x + this.player.facing * this.weaponReach, this.player.sprite.y, this.hitbox, this.player, this.handleHitCallback);
 };
 
 SwordWeaponSlot.prototype.stopAttack = function () {};

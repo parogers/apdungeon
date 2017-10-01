@@ -52,7 +52,7 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
      * for the first row, in case it contains wall tiles. (taller) */
     var renderTexture = PIXI.RenderTexture.create(
         grid[0].length*tileWidth, 
-        (grid.length+1)*tileHeight);
+        (grid.length-1)*tileHeight + wallHeight);
     var cnt = new PIXI.Container();
     this.solid = Utils.createGrid(grid.rows, grid.cols);
     for (var row = 0; row < grid.length; row++) 
@@ -84,25 +84,6 @@ function TiledBackground(tileWidth, tileHeight, wallHeight, textures, grid)
     //this.sprite.scale.set(1.8);
 }
 
-TiledBackground.prototype.checkHit = function(x, y, w)
-{
-    return false;
-    var x = x-this.sprite.x;
-    var y = y-(this.sprite.y+this.tileHeight);
-    if (x < 0 || x > this.sprite.texture.width ||
-        y < 0 || y > this.sprite.texture.height - this.tileHeight) 
-    {
-        return true;
-    }
-    var row = (y / this.tileHeight)|0;
-    var col1 = (x / this.tileWidth)|0;
-    var col2 = ((x+w) / this.tileWidth)|0;
-    for (var col = col1; col <= col2; col++)
-        if (this.solid[row] && this.solid[row][col])
-            return true;
-    return false;
-}
-
 TiledBackground.prototype.getTileAt = function(x, y)
 {
     // Account for the background offset, and also for the fact that the
@@ -112,8 +93,10 @@ TiledBackground.prototype.getTileAt = function(x, y)
 
     var row = (y / this.tileHeight)|0;
     var col = (x / this.tileWidth)|0;
-    if (this.grid[row] && this.grid[row][col])
-        return this.tileset.getTile(this.grid[row][col]);
+    if (this.grid[row])
+        //return this.tileset.getTile(this.grid[row][col]);
+        return this.tileset.tiles[this.grid[row][col]] || this.tileset.wall;
+
     return this.tileset.wall;
 }
 

@@ -44,6 +44,12 @@ function GameState()
 
     this.state = this.SHOW_TITLE_SCREEN;
     this.screen = null;
+
+    window.addEventListener("resize", () => {
+        div.style.width = window.innerWidth;
+        div.style.height = window.innerHeight;
+        Render.configure(div);
+    });
 }
 
 /* Called every render frame to update the overall game state, transition

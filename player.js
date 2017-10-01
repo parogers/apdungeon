@@ -103,6 +103,12 @@ function Player(controls)
     this.sprite.addChild(this.swordWeaponSlot.sprite);
     this.bowWeaponSlot.sprite.visible = false;
     this.swordWeaponSlot.sprite.visible = false;
+
+    this.handleCollisionCallback = (function(thing) {
+        if (thing.handlePlayerCollision) {
+            thing.handlePlayerCollision(this);
+        }
+    }).bind(this);
 }
 
 /* Have the player face the given direction */
@@ -225,6 +231,7 @@ Player.prototype.update = function(dt)
             this.velx = 0;
         }
     }
+    // Handle up/down movement
     if (this.vely) {
         var y = this.sprite.y + this.vely*dt;
         var left = this.level.bg.getTileAt(this.sprite.x-w/2, y);
@@ -249,14 +256,10 @@ Player.prototype.update = function(dt)
     //if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
     // Check for collisions with other things
-    var hit = this.level.checkHitMany(
+    this.level.forEachThingHit(
         this.sprite.x, this.sprite.y, 
-        this.hitbox, this);
-    for (var n = 0; n < hit.length; n++) {
-        if (hit[n].handlePlayerCollision) {
-            hit[n].handlePlayerCollision(this);
-        }
-    }
+        this.hitbox, this, 
+        this.handleCollisionCallback);
 
     // Update animation
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];

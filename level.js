@@ -255,28 +255,25 @@ Level.prototype.checkHit = function(x, y, hitbox, ignore)
     return null;
 }
 
-/* Returns a list of things that overlap with the given hitbox at a given
- * position within the level. (useful for checking if the player has collided
- * with any monsters) */
-Level.prototype.checkHitMany = function(x, y, hitbox, ignore)
+/* Iterates over all things in this level, and calls the given function
+ * for each thing that overlaps with the given hitbox. */
+Level.prototype.forEachThingHit = function(x, y, hitbox, ignore, callback)
 {
-    var xp = x + hitbox.x, yp = y + hitbox.y;
-    var w = hitbox.w, h = hitbox.h;
-    //var thing = null;
-    var hit = [];
-    //for (var n = 0; n < this.things.length; n++) 
+    let xp = x + hitbox.x;
+    let yp = y + hitbox.y;
+    let w = hitbox.w;
+    let h = hitbox.h;
+
     for (let thing of this.things)
     {
-        //thing = this.things[n];
         if (thing !== ignore && thing.sprite && 
             thing.hitbox && thing.hitbox !== hitbox && 
             Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
             Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
         {
-            hit.push(thing);
+            callback(thing);
         }
     }
-    return hit;
 }
 
 // Add a 'thing' to the level and it's sprite to the render stage

@@ -114,7 +114,7 @@ Snake.prototype.updateAttacking = function(dt)
 
     // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
-    if (Math.abs(dist) > 10) {
+    if (Math.abs(dist) > 5) {
         dy = dt*4*Math.sign(dist);
     }
 

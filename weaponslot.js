@@ -47,6 +47,13 @@ function SwordWeaponSlot(player)
     // Which weapon texture is currently displayed
     this.textureName = null;
     this.setTexture("sword2");
+
+    this.handleHitCallback = (function(hit) {
+        if (hit.handleHit) {
+            hit.handleHit(this.player.sprite.x, 
+                          this.player.sprite.y, 1);
+        }
+    }).bind(this);
 }
 
 SwordWeaponSlot.prototype.update = function(dt)
@@ -81,19 +88,13 @@ SwordWeaponSlot.prototype.startAttack = function()
     Utils.getSound(RES.ATTACK_SWORD_SND).play();
     this.sprite.rotation = 0;
     this.sprite.x = 3.5;
+    this.attackCooldown = 0.15;
 
-    var lst = this.player.level.checkHitMany(
+    this.player.level.forEachThingHit(
         this.player.sprite.x + this.player.facing*this.weaponReach, 
         this.player.sprite.y,
-        this.hitbox, this.player);
-
-    for (let hit of lst) {
-        if (hit.handleHit) {
-            hit.handleHit(this.player.sprite.x, 
-                          this.player.sprite.y, 1);
-        }
-    }
-    this.attackCooldown = 0.15;
+        this.hitbox, this.player,
+        this.handleHitCallback);
 }
 
 SwordWeaponSlot.prototype.stopAttack = function()
