@@ -163,7 +163,7 @@ Goblin.prototype.updateAttacking = function(dt)
 
     // Go back to a careful approach if the player is facing us (note the
     // goblin always faces the player)
-    if (player.facing*this.facing < 0) {
+    if (player.getFacing()*this.facing < 0) {
         this.state = GOBLIN_APPROACH;
         return;
     }
@@ -220,7 +220,7 @@ Goblin.prototype.updateApproach = function(dt)
 
     // Rush the player for an attack, if they're facing away from us
     // (note the goblin always faces the player)
-    if (player.facing*this.facing > 0) {
+    if (player.getFacing()*this.facing > 0) {
         this.state = GOBLIN_ATTACKING;
         return;
     }

@@ -21,6 +21,7 @@ var RES = require("./res");
 var Render = require("./render");
 var ProgressBar = require("./progress");
 var GameControls = require("./controls");
+var LevelScreen = require("./levelscreen");
 var GameState = require("./gamestate");
 var Utils = require("./utils");
 //require("./contrib/sound.js");
@@ -28,53 +29,6 @@ var Utils = require("./utils");
 var gamestate = null;
 var stage = null;
 var progress = null;
-
-function start(elementName)
-{
-    var div = document.getElementById(elementName);
-    div.focus();
-
-    Render.configure(div);
-
-    //renderer = new PIXI.CanvasRenderer(550, 400);
-    stage = new PIXI.Container();
-
-    progress = new ProgressBar(200, 20, "LOADING IMAGES...");
-    progress.sprite.x = 100;
-    progress.sprite.y = 100;
-    stage.addChild(progress.sprite);
-
-    GameControls.configure();
-
-    gamestate = new GameState();
-
-    function progresscb(loader, resource) {
-        console.log("loading: " + resource.url + 
-                    " (" + (loader.progress|0) + "%)"); 
-        progress.update(loader.progress/100.0);
-        requestAnimationFrame(function() {
-            Render.getRenderer().render(stage);
-        });
-    }
-    // Add a random query string when loading the JSON files below. This avoids
-    // persistent caching problems, where the browser (eg FF) uses the cached
-    // without checking in with the server first.
-    var now = (new Date()).getTime();
-    PIXI.loader.defaultQueryString = "nocache=" + now;
-    PIXI.loader
-        .add(RES.MALE_MELEE)
-        .add(RES.FEMALE_MELEE)
-        .add(RES.NPC_TILESET)
-        .add(RES.MAPTILES)
-        .add(RES.ENEMIES)
-        .add(RES.WEAPONS)
-        .add(RES.GROUND_ITEMS)
-        .add(RES.UI)
-        .add(RES.DRAGON)
-    //.add({name: "hit", url: "media/hit.wav"})
-        .on("progress", progresscb)
-        .load(graphicsLoaded);
-}
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
@@ -169,7 +123,60 @@ function setup()
     requestAnimationFrame(gameLoop)
 }
 
-module.exports = {
-    gamestate: gamestate,
-    start: start
-};
+module.exports = {};
+module.exports.start = function(elementName)
+{
+    var div = document.getElementById(elementName);
+    div.focus();
+
+    // Use the level screen to determine what the render view aspect
+    // ratio should be.
+    Render.configure(div, LevelScreen.getAspectRatio());
+
+    stage = new PIXI.Container();
+    progress = new ProgressBar(200, 20, "LOADING IMAGES...");
+    progress.sprite.x = 100;
+    progress.sprite.y = 100;
+    stage.addChild(progress.sprite);
+
+    GameControls.configure();
+
+    gamestate = new GameState();
+
+    function progresscb(loader, resource) {
+        console.log("loading: " + resource.url + 
+                    " (" + (loader.progress|0) + "%)"); 
+        progress.update(loader.progress/100.0);
+        requestAnimationFrame(function() {
+            Render.getRenderer().render(stage);
+        });
+    }
+    // Add a random query string when loading the JSON files below. This avoids
+    // persistent caching problems, where the browser (eg FF) uses the cached
+    // without checking in with the server first.
+    var now = (new Date()).getTime();
+    PIXI.loader.defaultQueryString = "nocache=" + now;
+    PIXI.loader
+        .add(RES.MALE_MELEE)
+        .add(RES.FEMALE_MELEE)
+        .add(RES.NPC_TILESET)
+        .add(RES.MAPTILES)
+        .add(RES.ENEMIES)
+        .add(RES.WEAPONS)
+        .add(RES.GROUND_ITEMS)
+        .add(RES.UI)
+        .add(RES.DRAGON)
+    //.add({name: "hit", url: "media/hit.wav"})
+        .on("progress", progresscb)
+        .load(graphicsLoaded);
+}
+
+module.exports.resize = function()
+{
+    gamestate.handleResize();
+}
+
+module.exports.getGamestate = function()
+{
+    return gamestate;
+}

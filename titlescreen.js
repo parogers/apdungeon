@@ -30,6 +30,7 @@ var SnakeLike = require("./snake");
 var Goblin = require("./goblin");
 var SkelWarrior = require("./skel_warrior");
 var Ghost = require("./ghost");
+var LevelScreen = require("./levelscreen");
 
 var Snake = SnakeLike.Snake;
 var Rat = SnakeLike.Rat;
@@ -47,13 +48,15 @@ function TitleScreen()
     this.NEW_GAME = 2;
 
     // The (native) height of the title screen before scaling
-    var screenHeight = 80;
+    this.screenHeight = 80;
+    this.screenWidth = Math.round(
+        LevelScreen.getAspectRatio()*this.screenHeight);
     // Calculate the native-to-screen scaling so that the title screen fits
     // the available vertical space.
-    var scale = Render.getRenderer().height/screenHeight;
+    var scale = Render.getRenderer().height/this.screenHeight;
 
     // Now figure out how wide the screen is (to fill the space)
-    var screenWidth = Render.getRenderer().width/scale;
+    //var screenWidth = Render.getRenderer().width/scale;
 
     // The PIXI container for rendering the scene
     this.stage = new PIXI.Container();
@@ -63,8 +66,8 @@ function TitleScreen()
     this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
     this.bg.scale.set(
-        screenWidth/this.bg.texture.width,
-        screenHeight/this.bg.texture.height);
+        this.screenWidth/this.bg.texture.width,
+        this.screenHeight/this.bg.texture.height);
     this.stage.addChild(this.bg);
     this.delay = 0;
 
@@ -72,47 +75,51 @@ function TitleScreen()
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
-    txt.x = screenWidth/2;
-    txt.y = screenHeight/5;
+    txt.x = this.screenWidth/2;
+    txt.y = this.screenHeight/5;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
-    txt.x = screenWidth/2;
-    txt.y = screenHeight/5+15;
+    txt.x = this.screenWidth/2;
+    txt.y = this.screenHeight/5+15;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
     txt.scale.set(0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = screenWidth/2; //getRenderer().width/2;
-    txt.y = 6*screenHeight/7; //getRenderer().height-50;
+    txt.x = this.screenWidth/2; //getRenderer().width/2;
+    txt.y = 6*this.screenHeight/7; //getRenderer().height-50;
     this.stage.addChild(txt);
 
     this.sequence = new Utils.Sequence(
         {
             stage: this.stage,
             level: null,
-            player: null
+            player: null,
+            screenWidth: this.screenWidth,
+            screenHeight: this.screenHeight
         },
         "start",
         function(dt) {
-            this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
-            this.level.stage.x = -10;
-            this.level.stage.y = screenHeight/2-5;
+            this.level = LevelGenerator.generateEmpty(
+                3, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
+                "smooth_floor_m");
+            this.level.stage.x = -RES.TILE_WIDTH*2;
+            this.level.stage.y = this.screenHeight/2-5;
+            //this.level.camera.x = RES.TILE_WIDTH*2;
+            this.level.camera.width = this.level.getWidth();
             this.stage.addChild(this.level.stage);
             // Note the screen position within the level (so we can know when
             // objects are offscreen)
             this.screenLeft = -this.level.stage.x;
-            this.screenRight = this.screenLeft + screenWidth;
+            this.screenRight = this.screenLeft + this.screenWidth;
             // Create a dummy player to drive around
             this.controls = new GameControls.ManualControls();
             this.player = new Player(this.controls);
-            this.player.cameraMovement = false;
-            //this.player.hasControl = false;
             this.player.sprite.x = 2;
             this.player.sprite.y = 20;
             this.level.addThing(this.player);
@@ -192,6 +199,16 @@ TitleScreen.prototype.update = function(dt)
 TitleScreen.prototype.render = function()
 {
     Render.getRenderer().render(this.stage);
+}
+
+TitleScreen.prototype.handleResize = function()
+{
+    if (this.stage) {
+        var scale = Math.min(
+            Render.getRenderer().width / this.screenWidth,
+            Render.getRenderer().height / this.screenHeight);
+        this.stage.scale.set(scale);
+    }
 }
 
 module.exports = TitleScreen;

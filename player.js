@@ -38,7 +38,6 @@ function Player(controls)
     this.frame = 0;
     this.frames = null;
     this.lungeFrame = null;
-    this.facing = 1;
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 10;
     this.health = this.maxHealth;
@@ -62,10 +61,6 @@ function Player(controls)
     // image of the monster (for displaying stats later)
     //     {count: ZZZ, img: ZZZ}
     this.kills = {};
-
-    // Whether the player movement is restricted by the camera position.
-    // Disabled during cut scenes and whatnot.
-    this.cameraMovement = true;
 
     // Define the hitbox
     this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
@@ -115,6 +110,11 @@ function Player(controls)
 Player.prototype.faceDirection = function(dirx)
 {
     this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
+}
+
+Player.prototype.getFacing = function()
+{
+    return Math.sign(this.sprite.scale.x);
 }
 
 Player.prototype.update = function(dt)
@@ -174,25 +174,9 @@ Player.prototype.update = function(dt)
         this.knockedTimer -= dt;
     }
 
-    //
-    if (this.weaponSlot && this.weaponSlot.update) {
-        this.weaponSlot.update(dt);
-    }
-
-    if (this.damageTimer > 0) {
-        this.damageTimer -= dt;
-        if (this.damageTimer <= 0 || 
-            this.damageCooldown-this.damageTimer > 0.1) 
-        {
-            // Stop flashing red
-            this.spriteChar.tint = NO_TINT;
-        }
-    }
-
     if (dirx) {
-        this.faceDirection(dirx);
+        if (dirx*this.velx < 0) this.faceDirection(dirx);
         this.velx = dirx * this.maxSpeed;
-        this.facing = Math.sign(dirx);
     } else {
         this.velx *= 0.75;
     } 
@@ -214,18 +198,15 @@ Player.prototype.update = function(dt)
         this.velx *= this.maxSpeed/speed;
         this.vely *= this.maxSpeed/speed;
     }
-    var w = this.spriteChar.texture.width*0.75;
 
     // Handle left/right movement
+    var w = this.spriteChar.texture.width*0.75;
     if (this.velx) {
         var x = this.sprite.x + this.velx*dt;
-        var left = this.level.bg.getTileAt(x-w/2, this.sprite.y);
-        var right = this.level.bg.getTileAt(x+w/2, this.sprite.y);
-        // Keep the player visible to the camera (unless camera mode disabled)
-        if (!left.solid && !right.solid && (
-            !this.cameraMovement || (
-                x-w/2 >= this.level.camera.x && 
-                    x+w/2 <= this.level.camera.x + this.level.camera.width))) {
+        // Keep the player visible to the camera
+        if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
+            x-w/2 >= this.level.camera.x && 
+            x+w/2 <= this.level.camera.x + this.level.camera.width) {
             this.sprite.x = x;
         } else {
             this.velx = 0;
@@ -234,13 +215,16 @@ Player.prototype.update = function(dt)
     // Handle up/down movement
     if (this.vely) {
         var y = this.sprite.y + this.vely*dt;
-        var left = this.level.bg.getTileAt(this.sprite.x-w/2, y);
-        var right = this.level.bg.getTileAt(this.sprite.x+w/2, y);
-        if (!left.solid && !right.solid) {
+        if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
             this.sprite.y = y;
         } else {
             this.vely = 0;
         }
+    }
+
+    // Update the equipped weapon
+    if (this.weaponSlot && this.weaponSlot.update) {
+        this.weaponSlot.update(dt);
     }
 
     // Make a splashy sound when we enter water
@@ -251,6 +235,16 @@ Player.prototype.update = function(dt)
         this.waterSprite.visible = true;
     } else {
         this.waterSprite.visible = false;
+    }
+
+    if (this.damageTimer > 0) {
+        this.damageTimer -= dt;
+        if (this.damageTimer <= 0 || 
+            this.damageCooldown-this.damageTimer > 0.1) 
+        {
+            // Stop flashing red
+            this.spriteChar.tint = NO_TINT;
+        }
     }
 
     //if (controls.testKey && !controls.lastTestKey) this.health = 0;

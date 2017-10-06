@@ -49,11 +49,10 @@ NPC.prototype.setDialog = function(lines)
 
 NPC.prototype.update = function(dt)
 {
-    if (this.level.player.hasControl) {
-        // Always face the player
-        var dirx = Math.sign(this.level.player.sprite.x-this.sprite.x);
-        this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
-    }
+    // Always face the player
+    var dirx = Math.sign(this.level.player.sprite.x-this.sprite.x);
+    this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
+
     if (this.visibleTimer > 0) {
         this.visibleTimer -= dt;
         if (this.visibleTimer <= 0) {

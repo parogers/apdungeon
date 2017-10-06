@@ -605,6 +605,8 @@ function GameControls() {
     this.lastSwap = false;
     this.lastSpace = false;
     this.lastTestKey = false;
+
+    this.playerControlled = true;
 }
 
 GameControls.prototype.getX = function () {
@@ -984,12 +986,15 @@ module.exports = GameOverScreen;
 var TitleScreen = require("./titlescreen");
 var LevelScreen = require("./levelscreen");
 var GameOverScreen = require("./gameover");
+var Render = require("./render");
 
 /* The finite state machine that drives the entire game. It manages things
  * at a high level, loading and unloading screens as it transitions
  * between game states. */
 
 function GameState() {
+    var _this = this;
+
     // Loading assets and showing the loading screen
     this.LOADING = 1;
     // Show the title screen
@@ -1009,9 +1014,15 @@ function GameState() {
     this.screen = null;
 
     window.addEventListener("resize", function () {
-        div.style.width = window.innerWidth;
-        div.style.height = window.innerHeight;
-        Render.configure(div);
+        var div = Render.getContainer();
+        var width = window.innerWidth - 5;
+        var height = window.innerHeight - 5;
+        div.style.width = width;
+        div.style.height = height;
+        Render.getRenderer().resize(width, height);
+        if (_this.screen && _this.screen.handleResize) {
+            _this.screen.handleResize();
+        }
     });
 }
 
@@ -1066,9 +1077,16 @@ GameState.prototype.render = function () {
     }
 };
 
+GameState.prototype.handleResize = function () {
+    Render.resize();
+    if (this.screen && this.screen.handleResize) {
+        this.screen.handleResize();
+    }
+};
+
 module.exports = GameState;
 
-},{"./gameover":6,"./levelscreen":16,"./titlescreen":27}],8:[function(require,module,exports){
+},{"./gameover":6,"./levelscreen":16,"./render":21,"./titlescreen":27}],8:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1950,7 +1968,7 @@ Goblin.prototype.updateAttacking = function (dt) {
 
     // Go back to a careful approach if the player is facing us (note the
     // goblin always faces the player)
-    if (player.facing * this.facing < 0) {
+    if (player.getFacing() * this.facing < 0) {
         this.state = GOBLIN_APPROACH;
         return;
     }
@@ -2005,7 +2023,7 @@ Goblin.prototype.updateApproach = function (dt) {
 
     // Rush the player for an attack, if they're facing away from us
     // (note the goblin always faces the player)
-    if (player.facing * this.facing > 0) {
+    if (player.getFacing() * this.facing > 0) {
         this.state = GOBLIN_ATTACKING;
         return;
     }
@@ -2434,7 +2452,7 @@ function Level(bg) {
     // Player has passed through the exit
     this.FINISHED = 5;
 
-    this.camera = new Camera(100, 65);
+    this.camera = new Camera(Level.CAMERA_WIDTH, Level.CAMERA_HEIGHT);
     this.player = null;
     this.stage = null;
     this.state = this.NEXT_ARENA;
@@ -2458,6 +2476,9 @@ Level.BEHIND_BACKGROUND_POS = -1;
 Level.BACKGROUND_POS = 0;
 Level.FLOOR_POS = 1;
 Level.FRONT_POS = 10000;
+
+Level.CAMERA_WIDTH = 100;
+Level.CAMERA_HEIGHT = 65;
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function () {
@@ -2694,6 +2715,12 @@ Level.prototype.forEachThingHit = function (x, y, hitbox, ignore, callback) {
     }
 };
 
+Level.prototype.checkSolidAt = function (x, y, width) {
+    var left = this.bg.getTileAt(x - width / 2, y);
+    var right = this.bg.getTileAt(x + width / 2, y);
+    return left.solid || right.solid;
+};
+
 // Add a 'thing' to the level and it's sprite to the render stage
 Level.prototype.addThing = function (thing) {
     thing.level = this;
@@ -2865,6 +2892,10 @@ function LevelScreen() {
     });
 }
 
+LevelScreen.getAspectRatio = function () {
+    return Level.CAMERA_WIDTH / Level.CAMERA_HEIGHT;
+};
+
 LevelScreen.prototype.update = function (dt) {
     switch (this.state) {
         case this.NEW_GAME:
@@ -2873,7 +2904,7 @@ LevelScreen.prototype.update = function (dt) {
             this.player.sprite.x = 0;
             this.player.sprite.y = 0;
             this.levelNum = 0;
-            // Generate the first level
+            // Auto-generate the first level
             var level = LevelGenerator.generate(this.levelNum);
             this.setLevel(level);
             // Start playing it immediately
@@ -2887,9 +2918,8 @@ LevelScreen.prototype.update = function (dt) {
         case this.PLAYING:
             if (this.level.state === this.level.FINISHED) {
                 // Proceed to the next level
-                console.log("NEXT LEVEL");
-                level = LevelGenerator.generate(++this.levelNum);
-                this.setLevel(level);
+                var _level = LevelGenerator.generate(++this.levelNum);
+                this.setLevel(_level);
             } else if (this.player.dead) {
                 // This triggers the game state machine to advance to the game
                 // over screen. Note there is no stop for sound effects, only 
@@ -2924,12 +2954,6 @@ LevelScreen.prototype.setLevel = function (level) {
     }
     if (!level) return;
 
-    var scale = Math.min(Render.getRenderer().width / level.camera.width, Render.getRenderer().height / level.camera.height);
-
-    // Revise the camera width to fill the available horizontal space
-    //level.camera.width = Render.getRenderer().width / scale;
-
-    this.stage.scale.set(scale);
     // Add the level (container) sprite to the start of the list of
     // child sprites, so it gets rendered before anything else.
     // (ie UI elements are drawn on top of the level)
@@ -2945,6 +2969,16 @@ LevelScreen.prototype.setLevel = function (level) {
     this.level.player = this.player;
     this.level.addThing(this.player);
     this.level.update(0);
+    this.gameUI.update(0);
+
+    this.handleResize();
+};
+
+LevelScreen.prototype.handleResize = function () {
+    if (this.level) {
+        var scale = Math.min(Render.getRenderer().width / this.level.camera.width, Render.getRenderer().height / this.level.camera.height);
+        this.stage.scale.set(scale);
+    }
 };
 
 module.exports = LevelScreen;
@@ -2975,6 +3009,7 @@ var RES = require("./res");
 var Render = require("./render");
 var ProgressBar = require("./progress");
 var GameControls = require("./controls");
+var LevelScreen = require("./levelscreen");
 var GameState = require("./gamestate");
 var Utils = require("./utils");
 //require("./contrib/sound.js");
@@ -2982,41 +3017,6 @@ var Utils = require("./utils");
 var gamestate = null;
 var stage = null;
 var progress = null;
-
-function start(elementName) {
-    var div = document.getElementById(elementName);
-    div.focus();
-
-    Render.configure(div);
-
-    //renderer = new PIXI.CanvasRenderer(550, 400);
-    stage = new PIXI.Container();
-
-    progress = new ProgressBar(200, 20, "LOADING IMAGES...");
-    progress.sprite.x = 100;
-    progress.sprite.y = 100;
-    stage.addChild(progress.sprite);
-
-    GameControls.configure();
-
-    gamestate = new GameState();
-
-    function progresscb(loader, resource) {
-        console.log("loading: " + resource.url + " (" + (loader.progress | 0) + "%)");
-        progress.update(loader.progress / 100.0);
-        requestAnimationFrame(function () {
-            Render.getRenderer().render(stage);
-        });
-    }
-    // Add a random query string when loading the JSON files below. This avoids
-    // persistent caching problems, where the browser (eg FF) uses the cached
-    // without checking in with the server first.
-    var now = new Date().getTime();
-    PIXI.loader.defaultQueryString = "nocache=" + now;
-    PIXI.loader.add(RES.MALE_MELEE).add(RES.FEMALE_MELEE).add(RES.NPC_TILESET).add(RES.MAPTILES).add(RES.ENEMIES).add(RES.WEAPONS).add(RES.GROUND_ITEMS).add(RES.UI).add(RES.DRAGON)
-    //.add({name: "hit", url: "media/hit.wav"})
-    .on("progress", progresscb).load(graphicsLoaded);
-}
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
@@ -3089,12 +3089,51 @@ function setup() {
     requestAnimationFrame(gameLoop);
 }
 
-module.exports = {
-    gamestate: gamestate,
-    start: start
+module.exports = {};
+module.exports.start = function (elementName) {
+    var div = document.getElementById(elementName);
+    div.focus();
+
+    // Use the level screen to determine what the render view aspect
+    // ratio should be.
+    Render.configure(div, LevelScreen.getAspectRatio());
+
+    stage = new PIXI.Container();
+    progress = new ProgressBar(200, 20, "LOADING IMAGES...");
+    progress.sprite.x = 100;
+    progress.sprite.y = 100;
+    stage.addChild(progress.sprite);
+
+    GameControls.configure();
+
+    gamestate = new GameState();
+
+    function progresscb(loader, resource) {
+        console.log("loading: " + resource.url + " (" + (loader.progress | 0) + "%)");
+        progress.update(loader.progress / 100.0);
+        requestAnimationFrame(function () {
+            Render.getRenderer().render(stage);
+        });
+    }
+    // Add a random query string when loading the JSON files below. This avoids
+    // persistent caching problems, where the browser (eg FF) uses the cached
+    // without checking in with the server first.
+    var now = new Date().getTime();
+    PIXI.loader.defaultQueryString = "nocache=" + now;
+    PIXI.loader.add(RES.MALE_MELEE).add(RES.FEMALE_MELEE).add(RES.NPC_TILESET).add(RES.MAPTILES).add(RES.ENEMIES).add(RES.WEAPONS).add(RES.GROUND_ITEMS).add(RES.UI).add(RES.DRAGON)
+    //.add({name: "hit", url: "media/hit.wav"})
+    .on("progress", progresscb).load(graphicsLoaded);
 };
 
-},{"./controls":4,"./gamestate":7,"./progress":20,"./render":21,"./res":22,"./utils":29}],18:[function(require,module,exports){
+module.exports.resize = function () {
+    gamestate.handleResize();
+};
+
+module.exports.getGamestate = function () {
+    return gamestate;
+};
+
+},{"./controls":4,"./gamestate":7,"./levelscreen":16,"./progress":20,"./render":21,"./res":22,"./utils":29}],18:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3145,11 +3184,10 @@ NPC.prototype.setDialog = function (lines) {
 };
 
 NPC.prototype.update = function (dt) {
-    if (this.level.player.hasControl) {
-        // Always face the player
-        var dirx = Math.sign(this.level.player.sprite.x - this.sprite.x);
-        this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x) * dirx;
-    }
+    // Always face the player
+    var dirx = Math.sign(this.level.player.sprite.x - this.sprite.x);
+    this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x) * dirx;
+
     if (this.visibleTimer > 0) {
         this.visibleTimer -= dt;
         if (this.visibleTimer <= 0) {
@@ -3214,7 +3252,6 @@ function Player(controls) {
     this.frame = 0;
     this.frames = null;
     this.lungeFrame = null;
-    this.facing = 1;
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 10;
     this.health = this.maxHealth;
@@ -3238,10 +3275,6 @@ function Player(controls) {
     // image of the monster (for displaying stats later)
     //     {count: ZZZ, img: ZZZ}
     this.kills = {};
-
-    // Whether the player movement is restricted by the camera position.
-    // Disabled during cut scenes and whatnot.
-    this.cameraMovement = true;
 
     // Define the hitbox
     this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
@@ -3290,6 +3323,10 @@ function Player(controls) {
 /* Have the player face the given direction */
 Player.prototype.faceDirection = function (dirx) {
     this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
+};
+
+Player.prototype.getFacing = function () {
+    return Math.sign(this.sprite.scale.x);
 };
 
 Player.prototype.update = function (dt) {
@@ -3346,23 +3383,9 @@ Player.prototype.update = function (dt) {
         this.knockedTimer -= dt;
     }
 
-    //
-    if (this.weaponSlot && this.weaponSlot.update) {
-        this.weaponSlot.update(dt);
-    }
-
-    if (this.damageTimer > 0) {
-        this.damageTimer -= dt;
-        if (this.damageTimer <= 0 || this.damageCooldown - this.damageTimer > 0.1) {
-            // Stop flashing red
-            this.spriteChar.tint = NO_TINT;
-        }
-    }
-
     if (dirx) {
-        this.faceDirection(dirx);
+        if (dirx * this.velx < 0) this.faceDirection(dirx);
         this.velx = dirx * this.maxSpeed;
-        this.facing = Math.sign(dirx);
     } else {
         this.velx *= 0.75;
     }
@@ -3384,15 +3407,13 @@ Player.prototype.update = function (dt) {
         this.velx *= this.maxSpeed / speed;
         this.vely *= this.maxSpeed / speed;
     }
-    var w = this.spriteChar.texture.width * 0.75;
 
     // Handle left/right movement
+    var w = this.spriteChar.texture.width * 0.75;
     if (this.velx) {
         var x = this.sprite.x + this.velx * dt;
-        var left = this.level.bg.getTileAt(x - w / 2, this.sprite.y);
-        var right = this.level.bg.getTileAt(x + w / 2, this.sprite.y);
-        // Keep the player visible to the camera (unless camera mode disabled)
-        if (!left.solid && !right.solid && (!this.cameraMovement || x - w / 2 >= this.level.camera.x && x + w / 2 <= this.level.camera.x + this.level.camera.width)) {
+        // Keep the player visible to the camera
+        if (!this.level.checkSolidAt(x, this.sprite.y, w) && x - w / 2 >= this.level.camera.x && x + w / 2 <= this.level.camera.x + this.level.camera.width) {
             this.sprite.x = x;
         } else {
             this.velx = 0;
@@ -3401,13 +3422,16 @@ Player.prototype.update = function (dt) {
     // Handle up/down movement
     if (this.vely) {
         var y = this.sprite.y + this.vely * dt;
-        var left = this.level.bg.getTileAt(this.sprite.x - w / 2, y);
-        var right = this.level.bg.getTileAt(this.sprite.x + w / 2, y);
-        if (!left.solid && !right.solid) {
+        if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
             this.sprite.y = y;
         } else {
             this.vely = 0;
         }
+    }
+
+    // Update the equipped weapon
+    if (this.weaponSlot && this.weaponSlot.update) {
+        this.weaponSlot.update(dt);
     }
 
     // Make a splashy sound when we enter water
@@ -3417,6 +3441,14 @@ Player.prototype.update = function (dt) {
         this.waterSprite.visible = true;
     } else {
         this.waterSprite.visible = false;
+    }
+
+    if (this.damageTimer > 0) {
+        this.damageTimer -= dt;
+        if (this.damageTimer <= 0 || this.damageCooldown - this.damageTimer > 0.1) {
+            // Stop flashing red
+            this.spriteChar.tint = NO_TINT;
+        }
     }
 
     //if (controls.testKey && !controls.lastTestKey) this.health = 0;
@@ -3676,10 +3708,19 @@ module.exports = ProgressBar;
  * See LICENSE.txt for the full text of the license.
  */
 
+// The PIXI renderer
 var renderer = null;
+// The containing element
+var container = null;
+// The preferred aspect ratio for sizing the render view
+var aspectRatio = 1;
 
 module.exports = {};
-module.exports.configure = function (div) {
+
+/* Configures the renderer (via PIXI) and adds the view to the given HTML
+ * element. The renderer width/height will conform to the given aspect 
+ * ratio. */
+module.exports.configure = function (div, aspect) {
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
     // Disable the ticker sinc we don't use it (rendering happens as needed)
     PIXI.ticker.shared.autoStart = false;
@@ -3690,21 +3731,55 @@ module.exports.configure = function (div) {
         throw Error("Invalid size for renderer");
     }
 
+    // Maintain the aspect ratio when sizing the render view
+    var width = Math.round(rect.height * aspect);
+    var height = rect.height;
+
+    if (width > rect.width) {
+        width = rect.width;
+        height = Math.round(rect.height / aspect);
+    }
+
     renderer = PIXI.autoDetectRenderer({
-        width: rect.width,
-        height: rect.height,
+        width: width,
+        height: height,
         //antialias: true,
         // Required to prevent flickering in Chrome on Android (others too?)
         preserveDrawingBuffer: true
         //clearBeforeRender: true
     });
 
+    renderer.view.className = "canvas";
+
     div.innerHTML = "";
     div.appendChild(renderer.view);
+    container = div;
+    aspectRatio = aspect;
+};
+
+module.exports.getContainer = function () {
+    return container;
 };
 
 module.exports.getRenderer = function () {
     return renderer;
+};
+
+/* Resize the renderer to fit the parent container */
+module.exports.resize = function () {
+    var rect = container.getBoundingClientRect();
+    // Maintain the aspect ratio when resizing the render view
+    var width = Math.round(rect.height * aspectRatio);
+    var height = rect.height;
+
+    if (width > rect.width) {
+        width = rect.width;
+        height = Math.round(rect.width / aspectRatio);
+    }
+
+    renderer.resize(width, height);
+    //container.innerHTML = "";
+    //container.appendChild(renderer.view);
 };
 
 },{}],22:[function(require,module,exports){
@@ -4213,7 +4288,7 @@ Snake.prototype.updateAttacking = function (dt) {
     // Move up/down towards the player more slowly (and don't overshoot)
     var dist = player.sprite.y - this.sprite.y;
     if (Math.abs(dist) > 5) {
-        dy = dt * 4 * Math.sign(dist);
+        dy = dt * Math.sign(dist) * this.speed / 2;
     }
 
     // Check if the snake can move left/right
@@ -4435,6 +4510,7 @@ var SnakeLike = require("./snake");
 var Goblin = require("./goblin");
 var SkelWarrior = require("./skel_warrior");
 var Ghost = require("./ghost");
+var LevelScreen = require("./levelscreen");
 
 var Snake = SnakeLike.Snake;
 var Rat = SnakeLike.Rat;
@@ -4451,13 +4527,14 @@ function TitleScreen() {
     this.NEW_GAME = 2;
 
     // The (native) height of the title screen before scaling
-    var screenHeight = 80;
+    this.screenHeight = 80;
+    this.screenWidth = Math.round(LevelScreen.getAspectRatio() * this.screenHeight);
     // Calculate the native-to-screen scaling so that the title screen fits
     // the available vertical space.
-    var scale = Render.getRenderer().height / screenHeight;
+    var scale = Render.getRenderer().height / this.screenHeight;
 
     // Now figure out how wide the screen is (to fill the space)
-    var screenWidth = Render.getRenderer().width / scale;
+    //var screenWidth = Render.getRenderer().width/scale;
 
     // The PIXI container for rendering the scene
     this.stage = new PIXI.Container();
@@ -4466,7 +4543,7 @@ function TitleScreen() {
 
     this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
-    this.bg.scale.set(screenWidth / this.bg.texture.width, screenHeight / this.bg.texture.height);
+    this.bg.scale.set(this.screenWidth / this.bg.texture.width, this.screenHeight / this.bg.texture.height);
     this.stage.addChild(this.bg);
     this.delay = 0;
 
@@ -4474,44 +4551,46 @@ function TitleScreen() {
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
-    txt.x = screenWidth / 2;
-    txt.y = screenHeight / 5;
+    txt.x = this.screenWidth / 2;
+    txt.y = this.screenHeight / 5;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
-    txt.x = screenWidth / 2;
-    txt.y = screenHeight / 5 + 15;
+    txt.x = this.screenWidth / 2;
+    txt.y = this.screenHeight / 5 + 15;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
     txt.scale.set(0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = screenWidth / 2; //getRenderer().width/2;
-    txt.y = 6 * screenHeight / 7; //getRenderer().height-50;
+    txt.x = this.screenWidth / 2; //getRenderer().width/2;
+    txt.y = 6 * this.screenHeight / 7; //getRenderer().height-50;
     this.stage.addChild(txt);
 
     this.sequence = new Utils.Sequence({
         stage: this.stage,
         level: null,
-        player: null
+        player: null,
+        screenWidth: this.screenWidth,
+        screenHeight: this.screenHeight
     }, "start", function (dt) {
-        this.level = LevelGenerator.generateEmpty(3, 20, "smooth_floor_m");
-        this.level.stage.x = -10;
-        this.level.stage.y = screenHeight / 2 - 5;
+        this.level = LevelGenerator.generateEmpty(3, Math.round(this.screenWidth / RES.TILE_WIDTH) + 4, "smooth_floor_m");
+        this.level.stage.x = -RES.TILE_WIDTH * 2;
+        this.level.stage.y = this.screenHeight / 2 - 5;
+        //this.level.camera.x = RES.TILE_WIDTH*2;
+        this.level.camera.width = this.level.getWidth();
         this.stage.addChild(this.level.stage);
         // Note the screen position within the level (so we can know when
         // objects are offscreen)
         this.screenLeft = -this.level.stage.x;
-        this.screenRight = this.screenLeft + screenWidth;
+        this.screenRight = this.screenLeft + this.screenWidth;
         // Create a dummy player to drive around
         this.controls = new GameControls.ManualControls();
         this.player = new Player(this.controls);
-        this.player.cameraMovement = false;
-        //this.player.hasControl = false;
         this.player.sprite.x = 2;
         this.player.sprite.y = 20;
         this.level.addThing(this.player);
@@ -4577,9 +4656,16 @@ TitleScreen.prototype.render = function () {
     Render.getRenderer().render(this.stage);
 };
 
+TitleScreen.prototype.handleResize = function () {
+    if (this.stage) {
+        var scale = Math.min(Render.getRenderer().width / this.screenWidth, Render.getRenderer().height / this.screenHeight);
+        this.stage.scale.set(scale);
+    }
+};
+
 module.exports = TitleScreen;
 
-},{"./controls":4,"./genlevel":9,"./ghost":10,"./goblin":11,"./item":14,"./player":19,"./render":21,"./res":22,"./scenery":23,"./skel_warrior":24,"./snake":25,"./ui":28,"./utils":29}],28:[function(require,module,exports){
+},{"./controls":4,"./genlevel":9,"./ghost":10,"./goblin":11,"./item":14,"./levelscreen":16,"./player":19,"./render":21,"./res":22,"./scenery":23,"./skel_warrior":24,"./snake":25,"./ui":28,"./utils":29}],28:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4876,9 +4962,9 @@ var GameUI = function () {
             this.container.x = x;
             this.container.y = y;
             this.healthUI.sprite.x = width;
-            this.healthUI.sprite.y = 1;
+            this.healthUI.sprite.y = 2;
             this.inventoryUI.sprite.x = 6;
-            this.inventoryUI.sprite.y = 1;
+            this.inventoryUI.sprite.y = 2;
             this.bg.scale.set(width / this.bg.texture.width, height / this.bg.texture.height);
         }
     }]);
@@ -5156,7 +5242,7 @@ SwordWeaponSlot.prototype.startAttack = function () {
     this.sprite.x = 3.5;
     this.attackCooldown = 0.15;
 
-    this.player.level.forEachThingHit(this.player.sprite.x + this.player.facing * this.weaponReach, this.player.sprite.y, this.hitbox, this.player, this.handleHitCallback);
+    this.player.level.forEachThingHit(this.player.sprite.x + this.player.getFacing() * this.weaponReach, this.player.sprite.y, this.hitbox, this.player, this.handleHitCallback);
 };
 
 SwordWeaponSlot.prototype.stopAttack = function () {};
@@ -5212,7 +5298,7 @@ BowWeaponSlot.prototype.startAttack = function () {
 
     this.player.numArrows--;
 
-    var arrow = new Arrow(this.player, this.player.sprite.x, this.player.sprite.y + this.sprite.y, this.player.facing * 100, 0, Math.abs(this.sprite.y));
+    var arrow = new Arrow(this.player, this.player.sprite.x, this.player.sprite.y + this.sprite.y, this.player.getFacing() * 100, 0, Math.abs(this.sprite.y));
     //level.things.push(arrow);
     //level.stage.addChild(arrow.sprite);
     this.player.level.addThing(arrow);

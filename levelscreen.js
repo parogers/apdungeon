@@ -59,6 +59,11 @@ function LevelScreen()
     });
 }
 
+LevelScreen.getAspectRatio = function()
+{
+    return (Level.CAMERA_WIDTH / Level.CAMERA_HEIGHT);
+}
+
 LevelScreen.prototype.update = function(dt)
 {
     switch(this.state) {
@@ -68,8 +73,8 @@ LevelScreen.prototype.update = function(dt)
         this.player.sprite.x = 0;
         this.player.sprite.y = 0;
         this.levelNum = 0;
-        // Generate the first level
-        var level = LevelGenerator.generate(this.levelNum);
+        // Auto-generate the first level
+        let level = LevelGenerator.generate(this.levelNum);
         this.setLevel(level);
         // Start playing it immediately
         this.state = this.PLAYING;
@@ -82,8 +87,7 @@ LevelScreen.prototype.update = function(dt)
     case this.PLAYING:
         if (this.level.state === this.level.FINISHED) {
             // Proceed to the next level
-            console.log("NEXT LEVEL");
-            level = LevelGenerator.generate(++this.levelNum);
+            let level = LevelGenerator.generate(++this.levelNum);
             this.setLevel(level);
         } else if (this.player.dead) {
             // This triggers the game state machine to advance to the game
@@ -121,14 +125,6 @@ LevelScreen.prototype.setLevel = function(level)
     }
     if (!level) return;
 
-    var scale = Math.min(
-        Render.getRenderer().width / level.camera.width,
-        Render.getRenderer().height / level.camera.height);
-
-    // Revise the camera width to fill the available horizontal space
-    //level.camera.width = Render.getRenderer().width / scale;
-
-    this.stage.scale.set(scale);
     // Add the level (container) sprite to the start of the list of
     // child sprites, so it gets rendered before anything else.
     // (ie UI elements are drawn on top of the level)
@@ -147,6 +143,19 @@ LevelScreen.prototype.setLevel = function(level)
     this.level.player = this.player;
     this.level.addThing(this.player);
     this.level.update(0);
+    this.gameUI.update(0);
+
+    this.handleResize()
+}
+
+LevelScreen.prototype.handleResize = function()
+{
+    if (this.level) {
+        var scale = Math.min(
+            Render.getRenderer().width / this.level.camera.width,
+            Render.getRenderer().height / this.level.camera.height);
+        this.stage.scale.set(scale);
+    }
 }
 
 module.exports = LevelScreen;

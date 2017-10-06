@@ -20,6 +20,7 @@
 var TitleScreen = require("./titlescreen");
 var LevelScreen = require("./levelscreen");
 var GameOverScreen = require("./gameover");
+var Render = require("./render");
 
 /* The finite state machine that drives the entire game. It manages things
  * at a high level, loading and unloading screens as it transitions
@@ -46,9 +47,15 @@ function GameState()
     this.screen = null;
 
     window.addEventListener("resize", () => {
-        div.style.width = window.innerWidth;
-        div.style.height = window.innerHeight;
-        Render.configure(div);
+        var div = Render.getContainer();
+        var width = window.innerWidth-5;
+        var height = window.innerHeight-5;
+        div.style.width = width;
+        div.style.height = height;
+        Render.getRenderer().resize(width, height);
+        if (this.screen && this.screen.handleResize) {
+            this.screen.handleResize();
+        }
     });
 }
 
@@ -105,5 +112,12 @@ GameState.prototype.render = function()
     }
 }
 
-module.exports = GameState;
+GameState.prototype.handleResize = function()
+{
+    Render.resize();
+    if (this.screen && this.screen.handleResize) {
+        this.screen.handleResize();
+    }
+}
 
+module.exports = GameState;

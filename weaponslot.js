@@ -91,7 +91,7 @@ SwordWeaponSlot.prototype.startAttack = function()
     this.attackCooldown = 0.15;
 
     this.player.level.forEachThingHit(
-        this.player.sprite.x + this.player.facing*this.weaponReach, 
+        this.player.sprite.x + this.player.getFacing()*this.weaponReach, 
         this.player.sprite.y,
         this.hitbox, this.player,
         this.handleHitCallback);
@@ -161,7 +161,7 @@ BowWeaponSlot.prototype.startAttack = function()
         this.player,
         this.player.sprite.x,
         this.player.sprite.y+this.sprite.y,
-        this.player.facing*100, 0,
+        this.player.getFacing()*100, 0,
         Math.abs(this.sprite.y));
     //level.things.push(arrow);
     //level.stage.addChild(arrow.sprite);

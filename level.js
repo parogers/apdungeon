@@ -63,7 +63,7 @@ function Level(bg)
     // Player has passed through the exit
     this.FINISHED = 5;
 
-    this.camera = new Camera(100, 65);
+    this.camera = new Camera(Level.CAMERA_WIDTH, Level.CAMERA_HEIGHT);
     this.player = null;
     this.stage = null;
     this.state = this.NEXT_ARENA;
@@ -87,6 +87,9 @@ Level.BEHIND_BACKGROUND_POS = -1;
 Level.BACKGROUND_POS = 0;
 Level.FLOOR_POS = 1;
 Level.FRONT_POS = 10000;
+
+Level.CAMERA_WIDTH = 100;
+Level.CAMERA_HEIGHT = 65;
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()
@@ -276,6 +279,13 @@ Level.prototype.forEachThingHit = function(x, y, hitbox, ignore, callback)
     }
 }
 
+Level.prototype.checkSolidAt = function(x, y, width)
+{
+    var left = this.bg.getTileAt(x-width/2, y);
+    var right = this.bg.getTileAt(x+width/2, y);
+    return left.solid || right.solid;
+}
+
 // Add a 'thing' to the level and it's sprite to the render stage
 Level.prototype.addThing = function(thing)
 {
@@ -343,4 +353,3 @@ Level.prototype.createBloodSpatter = function(x, y, imgs)
 }
 
 module.exports = Level;
-

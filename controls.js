@@ -49,6 +49,8 @@ function GameControls()
     this.lastSwap = false;
     this.lastSpace = false;
     this.lastTestKey = false;
+
+    this.playerControlled = true;
 }
 
 GameControls.prototype.getX = function()
