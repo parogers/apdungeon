@@ -25,124 +25,92 @@ var ARROW_UP = 38;
 var ARROW_LEFT = 37;
 var ARROW_RIGHT = 39;
 var ARROW_DOWN = 40;
-
 var TEST_KEY = 75;
+
+var DEFAULTS = [
+    ["up", ARROW_UP],
+    ["down", ARROW_DOWN],
+    ["left", ARROW_LEFT],
+    ["right", ARROW_RIGHT],
+    ["primary", [PRIMARY, PRIMARY_ALT]],
+    ["swap", SWAP],
+    ["space", SPACE]
+];
 
 var controls = null;
 
+/* A single input (eg attack) */
+class Input
+{
+    constructor(name) {
+        this.name = name;
+        this.held = false;
+        this.pressed = false;
+        this.released = false;
+    }
+}
+
 function GameControls()
 {
-    this.up = false;
-    this.down = false;
-    this.left = false;
-    this.right = false;
-    this.primary = false;
-    this.swap = false;
-    this.space = false;
-    this.testKey = false;
+    // Map of Input instances stored by key code
+    this.inputByKey = {};
+    this.inputs = [];
+    for (let arg of DEFAULTS) 
+    {
+        let name = arg[0];
+        let keys = arg[1];
 
-    this.lastUp = false;
-    this.lastDown = false;
-    this.lastLeft = false;
-    this.lastRight = false;
-    this.lastPrimary = false;
-    this.lastSwap = false;
-    this.lastSpace = false;
-    this.lastTestKey = false;
+        if (typeof(keys.push) !== "function") {
+            keys = [keys];
+        }
 
-    this.playerControlled = true;
+        this[name] = new Input(name);
+        this.inputs.push(this[name]);
+        for (let key of keys) {
+            this.inputByKey[key] = this[name];
+        }
+    }
 }
 
 GameControls.prototype.getX = function()
 {
-    return (this.right - this.left);
+    return (this.right.held - this.left.held);
 }
 
 GameControls.prototype.getY = function()
 {
-    return (this.down - this.up);
+    return (this.down.held - this.up.held);
 }
 
+/* This should be called after the game state is updated */
 GameControls.prototype.update = function()
 {
-    this.lastUp = this.up;
-    this.lastDown = this.down;
-    this.lastLeft = this.left;
-    this.lastRight = this.right;
-    this.lastPrimary = this.primary;
-    this.lastSwap = this.swap;
-    this.lastSpace = this.space;
-    this.lastTestKey = this.testKey;
-}
-
-function attachKeyDown(controls)
-{
-    window.addEventListener("keydown", function(event) {
-        switch(event.keyCode) {
-        case ARROW_UP:
-            controls.up = true;
-            break;
-        case ARROW_DOWN:
-            controls.down = true;
-            break;
-        case ARROW_LEFT:
-            controls.left = true;
-            break;
-        case ARROW_RIGHT:
-            controls.right = true;
-            break;
-        case PRIMARY:
-        case PRIMARY_ALT:
-            controls.primary = true;
-            break;
-        case SWAP:
-            controls.swap = true;
-            break;
-        case SPACE:
-            controls.space = true;
-        case TEST_KEY:
-            controls.testKey = true;
-        }
-        event.stopPropagation();
-    });
-}
-
-function attachKeyUp(controls)
-{
-    window.addEventListener("keyup", function(event) {
-        switch(event.keyCode) {
-        case ARROW_UP:
-            controls.up = false;
-            break;
-        case ARROW_DOWN:
-            controls.down = false;
-            break;
-        case ARROW_LEFT:
-            controls.left = false;
-            break;
-        case ARROW_RIGHT:
-            controls.right = false;
-            break;
-        case PRIMARY:
-        case PRIMARY_ALT:
-            controls.primary = false;
-            break;
-        case SWAP:
-            controls.swap = false;
-            break;
-        case SPACE:
-            controls.space = false;
-        case TEST_KEY:
-            controls.testKey = false;
-        }
-        event.stopPropagation();
-    });
+    for (let input of this.inputs) {
+        input.pressed = false;
+        input.released = false;
+    }
 }
 
 GameControls.prototype.attach = function()
 {
-    attachKeyDown(this);
-    attachKeyUp(this);
+    window.addEventListener("keydown", (event) => {
+        var input = this.inputByKey[event.keyCode];
+        if (input) {
+            input.held = true;
+            input.pressed = true;
+        }
+        event.stopPropagation();
+    });
+
+    window.addEventListener("keyup", (event) => {
+        var input = this.inputByKey[event.keyCode];
+        if (input) {
+            input.held = false;
+            input.released = true;
+        }
+
+        event.stopPropagation();
+    });
 }
 
 /******************/
@@ -154,6 +122,12 @@ class ManualControls
     constructor() {
         this.dirx = 0;
         this.diry = 0;
+
+        for (let arg of DEFAULTS) 
+        {
+            let name = arg[0];
+            this[name] = new Input(name);
+        }
     }
 
     getX() {

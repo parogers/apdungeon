@@ -50,6 +50,7 @@ module.exports.configure = function(div, aspect)
         height = Math.round(rect.height/aspect);
     }
 
+    //renderer = new PIXI.CanvasRenderer({
     renderer = PIXI.autoDetectRenderer({
         width: width,
         height: height,

@@ -160,4 +160,9 @@ GameOverScreen.prototype.render = function()
     Render.getRenderer().render(this.stage);
 }
 
+GameOverScreen.prototype.handleResize = function()
+{
+    // TODO - implement this
+}
+
 module.exports = GameOverScreen;

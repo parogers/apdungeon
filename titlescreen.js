@@ -191,7 +191,7 @@ TitleScreen.prototype.update = function(dt)
 
     this.sequence.update(dt);
 
-    if (GameControls.getControls().space) {
+    if (GameControls.getControls().space.released) {
         this.state = this.NEW_GAME;
     }
 }

@@ -265,9 +265,9 @@ class GameUI
         this.container.x = x;
         this.container.y = y;
         this.healthUI.sprite.x = width;
-        this.healthUI.sprite.y = 2;
-        this.inventoryUI.sprite.x = 6;
-        this.inventoryUI.sprite.y = 2;
+        this.healthUI.sprite.y = 1;
+        this.inventoryUI.sprite.x = 5.5;
+        this.inventoryUI.sprite.y = 1;
         this.bg.scale.set(
             width/this.bg.texture.width, 
             height/this.bg.texture.height);

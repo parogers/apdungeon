@@ -151,18 +151,10 @@ Player.prototype.update = function(dt)
     }
 
     // Handle attacking
-    if (this.controls.primary && !this.controls.lastPrimary)
-    {
-        // Just hit the attack button
-        this.startAttack();
-    }
-    if (!this.controls.primary && this.controls.lastPrimary)
-    {
-        // Just released the attack button
-        this.stopAttack();
-    }
+    if (this.controls.primary.pressed) this.startAttack();
+    if (!this.controls.primary.released) this.stopAttack();
 
-    if (this.controls.swap && !this.controls.lastSwap) {
+    if (this.controls.swap.pressed) {
         this.swapWeapons();
     }
 
@@ -175,7 +167,7 @@ Player.prototype.update = function(dt)
     }
 
     if (dirx) {
-        if (dirx*this.velx < 0) this.faceDirection(dirx);
+        this.faceDirection(dirx);
         this.velx = dirx * this.maxSpeed;
     } else {
         this.velx *= 0.75;
@@ -376,10 +368,15 @@ Player.prototype.takeDamage = function(amt, src)
 
 Player.prototype.swapWeapons = function()
 {
-    if (this.weaponSlot === this.swordWeaponSlot && this.bow) {
+    if (this.weaponSlot === this.swordWeaponSlot && 
+        this.bow !== Item.Table.NONE) 
+    {
         this.weaponSlot = this.bowWeaponSlot;
         this.updatePlayerAppearance();
-    } else if (this.weaponSlot === this.bowWeaponSlot && this.sword) {
+    } 
+    else if (this.weaponSlot === this.bowWeaponSlot && 
+             this.sword !== Item.Table.NONE) 
+    {
         this.weaponSlot = this.swordWeaponSlot;
         this.updatePlayerAppearance();
     }

@@ -582,117 +582,143 @@ var ARROW_UP = 38;
 var ARROW_LEFT = 37;
 var ARROW_RIGHT = 39;
 var ARROW_DOWN = 40;
-
 var TEST_KEY = 75;
+
+var DEFAULTS = [["up", ARROW_UP], ["down", ARROW_DOWN], ["left", ARROW_LEFT], ["right", ARROW_RIGHT], ["primary", [PRIMARY, PRIMARY_ALT]], ["swap", SWAP], ["space", SPACE]];
 
 var controls = null;
 
+/* A single input (eg attack) */
+
+var Input = function Input(name) {
+    _classCallCheck(this, Input);
+
+    this.name = name;
+    this.held = false;
+    this.pressed = false;
+    this.released = false;
+};
+
 function GameControls() {
-    this.up = false;
-    this.down = false;
-    this.left = false;
-    this.right = false;
-    this.primary = false;
-    this.swap = false;
-    this.space = false;
-    this.testKey = false;
+    // Map of Input instances stored by key code
+    this.inputByKey = {};
+    this.inputs = [];
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-    this.lastUp = false;
-    this.lastDown = false;
-    this.lastLeft = false;
-    this.lastRight = false;
-    this.lastPrimary = false;
-    this.lastSwap = false;
-    this.lastSpace = false;
-    this.lastTestKey = false;
+    try {
+        for (var _iterator = DEFAULTS[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var arg = _step.value;
 
-    this.playerControlled = true;
+            var name = arg[0];
+            var keys = arg[1];
+
+            if (typeof keys.push !== "function") {
+                keys = [keys];
+            }
+
+            this[name] = new Input(name);
+            this.inputs.push(this[name]);
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var key = _step2.value;
+
+                    this.inputByKey[key] = this[name];
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
 }
 
 GameControls.prototype.getX = function () {
-    return this.right - this.left;
+    return this.right.held - this.left.held;
 };
 
 GameControls.prototype.getY = function () {
-    return this.down - this.up;
+    return this.down.held - this.up.held;
 };
 
+/* This should be called after the game state is updated */
 GameControls.prototype.update = function () {
-    this.lastUp = this.up;
-    this.lastDown = this.down;
-    this.lastLeft = this.left;
-    this.lastRight = this.right;
-    this.lastPrimary = this.primary;
-    this.lastSwap = this.swap;
-    this.lastSpace = this.space;
-    this.lastTestKey = this.testKey;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+        for (var _iterator3 = this.inputs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var input = _step3.value;
+
+            input.pressed = false;
+            input.released = false;
+        }
+    } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
+            }
+        } finally {
+            if (_didIteratorError3) {
+                throw _iteratorError3;
+            }
+        }
+    }
 };
-
-function attachKeyDown(controls) {
-    window.addEventListener("keydown", function (event) {
-        switch (event.keyCode) {
-            case ARROW_UP:
-                controls.up = true;
-                break;
-            case ARROW_DOWN:
-                controls.down = true;
-                break;
-            case ARROW_LEFT:
-                controls.left = true;
-                break;
-            case ARROW_RIGHT:
-                controls.right = true;
-                break;
-            case PRIMARY:
-            case PRIMARY_ALT:
-                controls.primary = true;
-                break;
-            case SWAP:
-                controls.swap = true;
-                break;
-            case SPACE:
-                controls.space = true;
-            case TEST_KEY:
-                controls.testKey = true;
-        }
-        event.stopPropagation();
-    });
-}
-
-function attachKeyUp(controls) {
-    window.addEventListener("keyup", function (event) {
-        switch (event.keyCode) {
-            case ARROW_UP:
-                controls.up = false;
-                break;
-            case ARROW_DOWN:
-                controls.down = false;
-                break;
-            case ARROW_LEFT:
-                controls.left = false;
-                break;
-            case ARROW_RIGHT:
-                controls.right = false;
-                break;
-            case PRIMARY:
-            case PRIMARY_ALT:
-                controls.primary = false;
-                break;
-            case SWAP:
-                controls.swap = false;
-                break;
-            case SPACE:
-                controls.space = false;
-            case TEST_KEY:
-                controls.testKey = false;
-        }
-        event.stopPropagation();
-    });
-}
 
 GameControls.prototype.attach = function () {
-    attachKeyDown(this);
-    attachKeyUp(this);
+    var _this = this;
+
+    window.addEventListener("keydown", function (event) {
+        var input = _this.inputByKey[event.keyCode];
+        if (input) {
+            input.held = true;
+            input.pressed = true;
+        }
+        event.stopPropagation();
+    });
+
+    window.addEventListener("keyup", function (event) {
+        var input = _this.inputByKey[event.keyCode];
+        if (input) {
+            input.held = false;
+            input.released = true;
+        }
+
+        event.stopPropagation();
+    });
 };
 
 /******************/
@@ -705,6 +731,32 @@ var ManualControls = function () {
 
         this.dirx = 0;
         this.diry = 0;
+
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+            for (var _iterator4 = DEFAULTS[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var arg = _step4.value;
+
+                var name = arg[0];
+                this[name] = new Input(name);
+            }
+        } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                    _iterator4.return();
+                }
+            } finally {
+                if (_didIteratorError4) {
+                    throw _iteratorError4;
+                }
+            }
+        }
     }
 
     _createClass(ManualControls, [{
@@ -957,6 +1009,10 @@ GameOverScreen.prototype.update = function (dt) {
 
 GameOverScreen.prototype.render = function () {
     Render.getRenderer().render(this.stage);
+};
+
+GameOverScreen.prototype.handleResize = function () {
+    // TODO - implement this
 };
 
 module.exports = GameOverScreen;
@@ -3362,16 +3418,10 @@ Player.prototype.update = function (dt) {
     }
 
     // Handle attacking
-    if (this.controls.primary && !this.controls.lastPrimary) {
-        // Just hit the attack button
-        this.startAttack();
-    }
-    if (!this.controls.primary && this.controls.lastPrimary) {
-        // Just released the attack button
-        this.stopAttack();
-    }
+    if (this.controls.primary.pressed) this.startAttack();
+    if (!this.controls.primary.released) this.stopAttack();
 
-    if (this.controls.swap && !this.controls.lastSwap) {
+    if (this.controls.swap.pressed) {
         this.swapWeapons();
     }
 
@@ -3384,7 +3434,7 @@ Player.prototype.update = function (dt) {
     }
 
     if (dirx) {
-        if (dirx * this.velx < 0) this.faceDirection(dirx);
+        this.faceDirection(dirx);
         this.velx = dirx * this.maxSpeed;
     } else {
         this.velx *= 0.75;
@@ -3558,10 +3608,10 @@ Player.prototype.takeDamage = function (amt, src) {
 };
 
 Player.prototype.swapWeapons = function () {
-    if (this.weaponSlot === this.swordWeaponSlot && this.bow) {
+    if (this.weaponSlot === this.swordWeaponSlot && this.bow !== Item.Table.NONE) {
         this.weaponSlot = this.bowWeaponSlot;
         this.updatePlayerAppearance();
-    } else if (this.weaponSlot === this.bowWeaponSlot && this.sword) {
+    } else if (this.weaponSlot === this.bowWeaponSlot && this.sword !== Item.Table.NONE) {
         this.weaponSlot = this.swordWeaponSlot;
         this.updatePlayerAppearance();
     }
@@ -3740,6 +3790,7 @@ module.exports.configure = function (div, aspect) {
         height = Math.round(rect.height / aspect);
     }
 
+    //renderer = new PIXI.CanvasRenderer({
     renderer = PIXI.autoDetectRenderer({
         width: width,
         height: height,
@@ -4647,7 +4698,7 @@ TitleScreen.prototype.update = function (dt) {
 
     this.sequence.update(dt);
 
-    if (GameControls.getControls().space) {
+    if (GameControls.getControls().space.released) {
         this.state = this.NEW_GAME;
     }
 };
@@ -4962,9 +5013,9 @@ var GameUI = function () {
             this.container.x = x;
             this.container.y = y;
             this.healthUI.sprite.x = width;
-            this.healthUI.sprite.y = 2;
-            this.inventoryUI.sprite.x = 6;
-            this.inventoryUI.sprite.y = 2;
+            this.healthUI.sprite.y = 1;
+            this.inventoryUI.sprite.x = 5.5;
+            this.inventoryUI.sprite.y = 1;
             this.bg.scale.set(width / this.bg.texture.width, height / this.bg.texture.height);
         }
     }]);
