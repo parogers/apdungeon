@@ -76,7 +76,7 @@ function TitleScreen()
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
     txt.x = this.screenWidth/2;
-    txt.y = this.screenHeight/5;
+    txt.y = 15;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
@@ -84,15 +84,32 @@ function TitleScreen()
     txt.tint = 0xFF0000;
     //txt.x = getRenderer().width/2;
     txt.x = this.screenWidth/2;
-    txt.y = this.screenHeight/5+15;
+    txt.y = 25;
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
     txt.scale.set(0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    txt.x = this.screenWidth/2; //getRenderer().width/2;
-    txt.y = 6*this.screenHeight/7; //getRenderer().height-50;
+    txt.x = this.screenWidth/2;
+    txt.y = 35;
+    this.stage.addChild(txt);
+
+    txt = new PIXI.Sprite(UI.renderText("PROGRAMMING BY PETER ROGERS."));
+    txt.scale.set(0.5);
+    txt.anchor.set(0.5, 0.5);
+    txt.tint = 0xFF0000;
+    txt.x = this.screenWidth/2;
+    txt.y = 70;
+    this.stage.addChild(txt);
+
+    txt = new PIXI.Sprite(UI.renderText(
+        "MUSIC IS (C) PIERRA BONDOERFFER. ARTWORK IS PUBLIC DOMAIN."));
+    txt.scale.set(0.5);
+    txt.anchor.set(0.5, 0.5);
+    txt.tint = 0xFF0000;
+    txt.x = this.screenWidth/2;
+    txt.y = 75;
     this.stage.addChild(txt);
 
     this.sequence = new Utils.Sequence(
@@ -106,10 +123,10 @@ function TitleScreen()
         "start",
         function(dt) {
             this.level = LevelGenerator.generateEmpty(
-                3, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
+                2, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
                 "smooth_floor_m");
             this.level.stage.x = -RES.TILE_WIDTH*2;
-            this.level.stage.y = this.screenHeight/2-5;
+            this.level.stage.y = 40;
             //this.level.camera.x = RES.TILE_WIDTH*2;
             this.level.camera.width = this.level.getWidth();
             this.stage.addChild(this.level.stage);
