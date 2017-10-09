@@ -65,7 +65,6 @@ function Level(bg)
 
     this.camera = new Camera(Level.CAMERA_WIDTH, Level.CAMERA_HEIGHT);
     this.player = null;
-    this.stage = null;
     this.state = this.NEXT_ARENA;
     // The background sprite (TiledBackground)
     this.bg = bg;
@@ -89,7 +88,7 @@ Level.FLOOR_POS = 1;
 Level.FRONT_POS = 10000;
 
 Level.CAMERA_WIDTH = 100;
-Level.CAMERA_HEIGHT = 65;
+Level.CAMERA_HEIGHT = 60;
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()

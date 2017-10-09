@@ -66,8 +66,8 @@ function TitleScreen()
     this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
     this.bg.scale.set(
-        this.screenWidth/this.bg.texture.width,
-        this.screenHeight/this.bg.texture.height);
+        this.screenWidth/this.bg.texture.width+1,
+        this.screenHeight/this.bg.texture.height+1);
     this.stage.addChild(this.bg);
     this.delay = 0;
 

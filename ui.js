@@ -318,8 +318,8 @@ class GameUI
         this.inventoryUI.sprite.x = 5.5;
         this.inventoryUI.sprite.y = 1;
         this.audioButton.sprite.x = width-this.audioButton.sprite.width-1;
-        this.audioButton.sprite.y = 1; //height-5;
-        this.healthUI.sprite.x = 86; //width;
+        this.audioButton.sprite.y = 1;
+        this.healthUI.sprite.x = 86;
         this.healthUI.sprite.y = 2;
         this.bg.scale.set(
             width/this.bg.texture.width, 

@@ -205,7 +205,7 @@ class TouchAdapter
         // Center of the on-screen controller
         let centreX = this.element.innerWidth/6;
         let centreY = this.element.innerHeight/2;
-        let orad = (this.element.innerHeight/2)/3;
+        let orad = (this.element.innerHeight/2)/4;
         let irad = orad*0.1;
         for (let touch of event.changedTouches)
         {

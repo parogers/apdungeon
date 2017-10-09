@@ -59,6 +59,7 @@ module.exports.configure = function(div, aspect)
         preserveDrawingBuffer: true,
         //clearBeforeRender: true
     });
+    renderer.plugins.interaction.destroy();
 
     renderer.view.className = "canvas";
 

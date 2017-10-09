@@ -878,7 +878,7 @@ var TouchAdapter = function () {
             // Center of the on-screen controller
             var centreX = this.element.innerWidth / 6;
             var centreY = this.element.innerHeight / 2;
-            var orad = this.element.innerHeight / 2 / 3;
+            var orad = this.element.innerHeight / 2 / 4;
             var irad = orad * 0.1;
             var _iteratorNormalCompletion5 = true;
             var _didIteratorError5 = false;
@@ -2777,7 +2777,6 @@ function Level(bg) {
 
     this.camera = new Camera(Level.CAMERA_WIDTH, Level.CAMERA_HEIGHT);
     this.player = null;
-    this.stage = null;
     this.state = this.NEXT_ARENA;
     // The background sprite (TiledBackground)
     this.bg = bg;
@@ -2801,7 +2800,7 @@ Level.FLOOR_POS = 1;
 Level.FRONT_POS = 10000;
 
 Level.CAMERA_WIDTH = 100;
-Level.CAMERA_HEIGHT = 65;
+Level.CAMERA_HEIGHT = 60;
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function () {
@@ -4059,6 +4058,7 @@ module.exports.configure = function (div, aspect) {
         preserveDrawingBuffer: true
         //clearBeforeRender: true
     });
+    renderer.plugins.interaction.destroy();
 
     renderer.view.className = "canvas";
 
@@ -4856,7 +4856,7 @@ function TitleScreen() {
 
     this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
     this.bg.anchor.set(0, 0);
-    this.bg.scale.set(this.screenWidth / this.bg.texture.width, this.screenHeight / this.bg.texture.height);
+    this.bg.scale.set(this.screenWidth / this.bg.texture.width + 1, this.screenHeight / this.bg.texture.height + 1);
     this.stage.addChild(this.bg);
     this.delay = 0;
 
@@ -5332,8 +5332,8 @@ var GameUI = function () {
             this.inventoryUI.sprite.x = 5.5;
             this.inventoryUI.sprite.y = 1;
             this.audioButton.sprite.x = width - this.audioButton.sprite.width - 1;
-            this.audioButton.sprite.y = 1; //height-5;
-            this.healthUI.sprite.x = 86; //width;
+            this.audioButton.sprite.y = 1;
+            this.healthUI.sprite.x = 86;
             this.healthUI.sprite.y = 2;
             this.bg.scale.set(width / this.bg.texture.width, height / this.bg.texture.height);
         }
