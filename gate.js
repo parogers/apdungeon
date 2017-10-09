@@ -21,6 +21,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var GameControls = require("./controls");
+var Audio = require("./audio");
 
 function Gate()
 {
@@ -74,8 +75,7 @@ Gate.prototype.update = function(dt)
         // Make a "clicksh" noise as the gate is opening. (we do this every
         // other frame to make it more obvious, hence the '2' here and above)
         if (fnum !== Math.round(2*this.frameNum)) {
-            Utils.getSound(RES.GATE_SND).volume = 0.20;
-            Utils.getSound(RES.GATE_SND).play();
+            Audio.playSound(RES.GATE_SND, 0.2);
         }
     }
     this.sprite.texture = this.frames[Math.round(this.frameNum)|0];

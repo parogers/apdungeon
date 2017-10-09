@@ -22,6 +22,7 @@ var Utils = require("./utils");
 var Item = require("./item");
 var Thing = require("./thing");
 var WeaponSlot = require("./weaponslot");
+var Audio = require("./audio");
 
 // What tint of colour to use when the player takes damage
 var DAMAGE_TINT = 0xFF0000;
@@ -39,7 +40,7 @@ function Player(controls)
     this.frames = null;
     this.lungeFrame = null;
     // Player health in half hearts. This should always be a multiple of two
-    this.maxHealth = 10;
+    this.maxHealth = 8;
     this.health = this.maxHealth;
     this.maxSpeed = 40; // pixels/second
     // Inventory stuff
@@ -223,7 +224,7 @@ Player.prototype.update = function(dt)
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.water) {
         if (!this.waterSprite.visible) 
-            Utils.getSound(RES.SPLASH_SND).play();
+            Audio.playSound(RES.SPLASH_SND);
         this.waterSprite.visible = true;
     } else {
         this.waterSprite.visible = false;
@@ -317,15 +318,14 @@ Player.prototype.upgradeBow = function(item)
 Player.prototype.upgradeArmour = function(item)
 {
     this.setArmour(item);
-    Utils.getSound(RES.POWERUP2_SND).play();
+    Audio.playSound(RES.POWERUP2_SND);
 }
 
 Player.prototype.healDamage = function(amt)
 {
     if (this.health < this.maxHealth) {
         this.health = Math.min(this.health+amt, this.maxHealth);
-        Utils.getSound(RES.POWERUP4_SND).volume = 1.25;
-        Utils.getSound(RES.POWERUP4_SND).play();
+        Audio.playSound(RES.POWERUP4_SND, 1.25);
     }
 }
 
@@ -354,7 +354,7 @@ Player.prototype.takeDamage = function(amt, src)
             }
         }
 
-        Utils.getSound(RES.HIT_SND).play();
+        Audio.playSound(RES.HIT_SND);
 
         // Take damage and have the player flash red for a moment
         this.health -= amt;
@@ -440,7 +440,7 @@ Player.prototype.handleTakeItem = function(item)
         this.healDamage(this.maxHealth);
         break;
     }
-    Utils.getSound(RES.COIN_SND).play();
+    Audio.playSound(RES.COIN_SND);
     return true;
 }
 

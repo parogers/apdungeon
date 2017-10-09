@@ -21,6 +21,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Render = require("./render");
 var Item = require("./item");
+var Audio = require("./audio");
 
 function renderText(lines, options)
 {
@@ -72,9 +73,9 @@ function HealthUI()
     this.player = null;
     this.sprite = new PIXI.Container();
     this.hearts = [];
-    this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
-    this.halfHeart = Utils.getFrame(RES.UI, "half_heart");
-    this.emptyHeart = Utils.getFrame(RES.UI, "empty_heart");
+    this.fullHeart = Utils.getFrame(RES.UI, "full_bigheart");
+    this.halfHeart = Utils.getFrame(RES.UI, "half_bigheart");
+    this.emptyHeart = Utils.getFrame(RES.UI, "empty_bigheart");
 
     for (var n = 0; n < 3; n++) {
         this.addHeart();
@@ -235,20 +236,70 @@ InventoryUI.prototype.update = function(dt)
 }
 
 /**********/
+/* Button */
+/**********/
+
+class Button
+{
+    constructor(stateList)
+    {
+        this.onclick = null;
+        this.sprite = new PIXI.Sprite();
+        this.sprite.anchor.set(0, 0);
+        this.states = {};
+        this.state = null;
+        stateList.forEach(arg => {
+            let name = arg[0];
+            let img = arg[1];
+            this.states[name] = Utils.getFrame(RES.UI, img);
+            if (!this.state) this.state = name;
+        });
+        this.setState(this.state);
+        this.sprite.interactive = true;
+        this.sprite.click = () => {
+            if (this.onclick) this.onclick();
+        };
+    }
+
+    setState(state)
+    {
+        if (state && this.states.hasOwnProperty(state)) {
+            this.sprite.texture = this.states[state];
+            this.state = state;
+        }
+    }
+}
+
+/**********/
 /* GameUI */
 /**********/
 
 class GameUI
 {
-    constructor() {
+    constructor() 
+    {
         this.container = new PIXI.Container();
         this.healthUI = new HealthUI(this);
         this.inventoryUI = new InventoryUI(this);
         this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
+        this.audioButton = new Button([
+            ["on", "audio-on"],
+            ["off", "audio-off"]
+        ]);
+        this.audioButton.onclick = () => {
+            if (this.audioButton.state === "on") {
+                this.audioButton.setState("off");
+                Audio.setEnabled(false);
+            } else {
+                this.audioButton.setState("on");
+                Audio.setEnabled(true);
+            }
+        };
 
         this.container.addChild(this.bg);
         this.container.addChild(this.healthUI.sprite);
         this.container.addChild(this.inventoryUI.sprite);
+        this.container.addChild(this.audioButton.sprite);
     }
 
     setPlayer(player) {
@@ -264,10 +315,12 @@ class GameUI
     doLayout(x, y, width, height) {
         this.container.x = x;
         this.container.y = y;
-        this.healthUI.sprite.x = width;
-        this.healthUI.sprite.y = 1;
         this.inventoryUI.sprite.x = 5.5;
         this.inventoryUI.sprite.y = 1;
+        this.audioButton.sprite.x = width-this.audioButton.sprite.width-1;
+        this.audioButton.sprite.y = 1; //height-5;
+        this.healthUI.sprite.x = 86; //width;
+        this.healthUI.sprite.y = 2;
         this.bg.scale.set(
             width/this.bg.texture.width, 
             height/this.bg.texture.height);

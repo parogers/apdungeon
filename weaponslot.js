@@ -20,6 +20,7 @@
 var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
+var Audio = require("./audio");
 
 var ARROW_FLIGHT = 0;
 var ARROW_FALLING = 1;
@@ -85,7 +86,7 @@ SwordWeaponSlot.prototype.startAttack = function()
 {
     if (this.attackCooldown > 0) return;
 
-    Utils.getSound(RES.ATTACK_SWORD_SND).play();
+    Audio.playSound(RES.ATTACK_SWORD_SND);
     this.sprite.rotation = 0;
     this.sprite.x = 3.5;
     this.attackCooldown = 0.15;
@@ -152,7 +153,7 @@ BowWeaponSlot.prototype.startAttack = function()
     // Make sure we have an arrow to fire
     if (this.player.numArrows <= 0) return;
     if (this.attackCooldown > 0) return;
-    Utils.getSound(RES.ATTACK_SWORD_SND).play();
+    Audio.playSound(RES.ATTACK_SWORD_SND);
     this.attackCooldown = 0.2;
 
     this.player.numArrows--;
@@ -209,8 +210,7 @@ Arrow.prototype.update = function(dt)
             this.velx *= -0.25;
             this.vely = 0;
             this.state = ARROW_FALLING;
-            Utils.getSound(RES.ARROW_DING_SND).volume = 0.4;
-            Utils.getSound(RES.ARROW_DING_SND).play();
+            Audio.playSound(RES.ARROW_DING_SND, 0.4);
             return;
         }
         // Now check if we've hit an enemy

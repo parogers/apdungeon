@@ -24,6 +24,7 @@ var RES = require("./res");
 var Scenery = require("./scenery");
 var Utils = require("./utils");
 var Level = require("./level");
+var Audio = require("./audio");
 
 /*********/
 /* Arena */
@@ -282,8 +283,7 @@ DropSpawn.prototype.update = function (dt) {
         if (this.timer <= 0) {
             // Start the drop
             this.level.addThing(this.falling);
-            Utils.getSound(RES.DROP_SND).volume = 0.25;
-            Utils.getSound(RES.DROP_SND).play();
+            Audio.playSound(RES.DROP_SND, 0.25);
         }
         return;
     }
@@ -344,7 +344,60 @@ module.exports = {
     GateSpawn: GateSpawn
 };
 
-},{"./level":15,"./res":22,"./scenery":23,"./utils":29}],2:[function(require,module,exports){
+},{"./audio":2,"./level":16,"./res":23,"./scenery":24,"./utils":30}],2:[function(require,module,exports){
+"use strict";
+
+/* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
+ * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * See LICENSE.txt for the full text of the license.
+ */
+
+var RES = require("./res");
+
+var enabled = true;
+
+module.exports = {};
+module.exports.playSound = function (res, vol) {
+    if (enabled) {
+        if (vol !== undefined) sounds[res].volume = vol;
+        sounds[res].play();
+    }
+};
+
+module.exports.setEnabled = function (b) {
+    enabled = b;
+    if (enabled) module.exports.startMusic();else module.exports.stopMusic();
+};
+
+module.exports.startMusic = function () {
+    var snd = sounds[RES.GAME_MUSIC];
+    snd.loop = true;
+    snd.volume = 0.5;
+    // Start playing music (fade in). We call restart, which stops the
+    // previously play (if any), rewinds and starts again.
+    snd.restart();
+    snd.fadeIn(1);
+};
+
+module.exports.stopMusic = function () {
+    sounds[RES.GAME_MUSIC].pause();
+};
+
+},{"./res":23}],3:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -446,7 +499,7 @@ TiledBackground.prototype.getHeight = function () {
 
 module.exports = TiledBackground;
 
-},{"./render":21,"./utils":29}],3:[function(require,module,exports){
+},{"./render":22,"./utils":30}],4:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -472,6 +525,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var GroundItem = require("./grounditem");
+var Audio = require("./audio");
 
 /* A container for holding items. The chest is opened when the player touches
  * it, and the chests contents are ejected randomly.
@@ -542,13 +596,13 @@ Chest.prototype.handlePlayerCollision = function (player) {
         this.sprite.texture = this.openTexture;
         this.isOpen = true;
         this.timer = 0.25;
-        Utils.getSound(RES.CHEST_SND).play();
+        Audio.playSound(RES.CHEST_SND);
     }
 };
 
 module.exports = Chest;
 
-},{"./grounditem":13,"./res":22,"./thing":26,"./utils":29}],4:[function(require,module,exports){
+},{"./audio":2,"./grounditem":14,"./res":23,"./thing":27,"./utils":30}],5:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -590,14 +644,32 @@ var controls = null;
 
 /* A single input (eg attack) */
 
-var Input = function Input(name) {
-    _classCallCheck(this, Input);
+var Input = function () {
+    function Input(name) {
+        _classCallCheck(this, Input);
 
-    this.name = name;
-    this.held = false;
-    this.pressed = false;
-    this.released = false;
-};
+        this.name = name;
+        this.held = false;
+        this.pressed = false;
+        this.released = false;
+    }
+
+    _createClass(Input, [{
+        key: "press",
+        value: function press(set) {
+            this.pressed = !this.held;
+            this.held = set === undefined ? true : set;
+        }
+    }, {
+        key: "release",
+        value: function release(set) {
+            this.released = !!this.held;
+            this.held = set === undefined ? false : set;
+        }
+    }]);
+
+    return Input;
+}();
 
 function GameControls() {
     // Map of Input instances stored by key code
@@ -698,28 +770,220 @@ GameControls.prototype.update = function () {
     }
 };
 
-GameControls.prototype.attach = function () {
+GameControls.prototype.attachKeyboardEvents = function () {
     var _this = this;
 
     window.addEventListener("keydown", function (event) {
         var input = _this.inputByKey[event.keyCode];
         if (input) {
-            input.held = true;
-            input.pressed = true;
+            input.press();
+            event.stopPropagation();
+            event.preventDefault();
         }
-        event.stopPropagation();
     });
 
     window.addEventListener("keyup", function (event) {
         var input = _this.inputByKey[event.keyCode];
         if (input) {
-            input.held = false;
-            input.released = true;
+            input.release();
+            event.stopPropagation();
+            event.preventDefault();
         }
-
-        event.stopPropagation();
     });
 };
+
+GameControls.prototype.attachTouchEvents = function () {
+    this.touchAdapter = new TouchAdapter(window, this);
+};
+
+GameControls.prototype.attach = function () {
+    this.attachKeyboardEvents();
+    this.attachTouchEvents();
+};
+
+/* */
+
+var TouchAdapter = function () {
+    function TouchAdapter(el, controls) {
+        _classCallCheck(this, TouchAdapter);
+
+        this.controls = controls;
+        this.attackTouch = null;
+        this.movementTouch = null;
+        this.tapTouch = null;
+        this.element = el;
+
+        el.addEventListener("touchstart", this.handleTouchStart.bind(this), true);
+        el.addEventListener("touchmove", this.handleTouchMove.bind(this), true);
+        el.addEventListener("touchend", this.handleTouchEnd.bind(this), true);
+        el.addEventListener("touchcancel", this.handleTouchEnd.bind(this), true);
+    }
+
+    _createClass(TouchAdapter, [{
+        key: "handleTouchStart",
+        value: function handleTouchStart(event) {
+            var Touch = function Touch(id, x, y) {
+                _classCallCheck(this, Touch);
+
+                this.id = id;
+                this.startx = x;
+                this.starty = y;
+            };
+
+            ;
+
+            var middle = this.element.innerWidth / 2;
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+                for (var _iterator4 = event.changedTouches[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var touch = _step4.value;
+
+                    if (this.tapTouch === null) {
+                        this.tapTouch = new Touch(touch.identifier, touch.pageX, touch.pageY);
+                        this.controls.space.press();
+                    }
+
+                    if (touch.pageX > middle && this.attackTouch === null) {
+                        this.attackTouch = new Touch(touch.identifier, touch.pageX, touch.pageY);
+                        this.controls.primary.press();
+                    } else if (touch.pageX < middle && this.movementTouch === null) {
+                        this.movementTouch = new Touch(touch.identifier, touch.pageX, touch.pageY);
+                        this.handleTouchMove(event);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                        _iterator4.return();
+                    }
+                } finally {
+                    if (_didIteratorError4) {
+                        throw _iteratorError4;
+                    }
+                }
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, {
+        key: "handleTouchMove",
+        value: function handleTouchMove(event) {
+            // Center of the on-screen controller
+            var centreX = this.element.innerWidth / 6;
+            var centreY = this.element.innerHeight / 2;
+            var orad = this.element.innerHeight / 2 / 3;
+            var irad = orad * 0.1;
+            var _iteratorNormalCompletion5 = true;
+            var _didIteratorError5 = false;
+            var _iteratorError5 = undefined;
+
+            try {
+                for (var _iterator5 = event.changedTouches[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                    var touch = _step5.value;
+
+                    if (this.movementTouch !== null && this.movementTouch.id === touch.identifier) {
+                        var dx = touch.pageX - centreX;
+                        var dy = touch.pageY - centreY;
+                        var magx = Math.min((Math.abs(dx) - irad) / orad, 1);
+                        var magy = Math.min((Math.abs(dy) - irad) / orad, 1);
+
+                        if (dx >= irad) {
+                            this.controls.left.release();
+                            this.controls.right.press(magx);
+                        } else if (dx <= -irad) {
+                            this.controls.left.press(magx);
+                            this.controls.right.release();
+                        } else {
+                            this.controls.left.release();
+                            this.controls.right.release();
+                        }
+
+                        if (dy >= irad) {
+                            this.controls.up.release();
+                            this.controls.down.press(magy);
+                        } else if (dy <= -irad) {
+                            this.controls.up.press(magy);
+                            this.controls.down.release();
+                        } else {
+                            this.controls.up.release();
+                            this.controls.down.release();
+                        }
+                    }
+                }
+            } catch (err) {
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                        _iterator5.return();
+                    }
+                } finally {
+                    if (_didIteratorError5) {
+                        throw _iteratorError5;
+                    }
+                }
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, {
+        key: "handleTouchEnd",
+        value: function handleTouchEnd(event) {
+            var _iteratorNormalCompletion6 = true;
+            var _didIteratorError6 = false;
+            var _iteratorError6 = undefined;
+
+            try {
+                for (var _iterator6 = event.changedTouches[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                    var touch = _step6.value;
+
+                    if (this.tapTouch !== null && this.tapTouch.id === touch.identifier) {
+                        this.tapTouch = null;
+                        this.controls.space.release();
+                    }
+                    if (this.attackTouch !== null && this.attackTouch.id === touch.identifier) {
+                        this.attackTouch = null;
+                        this.controls.primary.release();
+                    }
+                    if (this.movementTouch !== null && this.movementTouch.id === touch.identifier) {
+                        this.controls.up.release();
+                        this.controls.down.release();
+                        this.controls.left.release();
+                        this.controls.right.release();
+                        this.movementTouch = null;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError6 = true;
+                _iteratorError6 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                        _iterator6.return();
+                    }
+                } finally {
+                    if (_didIteratorError6) {
+                        throw _iteratorError6;
+                    }
+                }
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }]);
+
+    return TouchAdapter;
+}();
 
 /******************/
 /* ManualControls */
@@ -732,28 +996,28 @@ var ManualControls = function () {
         this.dirx = 0;
         this.diry = 0;
 
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion7 = true;
+        var _didIteratorError7 = false;
+        var _iteratorError7 = undefined;
 
         try {
-            for (var _iterator4 = DEFAULTS[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var arg = _step4.value;
+            for (var _iterator7 = DEFAULTS[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                var arg = _step7.value;
 
                 var name = arg[0];
                 this[name] = new Input(name);
             }
         } catch (err) {
-            _didIteratorError4 = true;
-            _iteratorError4 = err;
+            _didIteratorError7 = true;
+            _iteratorError7 = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                    _iterator4.return();
+                if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                    _iterator7.return();
                 }
             } finally {
-                if (_didIteratorError4) {
-                    throw _iteratorError4;
+                if (_didIteratorError7) {
+                    throw _iteratorError7;
                 }
             }
         }
@@ -790,7 +1054,7 @@ module.exports.getControls = function () {
 
 module.exports.ManualControls = ManualControls;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -830,7 +1094,7 @@ Door.prototype = Object.create(Gate.prototype);
 
 module.exports = Door;
 
-},{"./gate":8,"./res":22,"./utils":29}],6:[function(require,module,exports){
+},{"./gate":9,"./res":23,"./utils":30}],7:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1000,7 +1264,7 @@ GameOverScreen.prototype.update = function (dt) {
             break;
 
         case this.WAITING:
-            if (GameControls.getControls().space) {
+            if (GameControls.getControls().space.released) {
                 this.state = this.DONE;
             }
             break;
@@ -1017,7 +1281,7 @@ GameOverScreen.prototype.handleResize = function () {
 
 module.exports = GameOverScreen;
 
-},{"./controls":4,"./render":21,"./res":22,"./ui":28,"./utils":29}],7:[function(require,module,exports){
+},{"./controls":5,"./render":22,"./res":23,"./ui":29,"./utils":30}],8:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1142,7 +1406,7 @@ GameState.prototype.handleResize = function () {
 
 module.exports = GameState;
 
-},{"./gameover":6,"./levelscreen":16,"./render":21,"./titlescreen":27}],8:[function(require,module,exports){
+},{"./gameover":7,"./levelscreen":17,"./render":22,"./titlescreen":28}],9:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1168,6 +1432,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var GameControls = require("./controls");
+var Audio = require("./audio");
 
 function Gate() {
     this.frames = [Utils.getFrame(RES.MAPTILES, "gate_wall_1"), Utils.getFrame(RES.MAPTILES, "gate_wall_2"), Utils.getFrame(RES.MAPTILES, "gate_wall_3")];
@@ -1212,8 +1477,7 @@ Gate.prototype.update = function (dt) {
         // Make a "clicksh" noise as the gate is opening. (we do this every
         // other frame to make it more obvious, hence the '2' here and above)
         if (fnum !== Math.round(2 * this.frameNum)) {
-            Utils.getSound(RES.GATE_SND).volume = 0.20;
-            Utils.getSound(RES.GATE_SND).play();
+            Audio.playSound(RES.GATE_SND, 0.2);
         }
     }
     this.sprite.texture = this.frames[Math.round(this.frameNum) | 0];
@@ -1230,7 +1494,7 @@ Gate.prototype.handlePlayerCollision = function (player) {
 
 module.exports = Gate;
 
-},{"./controls":4,"./res":22,"./thing":26,"./utils":29}],9:[function(require,module,exports){
+},{"./audio":2,"./controls":5,"./res":23,"./thing":27,"./utils":30}],10:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1729,7 +1993,7 @@ module.exports.generateEmpty = function (rows, cols, value) {
     return new Level(bg);
 };
 
-},{"./arena":1,"./bg":2,"./chest":3,"./controls":4,"./door":5,"./gate":8,"./ghost":10,"./goblin":11,"./grounditem":13,"./item":14,"./level":15,"./npc":18,"./res":22,"./skel_warrior":24,"./snake":25,"./utils":29}],10:[function(require,module,exports){
+},{"./arena":1,"./bg":3,"./chest":4,"./controls":5,"./door":6,"./gate":9,"./ghost":11,"./goblin":12,"./grounditem":14,"./item":15,"./level":16,"./npc":19,"./res":23,"./skel_warrior":25,"./snake":26,"./utils":30}],11:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1755,6 +2019,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var Item = require("./item");
+var Audio = require("./audio");
 
 var GHOST_IDLE = 0;
 var GHOST_ATTACKING = 1;
@@ -1844,14 +2109,14 @@ Ghost.prototype.handleHit = function (srcx, srcy, dmg) {
     if (this.state === GHOST_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-        Utils.getSound(RES.DEAD_SND).play();
+        Audio.playSound(RES.DEAD_SND);
         this.state = GHOST_DEAD;
         // Drop a reward
         this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
         player.handleMonsterKilled(this);
         this.dead = true;
     } else {
-        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        Audio.playSound(RES.SNAKE_HURT_SND);
         this.knocked = Math.sign(this.sprite.x - srcx) * 100;
         this.knockedTimer = 0.1;
         this.state = GHOST_HURT;
@@ -1865,7 +2130,7 @@ Ghost.prototype.handlePlayerCollision = function (player) {
 
 module.exports = Ghost;
 
-},{"./item":14,"./res":22,"./thing":26,"./utils":29}],11:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],12:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1891,6 +2156,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var Item = require("./item");
+var Audio = require("./audio");
 
 var GOBLIN_IDLE = 0;
 // Approaching the player, but keeping a distance away
@@ -2139,14 +2405,14 @@ Goblin.prototype.handleHit = function (srcx, srcy, dmg) {
     if (this.state === GOBLIN_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-        Utils.getSound(RES.DEAD_SND).play();
+        Audio.playSound(RES.DEAD_SND);
         this.state = GOBLIN_DEAD;
         // Drop a reward
         this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
         player.handleMonsterKilled(this);
         this.dead = true;
     } else {
-        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        Audio.playSound(RES.SNAKE_HURT_SND);
         this.knocked = Math.sign(this.sprite.x - srcx) * 60;
         this.knockedTimer = 0.1;
         this.state = GOBLIN_HURT;
@@ -2167,7 +2433,7 @@ Goblin.prototype.handlePlayerCollision = function (player) {
 
 module.exports = Goblin;
 
-},{"./item":14,"./res":22,"./thing":26,"./utils":29}],12:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],13:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2191,6 +2457,7 @@ module.exports = Goblin;
 
 var RES = require("./res");
 var Utils = require("./utils");
+var Audio = require("./audio");
 
 /* TODO - this code would be cleaner if we implemented an event queue/message
  * passing system. The level instance could broadcast changes in it's state,
@@ -2243,7 +2510,7 @@ GoMarker.prototype.update = function (dt) {
 
     var next = this.timer + dt;
     if (this.timer < 0.3 && next >= 0.3) {
-        if (this.dings-- > 0) Utils.getSound(RES.GO_SND).play();else this.done = true;
+        if (this.dings-- > 0) Audio.playSound(RES.GO_SND);else this.done = true;
         this.frameNum = 1;
     } else if (this.timer < 1 && next >= 1) {
         this.frameNum = 0;
@@ -2259,7 +2526,7 @@ GoMarker.prototype.handlePlayerCollision = function (player) {};
 
 module.exports = GoMarker;
 
-},{"./res":22,"./utils":29}],13:[function(require,module,exports){
+},{"./audio":2,"./res":23,"./utils":30}],14:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2362,7 +2629,7 @@ GroundItem.prototype.handlePlayerCollision = function (player) {
 
 module.exports = GroundItem;
 
-},{"./res":22,"./thing":26,"./utils":29}],14:[function(require,module,exports){
+},{"./res":23,"./thing":27,"./utils":30}],15:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2442,7 +2709,7 @@ Item.Table = {
 
 module.exports = Item;
 
-},{"./res":22,"./utils":29}],15:[function(require,module,exports){
+},{"./res":23,"./utils":30}],16:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2885,7 +3152,7 @@ Level.prototype.createBloodSpatter = function (x, y, imgs) {
 
 module.exports = Level;
 
-},{"./genlevel":9,"./grounditem":13,"./render":21,"./res":22,"./utils":29}],16:[function(require,module,exports){
+},{"./genlevel":10,"./grounditem":14,"./render":22,"./res":23,"./utils":30}],17:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2915,6 +3182,7 @@ var Player = require("./player");
 var Level = require("./level");
 var Utils = require("./utils");
 var GameControls = require("./controls");
+var Audio = require("./audio");
 
 /***************/
 /* LevelScreen */
@@ -2965,10 +3233,7 @@ LevelScreen.prototype.update = function (dt) {
             this.setLevel(level);
             // Start playing it immediately
             this.state = this.PLAYING;
-            // Start playing music (fade in). We call restart, which stops the
-            // previously play (if any), rewinds and starts again.
-            Utils.getMusic().restart();
-            Utils.getMusic().fadeIn(1);
+            Audio.startMusic();
             break;
 
         case this.PLAYING:
@@ -2978,9 +3243,8 @@ LevelScreen.prototype.update = function (dt) {
                 this.setLevel(_level);
             } else if (this.player.dead) {
                 // This triggers the game state machine to advance to the game
-                // over screen. Note there is no stop for sound effects, only 
-                // a pause function. (TODO - why?)
-                Utils.getMusic().pause();
+                // over screen.
+                Audio.stopMusic();
                 this.state = this.GAME_OVER;
             } else {
                 if (this.level) this.level.update(dt);
@@ -3039,7 +3303,7 @@ LevelScreen.prototype.handleResize = function () {
 
 module.exports = LevelScreen;
 
-},{"./controls":4,"./genlevel":9,"./gomarker":12,"./level":15,"./player":19,"./render":21,"./ui":28,"./utils":29}],17:[function(require,module,exports){
+},{"./audio":2,"./controls":5,"./genlevel":10,"./gomarker":13,"./level":16,"./player":20,"./render":22,"./ui":29,"./utils":30}],18:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3138,10 +3402,6 @@ function setup() {
 
     //stage.removeChild(progress.sprite);
     stage.children = [];
-
-    Utils.getMusic().loop = true;
-    Utils.getMusic().volume = 0.5;
-
     requestAnimationFrame(gameLoop);
 }
 
@@ -3189,7 +3449,7 @@ module.exports.getGamestate = function () {
     return gamestate;
 };
 
-},{"./controls":4,"./gamestate":7,"./levelscreen":16,"./progress":20,"./render":21,"./res":22,"./utils":29}],18:[function(require,module,exports){
+},{"./controls":5,"./gamestate":8,"./levelscreen":17,"./progress":21,"./render":22,"./res":23,"./utils":30}],19:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3266,7 +3526,7 @@ NPC.prototype.handlePlayerCollision = function (player) {
 
 module.exports = NPC;
 
-},{"./res":22,"./thing":26,"./ui":28,"./utils":29}],19:[function(require,module,exports){
+},{"./res":23,"./thing":27,"./ui":29,"./utils":30}],20:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3293,6 +3553,7 @@ var Utils = require("./utils");
 var Item = require("./item");
 var Thing = require("./thing");
 var WeaponSlot = require("./weaponslot");
+var Audio = require("./audio");
 
 // What tint of colour to use when the player takes damage
 var DAMAGE_TINT = 0xFF0000;
@@ -3309,7 +3570,7 @@ function Player(controls) {
     this.frames = null;
     this.lungeFrame = null;
     // Player health in half hearts. This should always be a multiple of two
-    this.maxHealth = 10;
+    this.maxHealth = 8;
     this.health = this.maxHealth;
     this.maxSpeed = 40; // pixels/second
     // Inventory stuff
@@ -3487,7 +3748,7 @@ Player.prototype.update = function (dt) {
     // Make a splashy sound when we enter water
     var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.water) {
-        if (!this.waterSprite.visible) Utils.getSound(RES.SPLASH_SND).play();
+        if (!this.waterSprite.visible) Audio.playSound(RES.SPLASH_SND);
         this.waterSprite.visible = true;
     } else {
         this.waterSprite.visible = false;
@@ -3561,14 +3822,13 @@ Player.prototype.upgradeBow = function (item) {
 
 Player.prototype.upgradeArmour = function (item) {
     this.setArmour(item);
-    Utils.getSound(RES.POWERUP2_SND).play();
+    Audio.playSound(RES.POWERUP2_SND);
 };
 
 Player.prototype.healDamage = function (amt) {
     if (this.health < this.maxHealth) {
         this.health = Math.min(this.health + amt, this.maxHealth);
-        Utils.getSound(RES.POWERUP4_SND).volume = 1.25;
-        Utils.getSound(RES.POWERUP4_SND).play();
+        Audio.playSound(RES.POWERUP4_SND, 1.25);
     }
 };
 
@@ -3595,7 +3855,7 @@ Player.prototype.takeDamage = function (amt, src) {
             }
         }
 
-        Utils.getSound(RES.HIT_SND).play();
+        Audio.playSound(RES.HIT_SND);
 
         // Take damage and have the player flash red for a moment
         this.health -= amt;
@@ -3669,13 +3929,13 @@ Player.prototype.handleTakeItem = function (item) {
             this.healDamage(this.maxHealth);
             break;
     }
-    Utils.getSound(RES.COIN_SND).play();
+    Audio.playSound(RES.COIN_SND);
     return true;
 };
 
 module.exports = Player;
 
-},{"./item":14,"./res":22,"./thing":26,"./utils":29,"./weaponslot":30}],20:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30,"./weaponslot":31}],21:[function(require,module,exports){
 'use strict';
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3736,7 +3996,7 @@ ProgressBar.prototype.update = function (value) {
 
 module.exports = ProgressBar;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3833,7 +4093,7 @@ module.exports.resize = function () {
     //container.appendChild(renderer.view);
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3866,7 +4126,7 @@ module.exports = {
     UI: "media/rogue-like-8x8/UI.json",
     DRAGON: "media/rogue-like-8x8/Dragon.json",
 
-    GAME_MUSIC: "media/music/A Journey Awaits2.ogg",
+    GAME_MUSIC: "media/music/A Journey Awaits2-lowfi.ogg",
     ATTACK_SWORD_SND: "media/effects/attack_sword2.wav",
     HIT_SND: "media/effects/hit.wav",
     SNAKE_HURT_SND: "media/effects/snake_hurt.wav",
@@ -3890,7 +4150,7 @@ module.exports = {
     renderer: null
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3946,7 +4206,7 @@ Scenery.prototype.update = function (dt) {
 
 module.exports = Scenery;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3972,6 +4232,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var Item = require("./item");
+var Audio = require("./audio");
 
 var SKEL_WARRIOR_IDLE = 0;
 // Slowly approaching the player
@@ -4204,14 +4465,14 @@ SkelWarrior.prototype.handleHit = function (srcx, srcy, dmg) {
     if (this.state === SKEL_WARRIOR_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-        Utils.getSound(RES.DEAD_SND).play();
+        Audio.playSound(RES.DEAD_SND);
         this.state = SKEL_WARRIOR_DEAD;
         // Drop a reward
         this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
         player.handleMonsterKilled(this);
         this.dead = true;
     } else {
-        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        Audio.playSound(RES.SNAKE_HURT_SND);
         this.knocked = Math.sign(this.sprite.x - srcx) * 60;
         this.knockedTimer = 0.1;
         this.state = SKEL_WARRIOR_HURT;
@@ -4231,7 +4492,7 @@ SkelWarrior.prototype.handlePlayerCollision = function (player) {
 
 module.exports = SkelWarrior;
 
-},{"./item":14,"./res":22,"./thing":26,"./utils":29}],25:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],26:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -4257,6 +4518,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var Item = require("./item");
+var Audio = require("./audio");
 
 /*********/
 /* Snake */
@@ -4386,14 +4648,14 @@ Snake.prototype.handleHit = function (srcx, srcy, dmg) {
     if (this.state === SNAKE_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-        Utils.getSound(RES.DEAD_SND).play();
+        Audio.playSound(RES.DEAD_SND);
         this.state = SNAKE_DEAD;
         // Drop a reward
         this.level.handleTreasureDrop(this.getDropTable(), this.sprite.x, this.sprite.y);
         player.handleMonsterKilled(this);
         this.dead = true;
     } else {
-        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        Audio.playSound(RES.SNAKE_HURT_SND);
         this.knocked = Math.sign(this.sprite.x - srcx) * 60;
         this.knockedTimer = 0.1;
         this.state = SNAKE_HURT;
@@ -4468,7 +4730,7 @@ module.exports = {
     Scorpion: Scorpion
 };
 
-},{"./item":14,"./res":22,"./thing":26,"./utils":29}],26:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],27:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -4526,7 +4788,7 @@ Thing.Hitbox = function (x, y, w, h) {
 
 module.exports = Thing;
 
-},{"./utils":29}],27:[function(require,module,exports){
+},{"./utils":30}],28:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -4716,7 +4978,7 @@ TitleScreen.prototype.handleResize = function () {
 
 module.exports = TitleScreen;
 
-},{"./controls":4,"./genlevel":9,"./ghost":10,"./goblin":11,"./item":14,"./levelscreen":16,"./player":19,"./render":21,"./res":22,"./scenery":23,"./skel_warrior":24,"./snake":25,"./ui":28,"./utils":29}],28:[function(require,module,exports){
+},{"./controls":5,"./genlevel":10,"./ghost":11,"./goblin":12,"./item":15,"./levelscreen":17,"./player":20,"./render":22,"./res":23,"./scenery":24,"./skel_warrior":25,"./snake":26,"./ui":29,"./utils":30}],29:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4746,6 +5008,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Render = require("./render");
 var Item = require("./item");
+var Audio = require("./audio");
 
 function renderText(lines, options) {
     if (!(lines instanceof Array)) lines = [lines];
@@ -4792,9 +5055,9 @@ function HealthUI() {
     this.player = null;
     this.sprite = new PIXI.Container();
     this.hearts = [];
-    this.fullHeart = Utils.getFrame(RES.UI, "full_heart");
-    this.halfHeart = Utils.getFrame(RES.UI, "half_heart");
-    this.emptyHeart = Utils.getFrame(RES.UI, "empty_heart");
+    this.fullHeart = Utils.getFrame(RES.UI, "full_bigheart");
+    this.halfHeart = Utils.getFrame(RES.UI, "half_bigheart");
+    this.emptyHeart = Utils.getFrame(RES.UI, "empty_bigheart");
 
     for (var n = 0; n < 3; n++) {
         this.addHeart();
@@ -4978,21 +5241,75 @@ InventoryUI.prototype.update = function (dt) {
 };
 
 /**********/
+/* Button */
+/**********/
+
+var Button = function () {
+    function Button(stateList) {
+        var _this = this;
+
+        _classCallCheck(this, Button);
+
+        this.onclick = null;
+        this.sprite = new PIXI.Sprite();
+        this.sprite.anchor.set(0, 0);
+        this.states = {};
+        this.state = null;
+        stateList.forEach(function (arg) {
+            var name = arg[0];
+            var img = arg[1];
+            _this.states[name] = Utils.getFrame(RES.UI, img);
+            if (!_this.state) _this.state = name;
+        });
+        this.setState(this.state);
+        this.sprite.interactive = true;
+        this.sprite.click = function () {
+            if (_this.onclick) _this.onclick();
+        };
+    }
+
+    _createClass(Button, [{
+        key: "setState",
+        value: function setState(state) {
+            if (state && this.states.hasOwnProperty(state)) {
+                this.sprite.texture = this.states[state];
+                this.state = state;
+            }
+        }
+    }]);
+
+    return Button;
+}();
+
+/**********/
 /* GameUI */
 /**********/
 
 var GameUI = function () {
     function GameUI() {
+        var _this2 = this;
+
         _classCallCheck(this, GameUI);
 
         this.container = new PIXI.Container();
         this.healthUI = new HealthUI(this);
         this.inventoryUI = new InventoryUI(this);
         this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
+        this.audioButton = new Button([["on", "audio-on"], ["off", "audio-off"]]);
+        this.audioButton.onclick = function () {
+            if (_this2.audioButton.state === "on") {
+                _this2.audioButton.setState("off");
+                Audio.setEnabled(false);
+            } else {
+                _this2.audioButton.setState("on");
+                Audio.setEnabled(true);
+            }
+        };
 
         this.container.addChild(this.bg);
         this.container.addChild(this.healthUI.sprite);
         this.container.addChild(this.inventoryUI.sprite);
+        this.container.addChild(this.audioButton.sprite);
     }
 
     _createClass(GameUI, [{
@@ -5012,10 +5329,12 @@ var GameUI = function () {
         value: function doLayout(x, y, width, height) {
             this.container.x = x;
             this.container.y = y;
-            this.healthUI.sprite.x = width;
-            this.healthUI.sprite.y = 1;
             this.inventoryUI.sprite.x = 5.5;
             this.inventoryUI.sprite.y = 1;
+            this.audioButton.sprite.x = width - this.audioButton.sprite.width - 1;
+            this.audioButton.sprite.y = 1; //height-5;
+            this.healthUI.sprite.x = 86; //width;
+            this.healthUI.sprite.y = 2;
             this.bg.scale.set(width / this.bg.texture.width, height / this.bg.texture.height);
         }
     }]);
@@ -5031,7 +5350,7 @@ module.exports = {
     GameUI: GameUI
 };
 
-},{"./item":14,"./render":21,"./res":22,"./utils":29}],29:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./render":22,"./res":23,"./utils":30}],30:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -5122,14 +5441,6 @@ function updateDict(dict, other) {
     }
 }
 
-function getSound(snd) {
-    return sounds[snd];
-}
-
-function getMusic() {
-    return sounds[RES.GAME_MUSIC];
-}
-
 /************/
 /* Sequence */
 /************/
@@ -5193,8 +5504,6 @@ module.exports = {
     randUniform: randUniform,
     randomChoice: randomChoice,
     Sequence: Sequence,
-    getMusic: getMusic,
-    getSound: getSound,
     createGrid: createGrid,
     createSplashSprite: createSplashSprite,
 
@@ -5203,7 +5512,7 @@ module.exports = {
     getTextures: getTextures
 };
 
-},{"./res":22}],30:[function(require,module,exports){
+},{"./res":23}],31:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -5228,6 +5537,7 @@ module.exports = {
 var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
+var Audio = require("./audio");
 
 var ARROW_FLIGHT = 0;
 var ARROW_FALLING = 1;
@@ -5288,7 +5598,7 @@ SwordWeaponSlot.prototype.setTexture = function (name) {
 SwordWeaponSlot.prototype.startAttack = function () {
     if (this.attackCooldown > 0) return;
 
-    Utils.getSound(RES.ATTACK_SWORD_SND).play();
+    Audio.playSound(RES.ATTACK_SWORD_SND);
     this.sprite.rotation = 0;
     this.sprite.x = 3.5;
     this.attackCooldown = 0.15;
@@ -5344,7 +5654,7 @@ BowWeaponSlot.prototype.startAttack = function () {
     // Make sure we have an arrow to fire
     if (this.player.numArrows <= 0) return;
     if (this.attackCooldown > 0) return;
-    Utils.getSound(RES.ATTACK_SWORD_SND).play();
+    Audio.playSound(RES.ATTACK_SWORD_SND);
     this.attackCooldown = 0.2;
 
     this.player.numArrows--;
@@ -5388,8 +5698,7 @@ Arrow.prototype.update = function (dt) {
             this.velx *= -0.25;
             this.vely = 0;
             this.state = ARROW_FALLING;
-            Utils.getSound(RES.ARROW_DING_SND).volume = 0.4;
-            Utils.getSound(RES.ARROW_DING_SND).play();
+            Audio.playSound(RES.ARROW_DING_SND, 0.4);
             return;
         }
         // Now check if we've hit an enemy
@@ -5420,5 +5729,5 @@ module.exports = {
     Sword: SwordWeaponSlot
 };
 
-},{"./res":22,"./thing":26,"./utils":29}]},{},[17])(17)
+},{"./audio":2,"./res":23,"./thing":27,"./utils":30}]},{},[18])(18)
 });

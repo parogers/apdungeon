@@ -25,6 +25,7 @@ var Player = require("./player");
 var Level = require("./level");
 var Utils = require("./utils");
 var GameControls = require("./controls");
+var Audio = require("./audio");
 
 /***************/
 /* LevelScreen */
@@ -78,10 +79,7 @@ LevelScreen.prototype.update = function(dt)
         this.setLevel(level);
         // Start playing it immediately
         this.state = this.PLAYING;
-        // Start playing music (fade in). We call restart, which stops the
-        // previously play (if any), rewinds and starts again.
-        Utils.getMusic().restart();
-        Utils.getMusic().fadeIn(1);
+        Audio.startMusic();
         break;
 
     case this.PLAYING:
@@ -91,9 +89,8 @@ LevelScreen.prototype.update = function(dt)
             this.setLevel(level);
         } else if (this.player.dead) {
             // This triggers the game state machine to advance to the game
-            // over screen. Note there is no stop for sound effects, only 
-            // a pause function. (TODO - why?)
-            Utils.getMusic().pause();
+            // over screen.
+            Audio.stopMusic();
             this.state = this.GAME_OVER;
         } else {
             if (this.level) this.level.update(dt);

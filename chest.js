@@ -21,6 +21,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var GroundItem = require("./grounditem");
+var Audio = require("./audio");
 
 /* A container for holding items. The chest is opened when the player touches
  * it, and the chests contents are ejected randomly.
@@ -78,7 +79,7 @@ Chest.prototype.handlePlayerCollision = function(player)
         this.sprite.texture = this.openTexture;
         this.isOpen = true;
         this.timer = 0.25;
-        Utils.getSound(RES.CHEST_SND).play();
+        Audio.playSound(RES.CHEST_SND);
     }
 }
 

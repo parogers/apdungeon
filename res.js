@@ -28,7 +28,7 @@ module.exports = {
     UI: "media/rogue-like-8x8/UI.json",
     DRAGON: "media/rogue-like-8x8/Dragon.json",
 
-    GAME_MUSIC: "media/music/A Journey Awaits2.ogg",
+    GAME_MUSIC: "media/music/A Journey Awaits2-lowfi.ogg",
     ATTACK_SWORD_SND: "media/effects/attack_sword2.wav",
     HIT_SND: "media/effects/hit.wav",
     SNAKE_HURT_SND: "media/effects/snake_hurt.wav",

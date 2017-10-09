@@ -148,7 +148,7 @@ GameOverScreen.prototype.update = function(dt)
         break;
 
     case this.WAITING:
-        if (GameControls.getControls().space) {
+        if (GameControls.getControls().space.released) {
             this.state = this.DONE;
         }
         break;

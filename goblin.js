@@ -21,6 +21,7 @@ var RES = require("./res");
 var Utils = require("./utils");
 var Thing = require("./thing");
 var Item = require("./item");
+var Audio = require("./audio");
 
 var GOBLIN_IDLE = 0;
 // Approaching the player, but keeping a distance away
@@ -282,7 +283,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
     if (this.state === GOBLIN_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
-        Utils.getSound(RES.DEAD_SND).play();
+        Audio.playSound(RES.DEAD_SND);
         this.state = GOBLIN_DEAD;
         // Drop a reward
         this.level.handleTreasureDrop(
@@ -291,7 +292,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
         this.dead = true;
 
     } else {
-        Utils.getSound(RES.SNAKE_HURT_SND).play();
+        Audio.playSound(RES.SNAKE_HURT_SND);
         this.knocked = Math.sign(this.sprite.x-srcx)*60;
         this.knockedTimer = 0.1;
         this.state = GOBLIN_HURT;

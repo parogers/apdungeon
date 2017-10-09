@@ -328,6 +328,11 @@ desc = [
 frames += gen_grid((1,12), (9, 9), desc)
 
 desc = [
+    ("full_bigheart", "half_bigheart", "empty_bigheart"),
+]
+frames += gen_grid((1,22), (7, 6), desc)
+
+desc = [
     ("full_heart", "half_heart", "empty_heart"),
 ]
 frames += gen_grid((1,29), (5, 4), desc)
@@ -342,6 +347,9 @@ desc = [
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!-+",
 ]
 frames += gen_grid((1,38), (3, 4), desc)
+
+frames += gen_grid((63, 1), (10, 9), "audio-on")
+frames += gen_grid((74, 1), (10, 9), "audio-off")
 
 desc = [
     ("go1", "go2"),

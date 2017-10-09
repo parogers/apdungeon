@@ -21,6 +21,7 @@ var RES = require("./res");
 var Scenery = require("./scenery");
 var Utils = require("./utils");
 var Level = require("./level");
+var Audio = require("./audio");
 
 /*********/
 /* Arena */
@@ -283,8 +284,7 @@ DropSpawn.prototype.update = function(dt)
         if (this.timer <= 0) {
             // Start the drop
             this.level.addThing(this.falling);
-            Utils.getSound(RES.DROP_SND).volume = 0.25;
-            Utils.getSound(RES.DROP_SND).play();
+            Audio.playSound(RES.DROP_SND, 0.25);
         }
         return;
     }

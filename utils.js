@@ -95,16 +95,6 @@ function updateDict(dict, other)
     }
 }
 
-function getSound(snd)
-{
-    return sounds[snd];
-}
-
-function getMusic()
-{
-    return sounds[RES.GAME_MUSIC];
-}
-
 /************/
 /* Sequence */
 /************/
@@ -170,8 +160,6 @@ module.exports = {
     randUniform: randUniform,
     randomChoice: randomChoice,
     Sequence: Sequence,
-    getMusic: getMusic,
-    getSound: getSound,
     createGrid: createGrid,
     createSplashSprite: createSplashSprite,
 

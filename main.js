@@ -116,10 +116,6 @@ function setup()
 
     //stage.removeChild(progress.sprite);
     stage.children = [];
-
-    Utils.getMusic().loop = true;
-    Utils.getMusic().volume = 0.5;
-
     requestAnimationFrame(gameLoop)
 }
 

@@ -19,6 +19,7 @@
 
 var RES = require("./res");
 var Utils = require("./utils");
+var Audio = require("./audio");
 
 /* TODO - this code would be cleaner if we implemented an event queue/message
  * passing system. The level instance could broadcast changes in it's state,
@@ -78,7 +79,7 @@ GoMarker.prototype.update = function(dt)
 
     var next = this.timer + dt;
     if (this.timer < 0.3 && next >= 0.3) {
-        if (this.dings-- > 0) Utils.getSound(RES.GO_SND).play();
+        if (this.dings-- > 0) Audio.playSound(RES.GO_SND);
         else this.done = true;
         this.frameNum = 1;
     } else if (this.timer < 1 && next >= 1) {
