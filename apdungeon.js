@@ -344,7 +344,7 @@ module.exports = {
     GateSpawn: GateSpawn
 };
 
-},{"./audio":2,"./level":16,"./res":23,"./scenery":24,"./utils":30}],2:[function(require,module,exports){
+},{"./audio":2,"./level":16,"./res":23,"./scenery":24,"./utils":31}],2:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -499,7 +499,7 @@ TiledBackground.prototype.getHeight = function () {
 
 module.exports = TiledBackground;
 
-},{"./render":22,"./utils":30}],4:[function(require,module,exports){
+},{"./render":22,"./utils":31}],4:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -602,7 +602,7 @@ Chest.prototype.handlePlayerCollision = function (player) {
 
 module.exports = Chest;
 
-},{"./audio":2,"./grounditem":14,"./res":23,"./thing":27,"./utils":30}],5:[function(require,module,exports){
+},{"./audio":2,"./grounditem":14,"./res":23,"./thing":27,"./utils":31}],5:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -792,198 +792,12 @@ GameControls.prototype.attachKeyboardEvents = function () {
     });
 };
 
-GameControls.prototype.attachTouchEvents = function () {
-    this.touchAdapter = new TouchAdapter(window, this);
-};
-
 GameControls.prototype.attach = function () {
     this.attachKeyboardEvents();
-    this.attachTouchEvents();
+    //this.attachTouchEvents();
 };
 
-/* */
-
-var TouchAdapter = function () {
-    function TouchAdapter(el, controls) {
-        _classCallCheck(this, TouchAdapter);
-
-        this.controls = controls;
-        this.attackTouch = null;
-        this.movementTouch = null;
-        this.tapTouch = null;
-        this.element = el;
-
-        el.addEventListener("touchstart", this.handleTouchStart.bind(this), true);
-        el.addEventListener("touchmove", this.handleTouchMove.bind(this), true);
-        el.addEventListener("touchend", this.handleTouchEnd.bind(this), true);
-        el.addEventListener("touchcancel", this.handleTouchEnd.bind(this), true);
-    }
-
-    _createClass(TouchAdapter, [{
-        key: "handleTouchStart",
-        value: function handleTouchStart(event) {
-            var Touch = function Touch(id, x, y) {
-                _classCallCheck(this, Touch);
-
-                this.id = id;
-                this.startx = x;
-                this.starty = y;
-            };
-
-            ;
-
-            var middle = this.element.innerWidth / 2;
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-                for (var _iterator4 = event.changedTouches[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var touch = _step4.value;
-
-                    if (this.tapTouch === null) {
-                        this.tapTouch = new Touch(touch.identifier, touch.pageX, touch.pageY);
-                        this.controls.space.press();
-                    }
-
-                    if (touch.pageX > middle && this.attackTouch === null) {
-                        this.attackTouch = new Touch(touch.identifier, touch.pageX, touch.pageY);
-                        this.controls.primary.press();
-                    } else if (touch.pageX < middle && this.movementTouch === null) {
-                        this.movementTouch = new Touch(touch.identifier, touch.pageX, touch.pageY);
-                        this.handleTouchMove(event);
-                    }
-                }
-            } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                        _iterator4.return();
-                    }
-                } finally {
-                    if (_didIteratorError4) {
-                        throw _iteratorError4;
-                    }
-                }
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    }, {
-        key: "handleTouchMove",
-        value: function handleTouchMove(event) {
-            // Center of the on-screen controller
-            var centreX = this.element.innerWidth / 6;
-            var centreY = this.element.innerHeight / 2;
-            var orad = this.element.innerHeight / 2 / 4;
-            var irad = orad * 0.1;
-            var _iteratorNormalCompletion5 = true;
-            var _didIteratorError5 = false;
-            var _iteratorError5 = undefined;
-
-            try {
-                for (var _iterator5 = event.changedTouches[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                    var touch = _step5.value;
-
-                    if (this.movementTouch !== null && this.movementTouch.id === touch.identifier) {
-                        var dx = touch.pageX - centreX;
-                        var dy = touch.pageY - centreY;
-                        var magx = Math.min((Math.abs(dx) - irad) / orad, 1);
-                        var magy = Math.min((Math.abs(dy) - irad) / orad, 1);
-
-                        if (dx >= irad) {
-                            this.controls.left.release();
-                            this.controls.right.press(magx);
-                        } else if (dx <= -irad) {
-                            this.controls.left.press(magx);
-                            this.controls.right.release();
-                        } else {
-                            this.controls.left.release();
-                            this.controls.right.release();
-                        }
-
-                        if (dy >= irad) {
-                            this.controls.up.release();
-                            this.controls.down.press(magy);
-                        } else if (dy <= -irad) {
-                            this.controls.up.press(magy);
-                            this.controls.down.release();
-                        } else {
-                            this.controls.up.release();
-                            this.controls.down.release();
-                        }
-                    }
-                }
-            } catch (err) {
-                _didIteratorError5 = true;
-                _iteratorError5 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                        _iterator5.return();
-                    }
-                } finally {
-                    if (_didIteratorError5) {
-                        throw _iteratorError5;
-                    }
-                }
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    }, {
-        key: "handleTouchEnd",
-        value: function handleTouchEnd(event) {
-            var _iteratorNormalCompletion6 = true;
-            var _didIteratorError6 = false;
-            var _iteratorError6 = undefined;
-
-            try {
-                for (var _iterator6 = event.changedTouches[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                    var touch = _step6.value;
-
-                    if (this.tapTouch !== null && this.tapTouch.id === touch.identifier) {
-                        this.tapTouch = null;
-                        this.controls.space.release();
-                    }
-                    if (this.attackTouch !== null && this.attackTouch.id === touch.identifier) {
-                        this.attackTouch = null;
-                        this.controls.primary.release();
-                    }
-                    if (this.movementTouch !== null && this.movementTouch.id === touch.identifier) {
-                        this.controls.up.release();
-                        this.controls.down.release();
-                        this.controls.left.release();
-                        this.controls.right.release();
-                        this.movementTouch = null;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError6 = true;
-                _iteratorError6 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                        _iterator6.return();
-                    }
-                } finally {
-                    if (_didIteratorError6) {
-                        throw _iteratorError6;
-                    }
-                }
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    }]);
-
-    return TouchAdapter;
-}();
+GameControls.prototype.configureButtons = function () {};
 
 /******************/
 /* ManualControls */
@@ -996,28 +810,28 @@ var ManualControls = function () {
         this.dirx = 0;
         this.diry = 0;
 
-        var _iteratorNormalCompletion7 = true;
-        var _didIteratorError7 = false;
-        var _iteratorError7 = undefined;
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
 
         try {
-            for (var _iterator7 = DEFAULTS[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                var arg = _step7.value;
+            for (var _iterator4 = DEFAULTS[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var arg = _step4.value;
 
                 var name = arg[0];
                 this[name] = new Input(name);
             }
         } catch (err) {
-            _didIteratorError7 = true;
-            _iteratorError7 = err;
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                    _iterator7.return();
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                    _iterator4.return();
                 }
             } finally {
-                if (_didIteratorError7) {
-                    throw _iteratorError7;
+                if (_didIteratorError4) {
+                    throw _iteratorError4;
                 }
             }
         }
@@ -1038,9 +852,13 @@ var ManualControls = function () {
     return ManualControls;
 }();
 
+/***********/
+/* Exports */
+/***********/
+
 module.exports = {};
-module.exports.configure = function () {
-    controls = new GameControls();
+module.exports.configure = function (view) {
+    controls = new GameControls(view);
     controls.attach();
 };
 
@@ -1094,7 +912,7 @@ Door.prototype = Object.create(Gate.prototype);
 
 module.exports = Door;
 
-},{"./gate":9,"./res":23,"./utils":30}],7:[function(require,module,exports){
+},{"./gate":9,"./res":23,"./utils":31}],7:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1126,6 +944,8 @@ var GameControls = require("./controls");
  * should be passed in. This screen will make a gradual transition from 
  * the level scene to a general game over screen, showing stats etc */
 function GameOverScreen(levelScreen) {
+    var _this = this;
+
     // The various states we can be in:
     // Making a transition between the level and a black screen
     this.TRANSITION_TO_GAMEOVER = 1;
@@ -1193,6 +1013,14 @@ function GameOverScreen(levelScreen) {
             }
         }
     }
+
+    this.clicked = false;
+    Render.getContainer().addEventListener("mouseup", function (evt) {
+        _this.clicked = true;
+    });
+    Render.getContainer().addEventListener("touchend", function (evt) {
+        _this.clicked = true;
+    });
 
     this.stage.addChild(this.bg);
 }
@@ -1264,7 +1092,7 @@ GameOverScreen.prototype.update = function (dt) {
             break;
 
         case this.WAITING:
-            if (GameControls.getControls().space.released) {
+            if (GameControls.getControls().space.released || this.clicked) {
                 this.state = this.DONE;
             }
             break;
@@ -1281,7 +1109,7 @@ GameOverScreen.prototype.handleResize = function () {
 
 module.exports = GameOverScreen;
 
-},{"./controls":5,"./render":22,"./res":23,"./ui":29,"./utils":30}],8:[function(require,module,exports){
+},{"./controls":5,"./render":22,"./res":23,"./ui":30,"./utils":31}],8:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1332,6 +1160,9 @@ function GameState() {
 
     this.state = this.SHOW_TITLE_SCREEN;
     this.screen = null;
+    // Whether we should enable touch by default. This is decided based on
+    // what the player does to star the game at the title screen.
+    this.enableTouch = false;
 
     window.addEventListener("resize", function () {
         var div = Render.getContainer();
@@ -1355,7 +1186,6 @@ GameState.prototype.update = function (dt) {
 
     switch (this.state) {
         case this.SHOW_TITLE_SCREEN:
-            //this.state = this.NEW_GAME;
             this.screen = new TitleScreen();
             this.state = this.TITLE_SCREEN;
             break;
@@ -1363,12 +1193,15 @@ GameState.prototype.update = function (dt) {
         case this.TITLE_SCREEN:
             if (this.screen.state === this.screen.NEW_GAME) {
                 this.state = this.NEW_GAME;
+                this.enableTouch = this.screen.touchClicked;
             }
             break;
 
         case this.NEW_GAME:
             // Start a new game
-            this.screen = new LevelScreen();
+            this.screen = new LevelScreen({
+                enableTouch: this.enableTouch
+            });
             this.state = this.PLAYING_GAME;
             break;
 
@@ -1494,7 +1327,7 @@ Gate.prototype.handlePlayerCollision = function (player) {
 
 module.exports = Gate;
 
-},{"./audio":2,"./controls":5,"./res":23,"./thing":27,"./utils":30}],10:[function(require,module,exports){
+},{"./audio":2,"./controls":5,"./res":23,"./thing":27,"./utils":31}],10:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -1993,7 +1826,7 @@ module.exports.generateEmpty = function (rows, cols, value) {
     return new Level(bg);
 };
 
-},{"./arena":1,"./bg":3,"./chest":4,"./controls":5,"./door":6,"./gate":9,"./ghost":11,"./goblin":12,"./grounditem":14,"./item":15,"./level":16,"./npc":19,"./res":23,"./skel_warrior":25,"./snake":26,"./utils":30}],11:[function(require,module,exports){
+},{"./arena":1,"./bg":3,"./chest":4,"./controls":5,"./door":6,"./gate":9,"./ghost":11,"./goblin":12,"./grounditem":14,"./item":15,"./level":16,"./npc":19,"./res":23,"./skel_warrior":25,"./snake":26,"./utils":31}],11:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2130,7 +1963,7 @@ Ghost.prototype.handlePlayerCollision = function (player) {
 
 module.exports = Ghost;
 
-},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],12:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":31}],12:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2433,7 +2266,7 @@ Goblin.prototype.handlePlayerCollision = function (player) {
 
 module.exports = Goblin;
 
-},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],13:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":31}],13:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2526,7 +2359,7 @@ GoMarker.prototype.handlePlayerCollision = function (player) {};
 
 module.exports = GoMarker;
 
-},{"./audio":2,"./res":23,"./utils":30}],14:[function(require,module,exports){
+},{"./audio":2,"./res":23,"./utils":31}],14:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2629,7 +2462,7 @@ GroundItem.prototype.handlePlayerCollision = function (player) {
 
 module.exports = GroundItem;
 
-},{"./res":23,"./thing":27,"./utils":30}],15:[function(require,module,exports){
+},{"./res":23,"./thing":27,"./utils":31}],15:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -2709,7 +2542,7 @@ Item.Table = {
 
 module.exports = Item;
 
-},{"./res":23,"./utils":30}],16:[function(require,module,exports){
+},{"./res":23,"./utils":31}],16:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3151,7 +2984,7 @@ Level.prototype.createBloodSpatter = function (x, y, imgs) {
 
 module.exports = Level;
 
-},{"./genlevel":10,"./grounditem":14,"./render":22,"./res":23,"./utils":30}],17:[function(require,module,exports){
+},{"./genlevel":10,"./grounditem":14,"./render":22,"./res":23,"./utils":31}],17:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3182,6 +3015,7 @@ var Level = require("./level");
 var Utils = require("./utils");
 var GameControls = require("./controls");
 var Audio = require("./audio");
+var TouchUI = require("./touchui");
 
 /***************/
 /* LevelScreen */
@@ -3190,13 +3024,14 @@ var Audio = require("./audio");
 /* A container for holding screen-related stuff for playing a level. This
  * includes the level itself, PIXI container (staging area for rendering),
  * and the UI elements. (health bar, etc) */
-function LevelScreen() {
+function LevelScreen(opts) {
     // The various states this screen can be in
     this.NEW_GAME = 1;
     this.PLAYING = 2;
     this.NEXT_LEVEL = 3;
     this.GAME_OVER = 4;
 
+    this.enableTouch = opts.enableTouch || false;
     this.levelNum = 0;
     this.level = null;
     this.state = this.NEW_GAME;
@@ -3208,11 +3043,10 @@ function LevelScreen() {
     this.stage.addChild(this.goMarker.sprite);
     this.stage.addChild(this.gameUI.container);
 
-    window.addEventListener("resize", function () {
-        //div.style.width = window.innerWidth;
-        //div.style.height = window.innerHeight;
-        //Render.configure(div);
-    });
+    if (this.enableTouch) {
+        this.touchUI = new TouchUI();
+        this.stage.addChild(this.touchUI.container);
+    }
 }
 
 LevelScreen.getAspectRatio = function () {
@@ -3280,11 +3114,15 @@ LevelScreen.prototype.setLevel = function (level) {
     this.level = level;
 
     this.gameUI.setPlayer(this.player);
-    this.gameUI.doLayout(0, level.getHeight(), level.camera.width, level.camera.height - level.getHeight());
+    this.gameUI.container.position.set(0, level.getHeight());
+    this.gameUI.doLayout(level.camera.width, level.camera.height - level.getHeight());
+
+    if (this.touchUI) {
+        this.touchUI.doLayout(level.camera.width, level.getHeight());
+    }
 
     // Put the go marker in the top-right corner of the level area
-    this.goMarker.sprite.x = level.camera.width - 1;
-    this.goMarker.sprite.y = 2;
+    this.goMarker.sprite.position.set(level.camera.width - 1, 2);
     this.level.player = this.player;
     this.level.addThing(this.player);
     this.level.update(0);
@@ -3302,7 +3140,7 @@ LevelScreen.prototype.handleResize = function () {
 
 module.exports = LevelScreen;
 
-},{"./audio":2,"./controls":5,"./genlevel":10,"./gomarker":13,"./level":16,"./player":20,"./render":22,"./ui":29,"./utils":30}],18:[function(require,module,exports){
+},{"./audio":2,"./controls":5,"./genlevel":10,"./gomarker":13,"./level":16,"./player":20,"./render":22,"./touchui":29,"./ui":30,"./utils":31}],18:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3448,7 +3286,7 @@ module.exports.getGamestate = function () {
     return gamestate;
 };
 
-},{"./controls":5,"./gamestate":8,"./levelscreen":17,"./progress":21,"./render":22,"./res":23,"./utils":30}],19:[function(require,module,exports){
+},{"./controls":5,"./gamestate":8,"./levelscreen":17,"./progress":21,"./render":22,"./res":23,"./utils":31}],19:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3525,7 +3363,7 @@ NPC.prototype.handlePlayerCollision = function (player) {
 
 module.exports = NPC;
 
-},{"./res":23,"./thing":27,"./ui":29,"./utils":30}],20:[function(require,module,exports){
+},{"./res":23,"./thing":27,"./ui":30,"./utils":31}],20:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -3634,6 +3472,7 @@ function Player(controls) {
             thing.handlePlayerCollision(this);
         }
     }.bind(this);
+    //this.upgradeSword(Item.Table.SMALL_SWORD);
 }
 
 /* Have the player face the given direction */
@@ -3934,7 +3773,7 @@ Player.prototype.handleTakeItem = function (item) {
 
 module.exports = Player;
 
-},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30,"./weaponslot":31}],21:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":31,"./weaponslot":32}],21:[function(require,module,exports){
 'use strict';
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -4049,8 +3888,8 @@ module.exports.configure = function (div, aspect) {
         height = Math.round(rect.height / aspect);
     }
 
-    //renderer = new PIXI.CanvasRenderer({
-    renderer = PIXI.autoDetectRenderer({
+    renderer = new PIXI.CanvasRenderer({
+        //renderer = PIXI.autoDetectRenderer({
         width: width,
         height: height,
         //antialias: true,
@@ -4492,7 +4331,7 @@ SkelWarrior.prototype.handlePlayerCollision = function (player) {
 
 module.exports = SkelWarrior;
 
-},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],26:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":31}],26:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -4730,7 +4569,7 @@ module.exports = {
     Scorpion: Scorpion
 };
 
-},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":30}],27:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":31}],27:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -4788,7 +4627,7 @@ Thing.Hitbox = function (x, y, w, h) {
 
 module.exports = Thing;
 
-},{"./utils":30}],28:[function(require,module,exports){
+},{"./utils":31}],28:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -4834,6 +4673,8 @@ var Scorpion = SnakeLike.Scorpion;
 /***************/
 
 function TitleScreen() {
+    var _this = this;
+
     // Playing through the intro sequence (looping)
     this.PLAYING_INTRO = 1;
     // Player wants to start a new game
@@ -4863,7 +4704,6 @@ function TitleScreen() {
     var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    //txt.x = getRenderer().width/2;
     txt.x = this.screenWidth / 2;
     txt.y = 15;
     this.stage.addChild(txt);
@@ -4871,12 +4711,11 @@ function TitleScreen() {
     txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    //txt.x = getRenderer().width/2;
     txt.x = this.screenWidth / 2;
     txt.y = 25;
     this.stage.addChild(txt);
 
-    txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
+    txt = new PIXI.Sprite(UI.renderText("CLICK OR PRESS SPACE TO PLAY"));
     txt.scale.set(0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
@@ -4885,7 +4724,7 @@ function TitleScreen() {
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(UI.renderText("PROGRAMMING BY PETER ROGERS."));
-    txt.scale.set(0.5);
+    txt.scale.set(0.55);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     txt.x = this.screenWidth / 2;
@@ -4893,12 +4732,22 @@ function TitleScreen() {
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(UI.renderText("MUSIC IS (C) PIERRA BONDOERFFER. ARTWORK IS PUBLIC DOMAIN."));
-    txt.scale.set(0.5);
+    txt.scale.set(0.55);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     txt.x = this.screenWidth / 2;
     txt.y = 75;
     this.stage.addChild(txt);
+
+    // Add event handlers for mouse clicks and screen touches
+    this.mouseClicked = false;
+    this.touchClicked = false;
+    Render.getContainer().addEventListener("mouseup", function (evt) {
+        _this.mouseClicked = true;
+    });
+    Render.getContainer().addEventListener("touchend", function (evt) {
+        _this.touchClicked = true;
+    });
 
     this.sequence = new Utils.Sequence({
         stage: this.stage,
@@ -4976,7 +4825,7 @@ TitleScreen.prototype.update = function (dt) {
 
     this.sequence.update(dt);
 
-    if (GameControls.getControls().space.released) {
+    if (GameControls.getControls().space.released || this.mouseClicked || this.touchClicked) {
         this.state = this.NEW_GAME;
     }
 };
@@ -4994,7 +4843,285 @@ TitleScreen.prototype.handleResize = function () {
 
 module.exports = TitleScreen;
 
-},{"./controls":5,"./genlevel":10,"./ghost":11,"./goblin":12,"./item":15,"./levelscreen":17,"./player":20,"./render":22,"./res":23,"./scenery":24,"./skel_warrior":25,"./snake":26,"./ui":29,"./utils":30}],29:[function(require,module,exports){
+},{"./controls":5,"./genlevel":10,"./ghost":11,"./goblin":12,"./item":15,"./levelscreen":17,"./player":20,"./render":22,"./res":23,"./scenery":24,"./skel_warrior":25,"./snake":26,"./ui":30,"./utils":31}],29:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
+ * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * See LICENSE.txt for the full text of the license.
+ */
+
+var Utils = require("./utils");
+var RES = require("./res");
+var Render = require("./render");
+var GameControls = require("./controls");
+
+/****************/
+/* TouchAdapter */
+/****************/
+
+var TouchAdapter = function () {
+    function TouchAdapter(touchUI, controls) {
+        _classCallCheck(this, TouchAdapter);
+
+        this.touchUI = touchUI;
+        this.controls = controls;
+        this.attackTouch = null;
+        this.movementTouch = null;
+        this.tapTouch = null;
+
+        var cnt = Render.getRenderer().view;
+        this.viewElement = cnt;
+
+        cnt.addEventListener("touchstart", this.handleTouchStart.bind(this), true);
+        cnt.addEventListener("touchmove", this.handleTouchMove.bind(this), true);
+        cnt.addEventListener("touchend", this.handleTouchEnd.bind(this), true);
+        cnt.addEventListener("touchcancel", this.handleTouchEnd.bind(this), true);
+    }
+
+    _createClass(TouchAdapter, [{
+        key: "handleTouchStart",
+        value: function handleTouchStart(event) {
+            var Touch = function Touch(id, x, y) {
+                _classCallCheck(this, Touch);
+
+                this.id = id;
+                this.startx = x;
+                this.starty = y;
+            };
+
+            ;
+
+            var viewRect = this.viewElement.getBoundingClientRect();
+            var padArea = this.touchUI.padSprite.getBounds();
+            var btnArea = this.touchUI.buttonSprite.getBounds();
+
+            //let middle = this.element.innerWidth/2;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = event.changedTouches[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var touch = _step.value;
+
+                    var x = touch.clientX - viewRect.left;
+                    var y = touch.clientY - viewRect.top;
+
+                    // A single touch anywhere counts as a space bar
+                    /*if (this.tapTouch === null) 
+                    {
+                        this.tapTouch = new Touch(
+                            touch.identifier, touch.pageX, touch.pageY);
+                        this.controls.space.press();
+                    }*/
+                    if (this.attackTouch === null && btnArea.contains(x, y)) {
+                        this.attackTouch = new Touch(touch.identifier, x, y);
+                        this.controls.primary.press();
+                    } else if (this.movementTouch === null && padArea.contains(x, y)) {
+                        this.movementTouch = new Touch(touch.identifier, x, y);
+                        //this.handleTouchMove(event);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, {
+        key: "handleTouchMove",
+        value: function handleTouchMove(event) {
+            // Center of the on-screen controller
+            /*let centreX = this.element.innerWidth/6;
+            let centreY = this.element.innerHeight/2;*/
+
+            var viewRect = this.viewElement.getBoundingClientRect();
+            var padArea = this.touchUI.padSprite.getBounds();
+
+            var orad = padArea.width / 4;
+            var irad = orad * 0.1;
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = event.changedTouches[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var touch = _step2.value;
+
+                    if (this.movementTouch !== null && this.movementTouch.id === touch.identifier) {
+                        var x = touch.clientX - viewRect.left;
+                        var y = touch.clientY - viewRect.top;
+
+                        var dx = x - (padArea.x + padArea.width / 2);
+                        var dy = y - (padArea.y + padArea.height / 2);
+
+                        var magx = Math.min((Math.abs(dx) - irad) / orad, 1);
+                        var magy = Math.min((Math.abs(dy) - irad) / orad, 1);
+
+                        if (dx >= irad) {
+                            this.controls.left.release();
+                            this.controls.right.press(magx);
+                        } else if (dx <= -irad) {
+                            this.controls.left.press(magx);
+                            this.controls.right.release();
+                        } else {
+                            this.controls.left.release();
+                            this.controls.right.release();
+                        }
+
+                        if (dy >= irad) {
+                            this.controls.up.release();
+                            this.controls.down.press(magy);
+                        } else if (dy <= -irad) {
+                            this.controls.up.press(magy);
+                            this.controls.down.release();
+                        } else {
+                            this.controls.up.release();
+                            this.controls.down.release();
+                        }
+                    }
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, {
+        key: "handleTouchEnd",
+        value: function handleTouchEnd(event) {
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = event.changedTouches[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var touch = _step3.value;
+
+                    /*if (this.tapTouch !== null && 
+                        this.tapTouch.id === touch.identifier) {
+                        this.tapTouch = null;
+                        this.controls.space.release();
+                    }*/
+                    if (this.attackTouch !== null && this.attackTouch.id === touch.identifier) {
+                        this.attackTouch = null;
+                        this.controls.primary.release();
+                    }
+                    if (this.movementTouch !== null && this.movementTouch.id === touch.identifier) {
+                        this.controls.up.release();
+                        this.controls.down.release();
+                        this.controls.left.release();
+                        this.controls.right.release();
+                        this.movementTouch = null;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }]);
+
+    return TouchAdapter;
+}();
+
+/***********/
+/* TouchUI */
+/***********/
+
+var TouchUI = function () {
+    function TouchUI() {
+        _classCallCheck(this, TouchUI);
+
+        this.container = new PIXI.Container();
+        this.padSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "controller-pad"));
+        this.padSprite.anchor.set(0.5, 0.5);
+        this.buttonSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "controller-button"));
+        this.buttonSprite.anchor.set(0.5, 0.5);
+
+        this.container.alpha = 0.25;
+        this.container.addChild(this.padSprite);
+        this.container.addChild(this.buttonSprite);
+
+        this.touchAdapter = new TouchAdapter(this, GameControls.getControls());
+    }
+
+    /* Layout the on-screen controller sprites to cover the given area */
+
+
+    _createClass(TouchUI, [{
+        key: "doLayout",
+        value: function doLayout(width, height) {
+            this.padSprite.x = this.padSprite.width * 0.6;
+            this.padSprite.y = height / 2 + 1;
+            this.buttonSprite.x = width - this.buttonSprite.width * 0.65;
+            this.buttonSprite.y = height / 2 + 1;
+        }
+    }]);
+
+    return TouchUI;
+}();
+
+module.exports = TouchUI;
+
+},{"./controls":5,"./render":22,"./res":23,"./utils":31}],30:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5340,17 +5467,17 @@ var GameUI = function () {
             this.healthUI.update(dt);
             this.inventoryUI.update(dt);
         }
+
+        /* Layout the on-screen GUI (inventory, sprites, etc) given the overall
+         * screen size (width, height) and the y-position of the horizontal 
+         * dividing line between the level and controls. (hsplit) */
+
     }, {
         key: "doLayout",
-        value: function doLayout(x, y, width, height) {
-            this.container.x = x;
-            this.container.y = y;
-            this.inventoryUI.sprite.x = 5.5;
-            this.inventoryUI.sprite.y = 1;
-            this.audioButton.sprite.x = width - this.audioButton.sprite.width - 1;
-            this.audioButton.sprite.y = 1;
-            this.healthUI.sprite.x = 86;
-            this.healthUI.sprite.y = 2;
+        value: function doLayout(width, height) {
+            this.inventoryUI.sprite.position.set(5.5, 1);
+            this.audioButton.sprite.position.set(width - this.audioButton.sprite.width - 1, 1);
+            this.healthUI.sprite.position.set(86, 2);
             this.bg.scale.set(width / this.bg.texture.width, height / this.bg.texture.height);
         }
     }]);
@@ -5366,7 +5493,7 @@ module.exports = {
     GameUI: GameUI
 };
 
-},{"./audio":2,"./item":15,"./render":22,"./res":23,"./utils":30}],30:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./render":22,"./res":23,"./utils":31}],31:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -5528,7 +5655,7 @@ module.exports = {
     getTextures: getTextures
 };
 
-},{"./res":23}],31:[function(require,module,exports){
+},{"./res":23}],32:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
@@ -5745,5 +5872,5 @@ module.exports = {
     Sword: SwordWeaponSlot
 };
 
-},{"./audio":2,"./res":23,"./thing":27,"./utils":30}]},{},[18])(18)
+},{"./audio":2,"./res":23,"./thing":27,"./utils":31}]},{},[18])(18)
 });

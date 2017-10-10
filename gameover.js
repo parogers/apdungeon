@@ -76,6 +76,14 @@ function GameOverScreen(levelScreen)
         });
     }
 
+    this.clicked = false;
+    Render.getContainer().addEventListener("mouseup", (evt) => {
+        this.clicked = true;
+    });
+    Render.getContainer().addEventListener("touchend", (evt) => {
+        this.clicked = true;
+    });
+
     this.stage.addChild(this.bg);
 }
 
@@ -148,7 +156,7 @@ GameOverScreen.prototype.update = function(dt)
         break;
 
     case this.WAITING:
-        if (GameControls.getControls().space.released) {
+        if (GameControls.getControls().space.released || this.clicked) {
             this.state = this.DONE;
         }
         break;

@@ -26,6 +26,7 @@ var Level = require("./level");
 var Utils = require("./utils");
 var GameControls = require("./controls");
 var Audio = require("./audio");
+var TouchUI = require("./touchui");
 
 /***************/
 /* LevelScreen */
@@ -34,7 +35,7 @@ var Audio = require("./audio");
 /* A container for holding screen-related stuff for playing a level. This
  * includes the level itself, PIXI container (staging area for rendering),
  * and the UI elements. (health bar, etc) */
-function LevelScreen()
+function LevelScreen(opts)
 {
     // The various states this screen can be in
     this.NEW_GAME = 1;
@@ -42,6 +43,7 @@ function LevelScreen()
     this.NEXT_LEVEL = 3;
     this.GAME_OVER = 4;
 
+    this.enableTouch = opts.enableTouch || false;
     this.levelNum = 0;
     this.level = null;
     this.state = this.NEW_GAME;
@@ -53,11 +55,10 @@ function LevelScreen()
     this.stage.addChild(this.goMarker.sprite);
     this.stage.addChild(this.gameUI.container);
 
-    window.addEventListener("resize", function() {
-        //div.style.width = window.innerWidth;
-        //div.style.height = window.innerHeight;
-        //Render.configure(div);
-    });
+    if (this.enableTouch) {
+        this.touchUI = new TouchUI();
+        this.stage.addChild(this.touchUI.container);
+    }
 }
 
 LevelScreen.getAspectRatio = function()
@@ -129,14 +130,17 @@ LevelScreen.prototype.setLevel = function(level)
     this.level = level;
 
     this.gameUI.setPlayer(this.player);
+    this.gameUI.container.position.set(0, level.getHeight());
     this.gameUI.doLayout(
-        0, level.getHeight(),
         level.camera.width, 
-        level.camera.height - level.getHeight());
+        level.camera.height-level.getHeight());
+
+    if (this.touchUI) {
+        this.touchUI.doLayout(level.camera.width, level.getHeight());
+    }
 
     // Put the go marker in the top-right corner of the level area
-    this.goMarker.sprite.x = level.camera.width-1;
-    this.goMarker.sprite.y = 2;
+    this.goMarker.sprite.position.set(level.camera.width-1, 2);
     this.level.player = this.player;
     this.level.addThing(this.player);
     this.level.update(0);

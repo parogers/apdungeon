@@ -312,15 +312,15 @@ class GameUI
         this.inventoryUI.update(dt);
     }
 
-    doLayout(x, y, width, height) {
-        this.container.x = x;
-        this.container.y = y;
-        this.inventoryUI.sprite.x = 5.5;
-        this.inventoryUI.sprite.y = 1;
-        this.audioButton.sprite.x = width-this.audioButton.sprite.width-1;
-        this.audioButton.sprite.y = 1;
-        this.healthUI.sprite.x = 86;
-        this.healthUI.sprite.y = 2;
+    /* Layout the on-screen GUI (inventory, sprites, etc) given the overall
+     * screen size (width, height) and the y-position of the horizontal 
+     * dividing line between the level and controls. (hsplit) */
+    doLayout(width, height) 
+    {
+        this.inventoryUI.sprite.position.set(5.5, 1);
+        this.audioButton.sprite.position.set(
+            width-this.audioButton.sprite.width-1, 1);
+        this.healthUI.sprite.position.set(86, 2);
         this.bg.scale.set(
             width/this.bg.texture.width, 
             height/this.bg.texture.height);

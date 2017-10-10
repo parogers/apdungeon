@@ -74,7 +74,6 @@ function TitleScreen()
     var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    //txt.x = getRenderer().width/2;
     txt.x = this.screenWidth/2;
     txt.y = 15;
     this.stage.addChild(txt);
@@ -82,12 +81,11 @@ function TitleScreen()
     txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
-    //txt.x = getRenderer().width/2;
     txt.x = this.screenWidth/2;
     txt.y = 25;
     this.stage.addChild(txt);
 
-    txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO PLAY"));
+    txt = new PIXI.Sprite(UI.renderText("CLICK OR PRESS SPACE TO PLAY"));
     txt.scale.set(0.75);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
@@ -96,7 +94,7 @@ function TitleScreen()
     this.stage.addChild(txt);
 
     txt = new PIXI.Sprite(UI.renderText("PROGRAMMING BY PETER ROGERS."));
-    txt.scale.set(0.5);
+    txt.scale.set(0.55);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     txt.x = this.screenWidth/2;
@@ -105,12 +103,22 @@ function TitleScreen()
 
     txt = new PIXI.Sprite(UI.renderText(
         "MUSIC IS (C) PIERRA BONDOERFFER. ARTWORK IS PUBLIC DOMAIN."));
-    txt.scale.set(0.5);
+    txt.scale.set(0.55);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
     txt.x = this.screenWidth/2;
     txt.y = 75;
     this.stage.addChild(txt);
+
+    // Add event handlers for mouse clicks and screen touches
+    this.mouseClicked = false;
+    this.touchClicked = false;
+    Render.getContainer().addEventListener("mouseup", (evt) => {
+        this.mouseClicked = true;
+    });
+    Render.getContainer().addEventListener("touchend", (evt) => {
+        this.touchClicked = true;
+    });
 
     this.sequence = new Utils.Sequence(
         {
@@ -196,7 +204,6 @@ function TitleScreen()
             }
         }
     );
-
 }
 
 TitleScreen.prototype.update = function(dt)
@@ -208,7 +215,8 @@ TitleScreen.prototype.update = function(dt)
 
     this.sequence.update(dt);
 
-    if (GameControls.getControls().space.released) {
+    if (GameControls.getControls().space.released || 
+        this.mouseClicked || this.touchClicked) {
         this.state = this.NEW_GAME;
     }
 }

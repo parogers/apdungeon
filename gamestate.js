@@ -45,6 +45,9 @@ function GameState()
 
     this.state = this.SHOW_TITLE_SCREEN;
     this.screen = null;
+    // Whether we should enable touch by default. This is decided based on
+    // what the player does to star the game at the title screen.
+    this.enableTouch = false;
 
     window.addEventListener("resize", () => {
         var div = Render.getContainer();
@@ -69,7 +72,6 @@ GameState.prototype.update = function(dt)
 
     switch(this.state) {
     case this.SHOW_TITLE_SCREEN:
-        //this.state = this.NEW_GAME;
         this.screen = new TitleScreen();
         this.state = this.TITLE_SCREEN;
         break;
@@ -77,12 +79,15 @@ GameState.prototype.update = function(dt)
     case this.TITLE_SCREEN:
         if (this.screen.state === this.screen.NEW_GAME) {
             this.state = this.NEW_GAME;
+            this.enableTouch = this.screen.touchClicked;
         }
         break;
 
     case this.NEW_GAME:
         // Start a new game
-        this.screen = new LevelScreen();
+        this.screen = new LevelScreen({
+            enableTouch: this.enableTouch
+        });
         this.state = this.PLAYING_GAME;
         break;
 

@@ -122,156 +122,14 @@ GameControls.prototype.attachKeyboardEvents = function()
     });
 }
 
-GameControls.prototype.attachTouchEvents = function()
-{
-    this.touchAdapter = new TouchAdapter(window, this);
-}
-
 GameControls.prototype.attach = function()
 {
     this.attachKeyboardEvents();
-    this.attachTouchEvents();
+    //this.attachTouchEvents();
 }
 
-/* */
-
-class TouchAdapter
+GameControls.prototype.configureButtons = function()
 {
-    constructor(el, controls)
-    {
-        this.controls = controls;
-        this.attackTouch = null;
-        this.movementTouch = null;
-        this.tapTouch = null;
-        this.element = el;
-
-        el.addEventListener(
-            "touchstart", 
-            this.handleTouchStart.bind(this), 
-            true);
-        el.addEventListener(
-            "touchmove", 
-            this.handleTouchMove.bind(this), 
-            true);
-        el.addEventListener(
-            "touchend", 
-            this.handleTouchEnd.bind(this), 
-            true);
-        el.addEventListener(
-            "touchcancel", 
-            this.handleTouchEnd.bind(this), 
-            true);
-    }
-
-    handleTouchStart(event)
-    {
-        class Touch {
-            constructor(id, x, y) {
-                this.id = id;
-                this.startx = x;
-                this.starty = y;
-            }
-        };
-
-        let middle = this.element.innerWidth/2;
-        for (let touch of event.changedTouches) 
-        {
-            if (this.tapTouch === null) 
-            {
-                this.tapTouch = new Touch(
-                    touch.identifier, touch.pageX, touch.pageY);
-                this.controls.space.press();
-            }
-
-            if (touch.pageX > middle && this.attackTouch === null) 
-            {
-                this.attackTouch = new Touch(
-                    touch.identifier, touch.pageX, touch.pageY);
-                this.controls.primary.press();
-            } 
-            else if (touch.pageX < middle && this.movementTouch === null)
-            {
-                this.movementTouch = new Touch(
-                    touch.identifier, touch.pageX, touch.pageY);
-                this.handleTouchMove(event);
-            }
-        }
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    handleTouchMove(event)
-    {
-        // Center of the on-screen controller
-        let centreX = this.element.innerWidth/6;
-        let centreY = this.element.innerHeight/2;
-        let orad = (this.element.innerHeight/2)/4;
-        let irad = orad*0.1;
-        for (let touch of event.changedTouches)
-        {
-            if (this.movementTouch !== null &&
-                this.movementTouch.id === touch.identifier)
-            {
-                let dx = touch.pageX - centreX;
-                let dy = touch.pageY - centreY;
-                let magx = Math.min((Math.abs(dx)-irad)/orad, 1);
-                let magy = Math.min((Math.abs(dy)-irad)/orad, 1);
-
-                if (dx >= irad) {
-                    this.controls.left.release();
-                    this.controls.right.press(magx)
-                } else if (dx <= -irad) {
-                    this.controls.left.press(magx);
-                    this.controls.right.release();
-                } else {
-                    this.controls.left.release();
-                    this.controls.right.release();
-                }
-
-                if (dy >= irad) {
-                    this.controls.up.release();
-                    this.controls.down.press(magy)
-                } else if (dy <= -irad) {
-                    this.controls.up.press(magy);
-                    this.controls.down.release();
-                } else {
-                    this.controls.up.release();
-                    this.controls.down.release();
-                }
-            }
-        }
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    handleTouchEnd(event)
-    {
-        for (let touch of event.changedTouches) 
-        {
-            if (this.tapTouch !== null && 
-                this.tapTouch.id === touch.identifier) {
-                this.tapTouch = null;
-                this.controls.space.release();
-            }
-            if (this.attackTouch !== null && 
-                this.attackTouch.id === touch.identifier) 
-            {
-                this.attackTouch = null;
-                this.controls.primary.release();
-            }
-            if (this.movementTouch !== null &&
-                this.movementTouch.id === touch.identifier)
-            {
-                this.controls.up.release();
-                this.controls.down.release();
-                this.controls.left.release();
-                this.controls.right.release();
-                this.movementTouch = null;
-            }
-        }
-        event.preventDefault();
-        event.stopPropagation();
-    }
 }
 
 /******************/
@@ -300,10 +158,14 @@ class ManualControls
     }
 }
 
+/***********/
+/* Exports */
+/***********/
+
 module.exports = {};
-module.exports.configure = function()
+module.exports.configure = function(view)
 {
-    controls = new GameControls();
+    controls = new GameControls(view);
     controls.attach();
 }
 
@@ -318,4 +180,3 @@ module.exports.getControls = function()
 }
 
 module.exports.ManualControls = ManualControls;
-

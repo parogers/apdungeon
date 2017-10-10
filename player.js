@@ -105,6 +105,7 @@ function Player(controls)
             thing.handlePlayerCollision(this);
         }
     }).bind(this);
+    //this.upgradeSword(Item.Table.SMALL_SWORD);
 }
 
 /* Have the player face the given direction */
