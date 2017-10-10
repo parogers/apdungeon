@@ -82,13 +82,18 @@ function Level(bg)
     this.exitDoor = null;
 }
 
-Level.BEHIND_BACKGROUND_POS = -1;
-Level.BACKGROUND_POS = 0;
-Level.FLOOR_POS = 1;
-Level.FRONT_POS = 10000;
-
-Level.CAMERA_WIDTH = 100;
-Level.CAMERA_HEIGHT = 60;
+Level.prototype.destroy = function()
+{
+    if (this.stage) {
+        // Remove the player first, so they don't get destroyed
+        // (reused in the next level)
+        this.removeThing(this.player);
+        this.stage.destroy({children: true});
+        this.stage = null;
+        this.things = null;
+        this.player = null;
+    }
+}
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()
@@ -350,5 +355,13 @@ Level.prototype.createBloodSpatter = function(x, y, imgs)
     this.stage.addChild(sprite);
     return sprite;
 }
+
+Level.BEHIND_BACKGROUND_POS = -1;
+Level.BACKGROUND_POS = 0;
+Level.FLOOR_POS = 1;
+Level.FRONT_POS = 10000;
+
+Level.CAMERA_WIDTH = 100;
+Level.CAMERA_HEIGHT = 60;
 
 module.exports = Level;

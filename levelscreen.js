@@ -61,6 +61,20 @@ function LevelScreen(opts)
     }
 }
 
+LevelScreen.prototype.destroy = function()
+{
+    if (this.gameUI) {
+        this.gameUI.destroy();
+        this.level.destroy();
+        this.gameUI = null;
+        this.level = null;
+    }
+    if (this.touchUI) {
+        this.touchUI.destroy();
+        this.touchUI = null;
+    }
+}
+
 LevelScreen.getAspectRatio = function()
 {
     return (Level.CAMERA_WIDTH / Level.CAMERA_HEIGHT);
@@ -120,6 +134,8 @@ LevelScreen.prototype.setLevel = function(level)
     // Remove the previous level sprite container
     if (this.level) {
         this.stage.removeChild(this.level.stage);
+        this.level.destroy();
+        this.level = null;
     }
     if (!level) return;
 

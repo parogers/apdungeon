@@ -302,6 +302,17 @@ class GameUI
         this.container.addChild(this.audioButton.sprite);
     }
 
+    destroy() {
+        if (this.container) {
+            this.container.destroy();
+            this.container = null;
+            this.healthUI = null;
+            this.inventoryUI = null;
+            this.bg = null;
+            this.audioButton = null;
+        }
+    }
+
     setPlayer(player) {
         this.healthUI.player = player;
         this.inventoryUI.player = player;

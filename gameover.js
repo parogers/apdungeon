@@ -87,6 +87,14 @@ function GameOverScreen(levelScreen)
     this.stage.addChild(this.bg);
 }
 
+GameOverScreen.prototype.destroy = function()
+{
+    if (this.levelScreen !== null) {
+        this.levelScreen.destroy();
+        this.levelScreen = null;
+    }
+}
+
 GameOverScreen.prototype.update = function(dt)
 {
     if (this.delay > 0) {

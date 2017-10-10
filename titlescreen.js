@@ -110,15 +110,18 @@ function TitleScreen()
     txt.y = 75;
     this.stage.addChild(txt);
 
-    // Add event handlers for mouse clicks and screen touches
+    // Add event handlers for mouse clicks and screen touches. We cache the
+    // event handlers here so they can be removed later.
     this.mouseClicked = false;
     this.touchClicked = false;
-    Render.getContainer().addEventListener("mouseup", (evt) => {
+    this.onMouseUp = (evt) => {
         this.mouseClicked = true;
-    });
-    Render.getContainer().addEventListener("touchend", (evt) => {
+    };
+    this.onTouchEnd = (evt) => {
         this.touchClicked = true;
-    });
+    }
+    Render.getContainer().addEventListener("mouseup", this.onMouseUp);
+    Render.getContainer().addEventListener("touchend", this.onTouchEnd);
 
     this.sequence = new Utils.Sequence(
         {
@@ -204,6 +207,12 @@ function TitleScreen()
             }
         }
     );
+}
+
+TitleScreen.prototype.destroy = function()
+{
+    Render.getContainer().removeEventListener("mouseup", this.onMouseUp);
+    Render.getContainer().removeEventListener("touchend", this.onTouchEnd);
 }
 
 TitleScreen.prototype.update = function(dt)

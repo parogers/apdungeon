@@ -1025,6 +1025,13 @@ function GameOverScreen(levelScreen) {
     this.stage.addChild(this.bg);
 }
 
+GameOverScreen.prototype.destroy = function () {
+    if (this.levelScreen !== null) {
+        this.levelScreen.destroy();
+        this.levelScreen = null;
+    }
+};
+
 GameOverScreen.prototype.update = function (dt) {
     if (this.delay > 0) {
         this.delay -= dt;
@@ -1192,6 +1199,7 @@ GameState.prototype.update = function (dt) {
 
         case this.TITLE_SCREEN:
             if (this.screen.state === this.screen.NEW_GAME) {
+                this.screen.destroy();
                 this.state = this.NEW_GAME;
                 this.enableTouch = this.screen.touchClicked;
             }
@@ -1217,6 +1225,7 @@ GameState.prototype.update = function (dt) {
         case this.GAME_OVER:
             // Wait until the player is finished with the game over screen
             if (this.screen.state === this.screen.DONE) {
+                this.screen.destroy();
                 this.state = this.NEW_GAME;
             }
             break;
@@ -2627,13 +2636,17 @@ function Level(bg) {
     this.exitDoor = null;
 }
 
-Level.BEHIND_BACKGROUND_POS = -1;
-Level.BACKGROUND_POS = 0;
-Level.FLOOR_POS = 1;
-Level.FRONT_POS = 10000;
-
-Level.CAMERA_WIDTH = 100;
-Level.CAMERA_HEIGHT = 60;
+Level.prototype.destroy = function () {
+    if (this.stage) {
+        // Remove the player first, so they don't get destroyed
+        // (reused in the next level)
+        this.removeThing(this.player);
+        this.stage.destroy({ children: true });
+        this.stage = null;
+        this.things = null;
+        this.player = null;
+    }
+};
 
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function () {
@@ -2982,6 +2995,14 @@ Level.prototype.createBloodSpatter = function (x, y, imgs) {
     return sprite;
 };
 
+Level.BEHIND_BACKGROUND_POS = -1;
+Level.BACKGROUND_POS = 0;
+Level.FLOOR_POS = 1;
+Level.FRONT_POS = 10000;
+
+Level.CAMERA_WIDTH = 100;
+Level.CAMERA_HEIGHT = 60;
+
 module.exports = Level;
 
 },{"./genlevel":10,"./grounditem":14,"./render":22,"./res":23,"./utils":31}],17:[function(require,module,exports){
@@ -3049,6 +3070,19 @@ function LevelScreen(opts) {
     }
 }
 
+LevelScreen.prototype.destroy = function () {
+    if (this.gameUI) {
+        this.gameUI.destroy();
+        this.level.destroy();
+        this.gameUI = null;
+        this.level = null;
+    }
+    if (this.touchUI) {
+        this.touchUI.destroy();
+        this.touchUI = null;
+    }
+};
+
 LevelScreen.getAspectRatio = function () {
     return Level.CAMERA_WIDTH / Level.CAMERA_HEIGHT;
 };
@@ -3104,6 +3138,8 @@ LevelScreen.prototype.setLevel = function (level) {
     // Remove the previous level sprite container
     if (this.level) {
         this.stage.removeChild(this.level.stage);
+        this.level.destroy();
+        this.level = null;
     }
     if (!level) return;
 
@@ -4739,15 +4775,18 @@ function TitleScreen() {
     txt.y = 75;
     this.stage.addChild(txt);
 
-    // Add event handlers for mouse clicks and screen touches
+    // Add event handlers for mouse clicks and screen touches. We cache the
+    // event handlers here so they can be removed later.
     this.mouseClicked = false;
     this.touchClicked = false;
-    Render.getContainer().addEventListener("mouseup", function (evt) {
+    this.onMouseUp = function (evt) {
         _this.mouseClicked = true;
-    });
-    Render.getContainer().addEventListener("touchend", function (evt) {
+    };
+    this.onTouchEnd = function (evt) {
         _this.touchClicked = true;
-    });
+    };
+    Render.getContainer().addEventListener("mouseup", this.onMouseUp);
+    Render.getContainer().addEventListener("touchend", this.onTouchEnd);
 
     this.sequence = new Utils.Sequence({
         stage: this.stage,
@@ -4816,6 +4855,11 @@ function TitleScreen() {
         }
     });
 }
+
+TitleScreen.prototype.destroy = function () {
+    Render.getContainer().removeEventListener("mouseup", this.onMouseUp);
+    Render.getContainer().removeEventListener("touchend", this.onTouchEnd);
+};
 
 TitleScreen.prototype.update = function (dt) {
     if (this.delay > 0) {
@@ -4888,16 +4932,31 @@ var TouchAdapter = function () {
         this.movementTouch = null;
         this.tapTouch = null;
 
-        var cnt = Render.getRenderer().view;
-        this.viewElement = cnt;
+        // Create bound forms of the touch handlers, so we can add and 
+        // remove them as needed.
+        this.onTouchStart = this.handleTouchStart.bind(this);
+        this.onTouchMove = this.handleTouchMove.bind(this);
+        this.onTouchEnd = this.handleTouchEnd.bind(this);
 
-        cnt.addEventListener("touchstart", this.handleTouchStart.bind(this), true);
-        cnt.addEventListener("touchmove", this.handleTouchMove.bind(this), true);
-        cnt.addEventListener("touchend", this.handleTouchEnd.bind(this), true);
-        cnt.addEventListener("touchcancel", this.handleTouchEnd.bind(this), true);
+        this.viewElement = Render.getRenderer().view;
+        this.viewElement.addEventListener("touchstart", this.onTouchStart);
+        this.viewElement.addEventListener("touchmove", this.onTouchMove);
+        this.viewElement.addEventListener("touchend", this.onTouchEnd);
+        this.viewElement.addEventListener("touchcancel", this.onTouchEnd);
     }
 
     _createClass(TouchAdapter, [{
+        key: "destroy",
+        value: function destroy() {
+            if (this.viewElement === null) return;
+            console.log("REMOVING EVENT HANDLERS");
+            this.viewElement.removeEventListener("touchstart", this.onTouchStart);
+            this.viewElement.removeEventListener("touchmove", this.onTouchMove);
+            this.viewElement.removeEventListener("touchend", this.onTouchEnd);
+            this.viewElement.removeEventListener("touchcancel", this.onTouchEnd);
+            this.viewElement = null;
+        }
+    }, {
         key: "handleTouchStart",
         value: function handleTouchStart(event) {
             var Touch = function Touch(id, x, y) {
@@ -4914,7 +4973,6 @@ var TouchAdapter = function () {
             var padArea = this.touchUI.padSprite.getBounds();
             var btnArea = this.touchUI.buttonSprite.getBounds();
 
-            //let middle = this.element.innerWidth/2;
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
@@ -4962,10 +5020,6 @@ var TouchAdapter = function () {
     }, {
         key: "handleTouchMove",
         value: function handleTouchMove(event) {
-            // Center of the on-screen controller
-            /*let centreX = this.element.innerWidth/6;
-            let centreY = this.element.innerHeight/2;*/
-
             var viewRect = this.viewElement.getBoundingClientRect();
             var padArea = this.touchUI.padSprite.getBounds();
 
@@ -5103,10 +5157,20 @@ var TouchUI = function () {
         this.touchAdapter = new TouchAdapter(this, GameControls.getControls());
     }
 
-    /* Layout the on-screen controller sprites to cover the given area */
-
-
     _createClass(TouchUI, [{
+        key: "destroy",
+        value: function destroy() {
+            if (this.container !== null) {
+                this.container.destroy();
+                this.container = null;
+                this.touchAdapter.destroy();
+                this.touchAdapter = null;
+            }
+        }
+
+        /* Layout the on-screen controller sprites to cover the given area */
+
+    }, {
         key: "doLayout",
         value: function doLayout(width, height) {
             this.padSprite.x = this.padSprite.width * 0.6;
@@ -5456,6 +5520,18 @@ var GameUI = function () {
     }
 
     _createClass(GameUI, [{
+        key: "destroy",
+        value: function destroy() {
+            if (this.container) {
+                this.container.destroy();
+                this.container = null;
+                this.healthUI = null;
+                this.inventoryUI = null;
+                this.bg = null;
+                this.audioButton = null;
+            }
+        }
+    }, {
         key: "setPlayer",
         value: function setPlayer(player) {
             this.healthUI.player = player;

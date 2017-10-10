@@ -36,25 +36,28 @@ class TouchAdapter
         this.movementTouch = null;
         this.tapTouch = null;
 
-        var cnt = Render.getRenderer().view;
-        this.viewElement = cnt;
+        // Create bound forms of the touch handlers, so we can add and 
+        // remove them as needed.
+        this.onTouchStart = this.handleTouchStart.bind(this);
+        this.onTouchMove = this.handleTouchMove.bind(this);
+        this.onTouchEnd = this.handleTouchEnd.bind(this);
 
-        cnt.addEventListener(
-            "touchstart", 
-            this.handleTouchStart.bind(this), 
-            true);
-        cnt.addEventListener(
-            "touchmove", 
-            this.handleTouchMove.bind(this), 
-            true);
-        cnt.addEventListener(
-            "touchend", 
-            this.handleTouchEnd.bind(this), 
-            true);
-        cnt.addEventListener(
-            "touchcancel", 
-            this.handleTouchEnd.bind(this), 
-            true);
+        this.viewElement = Render.getRenderer().view;
+        this.viewElement.addEventListener("touchstart", this.onTouchStart);
+        this.viewElement.addEventListener("touchmove", this.onTouchMove);
+        this.viewElement.addEventListener("touchend", this.onTouchEnd);
+        this.viewElement.addEventListener("touchcancel", this.onTouchEnd);
+    }
+
+    destroy() {
+        if (this.viewElement === null) 
+            return;
+        console.log("REMOVING EVENT HANDLERS");
+        this.viewElement.removeEventListener("touchstart", this.onTouchStart);
+        this.viewElement.removeEventListener("touchmove", this.onTouchMove);
+        this.viewElement.removeEventListener("touchend", this.onTouchEnd);
+        this.viewElement.removeEventListener("touchcancel", this.onTouchEnd);
+        this.viewElement = null;
     }
 
     handleTouchStart(event)
@@ -71,7 +74,6 @@ class TouchAdapter
         let padArea = this.touchUI.padSprite.getBounds();
         let btnArea = this.touchUI.buttonSprite.getBounds();
 
-        //let middle = this.element.innerWidth/2;
         for (let touch of event.changedTouches) 
         {
             let x = touch.clientX - viewRect.left;
@@ -101,10 +103,6 @@ class TouchAdapter
 
     handleTouchMove(event)
     {
-        // Center of the on-screen controller
-        /*let centreX = this.element.innerWidth/6;
-        let centreY = this.element.innerHeight/2;*/
-
         let viewRect = this.viewElement.getBoundingClientRect();
         let padArea = this.touchUI.padSprite.getBounds();
 
@@ -205,6 +203,16 @@ class TouchUI
         this.touchAdapter = new TouchAdapter(this, GameControls.getControls());
     }
 
+    destroy()
+    {
+        if (this.container !== null) {
+            this.container.destroy();
+            this.container = null;
+            this.touchAdapter.destroy();
+            this.touchAdapter = null;
+        }
+    }
+
     /* Layout the on-screen controller sprites to cover the given area */
     doLayout(width, height)
     {
@@ -216,4 +224,3 @@ class TouchUI
 }
 
 module.exports = TouchUI;
-

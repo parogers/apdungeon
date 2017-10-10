@@ -78,6 +78,7 @@ GameState.prototype.update = function(dt)
 
     case this.TITLE_SCREEN:
         if (this.screen.state === this.screen.NEW_GAME) {
+            this.screen.destroy();
             this.state = this.NEW_GAME;
             this.enableTouch = this.screen.touchClicked;
         }
@@ -103,6 +104,7 @@ GameState.prototype.update = function(dt)
     case this.GAME_OVER:
         // Wait until the player is finished with the game over screen
         if (this.screen.state === this.screen.DONE) {
+            this.screen.destroy();
             this.state = this.NEW_GAME;
         }
         break;
