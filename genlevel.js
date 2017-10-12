@@ -301,7 +301,7 @@ module.exports.generate = function(levelNum)
             if (found !== -1) {
                 var gate = new Gate();
                 gate.sprite.x = pos*RES.TILE_WIDTH;
-                gate.sprite.y = found*RES.TILE_HEIGHT;
+                gate.sprite.y = found*RES.TILE_HEIGHT+0.01;
                 level.addThing(gate);
             }
         }

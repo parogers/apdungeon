@@ -1633,7 +1633,7 @@ module.exports.generate = function (levelNum) {
             if (found !== -1) {
                 var gate = new Gate();
                 gate.sprite.x = pos * RES.TILE_WIDTH;
-                gate.sprite.y = found * RES.TILE_HEIGHT;
+                gate.sprite.y = found * RES.TILE_HEIGHT + 0.01;
                 level.addThing(gate);
             }
         }
@@ -3272,8 +3272,6 @@ function setup() {
             console.log("Failed to load image: " + name + " (" + err + ")");
         }
     }
-
-    //stage.removeChild(progress.sprite);
     stage.children = [];
     requestAnimationFrame(gameLoop);
 }
@@ -5015,7 +5013,7 @@ var TouchAdapter = function () {
             }
 
             event.preventDefault();
-            event.stopPropagation();
+            //event.stopPropagation();
         }
     }, {
         key: "handleTouchMove",
@@ -5083,7 +5081,7 @@ var TouchAdapter = function () {
             }
 
             event.preventDefault();
-            event.stopPropagation();
+            //event.stopPropagation();
         }
     }, {
         key: "handleTouchEnd",
@@ -5129,7 +5127,7 @@ var TouchAdapter = function () {
             }
 
             event.preventDefault();
-            event.stopPropagation();
+            //event.stopPropagation();
         }
     }]);
 
@@ -5173,9 +5171,9 @@ var TouchUI = function () {
     }, {
         key: "doLayout",
         value: function doLayout(width, height) {
-            this.padSprite.x = this.padSprite.width * 0.6;
+            this.padSprite.x = this.padSprite.width / 2 + 1;
             this.padSprite.y = height / 2 + 1;
-            this.buttonSprite.x = width - this.buttonSprite.width * 0.65;
+            this.buttonSprite.x = width - this.buttonSprite.width / 2 - 1;
             this.buttonSprite.y = height / 2 + 1;
         }
     }]);
@@ -5494,8 +5492,6 @@ var Button = function () {
 
 var GameUI = function () {
     function GameUI() {
-        var _this2 = this;
-
         _classCallCheck(this, GameUI);
 
         this.container = new PIXI.Container();
@@ -5503,32 +5499,84 @@ var GameUI = function () {
         this.inventoryUI = new InventoryUI(this);
         this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
         this.audioButton = new Button([["on", "audio-on"], ["off", "audio-off"]]);
-        this.audioButton.onclick = function () {
-            if (_this2.audioButton.state === "on") {
-                _this2.audioButton.setState("off");
-                Audio.setEnabled(false);
-            } else {
-                _this2.audioButton.setState("on");
-                Audio.setEnabled(true);
-            }
-        };
 
         this.container.addChild(this.bg);
         this.container.addChild(this.healthUI.sprite);
         this.container.addChild(this.inventoryUI.sprite);
         this.container.addChild(this.audioButton.sprite);
+
+        // Add event handlers for clicking on the various UI buttons
+        this.onMouseDown = this.handleMouseDown.bind(this);
+        this.onTouchStart = this.handleTouchStart.bind(this);
+        this.viewElement = Render.getRenderer().view;
+        this.viewElement.addEventListener("mousedown", this.onMouseDown);
+        this.viewElement.addEventListener("touchstart", this.onTouchStart);
     }
 
     _createClass(GameUI, [{
         key: "destroy",
         value: function destroy() {
             if (this.container) {
+                this.setPlayer(null);
                 this.container.destroy();
                 this.container = null;
                 this.healthUI = null;
                 this.inventoryUI = null;
                 this.bg = null;
                 this.audioButton = null;
+                this.viewElement.removeEventListener("mousedown", this.onMouseDown);
+                this.viewElement.removeEventListener("touchstart", this.onTouchStart);
+                this.viewElement = null;
+            }
+        }
+    }, {
+        key: "handleTouchStart",
+        value: function handleTouchStart(event) {
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = event.changedTouches[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var touch = _step3.value;
+
+                    this.handlePointerDown(touch.clientX, touch.clientY);
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+        }
+    }, {
+        key: "handleMouseDown",
+        value: function handleMouseDown(event) {
+            this.handlePointerDown(event.clientX, event.clientY);
+        }
+    }, {
+        key: "handlePointerDown",
+        value: function handlePointerDown(x, y) {
+            var viewRect = this.viewElement.getBoundingClientRect();
+            var xp = x - viewRect.left;
+            var yp = y - viewRect.top;
+            var rect = this.audioButton.sprite.getBounds();
+            if (rect.contains(xp, yp)) {
+                if (this.audioButton.state === "on") {
+                    this.audioButton.setState("off");
+                    Audio.setEnabled(false);
+                } else {
+                    this.audioButton.setState("on");
+                    Audio.setEnabled(true);
+                }
             }
         }
     }, {

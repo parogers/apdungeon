@@ -261,7 +261,7 @@ class Button
         };
     }
 
-    setState(state)
+    setState(state) 
     {
         if (state && this.states.hasOwnProperty(state)) {
             this.sprite.texture = this.states[state];
@@ -286,7 +286,57 @@ class GameUI
             ["on", "audio-on"],
             ["off", "audio-off"]
         ]);
-        this.audioButton.onclick = () => {
+
+        this.container.addChild(this.bg);
+        this.container.addChild(this.healthUI.sprite);
+        this.container.addChild(this.inventoryUI.sprite);
+        this.container.addChild(this.audioButton.sprite);
+
+        // Add event handlers for clicking on the various UI buttons
+        this.onMouseDown = this.handleMouseDown.bind(this);
+        this.onTouchStart = this.handleTouchStart.bind(this);
+        this.viewElement = Render.getRenderer().view;
+        this.viewElement.addEventListener("mousedown", this.onMouseDown);
+        this.viewElement.addEventListener("touchstart", this.onTouchStart);
+    }
+
+    destroy() {
+        if (this.container) {
+            this.setPlayer(null);
+            this.container.destroy();
+            this.container = null;
+            this.healthUI = null;
+            this.inventoryUI = null;
+            this.bg = null;
+            this.audioButton = null;
+            this.viewElement.removeEventListener(
+                "mousedown", this.onMouseDown);
+            this.viewElement.removeEventListener(
+                "touchstart", this.onTouchStart);
+            this.viewElement = null;
+        }
+    }
+
+    handleTouchStart(event)
+    {
+        for (let touch of event.changedTouches) {
+            this.handlePointerDown(touch.clientX, touch.clientY);
+        }
+    }
+
+    handleMouseDown(event)
+    {
+        this.handlePointerDown(event.clientX, event.clientY);
+    }
+
+    handlePointerDown(x, y)
+    {
+        let viewRect = this.viewElement.getBoundingClientRect();
+        let xp = x - viewRect.left;
+        let yp = y - viewRect.top;
+        let rect = this.audioButton.sprite.getBounds();
+        if (rect.contains(xp, yp))
+        {
             if (this.audioButton.state === "on") {
                 this.audioButton.setState("off");
                 Audio.setEnabled(false);
@@ -294,22 +344,6 @@ class GameUI
                 this.audioButton.setState("on");
                 Audio.setEnabled(true);
             }
-        };
-
-        this.container.addChild(this.bg);
-        this.container.addChild(this.healthUI.sprite);
-        this.container.addChild(this.inventoryUI.sprite);
-        this.container.addChild(this.audioButton.sprite);
-    }
-
-    destroy() {
-        if (this.container) {
-            this.container.destroy();
-            this.container = null;
-            this.healthUI = null;
-            this.inventoryUI = null;
-            this.bg = null;
-            this.audioButton = null;
         }
     }
 

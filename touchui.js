@@ -98,7 +98,7 @@ class TouchAdapter
             }
         }
         event.preventDefault();
-        event.stopPropagation();
+        //event.stopPropagation();
     }
 
     handleTouchMove(event)
@@ -147,7 +147,7 @@ class TouchAdapter
             }
         }
         event.preventDefault();
-        event.stopPropagation();
+        //event.stopPropagation();
     }
 
     handleTouchEnd(event)
@@ -176,7 +176,7 @@ class TouchAdapter
             }
         }
         event.preventDefault();
-        event.stopPropagation();
+        //event.stopPropagation();
     }
 }
 
@@ -216,9 +216,9 @@ class TouchUI
     /* Layout the on-screen controller sprites to cover the given area */
     doLayout(width, height)
     {
-        this.padSprite.x = this.padSprite.width*0.6;
+        this.padSprite.x = this.padSprite.width/2+1;
         this.padSprite.y = height/2+1;
-        this.buttonSprite.x = width-this.buttonSprite.width*0.65;
+        this.buttonSprite.x = width-this.buttonSprite.width/2-1;
         this.buttonSprite.y = height/2+1;
     }
 }

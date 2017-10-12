@@ -113,8 +113,6 @@ function setup()
             console.log("Failed to load image: " + name + " (" + err + ")");
         }
     }
-
-    //stage.removeChild(progress.sprite);
     stage.children = [];
     requestAnimationFrame(gameLoop)
 }
