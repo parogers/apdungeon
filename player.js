@@ -434,7 +434,11 @@ Player.prototype.handleTakeItem = function(item)
     // Check for a sword upgrade
     if (item.isSword() && item.isBetter(this.sword)) {
         if (this.sword === Item.Table.NONE) {
-            this.showMessage("  PRESS A", "TO ATTACK");
+            if (this.controls.hasTouch) {
+                this.showMessage("TAP BUTTON", " TO ATTACK");
+            } else {
+                this.showMessage("  PRESS A", "TO ATTACK");
+            }
         }
         this.upgradeSword(item);
         return true;
@@ -442,7 +446,11 @@ Player.prototype.handleTakeItem = function(item)
     // Check for a bow upgrade
     if (item.isBow() && item.isBetter(this.bow)) {
         if (this.bow === Item.Table.NONE) {
-            this.showMessage("PRESS X", "TO SWAP");
+            if (this.controls.hasTouch) {
+                this.showMessage("SWIPE BUTTON", "    TO SWAP");
+            } else {
+                this.showMessage("PRESS X", "TO SWAP");
+            }
         }
         this.upgradeBow(item);
         return true;
@@ -476,7 +484,7 @@ Player.prototype.showMessage = function()
         this.textSprite.y = -this.spriteChar.texture.height-1;
         this.textSprite.texture = UI.renderText(lines, {blackBG: true})
         this.textSprite.visible = true;
-        this.textTimeout = 2;
+        this.textTimeout = 3;
     } else {
         this.textSprite.visible = false;
     }

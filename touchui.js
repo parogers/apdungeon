@@ -35,6 +35,7 @@ class TouchAdapter
         this.attackTouch = null;
         this.movementTouch = null;
         this.tapTouch = null;
+        this.controls.hasTouch = true;
 
         // Create bound forms of the touch handlers, so we can add and 
         // remove them as needed.
@@ -58,6 +59,7 @@ class TouchAdapter
         this.viewElement.removeEventListener("touchend", this.onTouchEnd);
         this.viewElement.removeEventListener("touchcancel", this.onTouchEnd);
         this.viewElement = null;
+        this.controls.hasTouch = false;
     }
 
     handleTouchStart(event)
@@ -72,7 +74,7 @@ class TouchAdapter
 
         let viewRect = this.viewElement.getBoundingClientRect();
         let padArea = this.touchUI.padSprite.getBounds();
-        let btnArea = this.touchUI.buttonSprite.getBounds();
+        let btnArea = this.touchUI.attackSprite.getBounds();
 
         for (let touch of event.changedTouches) 
         {
@@ -162,6 +164,19 @@ class TouchAdapter
             if (this.attackTouch !== null && 
                 this.attackTouch.id === touch.identifier) 
             {
+                let viewRect = this.viewElement.getBoundingClientRect();
+                let x = touch.clientX - viewRect.left;
+                let y = touch.clientY - viewRect.top;
+                let btnArea = this.touchUI.attackSprite.getBounds();
+
+                // If the player swiped off the attack button, count that
+                // as pressing the swap button.
+                if (!btnArea.contains(x, y)) {
+                    this.controls.swap.press();
+                    setTimeout(() => {
+                        this.controls.swap.release();
+                    }, 10);
+                }
                 this.attackTouch = null;
                 this.controls.primary.release();
             }
@@ -192,13 +207,13 @@ class TouchUI
         this.padSprite = new PIXI.Sprite(
             Utils.getFrame(RES.UI, "controller-pad"));
         this.padSprite.anchor.set(0.5, 0.5);
-        this.buttonSprite = new PIXI.Sprite(
-            Utils.getFrame(RES.UI, "controller-button"));
-        this.buttonSprite.anchor.set(0.5, 0.5);
+        this.attackSprite = new PIXI.Sprite(
+            Utils.getFrame(RES.UI, "controller-attack"));
+        this.attackSprite.anchor.set(0.5, 0.5);
 
         this.container.alpha = 0.25;
         this.container.addChild(this.padSprite);
-        this.container.addChild(this.buttonSprite);
+        this.container.addChild(this.attackSprite);
 
         this.touchAdapter = new TouchAdapter(this, GameControls.getControls());
     }
@@ -217,9 +232,9 @@ class TouchUI
     doLayout(width, height)
     {
         this.padSprite.x = this.padSprite.width/2+1;
-        this.padSprite.y = height/2+1;
-        this.buttonSprite.x = width-this.buttonSprite.width/2-1;
-        this.buttonSprite.y = height/2+1;
+        this.padSprite.y = height/2+4;
+        this.attackSprite.x = width-this.attackSprite.width/2-2;
+        this.attackSprite.y = height/2+1;
     }
 }
 

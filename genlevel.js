@@ -320,6 +320,7 @@ module.exports.generate = function(levelNum)
     // budget. This is gradually reduced working backwards through the 
     // level to make earlier rounds a little easier.
     var budget = (levelNum+1)*6;
+    var firstChest = null;
     while (endx > arenaWidth*1.75)
     {
         var arena = new Arena.Arena(level, arenaWidth, endx);
@@ -384,16 +385,22 @@ module.exports.generate = function(levelNum)
 
             ypos = level.findClearSpace(xpos, ypos);
             if (ypos !== null) {
-                var chest = new Chest(randomTreasures(levelNum));
+                let treasures = randomTreasures(levelNum);
+                let chest = new Chest(treasures);
                 chest.sprite.x = xpos;
                 chest.sprite.y = ypos;
                 level.addThing(chest);
+                firstChest = chest;
             }
         }
         // Skip some space to the previous arena (working backwards)
         endx -= (arenaWidth*randUniform(1, 1.25))|0;
         // Decrease the monster 'budget' so the arenas are slightly easier
         if (budget > 3) budget--;
+    }
+
+    if (levelNum === 0 && firstChest) {
+        firstChest.items = [Item.Table.SMALL_BOW];
     }
 
     // Add random coins scattered throughout the level

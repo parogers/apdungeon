@@ -31,6 +31,9 @@ var Audio = require("./audio");
  * */
 function Chest(items, options)
 {
+    for (let item of items) {
+        if (!item) throw Error("item cannot be null");
+    }
     this.openTexture = Utils.getFrame(RES.MAPTILES, "chest_open");
     this.closedTexture = Utils.getFrame(RES.MAPTILES, "chest_closed");
     this.sprite = new PIXI.Sprite(this.closedTexture);

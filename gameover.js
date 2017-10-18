@@ -155,7 +155,12 @@ GameOverScreen.prototype.update = function(dt)
         break;
 
     case this.SHOW_CONTINUE_TEXT:
-        var txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO CONTINUE"));
+        let msg = "PRESS SPACE TO PLAY AGAIN";
+        if (GameControls.getControls().hasTouch) {
+            msg = "TAP SCREEN TO PLAY AGAIN";
+        }
+
+        let txt = new PIXI.Sprite(UI.renderText(msg));
         txt.anchor.set(0.5, 0.5);
         txt.x = this.screenWidth/2;
         txt.y = this.screenHeight-15;

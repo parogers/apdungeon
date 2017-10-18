@@ -65,6 +65,8 @@ function GameControls()
     // Map of Input instances stored by key code
     this.inputByKey = {};
     this.inputs = [];
+    // Whether the player is driving these controls with a touchscreen
+    this.hasTouch = false;
     for (let arg of DEFAULTS) 
     {
         let name = arg[0];

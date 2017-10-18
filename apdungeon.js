@@ -534,6 +534,31 @@ var Audio = require("./audio");
  * options.ejectX - a particular X direction to eject the items 
  * */
 function Chest(items, options) {
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var item = _step.value;
+
+            if (!item) throw Error("item cannot be null");
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
     this.openTexture = Utils.getFrame(RES.MAPTILES, "chest_open");
     this.closedTexture = Utils.getFrame(RES.MAPTILES, "chest_closed");
     this.sprite = new PIXI.Sprite(this.closedTexture);
@@ -550,13 +575,13 @@ Chest.prototype.update = function (dt) {
         this.timer -= dt;
         if (this.timer <= 0) {
             // Eject the contents from the chest
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator = this.items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var item = _step.value;
+                for (var _iterator2 = this.items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var item = _step2.value;
 
                     var gnd = new GroundItem(item, this.sprite.x + 1 * Utils.randUniform(0, 1), this.sprite.y + 2 * Utils.randUniform(0.1, 1));
                     this.level.addThing(gnd);
@@ -570,16 +595,16 @@ Chest.prototype.update = function (dt) {
                     gnd.velh = -30 * Utils.randUniform(0.9, 1);
                 }
             } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
                     }
                 } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
                     }
                 }
             }
@@ -675,6 +700,8 @@ function GameControls() {
     // Map of Input instances stored by key code
     this.inputByKey = {};
     this.inputs = [];
+    // Whether the player is driving these controls with a touchscreen
+    this.hasTouch = false;
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
@@ -1048,11 +1075,11 @@ GameOverScreen.prototype.update = function (dt) {
             if (this.bg.alpha > 1) {
                 // Background is now fully black. Show the game over text
                 this.bg.alpha = 1;
-                var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "game-over-text"));
-                txt.anchor.set(0.5, 0.5);
-                txt.x = this.screenWidth / 2;
-                txt.y = this.screenHeight / 8;
-                this.stage.addChild(txt);
+                var _txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "game-over-text"));
+                _txt.anchor.set(0.5, 0.5);
+                _txt.x = this.screenWidth / 2;
+                _txt.y = this.screenHeight / 8;
+                this.stage.addChild(_txt);
                 this.state = this.SHOWING_KILLS;
                 this.delay = 0.75;
             }
@@ -1071,13 +1098,13 @@ GameOverScreen.prototype.update = function (dt) {
                 this.stage.addChild(monster);
 
                 // Show the name
-                var msg = stat.name.toUpperCase() + " *" + stat.count;
-                var txt = new PIXI.Sprite(UI.renderText(msg));
-                txt.x = xpos + 8;
-                txt.y = ypos;
-                txt.anchor.set(0, 1);
-                txt.scale.set(0.65);
-                this.stage.addChild(txt);
+                var _msg = stat.name.toUpperCase() + " *" + stat.count;
+                var _txt = new PIXI.Sprite(UI.renderText(_msg));
+                _txt.x = xpos + 8;
+                _txt.y = ypos;
+                _txt.anchor.set(0, 1);
+                _txt.scale.set(0.65);
+                this.stage.addChild(_txt);
 
                 this.col++;
                 if (this.col > 1) {
@@ -1090,11 +1117,16 @@ GameOverScreen.prototype.update = function (dt) {
             break;
 
         case this.SHOW_CONTINUE_TEXT:
-            var txt = new PIXI.Sprite(UI.renderText("PRESS SPACE TO CONTINUE"));
-            txt.anchor.set(0.5, 0.5);
-            txt.x = this.screenWidth / 2;
-            txt.y = this.screenHeight - 15;
-            this.stage.addChild(txt);
+            var _msg = "PRESS SPACE TO PLAY AGAIN";
+            if (GameControls.getControls().hasTouch) {
+                _msg = "TAP SCREEN TO PLAY AGAIN";
+            }
+
+            var _txt = new PIXI.Sprite(UI.renderText(_msg));
+            _txt.anchor.set(0.5, 0.5);
+            _txt.x = this.screenWidth / 2;
+            _txt.y = this.screenHeight - 15;
+            this.stage.addChild(_txt);
             this.state = this.WAITING;
             break;
 
@@ -1652,6 +1684,7 @@ module.exports.generate = function (levelNum) {
     // budget. This is gradually reduced working backwards through the 
     // level to make earlier rounds a little easier.
     var budget = (levelNum + 1) * 6;
+    var firstChest = null;
     while (endx > arenaWidth * 1.75) {
         var arena = new Arena.Arena(level, arenaWidth, endx);
         level.addArena(arena);
@@ -1750,16 +1783,22 @@ module.exports.generate = function (levelNum) {
 
             ypos = level.findClearSpace(xpos, ypos);
             if (ypos !== null) {
-                var chest = new Chest(randomTreasures(levelNum));
-                chest.sprite.x = xpos;
-                chest.sprite.y = ypos;
-                level.addThing(chest);
+                var treasures = randomTreasures(levelNum);
+                var _chest = new Chest(treasures);
+                _chest.sprite.x = xpos;
+                _chest.sprite.y = ypos;
+                level.addThing(_chest);
+                firstChest = _chest;
             }
         }
         // Skip some space to the previous arena (working backwards)
         endx -= arenaWidth * randUniform(1, 1.25) | 0;
         // Decrease the monster 'budget' so the arenas are slightly easier
         if (budget > 3) budget--;
+    }
+
+    if (levelNum === 0 && firstChest) {
+        firstChest.items = [Item.Table.SMALL_BOW];
     }
 
     // Add random coins scattered throughout the level
@@ -3793,7 +3832,11 @@ Player.prototype.handleTakeItem = function (item) {
     // Check for a sword upgrade
     if (item.isSword() && item.isBetter(this.sword)) {
         if (this.sword === Item.Table.NONE) {
-            this.showMessage("  PRESS A", "TO ATTACK");
+            if (this.controls.hasTouch) {
+                this.showMessage("TAP BUTTON", " TO ATTACK");
+            } else {
+                this.showMessage("  PRESS A", "TO ATTACK");
+            }
         }
         this.upgradeSword(item);
         return true;
@@ -3801,7 +3844,11 @@ Player.prototype.handleTakeItem = function (item) {
     // Check for a bow upgrade
     if (item.isBow() && item.isBetter(this.bow)) {
         if (this.bow === Item.Table.NONE) {
-            this.showMessage("PRESS X", "TO SWAP");
+            if (this.controls.hasTouch) {
+                this.showMessage("SWIPE BUTTON", "    TO SWAP");
+            } else {
+                this.showMessage("PRESS X", "TO SWAP");
+            }
         }
         this.upgradeBow(item);
         return true;
@@ -3834,7 +3881,7 @@ Player.prototype.showMessage = function () {
         this.textSprite.y = -this.spriteChar.texture.height - 1;
         this.textSprite.texture = UI.renderText(lines, { blackBG: true });
         this.textSprite.visible = true;
-        this.textTimeout = 2;
+        this.textTimeout = 3;
     } else {
         this.textSprite.visible = false;
     }
@@ -4964,6 +5011,7 @@ var TouchAdapter = function () {
         this.attackTouch = null;
         this.movementTouch = null;
         this.tapTouch = null;
+        this.controls.hasTouch = true;
 
         // Create bound forms of the touch handlers, so we can add and 
         // remove them as needed.
@@ -4988,6 +5036,7 @@ var TouchAdapter = function () {
             this.viewElement.removeEventListener("touchend", this.onTouchEnd);
             this.viewElement.removeEventListener("touchcancel", this.onTouchEnd);
             this.viewElement = null;
+            this.controls.hasTouch = false;
         }
     }, {
         key: "handleTouchStart",
@@ -5004,7 +5053,7 @@ var TouchAdapter = function () {
 
             var viewRect = this.viewElement.getBoundingClientRect();
             var padArea = this.touchUI.padSprite.getBounds();
-            var btnArea = this.touchUI.buttonSprite.getBounds();
+            var btnArea = this.touchUI.attackSprite.getBounds();
 
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
@@ -5121,6 +5170,8 @@ var TouchAdapter = function () {
     }, {
         key: "handleTouchEnd",
         value: function handleTouchEnd(event) {
+            var _this = this;
+
             var _iteratorNormalCompletion3 = true;
             var _didIteratorError3 = false;
             var _iteratorError3 = undefined;
@@ -5135,6 +5186,19 @@ var TouchAdapter = function () {
                         this.controls.space.release();
                     }*/
                     if (this.attackTouch !== null && this.attackTouch.id === touch.identifier) {
+                        var viewRect = this.viewElement.getBoundingClientRect();
+                        var x = touch.clientX - viewRect.left;
+                        var y = touch.clientY - viewRect.top;
+                        var btnArea = this.touchUI.attackSprite.getBounds();
+
+                        // If the player swiped off the attack button, count that
+                        // as pressing the swap button.
+                        if (!btnArea.contains(x, y)) {
+                            this.controls.swap.press();
+                            setTimeout(function () {
+                                _this.controls.swap.release();
+                            }, 10);
+                        }
                         this.attackTouch = null;
                         this.controls.primary.release();
                     }
@@ -5180,12 +5244,12 @@ var TouchUI = function () {
         this.container = new PIXI.Container();
         this.padSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "controller-pad"));
         this.padSprite.anchor.set(0.5, 0.5);
-        this.buttonSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "controller-button"));
-        this.buttonSprite.anchor.set(0.5, 0.5);
+        this.attackSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "controller-attack"));
+        this.attackSprite.anchor.set(0.5, 0.5);
 
         this.container.alpha = 0.25;
         this.container.addChild(this.padSprite);
-        this.container.addChild(this.buttonSprite);
+        this.container.addChild(this.attackSprite);
 
         this.touchAdapter = new TouchAdapter(this, GameControls.getControls());
     }
@@ -5207,9 +5271,9 @@ var TouchUI = function () {
         key: "doLayout",
         value: function doLayout(width, height) {
             this.padSprite.x = this.padSprite.width / 2 + 1;
-            this.padSprite.y = height / 2 + 1;
-            this.buttonSprite.x = width - this.buttonSprite.width / 2 - 1;
-            this.buttonSprite.y = height / 2 + 1;
+            this.padSprite.y = height / 2 + 4;
+            this.attackSprite.x = width - this.attackSprite.width / 2 - 2;
+            this.attackSprite.y = height / 2 + 1;
         }
     }]);
 

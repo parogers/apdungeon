@@ -351,7 +351,8 @@ frames += gen_grid((1,38), (3, 4), desc)
 frames += gen_grid((63, 1), (10, 9), "audio-on")
 frames += gen_grid((74, 1), (10, 9), "audio-off")
 
-frames += gen_grid((81, 13), (17, 17), "controller-button")
+frames += gen_grid((67, 13), (15, 15), "controller-swap")
+frames += gen_grid((83, 13), (15, 15), "controller-attack")
 frames += gen_grid((99, 13), (27, 27), "controller-pad")
 
 desc = [
