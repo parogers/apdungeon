@@ -2538,9 +2538,9 @@ Item.Table = {
     COIN: new Item("coin", Item.OTHER, 0),
     SMALL_HEALTH: new Item("small_health", Item.HEALTH, 0),
     LARGE_HEALTH: new Item("large_health", Item.HEALTH, 1),
-    SMALL_BOW: new Item("bow1", Item.BOW, 0),
-    LARGE_BOW: new Item("bow2", Item.BOW, 1),
-    NO_BOW: new Item("bow3", Item.BOW, 2),
+    SMALL_BOW: new Item("bow1", Item.BOW, 1),
+    LARGE_BOW: new Item("bow2", Item.BOW, 2),
+    NO_BOW: new Item("bow3", Item.BOW, 3),
     ARROW: new Item("arrow1", Item.OTHER, 0),
     NO_SWORD: new Item("sword4", Item.SWORD, 0),
     SMALL_SWORD: new Item("sword1", Item.SWORD, 1),
@@ -3419,6 +3419,7 @@ module.exports = NPC;
  * See LICENSE.txt for the full text of the license.
  */
 
+var UI = require("./ui");
 var RES = require("./res");
 var Utils = require("./utils");
 var Item = require("./item");
@@ -3480,6 +3481,14 @@ function Player(controls) {
     this.waterSprite.y = -1.5;
     this.sprite.addChild(this.waterSprite);
 
+    // Sprite for showing messages to the player
+    this.textSprite = new PIXI.Sprite(UI.renderText("?"));
+    this.textSprite.scale.set(3 / 5.);
+    this.textSprite.anchor.set(0.5, 1);
+    this.textSprite.visible = false;
+    this.sprite.addChild(this.textSprite);
+    this.textTimeout = 0;
+
     // Minimum amount of time after taking damage, until the player can be
     // damaged again.
     this.damageCooldown = 1;
@@ -3512,6 +3521,7 @@ function Player(controls) {
 /* Have the player face the given direction */
 Player.prototype.faceDirection = function (dirx) {
     this.sprite.scale.x = Math.abs(this.sprite.scale.x) * Math.sign(dirx);
+    this.textSprite.scale.x = Math.abs(this.textSprite.scale.x) * Math.sign(dirx);
 };
 
 Player.prototype.getFacing = function () {
@@ -3523,6 +3533,13 @@ Player.prototype.update = function (dt) {
     var diry = 0;
 
     if (this.dead) return;
+
+    if (this.textTimeout > 0) {
+        this.textTimeout -= dt;
+        if (this.textTimeout <= 0) {
+            this.showMessage();
+        }
+    }
 
     // Handle dying state animation
     if (this.dying) {
@@ -3775,11 +3792,17 @@ Player.prototype.handleTakeItem = function (item) {
     }
     // Check for a sword upgrade
     if (item.isSword() && item.isBetter(this.sword)) {
+        if (this.sword === Item.Table.NONE) {
+            this.showMessage("  PRESS A", "TO ATTACK");
+        }
         this.upgradeSword(item);
         return true;
     }
     // Check for a bow upgrade
     if (item.isBow() && item.isBetter(this.bow)) {
+        if (this.bow === Item.Table.NONE) {
+            this.showMessage("PRESS X", "TO SWAP");
+        }
         this.upgradeBow(item);
         return true;
     }
@@ -3805,9 +3828,21 @@ Player.prototype.handleTakeItem = function (item) {
     return true;
 };
 
+Player.prototype.showMessage = function () {
+    var lines = Array.slice(arguments);
+    if (lines.length > 0) {
+        this.textSprite.y = -this.spriteChar.texture.height - 1;
+        this.textSprite.texture = UI.renderText(lines, { blackBG: true });
+        this.textSprite.visible = true;
+        this.textTimeout = 2;
+    } else {
+        this.textSprite.visible = false;
+    }
+};
+
 module.exports = Player;
 
-},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./utils":31,"./weaponslot":32}],21:[function(require,module,exports){
+},{"./audio":2,"./item":15,"./res":23,"./thing":27,"./ui":30,"./utils":31,"./weaponslot":32}],21:[function(require,module,exports){
 'use strict';
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
