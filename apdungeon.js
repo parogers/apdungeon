@@ -663,6 +663,8 @@ var ARROW_RIGHT = 39;
 var ARROW_DOWN = 40;
 var TEST_KEY = 75;
 
+var DOUBLE_PRESS_TIME = 0.3;
+
 var DEFAULTS = [["up", ARROW_UP], ["down", ARROW_DOWN], ["left", ARROW_LEFT], ["right", ARROW_RIGHT], ["primary", [PRIMARY, PRIMARY_ALT]], ["swap", SWAP], ["space", SPACE]];
 
 var controls = null;
@@ -677,6 +679,7 @@ var Input = function () {
         this.held = false;
         this.pressed = false;
         this.released = false;
+        this.doublePressed = false;
     }
 
     _createClass(Input, [{
@@ -689,7 +692,7 @@ var Input = function () {
         key: "release",
         value: function release(set) {
             this.released = !!this.held;
-            this.held = set === undefined ? false : set;
+            this.held = false;
         }
     }]);
 
@@ -700,6 +703,10 @@ function GameControls() {
     // Map of Input instances stored by key code
     this.inputByKey = {};
     this.inputs = [];
+    this.time = 0;
+    // Keep track of the last input pressed, so we can detect double-pressing
+    this.lastInputPressed = null;
+    this.lastInputPressedTime = 0;
     // Whether the player is driving these controls with a touchscreen
     this.hasTouch = false;
     var _iteratorNormalCompletion = true;
@@ -769,7 +776,8 @@ GameControls.prototype.getY = function () {
 };
 
 /* This should be called after the game state is updated */
-GameControls.prototype.update = function () {
+GameControls.prototype.update = function (dt) {
+    this.time += dt;
     var _iteratorNormalCompletion3 = true;
     var _didIteratorError3 = false;
     var _iteratorError3 = undefined;
@@ -780,6 +788,7 @@ GameControls.prototype.update = function () {
 
             input.pressed = false;
             input.released = false;
+            input.doublePressed = false;
         }
     } catch (err) {
         _didIteratorError3 = true;
@@ -802,7 +811,14 @@ GameControls.prototype.attachKeyboardEvents = function () {
 
     window.addEventListener("keydown", function (event) {
         var input = _this.inputByKey[event.keyCode];
-        if (input) {
+        if (input && !input.held) {
+            // Handle double-pressing the input
+            if (_this.lastInputPressed === input && _this.time - _this.lastInputPressedTime < DOUBLE_PRESS_TIME) {
+                input.doublePressed = true;
+            }
+            _this.lastInputPressedTime = _this.time;
+            _this.lastInputPressed = input;
+
             input.press();
             event.stopPropagation();
             event.preventDefault();
@@ -821,7 +837,6 @@ GameControls.prototype.attachKeyboardEvents = function () {
 
 GameControls.prototype.attach = function () {
     this.attachKeyboardEvents();
-    //this.attachTouchEvents();
 };
 
 GameControls.prototype.configureButtons = function () {};
@@ -889,8 +904,8 @@ module.exports.configure = function (view) {
     controls.attach();
 };
 
-module.exports.update = function () {
-    controls.update();
+module.exports.update = function (dt) {
+    controls.update(dt);
 };
 
 module.exports.getControls = function () {
@@ -3264,8 +3279,8 @@ var lastTime = null;
 function gameLoop() {
     var now = new Date().getTime() / 1000.0;
     var dt = 0;
-    if (lastTime) {
-        var dt = Math.min(1.0 / 30, now - lastTime);
+    if (lastTime !== null) {
+        dt = Math.min(1.0 / 30, now - lastTime);
         //dt /= 4;
     }
     lastTime = now;
@@ -3278,7 +3293,7 @@ function gameLoop() {
     }
 
     gamestate.update(dt);
-    GameControls.update();
+    GameControls.update(dt);
     gamestate.render();
     requestAnimationFrame(gameLoop);
 }
@@ -3499,6 +3514,7 @@ function Player(controls) {
     this.dying = false;
     // Actually dead
     this.dead = false;
+    this.lungeTimer = 0;
     // The number of kills (stored by monster name). Also stores the 
     // image of the monster (for displaying stats later)
     //     {count: ZZZ, img: ZZZ}
@@ -3622,11 +3638,23 @@ Player.prototype.update = function (dt) {
         this.knockedTimer -= dt;
     }
 
-    if (dirx) {
-        this.faceDirection(dirx);
-        this.velx = dirx * this.maxSpeed;
+    if (this.lungeTimer > 0) {
+        this.lungeTimer -= dt;
     } else {
-        this.velx *= 0.75;
+        if (dirx) {
+            this.faceDirection(dirx);
+            this.velx = dirx * this.maxSpeed;
+
+            /*if (this.controls.left.doublePressed || 
+                this.controls.right.doublePressed)
+            {
+                console.log("LUNGE!");
+                this.velx *= 2;
+                this.lungeTimer = 1;
+            }*/
+        } else {
+            this.velx *= 0.75;
+        }
     }
 
     if (diry) {
@@ -4014,8 +4042,6 @@ module.exports.configure = function (div, aspect) {
         //clearBeforeRender: true
     });
     renderer.plugins.interaction.destroy();
-
-    renderer.view.className = "canvas";
 
     div.innerHTML = "";
     div.appendChild(renderer.view);

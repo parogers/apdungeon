@@ -59,6 +59,7 @@ function Player(controls)
     this.dying = false;
     // Actually dead
     this.dead = false;
+    this.lungeTimer = 0;
     // The number of kills (stored by monster name). Also stores the 
     // image of the monster (for displaying stats later)
     //     {count: ZZZ, img: ZZZ}
@@ -186,12 +187,24 @@ Player.prototype.update = function(dt)
         this.knockedTimer -= dt;
     }
 
-    if (dirx) {
-        this.faceDirection(dirx);
-        this.velx = dirx * this.maxSpeed;
+    if (this.lungeTimer > 0) {
+        this.lungeTimer -= dt;
     } else {
-        this.velx *= 0.75;
-    } 
+        if (dirx) {
+            this.faceDirection(dirx);
+            this.velx = dirx * this.maxSpeed;
+
+            /*if (this.controls.left.doublePressed || 
+                this.controls.right.doublePressed)
+            {
+                console.log("LUNGE!");
+                this.velx *= 2;
+                this.lungeTimer = 1;
+            }*/
+        } else {
+            this.velx *= 0.75;
+        }
+    }
 
     if (diry) {
         this.vely = diry * this.maxSpeed;

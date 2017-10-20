@@ -45,8 +45,8 @@ function gameLoop()
 {
     var now = (new Date()).getTime()/1000.0;
     var dt = 0;
-    if (lastTime) {
-        var dt = Math.min(1.0/30, now - lastTime);
+    if (lastTime !== null) {
+        dt = Math.min(1.0/30, now - lastTime);
         //dt /= 4;
     }
     lastTime = now;
@@ -59,7 +59,7 @@ function gameLoop()
     }
 
     gamestate.update(dt);
-    GameControls.update();
+    GameControls.update(dt);
     gamestate.render();
     requestAnimationFrame(gameLoop)
 }

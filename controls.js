@@ -27,6 +27,8 @@ var ARROW_RIGHT = 39;
 var ARROW_DOWN = 40;
 var TEST_KEY = 75;
 
+var DOUBLE_PRESS_TIME = 0.3;
+
 var DEFAULTS = [
     ["up", ARROW_UP],
     ["down", ARROW_DOWN],
@@ -47,6 +49,7 @@ class Input
         this.held = false;
         this.pressed = false;
         this.released = false;
+        this.doublePressed = false;
     }
 
     press(set) {
@@ -56,7 +59,7 @@ class Input
 
     release(set) {
         this.released = !!this.held;
-        this.held = (set === undefined ? false : set);
+        this.held = false;
     }
 }
 
@@ -65,6 +68,10 @@ function GameControls()
     // Map of Input instances stored by key code
     this.inputByKey = {};
     this.inputs = [];
+    this.time = 0;
+    // Keep track of the last input pressed, so we can detect double-pressing
+    this.lastInputPressed = null;
+    this.lastInputPressedTime = 0;
     // Whether the player is driving these controls with a touchscreen
     this.hasTouch = false;
     for (let arg of DEFAULTS) 
@@ -95,11 +102,13 @@ GameControls.prototype.getY = function()
 }
 
 /* This should be called after the game state is updated */
-GameControls.prototype.update = function()
+GameControls.prototype.update = function(dt)
 {
+    this.time += dt;
     for (let input of this.inputs) {
         input.pressed = false;
         input.released = false;
+        input.doublePressed = false;
     }
 }
 
@@ -107,7 +116,17 @@ GameControls.prototype.attachKeyboardEvents = function()
 {
     window.addEventListener("keydown", (event) => {
         var input = this.inputByKey[event.keyCode];
-        if (input) {
+        if (input && !input.held) 
+        {
+            // Handle double-pressing the input
+            if (this.lastInputPressed === input && 
+                this.time - this.lastInputPressedTime < DOUBLE_PRESS_TIME) 
+            {
+                input.doublePressed = true;
+            }
+            this.lastInputPressedTime = this.time;
+            this.lastInputPressed = input;
+
             input.press();
             event.stopPropagation();
             event.preventDefault();
@@ -127,7 +146,6 @@ GameControls.prototype.attachKeyboardEvents = function()
 GameControls.prototype.attach = function()
 {
     this.attachKeyboardEvents();
-    //this.attachTouchEvents();
 }
 
 GameControls.prototype.configureButtons = function()
@@ -171,9 +189,9 @@ module.exports.configure = function(view)
     controls.attach();
 }
 
-module.exports.update = function()
+module.exports.update = function(dt)
 {
-    controls.update();
+    controls.update(dt);
 }
 
 module.exports.getControls = function()

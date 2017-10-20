@@ -61,8 +61,6 @@ module.exports.configure = function(div, aspect)
     });
     renderer.plugins.interaction.destroy();
 
-    renderer.view.className = "canvas";
-
     div.innerHTML = "";
     div.appendChild(renderer.view);
     container = div;

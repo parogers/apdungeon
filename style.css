@@ -1,4 +1,4 @@
-.canvas {
+canvas {
     margin: 0;
     padding: 0;
     margin-left: auto;
@@ -10,10 +10,6 @@
     width: 600px;
     height: 400px;
     margin: 0;
-}
-
-#control_area {
-    clear: both;
 }
 
 body {
