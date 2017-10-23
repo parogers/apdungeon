@@ -3904,7 +3904,7 @@ Player.prototype.handleTakeItem = function (item) {
 };
 
 Player.prototype.showMessage = function () {
-    var lines = Array.slice(arguments);
+    var lines = Array.prototype.slice.call(arguments);
     if (lines.length > 0) {
         this.textSprite.y = -this.spriteChar.texture.height - 1;
         this.textSprite.texture = UI.renderText(lines, { blackBG: true });
@@ -4865,7 +4865,7 @@ function TitleScreen() {
     txt.y = 35;
     this.stage.addChild(txt);
 
-    txt = new PIXI.Sprite(UI.renderText("PROGRAMMING BY PETER ROGERS."));
+    txt = new PIXI.Sprite(UI.renderText("PROGRAMMING BY PETER ROGERS. ARTWORK IS PUBLIC DOMAIN."));
     txt.scale.set(0.55);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;
@@ -4873,7 +4873,7 @@ function TitleScreen() {
     txt.y = 70;
     this.stage.addChild(txt);
 
-    txt = new PIXI.Sprite(UI.renderText("MUSIC IS (C) PIERRA BONDOERFFER. ARTWORK IS PUBLIC DOMAIN."));
+    txt = new PIXI.Sprite(UI.renderText("MUSIC \"A JOURNEY AWAITS\" BY PIERRA BONDOERFFER @PBONDOER"));
     txt.scale.set(0.55);
     txt.anchor.set(0.5, 0.5);
     txt.tint = 0xFF0000;

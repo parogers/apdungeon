@@ -492,7 +492,7 @@ Player.prototype.handleTakeItem = function(item)
 
 Player.prototype.showMessage = function()
 {
-    var lines = Array.slice(arguments);
+    var lines = Array.prototype.slice.call(arguments);
     if (lines.length > 0) {
         this.textSprite.y = -this.spriteChar.texture.height-1;
         this.textSprite.texture = UI.renderText(lines, {blackBG: true})
