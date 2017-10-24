@@ -21,22 +21,26 @@ The demo is a side scrolling action game with fantasy elements. The art
 style is "stripped down 8-bit" mostly because it was easy to knock something 
 together without worrying too much about design.
 
-Key features:
-
-* Randomly generated level
-* Area by area level progression
-* Difficulty progression
-* Randomly generated loot
-
 Features:
 
-* Music
+* Randomly generated levels
+* Area by area level progression
+* Difficulty progression
+* Music (single track)
 * Sound effects
-* Player character (selectable portraits)
-* Three weapon types: sword, bow, staff
-* Enemies: snake, slime, goblin, eye, skeleton warrior, skeleton archer
-* Score
-* Basic inventory management
+* Two weapon types: sword, bow
+* Enemies: snake, scorpion, rate, goblin, skeleton warrior, ghost
+* Sword upgrades
+* Armour upgrades
+* Basic inventory
+* Keyboard controls
+* Touch controls (on-screen controller for mobile)
+
+Screens:
+
+* Title (showing credits etc)
+* Gameplay (level-by-level play)
+* Gameover (summary of kills)
 
 Credits
 -------

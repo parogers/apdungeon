@@ -159,7 +159,7 @@ module.exports.start = function(elementName)
         .add(RES.WEAPONS)
         .add(RES.GROUND_ITEMS)
         .add(RES.UI)
-        .add(RES.DRAGON)
+        //.add(RES.DRAGON)
     //.add({name: "hit", url: "media/hit.wav"})
         .on("progress", progresscb)
         .load(graphicsLoaded);

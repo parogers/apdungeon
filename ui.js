@@ -22,6 +22,7 @@ var Utils = require("./utils");
 var Render = require("./render");
 var Item = require("./item");
 var Audio = require("./audio");
+var GameControls = require("./controls");
 
 function renderText(lines, options)
 {
@@ -309,10 +310,13 @@ class GameUI
             this.inventoryUI = null;
             this.bg = null;
             this.audioButton = null;
-            this.viewElement.removeEventListener(
-                "mousedown", this.onMouseDown);
-            this.viewElement.removeEventListener(
-                "touchstart", this.onTouchStart);
+            if (GameControls.getControls().hasTouch) {
+                this.viewElement.removeEventListener(
+                    "touchstart", this.onTouchStart);
+            } else {
+                this.viewElement.removeEventListener(
+                    "mousedown", this.onMouseDown);
+            }
             this.viewElement = null;
         }
     }

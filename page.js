@@ -15,8 +15,8 @@ function onload()
 function resize()
 {
     var div = document.getElementById("canvas_area");
-    var width = window.innerWidth-5;
-    var height = window.innerHeight-5;
+    var width = window.innerWidth;
+    var height = window.innerHeight;
 
     var credits = document.getElementById("credits");
     var rect = credits.getBoundingClientRect();

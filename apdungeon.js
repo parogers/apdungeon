@@ -3361,7 +3361,8 @@ module.exports.start = function (elementName) {
     // without checking in with the server first.
     var now = new Date().getTime();
     PIXI.loader.defaultQueryString = "nocache=" + now;
-    PIXI.loader.add(RES.MALE_MELEE).add(RES.FEMALE_MELEE).add(RES.NPC_TILESET).add(RES.MAPTILES).add(RES.ENEMIES).add(RES.WEAPONS).add(RES.GROUND_ITEMS).add(RES.UI).add(RES.DRAGON)
+    PIXI.loader.add(RES.MALE_MELEE).add(RES.FEMALE_MELEE).add(RES.NPC_TILESET).add(RES.MAPTILES).add(RES.ENEMIES).add(RES.WEAPONS).add(RES.GROUND_ITEMS).add(RES.UI)
+    //.add(RES.DRAGON)
     //.add({name: "hit", url: "media/hit.wav"})
     .on("progress", progresscb).load(graphicsLoaded);
 };
@@ -4105,7 +4106,7 @@ module.exports = {
     WEAPONS: "media/rogue-like-8x8/Weapons.json",
     GROUND_ITEMS: "media/rogue-like-8x8/GroundItems.json",
     UI: "media/rogue-like-8x8/UI.json",
-    DRAGON: "media/rogue-like-8x8/Dragon.json",
+    //DRAGON: "media/rogue-like-8x8/Dragon.json",
 
     GAME_MUSIC: "media/music/A Journey Awaits2-lowfi.ogg",
     ATTACK_SWORD_SND: "media/effects/attack_sword2.wav",
@@ -5339,6 +5340,7 @@ var Utils = require("./utils");
 var Render = require("./render");
 var Item = require("./item");
 var Audio = require("./audio");
+var GameControls = require("./controls");
 
 function renderText(lines, options) {
     if (!(lines instanceof Array)) lines = [lines];
@@ -5649,8 +5651,11 @@ var GameUI = function () {
                 this.inventoryUI = null;
                 this.bg = null;
                 this.audioButton = null;
-                this.viewElement.removeEventListener("mousedown", this.onMouseDown);
-                this.viewElement.removeEventListener("touchstart", this.onTouchStart);
+                if (GameControls.getControls().hasTouch) {
+                    this.viewElement.removeEventListener("touchstart", this.onTouchStart);
+                } else {
+                    this.viewElement.removeEventListener("mousedown", this.onMouseDown);
+                }
                 this.viewElement = null;
             }
         }
@@ -5742,7 +5747,7 @@ module.exports = {
     GameUI: GameUI
 };
 
-},{"./audio":2,"./item":15,"./render":22,"./res":23,"./utils":31}],31:[function(require,module,exports){
+},{"./audio":2,"./controls":5,"./item":15,"./render":22,"./res":23,"./utils":31}],31:[function(require,module,exports){
 "use strict";
 
 /* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
