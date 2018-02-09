@@ -3261,6 +3261,8 @@ var GameState = require("./gamestate");
 var Utils = require("./utils");
 //require("./contrib/sound.js");
 
+//var TEST = require("pixi.js");
+
 var gamestate = null;
 var stage = null;
 var progress = null;

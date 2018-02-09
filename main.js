@@ -24,7 +24,6 @@ var GameControls = require("./controls");
 var LevelScreen = require("./levelscreen");
 var GameState = require("./gamestate");
 var Utils = require("./utils");
-//require("./contrib/sound.js");
 
 var gamestate = null;
 var stage = null;
