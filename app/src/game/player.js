@@ -21,7 +21,7 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
@@ -66,7 +66,7 @@ export function Player(controls)
     this.kills = {};
 
     // Define the hitbox
-    this.hitbox = new Thing.Hitbox(0, -4, 6, 6);
+    this.hitbox = new Hitbox(0, -4, 6, 6);
 
     this.setCharFrames(RES.FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 

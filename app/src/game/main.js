@@ -93,7 +93,7 @@ function graphicsLoaded()
         RES.POWERUP3_SND,
         RES.POWERUP4_SND,
         RES.CHEST_SND,
-        RES.GAME_MUSIC
+        //RES.GAME_MUSIC
     ]);
 }
 

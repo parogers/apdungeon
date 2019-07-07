@@ -19,13 +19,13 @@
 
 import { renderText } from './ui';
 import { RES } from './res';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Utils } from './utils';
 
 export function NPC(img)
 {
     // Position of the hit box, relative to the sprite position
-    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    this.hitbox = new Hitbox(0, 0, 5, 5);
     var texture = Utils.getFrame(RES.NPC_TILESET, img || "npc1_south_1");
     this.sprite = new PIXI.Container();
     this.npcSprite = new PIXI.Sprite(texture);

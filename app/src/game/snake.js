@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -55,7 +55,7 @@ export function Snake(state)
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || SNAKE_ATTACKING;
-    this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
+    this.hitbox = new Hitbox(0, -1, 6, 6);
 }
 
 Snake.FRAMES = ["snake_south_1", "snake_south_2"];

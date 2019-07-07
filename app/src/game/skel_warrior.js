@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -63,7 +63,7 @@ export function SkelWarrior(state)
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || SKEL_WARRIOR_START_APPROACH;
-    this.hitbox = new Thing.Hitbox(0, -1, 6, 8);
+    this.hitbox = new Hitbox(0, -1, 6, 8);
 }
 
 SkelWarrior.FRAMES = ["skeleton_warrior_south_2", "skeleton_warrior_south_3"];

@@ -34,22 +34,22 @@ Audio.playSound = function(res, vol)
 Audio.setEnabled = function(b)
 {
     enabled = b;
-    if (enabled) Audio.startMusic();
-    else Audio.stopMusic();
+    //if (enabled) Audio.startMusic();
+    //else Audio.stopMusic();
 }
 
 Audio.startMusic = function()
 {
-    var snd = sounds[RES.GAME_MUSIC];
+    /*var snd = sounds[RES.GAME_MUSIC];
     snd.loop = true;
     snd.volume = 0.5;
     // Start playing music (fade in). We call restart, which stops the
     // previously play (if any), rewinds and starts again.
     snd.restart();
-    snd.fadeIn(1);
+    snd.fadeIn(1);*/
 }
 
 Audio.stopMusic = function()
 {
-    sounds[RES.GAME_MUSIC].pause();
+    //sounds[RES.GAME_MUSIC].pause();
 }

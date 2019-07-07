@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 
 var ITEM_GRAVITY = 120;
 
@@ -45,7 +45,7 @@ export function GroundItem(item, x, y)
     this.velz = 0;
     this.velh = 0;
     this.bouncy = 0.5;
-    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    this.hitbox = new Hitbox(0, 0, 5, 5);
 }
 
 GroundItem.prototype.update = function(dt)

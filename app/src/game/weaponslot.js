@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Audio } from './audio';
 
 var ARROW_FLIGHT = 0;
@@ -44,7 +44,7 @@ export function SwordWeaponSlot(player)
     this.attackCooldown = 0;
     this.weaponReach = 3.25;
     this.player = player;
-    this.hitbox = new Thing.Hitbox(0, -4, 10, 6);
+    this.hitbox = new Hitbox(0, -4, 10, 6);
     // Which weapon texture is currently displayed
     this.textureName = null;
     this.setTexture("sword2");
@@ -187,7 +187,7 @@ export function Arrow(owner, x, y, velx, vely, height)
     this.height = height;
     this.state = ARROW_FLIGHT;
     this.timer = 0;
-    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    this.hitbox = new Hitbox(0, 0, 5, 5);
 }
 
 Arrow.prototype.update = function(dt)

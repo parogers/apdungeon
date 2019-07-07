@@ -26,7 +26,7 @@ import { Utils } from "./utils";
 export function Thing()
 {
     // Position of the hit box, relative to the sprite position
-    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    this.hitbox = new Hitbox(0, 0, 5, 5);
     var texture = Utils.getFrame(RES.GROUND_ITEMS, "coin");
     this.sprite = new PIXI.Sprite(texture);
     this.sprite.anchor.set(0,0);
@@ -51,7 +51,7 @@ Thing.prototype.handlePlayerCollision = function(player)
 // A hitbox that defines an area of a thing to test collisions against. Note
 // the (x, y) point is relative to the thing's sprite position, and (w, h)
 // defines a rectangle that is centered on that position.
-Thing.Hitbox = function(x, y, w, h)
+export function Hitbox(x, y, w, h)
 {
     this.x = x;
     this.y = y;

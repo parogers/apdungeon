@@ -19,7 +19,7 @@
 
 import { RES } from "./res";
 import { Utils } from "./utils";
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { GameControls } from './controls';
 import { Audio } from './audio';
 
@@ -30,7 +30,7 @@ export function Gate()
         Utils.getFrame(RES.MAPTILES, "gate_wall_2"),
         Utils.getFrame(RES.MAPTILES, "gate_wall_3")
     ];
-    this.hitbox = new Thing.Hitbox(0, 0, 5, 5);
+    this.hitbox = new Hitbox(0, 0, 5, 5);
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.anchor.set(0,0);
     this.frameNum = 0;

@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -80,7 +80,7 @@ export function Goblin(state)
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GOBLIN_APPROACH;
-    this.hitbox = new Thing.Hitbox(0, -1, 6, 6);
+    this.hitbox = new Hitbox(0, -1, 6, 6);
 }
 
 Goblin.FRAMES = ["goblin_south_2", "goblin_south_3"];

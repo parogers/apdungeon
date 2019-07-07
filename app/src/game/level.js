@@ -20,7 +20,6 @@
 import { RES } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
-import { LevelGenerator } from './genlevel';
 import { GroundItem } from './grounditem';
 
 /**********/

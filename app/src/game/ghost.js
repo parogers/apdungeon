@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -51,7 +51,7 @@ export function Ghost(state)
     this.knocked = 0;
     this.knockedTimer = 0;
     this.state = state || GHOST_ATTACKING;
-    this.hitbox = new Thing.Hitbox(0, 0, 8, 4);
+    this.hitbox = new Hitbox(0, 0, 8, 4);
 }
 
 Ghost.FRAMES = ["ghost_south_1", "ghost_south_2"];
