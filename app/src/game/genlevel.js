@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Chunk, CompoundBackground, TiledBackground } from './bg';
+import { Tileset, Chunk, CompoundBackground, TiledBackground } from './bg';
 import { Level } from './level';
 import { Door } from './door';
 import { Gate } from './gate';
@@ -473,11 +473,9 @@ export function generateLevelOLD(levelNum)
 }
 */
 
-const LEVEL_ROWS = 5;
-
 function generateStraightChunk(cols, narrow)
 {
-    let grid = Utils.createGrid(LEVEL_ROWS, cols);
+    let grid = Utils.createGrid(Level.ROW_DEPTH, cols);
     for (let col = 0; col < grid.cols; col++)
     {
         for (let row = 0; row < narrow; row++) {
@@ -496,13 +494,8 @@ function generateStraightChunk(cols, narrow)
             grid[row][col] = "smooth_floor_m";
         }
     }
-    return new Chunk(
-        RES.TILE_WIDTH,
-        RES.TILE_HEIGHT,
-        RES.WALL_HEIGHT,
-        Utils.getTextures(RES.MAPTILES),
-        grid
-    );
+    let tileset = new Tileset();
+    return new Chunk(tileset, grid);
 }
 
 export function generateLevel(levelNum)
@@ -559,14 +552,9 @@ export function generateLevel(levelNum)
 
 export function generateEmptyLevel(rows, cols, value)
 {
+    let tileset = new Tileset();
     let grid = Utils.createGrid(rows, cols, value);
-    let chunk = new Chunk(
-        RES.TILE_WIDTH,
-        RES.TILE_HEIGHT,
-        RES.WALL_HEIGHT,
-        Utils.getTextures(RES.MAPTILES),
-        grid
-    );
+    let chunk = new Chunk(tileset, grid);
     return new Level(new TiledBackground(chunk));
 }
 

@@ -19,6 +19,7 @@
 
 import { Render } from './render';
 import { Utils } from './utils';
+import { RES } from './res';
 
 export class Tile
 {
@@ -44,37 +45,44 @@ export class Tileset
             "water" : water
         };
         this.wall = wall;
+
+        this.tileWidth = RES.TILE_WIDTH;
+        this.tileHeight = RES.TILE_HEIGHT;
+        this.wallHeight = RES.WALL_HEIGHT;
+        this.textures = Utils.getTextures(RES.MAPTILES);
     }
 
-    getTile(name)
-    {
-        return this.tiles[name] || this.wall;
+    getTexture(name) {
+        return this.textures[name];
     }
 };
 
 export class Chunk
 {
-    constructor(tileWidth, tileHeight, wallHeight, textures, grid)
+    constructor(tileset, grid)
     {
         this.grid = grid;
-        this.tileWidth = tileWidth;
-        this.tileHeight = tileHeight;
-        this.wallHeight = wallHeight;
+        this.tileset = tileset;
+        this.tileWidth = tileset.tileWidth;
+        this.tileHeight = tileset.tileHeight;
+        this.wallHeight = tileset.wallHeight;
         /* Create a texture large enough to hold all the tiles, plus a little 
          * extra for the first row, in case it contains wall tiles. (taller) */
         this.texture = PIXI.RenderTexture.create(
-            grid[0].length*tileWidth, 
-            (grid.length-1)*tileHeight + wallHeight);
+            grid[0].length*this.tileWidth, 
+            (grid.length-1)*this.tileHeight + this.wallHeight
+        );
         var cnt = new PIXI.Container();
         for (var row = 0; row < grid.length; row++) 
         {
             for (var col = 0; col < grid[0].length; col++) 
             {
-                var sprite = new PIXI.Sprite(textures[grid[row][col]]);
+                var sprite = new PIXI.Sprite(
+                    tileset.getTexture([grid[row][col]])
+                );
                 sprite.anchor.set(0,1);
-                sprite.x = col*tileWidth;
-                sprite.y = wallHeight + row*tileHeight;
-                //(row+1)*tileHeight-(sprite.texture.height-tileHeight);
+                sprite.x = col*this.tileWidth;
+                sprite.y = this.wallHeight + row*this.tileHeight;
                 cnt.addChild(sprite);
             }
         }
@@ -88,7 +96,7 @@ export class TiledBackground
 {
     constructor(chunk)
     {
-        this.tileset = new Tileset();
+        this.tileset = chunk.tileset;
         this.chunk = chunk;
         this.grid = chunk.grid;
         this.tileWidth = chunk.tileWidth;
