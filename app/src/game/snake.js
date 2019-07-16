@@ -120,7 +120,7 @@ Snake.prototype.updateAttacking = function(dt)
     }
 
     // Check if the snake can move left/right
-    var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+    var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
         this.sprite.x += dx;
         this.waterSprite.visible = tile.water;
@@ -128,7 +128,7 @@ Snake.prototype.updateAttacking = function(dt)
 
     // Now check if it can move up/down. Doing this separately from the check
     // above means we can "slide" along walls and such.
-    var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
+    var tile2 = this.level.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile2.solid) {
         // Go a bit faster if we're just moving up/down
         if (tile.solid) this.sprite.y += 1*dy;
@@ -148,7 +148,7 @@ Snake.prototype.updateHurt = function(dt)
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
         var dx = this.knocked*dt;
-        var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+        var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
         if (!tile.solid) {
             this.sprite.x += dx;
         }
@@ -183,7 +183,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
 
     // Add some random blood, but only if we're not currently in water
     // (looks better this way)
-    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    var tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
         this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
     }

@@ -56,7 +56,7 @@ GroundItem.prototype.update = function(dt)
         // we don't bump into anything.
         if (this.velz !== 0) {
             var dz = this.velz*dt;
-            var tile = this.level.bg.getTileAt(this.sprite.x, this.ypos+dz);
+            var tile = this.level.getTileAt(this.sprite.x, this.ypos+dz);
             // If we connect with a wall, don't bother bouncing off
             if (tile.solid) this.velz = 0;
             else {
@@ -68,7 +68,7 @@ GroundItem.prototype.update = function(dt)
         // Move the item left/right having it bounce off walls too. Note we
         // check the "floor" position of the item instead of the sprite pos.
         var dx = this.velx*dt;
-        var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.ypos);
+        var tile = this.level.getTileAt(this.sprite.x+dx, this.ypos);
         if (tile.solid) {
             this.velx *= -1;
         } else {

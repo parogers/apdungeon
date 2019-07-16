@@ -141,7 +141,7 @@ Goblin.prototype.updateJumping = function(dt)
 
     // Check if we can move where we want to
     var x = this.sprite.x + this.facing*this.jumpHorSpeed*dt;
-    var tile = this.level.bg.getTileAt(x, this.jumpStartY);
+    var tile = this.level.getTileAt(x, this.jumpStartY);
     if (!tile.solid) {
         this.sprite.x = x;
     }
@@ -181,7 +181,7 @@ Goblin.prototype.updateAttacking = function(dt)
     }
 
     // Check if we can move left/right
-    var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+    var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
     if (!tile.solid) {
         this.sprite.x += dx;
         this.waterSprite.visible = tile.water;
@@ -189,7 +189,7 @@ Goblin.prototype.updateAttacking = function(dt)
 
     // Now check if it can move up/down. Doing this separately from the check
     // above means we can "slide" along walls and such.
-    var tile2 = this.level.bg.getTileAt(this.sprite.x, this.sprite.y+dy);
+    var tile2 = this.level.getTileAt(this.sprite.x, this.sprite.y+dy);
     if (!tile2.solid) {
         // Go a bit faster if we're just moving up/down
         if (tile.solid) this.sprite.y += 3*dy;
@@ -248,7 +248,7 @@ Goblin.prototype.updateApproach = function(dt)
         dy = dt*30*Math.sign(dist);
     }
     // Check if we can move where we want to
-    var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y+dy);
+    var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y+dy);
     if (!tile.solid) {
         this.sprite.x += dx;
         this.sprite.y += dy;
@@ -263,7 +263,7 @@ Goblin.prototype.updateHurt = function(dt)
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
         var dx = this.knocked*dt;
-        var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+        var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
         if (!tile.solid) {
             this.sprite.x += dx;
         }
@@ -300,7 +300,7 @@ Goblin.prototype.handleHit = function(srcx, srcy, dmg)
 
     // Add some random blood, but only if we're not currently in water
     // (looks better this way)
-    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    var tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
     if (!tile.water) {
         this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
     }

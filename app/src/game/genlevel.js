@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { TiledBackground } from './bg';
+import { Chunk, CompoundBackground, TiledBackground } from './bg';
 import { Level } from './level';
 import { Door } from './door';
 import { Gate } from './gate';
@@ -205,7 +205,8 @@ EnterScene.prototype.update = function(dt)
 
 /* Functions */
 
-export function generateLevel(levelNum)
+/*
+export function generateLevelOLD(levelNum)
 {
     // Generate the floor and top wall across the level
     var length = 100;
@@ -269,8 +270,14 @@ export function generateLevel(levelNum)
 
     // Build a big sprite for the tiled map
     var bg = new TiledBackground(
-        RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT,
-        Utils.getTextures(RES.MAPTILES), grid);
+        RES.TILE_WIDTH,
+        RES.TILE_HEIGHT,
+        {
+            wallHeight: RES.WALL_HEIGHT,
+            textures: Utils.getTextures(RES.MAPTILES),
+            grid: grid
+        }
+    );
     var level = new Level(bg);
 
     // Now add some random gates throughout the level
@@ -312,6 +319,7 @@ export function generateLevel(levelNum)
     // cost. Each round is populated with monsters that fall within this 
     // budget. This is gradually reduced working backwards through the 
     // level to make earlier rounds a little easier.
+
     var budget = (levelNum+1)*6;
     var firstChest = null;
     while (endx > arenaWidth*1.75)
@@ -463,13 +471,102 @@ export function generateLevel(levelNum)
 
     return level;
 }
+*/
+
+const LEVEL_ROWS = 5;
+
+function generateStraightChunk(cols, narrow)
+{
+    let grid = Utils.createGrid(LEVEL_ROWS, cols);
+    for (let col = 0; col < grid.cols; col++)
+    {
+        for (let row = 0; row < narrow; row++) {
+            grid[row][col] = 'wall_behind2';
+        }
+
+        let n = Math.random();
+        let tile = 'broken_wall_m';
+        if (n < 0.5) tile = "brick_wall_m";
+        else if (n < 0.8) tile = "mossy_wall_m";
+
+        grid[narrow][col] = tile;
+
+        for (let row = narrow+1; row < grid.rows; row++)
+        {
+            grid[row][col] = "smooth_floor_m";
+        }
+    }
+    return new Chunk(
+        RES.TILE_WIDTH,
+        RES.TILE_HEIGHT,
+        RES.WALL_HEIGHT,
+        Utils.getTextures(RES.MAPTILES),
+        grid
+    );
+}
+
+export function generateLevel(levelNum)
+{
+    let chunk = generateStraightChunk(10, 0);
+    let bg = new CompoundBackground();
+    bg.appendBackground(new TiledBackground(chunk));
+    bg.appendBackground(new TiledBackground(chunk));
+    bg.appendBackground(new TiledBackground(chunk));
+
+    /*let bg2 = new CompoundBackground();
+    let chunk2 = generateStraightChunk(10, 2);
+    bg2.appendBackground(new TiledBackground(chunk2));
+    bg2.appendBackground(new TiledBackground(chunk2));
+    bg.appendBackground(bg2);*/
+
+    var level = new Level(bg);
+
+    // First level in the game. Add a chest of starter items. Have the 
+    // chest eject items to the right away from the first NPC. (so none
+    // of the items become hidden behind)
+    var items = [Item.Table.COIN, Item.Table.COIN, 
+                 Item.Table.COIN, Item.Table.SMALL_SWORD];
+    var chest = new Chest(items, {ejectX: 1});
+    chest.sprite.x = 60;
+    chest.sprite.y = 24;
+    level.addThing(chest);
+
+    // Add an NPC to give the player some dialog
+    var npc = new NPC();
+    npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
+    npc.sprite.x = 46;
+    npc.sprite.y = 25;
+    level.addThing(npc);
+
+    // Add an NPC to give the player some dialog
+    var npc = new NPC("npc3_south_1");
+    npc.setDialog("GOOD LUCK!");
+    npc.sprite.x = 80;
+    npc.sprite.y = 40;
+    level.addThing(npc);
+
+    // Add a door to enter the level
+    var door = new Door();
+    door.sprite.x = 20;
+    door.sprite.y = 12.8;
+    level.addThing(door);
+
+    var scn = new EnterScene(door);
+    level.addThing(scn);
+
+    return level;
+}
 
 export function generateEmptyLevel(rows, cols, value)
 {
-    var grid = Utils.createGrid(rows, cols, value);
-    var bg = new TiledBackground(
-        RES.TILE_WIDTH, RES.TILE_HEIGHT, RES.WALL_HEIGHT,
-        Utils.getTextures(RES.MAPTILES), grid);
-    return new Level(bg);
+    let grid = Utils.createGrid(rows, cols, value);
+    let chunk = new Chunk(
+        RES.TILE_WIDTH,
+        RES.TILE_HEIGHT,
+        RES.WALL_HEIGHT,
+        Utils.getTextures(RES.MAPTILES),
+        grid
+    );
+    return new Level(new TiledBackground(chunk));
 }
 
