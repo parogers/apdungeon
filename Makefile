@@ -1,9 +1,14 @@
 # Makefile
 
-.PHONY: chunks
+.PHONY: chunks tiles
+
+all: chunks tiles
 
 chunks:
 	./tools/build_chunks.py > ./app/src/assets/map-chunks.json
+
+tiles:
+	./tools/build_tileset.py
 
 # BUNDLE=apdungeon
 
