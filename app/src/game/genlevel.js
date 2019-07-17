@@ -473,37 +473,10 @@ export function generateLevelOLD(levelNum)
 }
 */
 
-function generateStraightChunk(cols, narrow)
-{
-    let grid = Utils.createGrid(Level.ROW_DEPTH, cols);
-    for (let col = 0; col < grid.cols; col++)
-    {
-        for (let row = 0; row < narrow; row++) {
-            grid[row][col] = 'wall_behind2';
-        }
-
-        let n = Math.random();
-        let tile = 'broken_wall_m';
-        if (n < 0.5) tile = "brick_wall_m";
-        else if (n < 0.8) tile = "mossy_wall_m";
-
-        grid[narrow][col] = tile;
-
-        for (let row = narrow+1; row < grid.rows; row++)
-        {
-            grid[row][col] = "smooth_floor_m";
-        }
-    }
-    let tileset = new Tileset();
-    return new Chunk(tileset, grid);
-}
-
 export function generateLevel(levelNum)
 {
-    let chunk = generateStraightChunk(10, 0);
+    let chunk = Utils.getChunk('start');
     let bg = new CompoundBackground();
-    bg.appendBackground(new TiledBackground(chunk));
-    bg.appendBackground(new TiledBackground(chunk));
     bg.appendBackground(new TiledBackground(chunk));
 
     /*let bg2 = new CompoundBackground();
@@ -541,7 +514,7 @@ export function generateLevel(levelNum)
     // Add a door to enter the level
     var door = new Door();
     door.sprite.x = 20;
-    door.sprite.y = 12.8;
+    door.sprite.y = 30;
     level.addThing(door);
 
     var scn = new EnterScene(door);
@@ -555,6 +528,7 @@ export function generateEmptyLevel(rows, cols, value)
     let tileset = new Tileset();
     let grid = Utils.createGrid(rows, cols, value);
     let chunk = new Chunk(tileset, grid);
+    chunk.renderTexture();
     return new Level(new TiledBackground(chunk));
 }
 

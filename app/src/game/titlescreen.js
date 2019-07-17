@@ -132,7 +132,7 @@ export function TitleScreen()
         function(dt) {
             this.level = generateEmptyLevel(
                 2, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
-                "smooth_floor_m");
+                "1");
             this.level.stage.x = -RES.TILE_WIDTH*2;
             this.level.stage.y = 40;
             //this.level.camera.x = RES.TILE_WIDTH*2;

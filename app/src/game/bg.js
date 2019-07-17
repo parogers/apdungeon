@@ -29,7 +29,7 @@ export class Tile
         this.solid = solid;
         this.wall = false;
     }
-}
+};
 
 export class Tileset
 {
@@ -48,12 +48,17 @@ export class Tileset
 
         this.tileWidth = RES.TILE_WIDTH;
         this.tileHeight = RES.TILE_HEIGHT;
-        this.wallHeight = RES.WALL_HEIGHT;
-        this.textures = Utils.getTextures(RES.MAPTILES);
     }
 
-    getTexture(name) {
-        return this.textures[name];
+    getTexture(name)
+    {
+        let textures = Utils.getTextures(RES.MAPTILES);
+        let texture = textures['' + name];
+
+        if (!texture) {
+            throw Error('cannot find texture ' + name);
+        }
+        return texture;
     }
 };
 
@@ -65,30 +70,39 @@ export class Chunk
         this.tileset = tileset;
         this.tileWidth = tileset.tileWidth;
         this.tileHeight = tileset.tileHeight;
-        this.wallHeight = tileset.wallHeight;
-        /* Create a texture large enough to hold all the tiles, plus a little 
-         * extra for the first row, in case it contains wall tiles. (taller) */
+        this.texture = null;
+    }
+
+    renderTexture()
+    {
+        if (this.texture !== null) {
+            return this.texture;
+        }
+        
         this.texture = PIXI.RenderTexture.create(
-            grid[0].length*this.tileWidth, 
-            (grid.length-1)*this.tileHeight + this.wallHeight
+            this.grid[0].length*this.tileWidth, 
+            this.grid.length*this.tileHeight
         );
+
         var cnt = new PIXI.Container();
-        for (var row = 0; row < grid.length; row++) 
+        for (var row = 0; row < this.grid.length; row++) 
         {
-            for (var col = 0; col < grid[0].length; col++) 
+            for (var col = 0; col < this.grid[0].length; col++) 
             {
+                let tileID = this.grid[row][col];
                 var sprite = new PIXI.Sprite(
-                    tileset.getTexture([grid[row][col]])
+                    this.tileset.getTexture(tileID)
                 );
                 sprite.anchor.set(0,1);
                 sprite.x = col*this.tileWidth;
-                sprite.y = this.wallHeight + row*this.tileHeight;
+                sprite.y = (row+1)*this.tileHeight;
                 cnt.addChild(sprite);
             }
         }
         cnt.x = 0;
         cnt.y = 0;
         Render.getRenderer().render(cnt, this.texture);
+        return this.texture;
     }
 };
 
@@ -101,7 +115,6 @@ export class TiledBackground
         this.grid = chunk.grid;
         this.tileWidth = chunk.tileWidth;
         this.tileHeight = chunk.tileHeight;
-        this.wallHeight = chunk.wallHeight;
         this.sprite = new PIXI.Sprite();
         this.sprite.texture = chunk.texture;
         this.sprite.x = 0;
@@ -121,7 +134,7 @@ export class TiledBackground
         // Account for the background offset, and also for the fact that the
         // first row of tiles are wall tiles. (ie taller)
         var x = x-this.sprite.x;
-        var y = y-this.sprite.y-(this.wallHeight-this.tileHeight);
+        var y = y-this.sprite.y;
 
         var row = (y / this.tileHeight)|0;
         var col = (x / this.tileWidth)|0;
@@ -151,23 +164,6 @@ export class TiledBackground
     addToLevel(level)
     {
         level.stage.addChild(this.sprite);
-    }
-
-    // Make a shallow copy of this TiledBackground (creates a new sprite instance,
-    // but shares the same texture and grid)
-    copy()
-    {
-        let bg = new TiledBackground(
-            this.tileWidth,
-            this.tileHeight,
-            {
-                wallHeight: this.wallHeight,
-                grid: this.grid,
-                texture: this.sprite.texture,
-            }
-        );
-
-        return bg;
     }
 };
 
@@ -252,3 +248,21 @@ export class CompoundBackground
     }
 };
 
+export class ChunkLoaderPlugin
+{
+    use(resource, next)
+    {
+        if (resource.name.endsWith('-chunks.json'))
+        {
+            resource.chunks = {};
+            for (let name in resource.data)
+            {
+                resource.chunks[name] = new Chunk(
+                    new Tileset(),
+                    resource.data[name].background,
+                );
+            }
+        }
+        next();
+    }
+}

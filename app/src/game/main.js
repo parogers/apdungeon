@@ -24,6 +24,7 @@ import { GameControls } from './controls';
 import { LevelScreen } from './levelscreen';
 import { GameState } from './gamestate';
 import { Utils } from './utils';
+import { ChunkLoaderPlugin } from './bg';
 
 var gamestate = null;
 var stage = null;
@@ -65,6 +66,11 @@ function gameLoop()
 
 function graphicsLoaded()
 {
+    let chunks = PIXI.loader.resources[RES.CHUNKS].chunks;
+    for (let name in chunks) {
+        chunks[name].renderTexture();
+    }
+
     sounds.whenLoaded = audioLoaded;
     sounds.onFailed = function(source) {
         console.log("Failed to load audio file: " + source);
@@ -143,6 +149,9 @@ function start(element)
             Render.getRenderer().render(stage);
         });
     }
+
+    PIXI.Loader.registerPlugin(new ChunkLoaderPlugin());
+    
     // Add a random query string when loading the JSON files below. This avoids
     // persistent caching problems, where the browser (eg FF) uses the cached
     // without checking in with the server first.
@@ -157,6 +166,7 @@ function start(element)
         .add(RES.WEAPONS)
         .add(RES.GROUND_ITEMS)
         .add(RES.UI)
+        .add(RES.CHUNKS)
         //.add(RES.DRAGON)
     //.add({name: "hit", url: "media/hit.wav"})
         .on("progress", progresscb)

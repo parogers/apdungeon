@@ -73,6 +73,11 @@ Utils.getTextures = function(res)
     return PIXI.loader.resources[res].textures;
 }
 
+Utils.getChunk = function(name)
+{
+    return PIXI.loader.resources[RES.CHUNKS].chunks[name];
+}
+
 Utils.getFrame = function(res, name)
 {
     return Utils.getTextures(res)[name];
