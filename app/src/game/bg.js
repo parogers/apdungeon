@@ -23,31 +23,31 @@ import { RES } from './res';
 
 export class Tile
 {
-    constructor(name, solid, wall)
+    constructor(id, type, args)
     {
-        this.name = name;
-        this.solid = solid;
-        this.wall = false;
+        this.id = id;
+        this.type = type;
+        this.solid = args.solid || false;
     }
 };
 
 export class Tileset
 {
-    constructor()
+    constructor(tileWidth, tileHeight, tiles)
     {
-        var wall = new Tile("wall", true, true);
-        var floor = new Tile("floor", false, false);
-        var water = new Tile("water", false, false);
-        water.water = true;
-        this.tiles = {
-            "smooth_floor_m" : floor,
-            "smooth_wall_m" : wall,
-            "water" : water
-        };
-        this.wall = wall;
+        this.wall = new Tile('wall', 999, { solid: true });
+        this.tiles = {};
+        for (let tileID in tiles)
+        {
+            this.tiles[tileID] = new Tile(
+                tileID,
+                tiles[tileID].type,
+                { solid: tiles[tileID].solid },
+            );
+        }
 
-        this.tileWidth = RES.TILE_WIDTH;
-        this.tileHeight = RES.TILE_HEIGHT;
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
     }
 
     getTexture(name)
@@ -64,12 +64,9 @@ export class Tileset
 
 export class Chunk
 {
-    constructor(tileset, grid)
+    constructor(grid)
     {
         this.grid = grid;
-        this.tileset = tileset;
-        this.tileWidth = tileset.tileWidth;
-        this.tileHeight = tileset.tileHeight;
         this.texture = null;
     }
 
@@ -79,9 +76,10 @@ export class Chunk
             return this.texture;
         }
         
+        let tileset = Utils.getTileset();
         this.texture = PIXI.RenderTexture.create(
-            this.grid[0].length*this.tileWidth, 
-            this.grid.length*this.tileHeight
+            this.grid[0].length*tileset.tileWidth, 
+            this.grid.length*tileset.tileHeight
         );
 
         var cnt = new PIXI.Container();
@@ -91,11 +89,11 @@ export class Chunk
             {
                 let tileID = this.grid[row][col];
                 var sprite = new PIXI.Sprite(
-                    this.tileset.getTexture(tileID)
+                    tileset.getTexture(tileID)
                 );
                 sprite.anchor.set(0,1);
-                sprite.x = col*this.tileWidth;
-                sprite.y = (row+1)*this.tileHeight;
+                sprite.x = col*tileset.tileWidth;
+                sprite.y = (row+1)*tileset.tileHeight;
                 cnt.addChild(sprite);
             }
         }
@@ -110,13 +108,13 @@ export class TiledBackground
 {
     constructor(chunk)
     {
-        this.tileset = chunk.tileset;
+        this.tileset = Utils.getTileset();
         this.chunk = chunk;
         this.grid = chunk.grid;
-        this.tileWidth = chunk.tileWidth;
-        this.tileHeight = chunk.tileHeight;
+        this.tileWidth = this.tileset.tileWidth;
+        this.tileHeight = this.tileset.tileHeight;
         this.sprite = new PIXI.Sprite();
-        this.sprite.texture = chunk.texture;
+        this.sprite.texture = chunk.renderTexture();
         this.sprite.x = 0;
         this.sprite.y = 0;
     }
@@ -138,10 +136,9 @@ export class TiledBackground
 
         var row = (y / this.tileHeight)|0;
         var col = (x / this.tileWidth)|0;
-        if (this.grid[row])
-            //return this.tileset.getTile(this.grid[row][col]);
-            return this.tileset.tiles[this.grid[row][col]] || this.tileset.wall;
-
+        if (this.grid[row] && this.grid[row][col]) {
+            return this.tileset.tiles[this.grid[row][col]];
+        }
         return this.tileset.wall;
     }
 
@@ -258,10 +255,25 @@ export class ChunkLoaderPlugin
             for (let name in resource.data)
             {
                 resource.chunks[name] = new Chunk(
-                    new Tileset(),
                     resource.data[name].background,
                 );
             }
+        }
+        next();
+    }
+}
+
+export class TilesetLoaderPlugin
+{
+    use(resource, next)
+    {
+        if (resource.name.endsWith('-tileset.json'))
+        {
+            resource.tileset = new Tileset(
+                resource.data.tile_width,
+                resource.data.tile_height,
+                resource.data.tiles
+            );
         }
         next();
     }

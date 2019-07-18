@@ -47,6 +47,8 @@ export var RES = {
 
     CHUNKS: 'assets/map-chunks.json',
 
+    TILESET: 'assets/map-tileset.json',
+
     TILE_WIDTH: 8,
     TILE_HEIGHT: 8,
     WALL_HEIGHT: 13,

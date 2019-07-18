@@ -5122,12 +5122,12 @@
         }
     },
     "meta": {
-        "app": "build_tileset.py conversion",
+        "app": "build_tileset.py",
         "version": "1",
         "image": "Tileset2.png",
         "format": "RGBA8888",
         "size": {
-            "W": 145,
+            "w": 145,
             "h": 145
         },
         "scale": "1"

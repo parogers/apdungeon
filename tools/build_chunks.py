@@ -64,7 +64,7 @@ def parse_chunk(src):
         obj = Object()
         obj.x = float(object_node.attrib['x']) + float(object_node.attrib['width'])/2
         obj.y = float(object_node.attrib['y']) + float(object_node.attrib['height'])/2
-        obj.tile = int(object_node.attrib['gid'])) - first_tile_id
+        obj.tile = int(object_node.attrib['gid']) - first_tile_id
         obj.name = object_node.attrib['name']
 
         chunk.objects.append(obj)

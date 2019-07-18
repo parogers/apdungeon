@@ -24,7 +24,7 @@ import { GameControls } from './controls';
 import { LevelScreen } from './levelscreen';
 import { GameState } from './gamestate';
 import { Utils } from './utils';
-import { ChunkLoaderPlugin } from './bg';
+import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
 
 var gamestate = null;
 var stage = null;
@@ -151,6 +151,7 @@ function start(element)
     }
 
     PIXI.Loader.registerPlugin(new ChunkLoaderPlugin());
+    PIXI.Loader.registerPlugin(new TilesetLoaderPlugin());
     
     // Add a random query string when loading the JSON files below. This avoids
     // persistent caching problems, where the browser (eg FF) uses the cached
@@ -167,6 +168,7 @@ function start(element)
         .add(RES.GROUND_ITEMS)
         .add(RES.UI)
         .add(RES.CHUNKS)
+        .add(RES.TILESET)
         //.add(RES.DRAGON)
     //.add({name: "hit", url: "media/hit.wav"})
         .on("progress", progresscb)

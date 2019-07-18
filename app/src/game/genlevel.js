@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Tileset, Chunk, CompoundBackground, TiledBackground } from './bg';
+import { Chunk, CompoundBackground, TiledBackground } from './bg';
 import { Level } from './level';
 import { Door } from './door';
 import { Gate } from './gate';
@@ -479,6 +479,8 @@ export function generateLevel(levelNum)
     let bg = new CompoundBackground();
     bg.appendBackground(new TiledBackground(chunk));
 
+    console.log('tile at', bg.getTileAt(4+8, 4+8*3));
+
     /*let bg2 = new CompoundBackground();
     let chunk2 = generateStraightChunk(10, 2);
     bg2.appendBackground(new TiledBackground(chunk2));
@@ -525,9 +527,8 @@ export function generateLevel(levelNum)
 
 export function generateEmptyLevel(rows, cols, value)
 {
-    let tileset = new Tileset();
     let grid = Utils.createGrid(rows, cols, value);
-    let chunk = new Chunk(tileset, grid);
+    let chunk = new Chunk(grid);
     chunk.renderTexture();
     return new Level(new TiledBackground(chunk));
 }
