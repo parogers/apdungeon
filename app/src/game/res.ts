@@ -21,12 +21,13 @@ export var RES = {
     MALE_MELEE: "assets/media/rogue-like-8x8/Male-Melee.json",
     FEMALE_MELEE: "assets/media/rogue-like-8x8/Girl-Melee.json",
     NPC_TILESET: "assets/media/rogue-like-8x8/NPC.json",
-    MAPTILES: "assets/media/rogue-like-8x8/Tileset.json",
+    MAPTILES: "assets/media/rogue-like-8x8/Tileset2.json",
     ENEMIES: "assets/media/rogue-like-8x8/Enemies.json",
     WEAPONS: "assets/media/rogue-like-8x8/Weapons.json",
     GROUND_ITEMS: "assets/media/rogue-like-8x8/GroundItems.json",
     UI: "assets/media/rogue-like-8x8/UI.json",
     //DRAGON: "assets/media/rogue-like-8x8/Dragon.json",
+    MAP_OBJS: 'assets/media/rogue-like-8x8/MapObjects.json',
 
     GAME_MUSIC: "assets/media/music/A Journey Awaits2-lowfi.ogg",
     ATTACK_SWORD_SND: "assets/media/effects/attack_sword2.wav",
@@ -44,6 +45,10 @@ export var RES = {
     POWERUP3_SND: "assets/media/effects/powerup3.wav",
     POWERUP4_SND: "assets/media/effects/powerup4.wav",
     CHEST_SND: "assets/media/effects/chest_open.wav",
+
+    CHUNKS: 'assets/map-chunks.json',
+
+    TILESET: 'assets/map-tileset.json',
 
     TILE_WIDTH: 8,
     TILE_HEIGHT: 8,

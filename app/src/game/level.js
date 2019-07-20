@@ -72,7 +72,8 @@ export function Level(bg)
     this.things = [];
     // The PIXI container for everything we want to draw
     this.stage = new PIXI.Container();
-    this.stage.addChild(this.bg.sprite);
+    this.bg.addToLevel(this);
+    
     // List of arenas in this level (Arena instances)
     this.arenas = [];
     // Current active arena (number)
@@ -97,13 +98,13 @@ Level.prototype.destroy = function()
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()
 {
-    return this.bg.sprite.width;
+    return this.bg.getWidth();
 }
 
 // Returns the height of the level in pixels (ie render size)
 Level.prototype.getHeight = function()
 {
-    return this.bg.sprite.height;
+    return this.bg.getHeight();
 }
 
 /* Find some clear space to spawn a thing at the given location. This code
@@ -122,7 +123,7 @@ Level.prototype.findClearSpace = function(x, y)
         if (!south.solid) {
             return y - offset;
         }
-        if (y + offset > this.getHeight() && y - offset < 0) {
+        if (y + offset > this.bg.getHeight() && y - offset < 0) {
             // We've gone completely outside the level - no space found
             return null;
         }
@@ -184,7 +185,7 @@ Level.prototype.update = function(dt)
         // smoothly towards the player to avoid jumping around.
         var xpos = this.player.sprite.x - this.camera.width/2;
         xpos = Math.max(xpos, 0);
-        xpos = Math.min(xpos, this.bg.sprite.width-this.camera.width);
+        xpos = Math.min(xpos, this.bg.getWidth()-this.camera.width);
         if (this.smoothTracking) {
             var dirx = Math.sign(xpos-this.camera.x);
             this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
@@ -346,7 +347,7 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
 Level.prototype.createBloodSpatter = function(x, y, imgs)
 {
     var txt = Utils.randomChoice(imgs || ["blood1", "blood2", "blood3"]);
-    var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAPTILES, txt));
+    var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAP_OBJS, txt));
     sprite.zpos = Level.FLOOR_POS;
     sprite.anchor.set(0.5, 0.5);
     sprite.x = x;
@@ -355,10 +356,15 @@ Level.prototype.createBloodSpatter = function(x, y, imgs)
     return sprite;
 }
 
+Level.prototype.getTileAt = function(x, y) {
+    return this.bg.getTileAt(x, y);
+}
+
 Level.BEHIND_BACKGROUND_POS = -1;
 Level.BACKGROUND_POS = 0;
 Level.FLOOR_POS = 1;
 Level.FRONT_POS = 10000;
+Level.ROW_DEPTH = 5;
 
 Level.CAMERA_WIDTH = 100;
 Level.CAMERA_HEIGHT = 60;

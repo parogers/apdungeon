@@ -218,11 +218,11 @@ Player.prototype.update = function(dt)
         this.frame = 0;
     }
 
-    var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
-    if (speed > this.maxSpeed) {
-        this.velx *= this.maxSpeed/speed;
-        this.vely *= this.maxSpeed/speed;
-    }
+    //var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
+    //if (speed > this.maxSpeed) {
+    //this.velx *= this.maxSpeed/speed;
+    //this.vely *= this.maxSpeed/speed;
+    //}
 
     // Handle left/right movement
     var w = this.spriteChar.texture.width*0.75;
@@ -253,7 +253,7 @@ Player.prototype.update = function(dt)
     }
 
     // Make a splashy sound when we enter water
-    var tile = this.level.bg.getTileAt(this.sprite.x, this.sprite.y);
+    var tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
     if (tile.water) {
         if (!this.waterSprite.visible) 
             Audio.playSound(RES.SPLASH_SND);

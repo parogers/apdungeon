@@ -62,7 +62,7 @@ Utils.createSplashSprite = function()
     var waterSprite = new PIXI.Sprite();
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
-    waterSprite.texture = Utils.getFrame(RES.MAPTILES, "treading_water");
+    waterSprite.texture = Utils.getFrame(RES.MAP_OBJS, "treading_water");
     return waterSprite;
 }
 
@@ -71,6 +71,16 @@ Utils.getTextures = function(res)
 {
     if (!res) throw Error("must specify a resource");
     return PIXI.loader.resources[res].textures;
+}
+
+Utils.getChunk = function(name)
+{
+    return PIXI.loader.resources[RES.CHUNKS].chunks[name];
+}
+
+Utils.getTileset = function()
+{
+    return PIXI.loader.resources[RES.TILESET].tileset;
 }
 
 Utils.getFrame = function(res, name)

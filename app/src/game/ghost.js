@@ -102,7 +102,7 @@ Ghost.prototype.updateHurt = function(dt)
     // Slide backwards from the hit
     if (this.knockedTimer > 0) {
         var dx = this.knocked*dt;
-        var tile = this.level.bg.getTileAt(this.sprite.x+dx, this.sprite.y);
+        var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
         if (!tile.solid) {
             this.sprite.x += dx;
         }

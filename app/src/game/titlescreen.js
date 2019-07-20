@@ -132,9 +132,9 @@ export function TitleScreen()
         function(dt) {
             this.level = generateEmptyLevel(
                 2, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
-                "smooth_floor_m");
+                "1"); // floor tile
             this.level.stage.x = -RES.TILE_WIDTH*2;
-            this.level.stage.y = 40;
+            this.level.stage.y = 44;
             //this.level.camera.x = RES.TILE_WIDTH*2;
             this.level.camera.width = this.level.getWidth();
             this.stage.addChild(this.level.stage);
@@ -146,7 +146,7 @@ export function TitleScreen()
             this.controls = new ManualControls();
             this.player = new Player(this.controls);
             this.player.sprite.x = 2;
-            this.player.sprite.y = 20;
+            this.player.sprite.y = 12;
             this.level.addThing(this.player);
 
             this.monsterChoices = [

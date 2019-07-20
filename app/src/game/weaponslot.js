@@ -203,7 +203,7 @@ Arrow.prototype.update = function(dt)
             level.removeThing(this);
         }
         // Check if the arrow hits a wall
-        var tile = level.bg.getTileAt(
+        var tile = level.getTileAt(
             this.sprite.x+Math.sign(this.velx)*4,
             this.sprite.y+this.height);
         if (tile.solid) {
