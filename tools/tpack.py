@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # A simple utility to generate a JSON sprite sheet for the rogue-like-8x8 
 # assets. (to make them more usable with pixi.js)
 
@@ -8,7 +8,7 @@ import PIL, PIL.Image
 
 # Change into the media output folder
 path = os.path.dirname(sys.argv[0])
-os.chdir(os.path.join(path, "..", "media", "rogue-like-8x8"))
+os.chdir(os.path.join(path, "..", 'app', 'src', 'assets', "media", "rogue-like-8x8"))
 
 HEADER = """{"frames" : {
 """
@@ -238,51 +238,72 @@ def get_desc(row, col):
 
 save_json_sheet("Weapons.png", (8, 8), get_desc, outer_pad=1)
 
-###
+# ###
 
-srcpath = "Tileset.png"
+# srcpath = "Tileset.png"
+# img = PIL.Image.open(srcpath)
+
+# desc = [
+#     ("treading_water",)
+# ]
+# frames = gen_grid((116,94), (10,4), desc)
+
+# desc = [
+#     ("shadow",),
+#     ("rippling_water",)
+# ]
+# frames += gen_grid((116,84), (10,5), desc)
+
+# desc = [
+#     ("black",)
+# ]
+# frames += gen_grid((118,55), (8,8), desc)
+
+# desc = [
+#     ("smooth_wall_l", "smooth_wall_m", "smooth_wall_r"),
+#     ("brick_wall_l", "brick_wall_m", "brick_wall_r"),
+#     ("mossy_wall_l", "mossy_wall_m", "mossy_wall_r"),
+#     ("broken_wall_l", "broken_wall_m", "broken_wall_r"),
+#     ("gate_wall_1", "gate_wall_2", "gate_wall_3"),
+#     ("window_wall_1", "wall_behind", "wall_behind2")
+# ]
+# frames += gen_grid((1,1), (8,13), desc)
+
+# desc = [
+#     ("smooth_floor_l", "smooth_floor_m", "smooth_floor_r", "door1", "door2", "door3", "door4", "torch", None, None, None),
+#     ("smooth_floor_bl", "smooth_floor_bm", "smooth_floor_br", "blood1", "blood2", "blood3", "blood4", "chest_closed", "chest_open", "skull1", "skull2"),
+#     ("water", "green_water", None, "barrel1", "barrel2", "barrel3", "barrel4", "barrel5", "barrel6", "barrel7", "bones"),
+#     ("bridge_b", "bridge_t", None, "sack1_open", "sack1_closed", None, "sack2_open", "sack2_closed", None, None, "mushroom"),
+#     (None, None, None, "carpet_l", "carpet_m", "carpet_r", "dust1", "dust2", ", dust3", "dust4"),
+#     (None, None, None, "carpet_bl", "carpet_bm", "carpet_br", None, None, None, None, None),
+# ]
+# frames += gen_grid((28,1), (8,8), desc)
+
+# desc = [
+#     ("bigdoor1", "bigdoor2", "bigdoor3", "bigdoor4"),
+# ]
+# frames += gen_grid((1,86), (24,13), desc)
+
+# out = HEADER
+# out += ",".join(frames)
+# out += FOOTER % {
+#     "src" : srcpath, 
+#     "w" : img.size[0], 
+#     "h" : img.size[1]}
+# open("Tileset.json", "w").write(out)
+
+srcpath = 'MapObjects.png'
 img = PIL.Image.open(srcpath)
 
-desc = [
-    ("treading_water",)
-]
-frames = gen_grid((116,94), (10,4), desc)
+frames = []
 
-desc = [
-    ("shadow",),
-    ("rippling_water",)
-]
-frames += gen_grid((116,84), (10,5), desc)
-
-desc = [
-    ("black",)
-]
-frames += gen_grid((118,55), (8,8), desc)
-
-desc = [
-    ("smooth_wall_l", "smooth_wall_m", "smooth_wall_r"),
-    ("brick_wall_l", "brick_wall_m", "brick_wall_r"),
-    ("mossy_wall_l", "mossy_wall_m", "mossy_wall_r"),
-    ("broken_wall_l", "broken_wall_m", "broken_wall_r"),
-    ("gate_wall_1", "gate_wall_2", "gate_wall_3"),
-    ("window_wall_1", "wall_behind", "wall_behind2")
-]
-frames += gen_grid((1,1), (8,13), desc)
-
-desc = [
-    ("smooth_floor_l", "smooth_floor_m", "smooth_floor_r", "door1", "door2", "door3", "door4", "torch", None, None, None),
-    ("smooth_floor_bl", "smooth_floor_bm", "smooth_floor_br", "blood1", "blood2", "blood3", "blood4", "chest_closed", "chest_open", "skull1", "skull2"),
-    ("water", "green_water", None, "barrel1", "barrel2", "barrel3", "barrel4", "barrel5", "barrel6", "barrel7", "bones"),
-    ("bridge_b", "bridge_t", None, "sack1_open", "sack1_closed", None, "sack2_open", "sack2_closed", None, None, "mushroom"),
-    (None, None, None, "carpet_l", "carpet_m", "carpet_r", "dust1", "dust2", ", dust3", "dust4"),
-    (None, None, None, "carpet_bl", "carpet_bm", "carpet_br", None, None, None, None, None),
-]
-frames += gen_grid((28,1), (8,8), desc)
-
-desc = [
-    ("bigdoor1", "bigdoor2", "bigdoor3", "bigdoor4"),
-]
-frames += gen_grid((1,86), (24,13), desc)
+frames += gen_grid((1, 1), (8, 8), [('door1', 'door2', 'door3', 'door4'),])
+frames += gen_grid((54, 2), (8, 3), 'shadow')
+frames += gen_grid((64, 6), (8, 3), 'rippling_water')
+frames += gen_grid((64, 6), (8, 3), 'treading_water')
+frames += gen_grid((10, 1), (8, 8), [['blood1', 'blood2', 'blood3', 'blood4']])
+frames += gen_grid((1, 37), (8, 8), [['dust1', 'dust2', 'dust3', 'dust4']])
+frames += gen_grid((37, 10), (8, 8), [['chest_closed', 'chest_open']])
 
 out = HEADER
 out += ",".join(frames)
@@ -290,7 +311,8 @@ out += FOOTER % {
     "src" : srcpath, 
     "w" : img.size[0], 
     "h" : img.size[1]}
-open("Tileset.json", "w").write(out)
+open("MapObjects.json", "w").write(out)
+
 
 ###
 
@@ -376,24 +398,23 @@ open("UI.json", "w").write(out)
 
 ###
 
+# desc = [
+#     ("dragon-idle",),
+#     ("dragon-walk1",),
+#     ("dragon-walk2",),
+#     ("dragon-roar1",),
+#     ("dragon-roar2",),
+# ]
+# frames = gen_grid((1,1), (48, 31), desc)
 
-desc = [
-    ("dragon-idle",),
-    ("dragon-walk1",),
-    ("dragon-walk2",),
-    ("dragon-roar1",),
-    ("dragon-roar2",),
-]
-frames = gen_grid((1,1), (48, 31), desc)
+# srcpath = "dragon-frames.png"
+# img = PIL.Image.open(srcpath)
 
-srcpath = "dragon-frames.png"
-img = PIL.Image.open(srcpath)
-
-out = HEADER
-out += ",".join(frames)
-out += FOOTER % {
-    "src" : srcpath, 
-    "w" : img.size[0], 
-    "h" : img.size[1]}
-open("Dragon.json", "w").write(out)
+# out = HEADER
+# out += ",".join(frames)
+# out += FOOTER % {
+#     "src" : srcpath, 
+#     "w" : img.size[0], 
+#     "h" : img.size[1]}
+# open("Dragon.json", "w").write(out)
 

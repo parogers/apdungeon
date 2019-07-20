@@ -2,13 +2,16 @@
 
 .PHONY: chunks tiles
 
-all: chunks tiles
+all: chunks tiles sprites
 
 chunks:
 	./tools/build_chunks.py > ./app/src/assets/map-chunks.json
 
 tiles:
 	./tools/build_tileset.py
+
+sprites:
+	./tools/tpack.py
 
 # BUNDLE=apdungeon
 
