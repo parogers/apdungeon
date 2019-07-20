@@ -347,7 +347,7 @@ Level.prototype.handleTreasureDrop = function(table, x, y)
 Level.prototype.createBloodSpatter = function(x, y, imgs)
 {
     var txt = Utils.randomChoice(imgs || ["blood1", "blood2", "blood3"]);
-    var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAPTILES, txt));
+    var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAP_OBJS, txt));
     sprite.zpos = Level.FLOOR_POS;
     sprite.anchor.set(0.5, 0.5);
     sprite.x = x;

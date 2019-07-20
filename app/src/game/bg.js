@@ -64,9 +64,10 @@ export class Tileset
 
 export class Chunk
 {
-    constructor(grid)
+    constructor(background, foreground, objects)
     {
-        this.grid = grid;
+        this.grid = background;
+        this.objects = objects
         this.texture = null;
     }
 
@@ -256,6 +257,8 @@ export class ChunkLoaderPlugin
             {
                 resource.chunks[name] = new Chunk(
                     resource.data[name].background,
+                    null,
+                    resource.data[name].objects,
                 );
             }
         }

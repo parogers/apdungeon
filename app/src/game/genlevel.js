@@ -475,25 +475,45 @@ export function generateLevelOLD(levelNum)
 
 export function generateLevel(levelNum)
 {
-    let chunk = Utils.getChunk('start');
+    let tileset = Utils.getTileset();
     let bg = new CompoundBackground();
+
+    let chunk = Utils.getChunk('start');
     bg.appendBackground(new TiledBackground(chunk));
-
-    console.log('tile at', bg.getTileAt(4+8, 4+8*3));
-
-    /*let bg2 = new CompoundBackground();
-    let chunk2 = generateStraightChunk(10, 2);
-    bg2.appendBackground(new TiledBackground(chunk2));
-    bg2.appendBackground(new TiledBackground(chunk2));
-    bg.appendBackground(bg2);*/
+    bg.appendBackground(new TiledBackground(Utils.getChunk('straight')));
+    bg.appendBackground(new TiledBackground(Utils.getChunk('straight2')));
 
     var level = new Level(bg);
+
+    let door = null;
+    for (let obj of chunk.objects)
+    {
+        if (obj.name == 'start') {
+            let x = obj.x - tileset.tileWidth/2;
+            let y = obj.y - tileset.tileHeight/2;
+
+            // Add a door to enter the level
+            door = new Door();
+            door.sprite.x = x + door.sprite.anchor.x * door.sprite.texture.width;
+            door.sprite.y = y + door.sprite.anchor.y * door.sprite.texture.height;
+            level.addThing(door);
+            level.addThing(new EnterScene(door));
+        }
+    }
+
+    if (!door) {
+        throw Error('level does not contain a starting door');
+    }
 
     // First level in the game. Add a chest of starter items. Have the 
     // chest eject items to the right away from the first NPC. (so none
     // of the items become hidden behind)
-    var items = [Item.Table.COIN, Item.Table.COIN, 
-                 Item.Table.COIN, Item.Table.SMALL_SWORD];
+    var items = [
+        Item.Table.COIN,
+        Item.Table.COIN, 
+        Item.Table.COIN,
+        Item.Table.SMALL_SWORD
+    ];
     var chest = new Chest(items, {ejectX: 1});
     chest.sprite.x = 60;
     chest.sprite.y = 24;
@@ -512,15 +532,6 @@ export function generateLevel(levelNum)
     npc.sprite.x = 80;
     npc.sprite.y = 40;
     level.addThing(npc);
-
-    // Add a door to enter the level
-    var door = new Door();
-    door.sprite.x = 20;
-    door.sprite.y = 30;
-    level.addThing(door);
-
-    var scn = new EnterScene(door);
-    level.addThing(scn);
 
     return level;
 }

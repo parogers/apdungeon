@@ -62,7 +62,7 @@ Utils.createSplashSprite = function()
     var waterSprite = new PIXI.Sprite();
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
-    waterSprite.texture = Utils.getFrame(RES.MAPTILES, "treading_water");
+    waterSprite.texture = Utils.getFrame(RES.MAP_OBJS, "treading_water");
     return waterSprite;
 }
 

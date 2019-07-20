@@ -36,8 +36,8 @@ export class Chest {
         for (let item of items) {
             if (!item) throw Error("item cannot be null");
         }
-        this.openTexture = Utils.getFrame(RES.MAPTILES, "chest_open");
-        this.closedTexture = Utils.getFrame(RES.MAPTILES, "chest_closed");
+        this.openTexture = Utils.getFrame(RES.MAP_OBJS, "chest_open");
+        this.closedTexture = Utils.getFrame(RES.MAP_OBJS, "chest_closed");
         this.sprite = new PIXI.Sprite(this.closedTexture);
         this.sprite.anchor.set(0.5, 0.75);
         this.isOpen = false;
