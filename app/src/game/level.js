@@ -37,6 +37,18 @@ function Camera(w, h)
 //Camera.autoFit
 
 /*********/
+/* Track */
+/*********/
+
+class Track
+{
+    constructor(number, y) {
+        this.y = y;
+        this.number = number;
+    }
+};
+
+/*********/
 /* Level */
 /*********/
 
@@ -80,6 +92,44 @@ export function Level(bg)
     this.arenaNum = 0;
     this.smoothTracking = true;
     this.exitDoor = null;
+
+    let tileHeight = this.bg.getTileHeight();
+    let y = this.bg.getHeight() - 1;
+    this.tracks = [
+        new Track(0, y-tileHeight*2),
+        new Track(1, y-tileHeight),
+        new Track(2, y),
+    ];
+}
+
+Level.prototype.getTopTrack = function(n) {
+    return this.tracks[0];
+}
+
+Level.prototype.getMiddleTrack = function(n) {
+    return this.tracks[1];
+}
+
+Level.prototype.getBottomTrack = function(n) {
+    return this.tracks[2];
+}
+
+Level.prototype.getTrackAbove = function(track) {
+    if (!track) return null;
+    return this.getTrack(track.number-1);
+}
+
+Level.prototype.getTrackBelow = function(track) {
+    if (!track) return null;
+    return this.getTrack(track.number+1);
+}
+
+Level.prototype.getTrack = function(n)
+{
+    if (n >= 0 && n < this.tracks.length) {
+        return this.tracks[n];
+    }
+    return null;
 }
 
 Level.prototype.destroy = function()
@@ -144,6 +194,17 @@ Level.prototype.addArena = function(arena)
 // Called every frame to update the general level state
 Level.prototype.update = function(dt)
 {
+    // TODO - this could be better optimized by despawning things that are
+    // no longer visible. (ie blood spatters etc)
+
+    // Re-sort the sprites by Z-depth so things are rendered in the correct
+    // order.
+    this.stage.children.sort(compareDepth);
+    // Update everything in the level
+    for (let thing of this.things) {
+        if (thing.update) thing.update(dt);
+    }
+
     var arena = this.arenas[this.arenaNum];
     switch(this.state) {
     case this.ACTIVE_ARENA:
@@ -183,10 +244,10 @@ Level.prototype.update = function(dt)
     case this.NEXT_ARENA:
         // Update the camera to track the player. Have the camera move
         // smoothly towards the player to avoid jumping around.
-        var xpos = this.player.sprite.x - this.camera.width/2;
+        var xpos = this.player.sprite.x - this.camera.width/8;
         xpos = Math.max(xpos, 0);
         xpos = Math.min(xpos, this.bg.getWidth()-this.camera.width);
-        if (this.smoothTracking) {
+        if (false) { //this.smoothTracking) {
             var dirx = Math.sign(xpos-this.camera.x);
             this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
             if (dirx != Math.sign(xpos-this.camera.x)) {
@@ -223,20 +284,9 @@ Level.prototype.update = function(dt)
         break;
 
     }
-
-    // TODO - this could be better optimized by despawning things that are
-    // no longer visible. (ie blood spatters etc)
-
-    // Re-sort the sprites by Z-depth so things are rendered in the correct
-    // order.
-    this.stage.children.sort(compareDepth);
     // Position the camera
     this.stage.x = -this.camera.x;
     this.stage.y = -this.camera.y;
-    // Update everything in the level
-    for (let thing of this.things) {
-        if (thing.update) thing.update(dt);
-    }
 }
 
 /* Check if the given hitbox, at the given position, overlaps with any thing 

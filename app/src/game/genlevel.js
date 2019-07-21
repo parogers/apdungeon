@@ -168,14 +168,26 @@ EnterScene.prototype.update = function(dt)
             player.sprite.zpos = undefined;
             this.state = this.PLAYER_ENTERING;
             this.timer = 0.4;
-            this.travelTime = 0.6;
+            player.moveToTrack(this.level.getBottomTrack());
         }
         break;
 
     case this.PLAYER_ENTERING:
         // Player walking some ways into the level
-        player.controls.diry = 0.5;
-        this.travelTime -= dt;
+        /*player.controls.diry = 0.5;
+        if (player.sprite.y >= track.y)
+        {
+            player.sprite.y = track.y;
+            player.controls.diry = 0;
+            this.state = this.PLAYER_LOOK_LEFT;
+            }*/
+
+        // Wait for the player to hit the track
+        if (!player.isMovingToTrack()) {
+            this.state = this.PLAYER_LOOK_LEFT;
+        }
+
+        /*this.travelTime -= dt;
         if (this.travelTime <= 0) {
             this.state = this.PLAYER_LOOK_LEFT;
             this.timer = 0.5;
@@ -184,20 +196,25 @@ EnterScene.prototype.update = function(dt)
             player.controls.diry = 0;
         } else if (this.travelTime < 0.35) {
             player.controls.dirx = 0.25;
-        }
+        }*/
         break;
 
     case this.PLAYER_LOOK_LEFT:
         player.faceDirection(-1);
         this.state = this.PLAYER_LOOK_RIGHT;
-        this.timer = 1;
+        this.timer = 0.5;
         break;
 
     case this.PLAYER_LOOK_RIGHT:
         player.faceDirection(1);
-        player.controls = GameControls.getControls();
         this.timer = 0.5;
         // Done!
+        this.state = this.PLAYER_DONE;
+        break;
+
+    case this.PLAYER_DONE:
+        player.controls = GameControls.getControls();
+        player.running = true;
         this.level.removeThing(this);
         break;
     }
@@ -480,8 +497,10 @@ export function generateLevel(levelNum)
 
     let chunk = Utils.getChunk('start');
     bg.appendBackground(new TiledBackground(chunk));
-    bg.appendBackground(new TiledBackground(Utils.getChunk('straight')));
-    bg.appendBackground(new TiledBackground(Utils.getChunk('straight2')));
+    for (let n = 0; n < 10; n++) {
+        bg.appendBackground(new TiledBackground(Utils.getChunk('straight')));
+        bg.appendBackground(new TiledBackground(Utils.getChunk('straight2')));
+    }
 
     var level = new Level(bg);
 

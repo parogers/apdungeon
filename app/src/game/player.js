@@ -43,7 +43,8 @@ export function Player(controls)
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 8;
     this.health = this.maxHealth;
-    this.maxSpeed = 40; // pixels/second
+    this.verticalSpeed = 40;
+    this.maxSpeed = 30; // pixels/second
     // Inventory stuff
     this.numCoins = 0;
     this.numArrows = 0;
@@ -55,6 +56,8 @@ export function Player(controls)
     //this.hasControl = true;
     this.dirx = 0;
     this.diry = 0;
+    this.running = false;
+    this.walkFPS = 10;
     // Process of dying (showing animation)
     this.dying = false;
     // Actually dead
@@ -97,6 +100,9 @@ export function Player(controls)
 
     this.weaponSlot = null;
 
+    this.track = null;
+    this.nextTrack = null;
+
     // Knockback timer and speed
     this.knockedTimer = 0;
     this.knocked = 0;
@@ -131,7 +137,7 @@ Player.prototype.getFacing = function()
     return Math.sign(this.sprite.scale.x);
 }
 
-Player.prototype.update = function(dt)
+/*Player.prototype.update = function(dt)
 {
     var dirx = 0;
     var diry = 0;
@@ -194,13 +200,13 @@ Player.prototype.update = function(dt)
             this.faceDirection(dirx);
             this.velx = dirx * this.maxSpeed;
 
-            /*if (this.controls.left.doublePressed || 
-                this.controls.right.doublePressed)
-            {
-                console.log("LUNGE!");
-                this.velx *= 2;
-                this.lungeTimer = 1;
-            }*/
+            //if (this.controls.left.doublePressed || 
+            //    this.controls.right.doublePressed)
+            //{
+            //    console.log("LUNGE!");
+            //    this.velx *= 2;
+            //    this.lungeTimer = 1;
+            //}
         } else {
             this.velx *= 0.75;
         }
@@ -283,6 +289,52 @@ Player.prototype.update = function(dt)
     // Update animation
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
     this.spriteChar.texture = frame;
+}*/
+
+Player.prototype.update = function(dt)
+{
+    let nextX = this.sprite.x;
+    let nextY = this.sprite.y;
+
+    if (this.running) {
+        nextX += this.maxSpeed*dt;
+    }
+    
+    if (this.nextTrack)
+    {
+        // Player is in the process of moving to another track
+        let currentY = this.sprite.y;
+        let dirY = Math.sign(this.nextTrack.y-currentY);
+        nextY = currentY + dirY*this.verticalSpeed*dt;
+
+        if (currentY < this.nextTrack.y && nextY >= this.nextTrack.y ||
+            currentY > this.nextTrack.y && nextY <= this.nextTrack.y)
+        {
+            nextY = this.nextTrack.y;
+            this.track = this.nextTrack;
+            this.nextTrack = null;
+        }
+    }
+    else
+    {
+        // Player is staying on the current track
+        if (this.controls.getY() > 0) {
+            this.nextTrack = this.level.getTrackBelow(this.track);
+        } else if (this.controls.getY() < 0) {
+            this.nextTrack = this.level.getTrackAbove(this.track);
+        }
+    }
+
+    if (this.sprite.x !== nextX || this.sprite.y !== nextY)
+    {
+        this.frame += dt;
+        this.sprite.x = nextX;
+        this.sprite.y = nextY;
+    }
+
+    // Update animation
+    let frameNum = ((this.frame*this.walkFPS)|0) % this.frames.length;
+    this.spriteChar.texture = this.frames[frameNum];
 }
 
 Player.prototype.setCharFrames = function(res, name)
@@ -501,4 +553,13 @@ Player.prototype.showMessage = function()
     } else {
         this.textSprite.visible = false;
     }
+}
+
+/* Start the player moving onto the given track */
+Player.prototype.moveToTrack = function(track) {
+    this.nextTrack = track;
+}
+
+Player.prototype.isMovingToTrack = function() {
+    return this.nextTrack !== null;
 }

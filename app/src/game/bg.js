@@ -159,6 +159,10 @@ export class TiledBackground
         return this.sprite.height;
     }
 
+    getTileHeight() {
+        return this.tileset.tileHeight;
+    }
+
     addToLevel(level)
     {
         level.stage.addChild(this.sprite);
@@ -173,6 +177,10 @@ export class CompoundBackground
         this.width = 0;
         this.height = 0;
         this.onSizeChanged = null;
+    }
+
+    getTileHeight() {
+        return this.bgList[0].getTileHeight();
     }
 
     updateLayout()
