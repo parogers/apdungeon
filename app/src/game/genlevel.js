@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Chunk, CompoundBackground, TiledBackground } from './bg';
+import { ChunkTemplate, Compound, Chunk } from './bg';
 import { Level } from './level';
 import { Door } from './door';
 import { Gate } from './gate';
@@ -227,8 +227,11 @@ function spawnThings(level)
     let tileset = Utils.getTileset();
     let door = null;
 
-    level.bg.forEachChunk(chunk => {
-        for (let obj of chunk.things)
+    //level.bg.forEachChunk(chunk => {
+
+    for (let chunk of level.compound.chunks)
+    {
+        for (let obj of chunk.template.things)
         {
             if (obj.name == 'start')
             {
@@ -248,7 +251,7 @@ function spawnThings(level)
                 level.addThing(spawn);
             }
         }
-    });
+    }
 
     if (!door) {
         throw Error('level does not contain a starting door');
@@ -257,13 +260,11 @@ function spawnThings(level)
 
 export function generateLevel(levelNum)
 {
-    let bg = new CompoundBackground();
-
-    let chunk = Utils.getChunk('start');
-    bg.appendBackground(new TiledBackground(chunk));
+    let bg = new Compound();
+    bg.addChunk(new Chunk(Utils.getChunk('start')));
     for (let n = 0; n < 10; n++) {
-        bg.appendBackground(new TiledBackground(Utils.getChunk('straight')));
-        bg.appendBackground(new TiledBackground(Utils.getChunk('straight2')));
+        bg.addChunk(new Chunk(Utils.getChunk('straight')));
+        bg.addChunk(new Chunk(Utils.getChunk('straight2')));
     }
 
     var level = new Level(bg);
@@ -303,7 +304,7 @@ export function generateLevel(levelNum)
 export function generateEmptyLevel(rows, cols, value)
 {
     let grid = Utils.createGrid(rows, cols, value);
-    let chunk = new Chunk(grid);
+    let chunk = new ChunkTemplate(grid);
     chunk.renderTexture();
-    return new Level(new TiledBackground(chunk));
+    return new Level(new Chunk(chunk));
 }

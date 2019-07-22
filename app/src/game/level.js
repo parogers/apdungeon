@@ -60,7 +60,7 @@ function compareDepth(s1, s2) {
     return (z1>z2) - (z2>z1);
 }
 
-export function Level(bg)
+export function Level(compound)
 {
     // The various level states
     this.PLAYING = 0;
@@ -70,19 +70,19 @@ export function Level(bg)
     this.player = null;
     this.state = this.PLAYING;
     // The background sprite (TiledBackground)
-    this.bg = bg;
-    this.bg.zpos = Level.BACKGROUND_POS;
+    this.compound = compound;
+    this.compound.zpos = Level.BACKGROUND_POS;
     // List of enemies, interactable objects etc and the player
     this.things = [];
     // The PIXI container for everything we want to draw
     this.stage = new PIXI.Container();
-    this.bg.addToLevel(this);
+    this.compound.addToLevel(this);
     
     this.smoothTracking = true;
     this.exitDoor = null;
 
-    let tileHeight = this.bg.getTileHeight();
-    let y = this.bg.getHeight() - 1;
+    let tileHeight = this.compound.getTileHeight();
+    let y = this.compound.getHeight() - 1;
     this.tracks = [
         new Track(0, y-tileHeight*2),
         new Track(1, y-tileHeight),
@@ -140,13 +140,13 @@ Level.prototype.destroy = function()
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()
 {
-    return this.bg.getWidth();
+    return this.compound.getWidth();
 }
 
 // Returns the height of the level in pixels (ie render size)
 Level.prototype.getHeight = function()
 {
-    return this.bg.getHeight();
+    return this.compound.getHeight();
 }
 
 /* Find some clear space to spawn a thing at the given location. This code
@@ -157,15 +157,15 @@ Level.prototype.findClearSpace = function(x, y)
     var offset = 0;
     while(true)
     {
-        var north = this.bg.getTileAt(x, y + offset);
-        var south = this.bg.getTileAt(x, y - offset);
+        var north = this.compound.getTileAt(x, y + offset);
+        var south = this.compound.getTileAt(x, y - offset);
         if (!north.solid) {
             return y + offset;
         }
         if (!south.solid) {
             return y - offset;
         }
-        if (y + offset > this.bg.getHeight() && y - offset < 0) {
+        if (y + offset > this.compound.getHeight() && y - offset < 0) {
             // We've gone completely outside the level - no space found
             return null;
         }
@@ -192,7 +192,7 @@ Level.prototype.update = function(dt)
     // smoothly towards the player to avoid jumping around.
     var xpos = this.player.sprite.x - this.camera.width/8;
     xpos = Math.max(xpos, 0);
-    xpos = Math.min(xpos, this.bg.getWidth()-this.camera.width);
+    xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
     if (false) { //this.smoothTracking) {
         var dirx = Math.sign(xpos-this.camera.x);
         this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
@@ -255,8 +255,8 @@ Level.prototype.forEachThingHit = function(x, y, hitbox, ignore, callback)
 
 Level.prototype.checkSolidAt = function(x, y, width)
 {
-    var left = this.bg.getTileAt(x-width/2, y);
-    var right = this.bg.getTileAt(x+width/2, y);
+    var left = this.compound.getTileAt(x-width/2, y);
+    var right = this.compound.getTileAt(x+width/2, y);
     return left.solid || right.solid;
 }
 
@@ -327,7 +327,7 @@ Level.prototype.createBloodSpatter = function(x, y, imgs)
 }
 
 Level.prototype.getTileAt = function(x, y) {
-    return this.bg.getTileAt(x, y);
+    return this.compound.getTileAt(x, y);
 }
 
 Level.BEHIND_BACKGROUND_POS = -1;

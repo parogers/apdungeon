@@ -62,7 +62,7 @@ export class Tileset
     }
 };
 
-export class Chunk
+export class ChunkTemplate
 {
     constructor(background, midground, things)
     {
@@ -106,17 +106,17 @@ export class Chunk
     }
 };
 
-export class TiledBackground
+export class Chunk
 {
-    constructor(chunk)
+    constructor(template)
     {
         this.tileset = Utils.getTileset();
-        this.chunk = chunk;
-        this.grid = chunk.grid;
+        this.template = template;
+        this.grid = template.grid;
         this.tileWidth = this.tileset.tileWidth;
         this.tileHeight = this.tileset.tileHeight;
         this.sprite = new PIXI.Sprite();
-        this.sprite.texture = chunk.renderTexture();
+        this.sprite.texture = template.renderTexture();
         this.sprite.x = 0;
         this.sprite.y = 0;
     }
@@ -170,45 +170,30 @@ export class TiledBackground
     }
 };
 
-export class CompoundBackground
+export class Compound
 {
     constructor()
     {
-        this.bgList = [];
+        this.chunks = [];
         this.width = 0;
         this.height = 0;
-        this.onSizeChanged = null;
     }
 
     getTileHeight() {
-        return this.bgList[0].getTileHeight();
+        return this.chunks[0].getTileHeight();
     }
 
-    updateLayout()
+    addChunk(chunk)
     {
+        this.chunks.push(chunk);
+        // Update the tiled grid layout to make sure everything lines up
         this.width = 0;
         this.height = 0;
-
-        for (let bg of this.bgList) {
-            bg.sprite.x = this.width;
-            this.width += bg.getWidth();
-            this.height = Math.max(this.height, bg.getHeight());
+        for (let chunk of this.chunks) {
+            chunk.sprite.x = this.width;
+            this.width += chunk.getWidth();
+            this.height = Math.max(this.height, chunk.getHeight());
         }
-        if (this.onSizeChanged)
-        {
-            this.onSizeChanged();
-        }
-    }
-
-    appendBackground(bg)
-    {
-        this.bgList.push(bg);
-        this.updateLayout();
-
-        // Update our size whenever a child background changes size
-        bg.onSizeChanged = () => {
-            this.updateLayout();
-        };
     }
 
     getWidth() {
@@ -221,58 +206,49 @@ export class CompoundBackground
 
     getTileAt(x, y)
     {
-        if (this.bgList.length === 0) {
+        if (this.chunks.length === 0) {
             return null;
         }
-        // Use binary search to figure out which TiledBackground contains
-        // the coordinates.
+        // Use binary search to figure out which Chunk contains the coordinates
         let start = 0;
-        let end = this.bgList.length-1;
+        let end = this.chunks.length-1;
 
         while (start <= end)
         {
             let mid = Math.floor((start + end) / 2);
-            let bg = this.bgList[mid];
+            let chunk = this.chunks[mid];
 
-            if (bg.containsX(x)) {
+            if (chunk.containsX(x)) {
                 // Found it
-                return bg.getTileAt(x, y);
+                return chunk.getTileAt(x, y);
             }
-            if (x >= bg.getX()) {
+            if (x >= chunk.getX()) {
                 start = mid+1;
             } else {
                 end = mid-1;
             }
         }
-        return this.bgList[0].getWallTile();
+        return this.chunks[0].getWallTile();
     }
 
     addToLevel(level)
     {
-        for (let bg of this.bgList) {
-            bg.addToLevel(level);
+        for (let chunk of this.chunks) {
+            chunk.addToLevel(level);
         }
     }
-
-    forEachChunk(callback)
-    {
-        for (let bg of this.bgList) {
-            callback(bg.chunk);
-        }
-    }
-
 };
 
 export class ChunkLoaderPlugin
 {
     use(resource, next)
     {
-        if (resource.name.endsWith('-chunks.json'))
+        if (resource.name.endsWith('.chunks.json'))
         {
             resource.chunks = {};
             for (let name in resource.data)
             {
-                resource.chunks[name] = new Chunk(
+                resource.chunks[name] = new ChunkTemplate(
                     resource.data[name].background,
                     resource.data[name].midground,
                     resource.data[name].things,
@@ -287,7 +263,7 @@ export class TilesetLoaderPlugin
 {
     use(resource, next)
     {
-        if (resource.name.endsWith('-tileset.json'))
+        if (resource.name.endsWith('.tileset.json'))
         {
             resource.tileset = new Tileset(
                 resource.data.tile_width,
