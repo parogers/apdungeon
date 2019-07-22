@@ -188,20 +188,23 @@ Level.prototype.update = function(dt)
         if (thing.update) thing.update(dt);
     }
 
-    // Update the camera to track the player. Have the camera move
-    // smoothly towards the player to avoid jumping around.
-    var xpos = this.player.sprite.x - this.camera.width/8;
-    xpos = Math.max(xpos, 0);
-    xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
-    if (false) { //this.smoothTracking) {
-        var dirx = Math.sign(xpos-this.camera.x);
-        this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
-        if (dirx != Math.sign(xpos-this.camera.x)) {
-            // Overshot the target, stop smoothly tracking
-            this.smoothTracking = false;
+    if (this.player.velx != 0)
+    {
+        // Update the camera to track the player. Have the camera move
+        // smoothly towards the player to avoid jumping around.
+        var xpos = this.player.sprite.x - this.camera.width/8;
+        xpos = Math.max(xpos, 0);
+        xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
+        if (this.smoothTracking) {
+            var dirx = Math.sign(xpos-this.camera.x);
+            this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
+            if (dirx != Math.sign(xpos-this.camera.x)) {
+                // Overshot the target, stop smoothly tracking
+                this.smoothTracking = false;
+            }
+        } else {
+            this.camera.x = xpos;
         }
-    } else {
-        this.camera.x = xpos;
     }
 
     // Position the camera

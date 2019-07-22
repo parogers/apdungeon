@@ -295,29 +295,22 @@ Player.prototype.update = function(dt)
 {
     let nextX = this.sprite.x;
     let nextY = this.sprite.y;
+    let velx = 0;
+    let vely = 0;
 
     if (this.running) {
-        nextX += this.maxSpeed*dt;
+        velx = this.maxSpeed;
     }
     
     if (this.nextTrack)
     {
         // Player is in the process of moving to another track
-        let currentY = this.sprite.y;
-        let dirY = Math.sign(this.nextTrack.y-currentY);
-        nextY = currentY + dirY*this.verticalSpeed*dt;
-
-        if (currentY < this.nextTrack.y && nextY >= this.nextTrack.y ||
-            currentY > this.nextTrack.y && nextY <= this.nextTrack.y)
-        {
-            nextY = this.nextTrack.y;
-            this.track = this.nextTrack;
-            this.nextTrack = null;
-        }
+        let dirY = Math.sign(this.nextTrack.y-this.sprite.y);
+        vely = dirY*this.verticalSpeed;
     }
     else
     {
-        // Player is staying on the current track
+        // Check if the player wants to change tracks
         if (this.track && this.controls.getY() !== 0) {
             this.nextTrack = this.level.getTrack(
                 this.track.number + Math.sign(this.controls.getY())
@@ -325,12 +318,28 @@ Player.prototype.update = function(dt)
         }
     }
 
-    if (this.sprite.x !== nextX || this.sprite.y !== nextY)
+    if (velx !== 0 || vely !== 0)
     {
         this.frame += dt;
-        this.sprite.x = nextX;
-        this.sprite.y = nextY;
     }
+
+    this.sprite.x += velx*dt;
+    this.sprite.y += vely*dt;
+
+    // If the player is changing tracks, check if they've made it
+    if (this.nextTrack)
+    {
+        if (vely > 0 && this.sprite.y >= this.nextTrack.y ||
+            vely < 0 && nextY <= this.nextTrack.y)
+        {
+            this.sprite.y = this.nextTrack.y;
+            this.track = this.nextTrack;
+            this.nextTrack = null;
+        }
+    }
+
+    this.velx = velx;
+    this.vely = vely;
 
     // Update animation
     let frameNum = ((this.frame*this.walkFPS)|0) % this.frames.length;
