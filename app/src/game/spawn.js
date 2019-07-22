@@ -1,4 +1,6 @@
 
+import { Door } from './door';
+
 /* A monster spawner */
 export class Spawn {
     constructor(x, y) {

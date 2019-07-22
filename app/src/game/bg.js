@@ -20,6 +20,8 @@
 import { Render } from './render';
 import { Utils } from './utils';
 import { RES } from './res';
+import { Door, EnterScene } from './door';
+import { Spawn } from './spawn';
 
 export class Tile
 {
@@ -104,6 +106,33 @@ export class ChunkTemplate
         Render.getRenderer().render(cnt, this.texture);
         return this.texture;
     }
+
+    // Spawn any things defined by this template into the given chunk
+    spawnThings(chunk)
+    {
+        let level = chunk.compound.level;
+        for (let obj of this.things)
+        {
+            if (obj.name == 'start')
+            {
+                let x = obj.x - chunk.tileset.tileWidth/2;
+                let y = obj.y - chunk.tileset.tileHeight/2;
+
+                // Add a door to enter the level
+                let door = new Door();
+                door.sprite.x = x + door.sprite.anchor.x * door.sprite.texture.width;
+                door.sprite.y = y + door.sprite.anchor.y * door.sprite.texture.height;
+                level.addThing(door);
+                level.addThing(new EnterScene(door));
+            }
+            else if (obj.type == 'spawn')
+            {
+                console.log('spawner!');
+                let spawn = new Spawn(obj.x, obj.y);
+                level.addThing(spawn);
+            }
+        }
+    }
 };
 
 export class Chunk
@@ -119,6 +148,17 @@ export class Chunk
         this.sprite.texture = template.renderTexture();
         this.sprite.x = 0;
         this.sprite.y = 0;
+        // Whether this chunk has spawned things are not
+        this.spawned = false;
+        this.compound = null;
+    }
+
+    spawnThings()
+    {
+        if (!this.spawned) {
+            this.template.spawnThings(this);
+            this.spawned = true;
+        }
     }
 
     containsX(x) {
@@ -177,6 +217,7 @@ export class Compound
         this.chunks = [];
         this.width = 0;
         this.height = 0;
+        this.level = null;
     }
 
     getTileHeight() {
@@ -185,6 +226,7 @@ export class Compound
 
     addChunk(chunk)
     {
+        chunk.compound = this;
         this.chunks.push(chunk);
         // Update the tiled grid layout to make sure everything lines up
         this.width = 0;
@@ -233,6 +275,7 @@ export class Compound
 
     addToLevel(level)
     {
+        this.level = level;
         for (let chunk of this.chunks) {
             chunk.addToLevel(level);
         }
