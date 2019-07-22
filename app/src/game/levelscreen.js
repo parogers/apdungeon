@@ -98,7 +98,7 @@ LevelScreen.prototype.update = function(dt)
         break;
 
     case this.PLAYING:
-        if (this.level.state === this.level.FINISHED) {
+        if (this.level.isFinished()) {
             // Proceed to the next level
             let level = generateLevel(++this.levelNum);
             this.setLevel(level);

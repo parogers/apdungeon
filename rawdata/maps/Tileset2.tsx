@@ -401,6 +401,7 @@
    <property name="solid" type="bool" value="false"/>
   </properties>
  </tile>
+ <tile id="80" type="spawn"/>
  <tile id="93" type="floor">
   <properties>
    <property name="solid" type="bool" value="false"/>

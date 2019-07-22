@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="10" height="5" tilewidth="8" tileheight="8" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="10" height="5" tilewidth="8" tileheight="8" infinite="0" nextlayerid="3" nextobjectid="7">
  <tileset firstgid="1" source="Tileset2.tsx"/>
  <layer id="1" name="background" width="10" height="5">
   <data encoding="csv">
@@ -10,4 +10,12 @@
 2,2,2,2,2,2,2,2,2,2
 </data>
  </layer>
+ <objectgroup id="2" name="things">
+  <object id="1" gid="81" x="64.5" y="23.625" width="8" height="8"/>
+  <object id="2" gid="81" x="64.5" y="31.375" width="8" height="8"/>
+  <object id="3" gid="81" x="64.25" y="39.125" width="8" height="8"/>
+  <object id="4" gid="81" x="32.375" y="23.375" width="8" height="8"/>
+  <object id="5" gid="81" x="32.5" y="32" width="8" height="8"/>
+  <object id="6" gid="81" x="32.25" y="39.125" width="8" height="8"/>
+ </objectgroup>
 </map>

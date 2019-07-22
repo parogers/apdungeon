@@ -19,7 +19,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="5" name="objects">
+ <objectgroup id="5" name="things">
   <object id="1" name="start" gid="33" x="16" y="24.125" width="8" height="8"/>
  </objectgroup>
 </map>

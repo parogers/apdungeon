@@ -64,10 +64,11 @@ export class Tileset
 
 export class Chunk
 {
-    constructor(background, foreground, objects)
+    constructor(background, midground, things)
     {
         this.grid = background;
-        this.objects = objects
+        this.midground = midground;
+        this.things = things;
         this.texture = null;
     }
 
@@ -252,6 +253,14 @@ export class CompoundBackground
             bg.addToLevel(level);
         }
     }
+
+    forEachChunk(callback)
+    {
+        for (let bg of this.bgList) {
+            callback(bg.chunk);
+        }
+    }
+
 };
 
 export class ChunkLoaderPlugin
@@ -265,8 +274,8 @@ export class ChunkLoaderPlugin
             {
                 resource.chunks[name] = new Chunk(
                     resource.data[name].background,
-                    null,
-                    resource.data[name].objects,
+                    resource.data[name].midground,
+                    resource.data[name].things,
                 );
             }
         }

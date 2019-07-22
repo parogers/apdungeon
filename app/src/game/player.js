@@ -318,10 +318,10 @@ Player.prototype.update = function(dt)
     else
     {
         // Player is staying on the current track
-        if (this.controls.getY() > 0) {
-            this.nextTrack = this.level.getTrackBelow(this.track);
-        } else if (this.controls.getY() < 0) {
-            this.nextTrack = this.level.getTrackAbove(this.track);
+        if (this.track && this.controls.getY() !== 0) {
+            this.nextTrack = this.level.getTrack(
+                this.track.number + Math.sign(this.controls.getY())
+            );
         }
     }
 

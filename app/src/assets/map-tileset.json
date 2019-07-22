@@ -322,6 +322,9 @@
             "type": "floor",
             "solid": false
         },
+        "80": {
+            "type": "spawn"
+        },
         "93": {
             "type": "floor",
             "solid": false

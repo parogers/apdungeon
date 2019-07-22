@@ -38,3 +38,4 @@ export function Door()
 }
 
 Door.prototype = Object.create(Gate.prototype);
+

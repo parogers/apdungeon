@@ -62,21 +62,13 @@ function compareDepth(s1, s2) {
 
 export function Level(bg)
 {
-    // The various level states:
-    // Player is within an active arena
-    this.ACTIVE_ARENA = 1;
-    // Showing the go arrow, indicating the player should advance forward
-    this.SHOWING_GO = 2;
-    // Player is moving towards next arena (not active yet)
-    this.NEXT_ARENA = 3;
-    // All monsters defeated - exit is open
-    this.EXIT_OPEN = 4;
-    // Player has passed through the exit
-    this.FINISHED = 5;
+    // The various level states
+    this.PLAYING = 0;
+    this.FINISHED = 1;
 
     this.camera = new Camera(Level.CAMERA_WIDTH, Level.CAMERA_HEIGHT);
     this.player = null;
-    this.state = this.NEXT_ARENA;
+    this.state = this.PLAYING;
     // The background sprite (TiledBackground)
     this.bg = bg;
     this.bg.zpos = Level.BACKGROUND_POS;
@@ -86,10 +78,6 @@ export function Level(bg)
     this.stage = new PIXI.Container();
     this.bg.addToLevel(this);
     
-    // List of arenas in this level (Arena instances)
-    this.arenas = [];
-    // Current active arena (number)
-    this.arenaNum = 0;
     this.smoothTracking = true;
     this.exitDoor = null;
 
@@ -100,6 +88,10 @@ export function Level(bg)
         new Track(1, y-tileHeight),
         new Track(2, y),
     ];
+}
+
+Level.prototype.isFinished = function() {
+    return this.state === this.FINISHED;
 }
 
 Level.prototype.getTopTrack = function(n) {
@@ -181,16 +173,6 @@ Level.prototype.findClearSpace = function(x, y)
     }
 }
 
-/* Adds an arena to this level. This function also maintains the correct
- * ordering of arenas sorted by ending position. */
-Level.prototype.addArena = function(arena)
-{
-    this.arenas.push(arena);
-    this.arenas.sort(function(a1, a2) {
-        return (a1.endx > a2.endx) - (a2.endx > a1.endx);
-    });
-}
-
 // Called every frame to update the general level state
 Level.prototype.update = function(dt)
 {
@@ -202,88 +184,26 @@ Level.prototype.update = function(dt)
     this.stage.children.sort(compareDepth);
     // Update everything in the level
     for (let thing of this.things) {
+        // TODO - only update things within camera view (+/- bounds)
         if (thing.update) thing.update(dt);
     }
 
-    var arena = this.arenas[this.arenaNum];
-    switch(this.state) {
-    case this.ACTIVE_ARENA:
-        // Wait for the current arena to be finished (ie player defeats 
-        // all the monsters)
-        if (arena.done) {
-            if (this.arenaNum < this.arenas.length-1) {
-                // Show the "go forward" marker
-                //gamestate.screen.goMarker.show();
-                // Advance to the next arena
-                this.arenaNum++;
-                this.state = this.SHOWING_GO;
-            } else {
-                // No more arenas - open the exit door
-                this.state = this.EXIT_OPEN;
-                if (this.exitDoor) this.exitDoor.startOpening();
-            }
-        } else {
-            arena.update(dt);
+    // Update the camera to track the player. Have the camera move
+    // smoothly towards the player to avoid jumping around.
+    var xpos = this.player.sprite.x - this.camera.width/8;
+    xpos = Math.max(xpos, 0);
+    xpos = Math.min(xpos, this.bg.getWidth()-this.camera.width);
+    if (false) { //this.smoothTracking) {
+        var dirx = Math.sign(xpos-this.camera.x);
+        this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
+        if (dirx != Math.sign(xpos-this.camera.x)) {
+            // Overshot the target, stop smoothly tracking
+            this.smoothTracking = false;
         }
-        // Update the camera - the player has full mobility within the 
-        // start and stop bounds of the arena.
-        //var xpos = this.player.sprite.x - this.camera.width/2;
-        //xpos = Math.max(xpos, arena.startx);
-        //xpos = Math.min(xpos, arena.endx-this.camera.width);
-        break;
-        
-    case this.SHOWING_GO:
-        // Wait for the player to move the level forward by "pushing" the
-        // edge of the screen.
-        if (this.player.sprite.x > this.camera.x + this.camera.width*0.8) {
-            this.state = this.NEXT_ARENA;
-            this.smoothTracking = true;
-        }
-        break;
-
-    case this.NEXT_ARENA:
-        // Update the camera to track the player. Have the camera move
-        // smoothly towards the player to avoid jumping around.
-        var xpos = this.player.sprite.x - this.camera.width/8;
-        xpos = Math.max(xpos, 0);
-        xpos = Math.min(xpos, this.bg.getWidth()-this.camera.width);
-        if (false) { //this.smoothTracking) {
-            var dirx = Math.sign(xpos-this.camera.x);
-            this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
-            if (dirx != Math.sign(xpos-this.camera.x)) {
-                // Overshot the target, stop smoothly tracking
-                this.smoothTracking = false;
-            }
-        } else {
-            this.camera.x = xpos;
-        }
-
-        // Also remove the go marker (if it's done animated) since the player
-        // already knows to move forward by now.
-        /*if (gamestate.screen.goMarker.sprite.visible && 
-          gamestate.screen.goMarker.done) {
-          gamestate.screen.goMarker.hide();
-          }*/
-
-        // Wait for the player to move into the next arena
-        if (arena && this.camera.x + this.camera.width >= arena.endx)
-        {
-            // Snap the camera into place and activate the next arena
-            this.camera.x = arena.endx - this.camera.width;
-            arena.activate();
-            this.state = this.ACTIVE_ARENA;
-            // If somehow the go marker is sticking around (maybe the player
-            // is moving _really_ fast) remove it now, done or not.
-            /*if (gamestate.screen.goMarker.sprite.visible) {
-              gamestate.screen.goMarker.hide();
-              }*/
-        }
-        break;
-
-    case this.EXIT_OPEN:
-        break;
-
+    } else {
+        this.camera.x = xpos;
     }
+
     // Position the camera
     this.stage.x = -this.camera.x;
     this.stage.y = -this.camera.y;

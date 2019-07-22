@@ -23,7 +23,6 @@ import { Chunk, CompoundBackground, TiledBackground } from './bg';
 import { Level } from './level';
 import { Door } from './door';
 import { Gate } from './gate';
-import { Arena, Round, DropSpawn, Spawn, GateSpawn } from './arena';
 import { Snake, Rat, Scorpion } from './snake';
 import { Goblin } from './goblin';
 import { SkelWarrior } from './skel_warrior';
@@ -33,6 +32,7 @@ import { Chest } from './chest';
 import { Item } from './item';
 import { GroundItem } from './grounditem';
 import { GameControls, ManualControls } from './controls';
+import { Spawn } from './spawn';
 
 var randint = Utils.randint;
 var randomChoice = Utils.randomChoice;
@@ -222,277 +222,41 @@ EnterScene.prototype.update = function(dt)
 
 /* Functions */
 
-/*
-export function generateLevelOLD(levelNum)
+function spawnThings(level)
 {
-    // Generate the floor and top wall across the level
-    var length = 100;
-    var grid = Utils.createGrid(5, length);
-    for (var row = 0; row < grid.rows; row++) {
-        for (var col = 0; col < grid.cols; col++) {
-            var n = Math.random();
-            if (n < 0.5) grid[0][col] = "brick_wall_m";
-            else if (n < 0.8) grid[0][col] = "mossy_wall_m";
-            else grid[0][col] = "broken_wall_m";
-            grid[row][col] = "smooth_floor_m";
-        }
-    }
+    let tileset = Utils.getTileset();
+    let door = null;
 
-    // Add a random spot of water somewhere
-    var w = randint(4, 8);
-    var pos = randint(10, grid.cols-2-w);
-    for (var row = 1; row < grid.rows; row++)
-        for (var col = pos-randint(0,2); col < pos+w+randint(0,2); col++)
-            grid[row][col] = "water";
-
-    // Add random outcropping of wall sections
-    var pos = 0;
-    if (levelNum === 0) {
-        // Leave a large, empty space in the first level to make room for
-        // a starter chest and some NPCs
-        pos += 10;
-    }
-    while (true) 
-    {
-        pos += randint(5, 10);
-        // Leave space at the end of the level
-        if (pos >= grid.cols-12) break;
-
-        var w = 1;
-        if (Math.random() < 0.5) {
-            w = randint(3, 5);
-        }
-        if (pos+w >= grid.cols) w = 0;
-
-        var depth = randomChoice([1, 1, 2, 2, 3]);
-        for (var col = 0; col < w; col++) {
-            for (var row = 0; row < depth; row++) {
-                if (row == 0) grid[row][pos+col] = "wall_behind";
-                else grid[row][pos+col] = "wall_behind2";
-            }
-            grid[depth][pos+col] = "smooth_wall_m";
-        }
-        pos += w;
-    }
-
-    // Add a vertical wall to either side of the level
-    for (var row = 0; row < grid.rows-1; row++) {
-        grid[row][0] = "wall_behind2";
-        grid[row][grid.cols-1] = "wall_behind2";
-    }
-    grid[0][0] = "wall_behind";
-    grid[0][grid.cols-1] = "wall_behind";
-    grid[grid.rows-1][0] = "smooth_wall_m";
-    grid[grid.rows-1][grid.cols-1] = "smooth_wall_m";
-
-    // Build a big sprite for the tiled map
-    var bg = new TiledBackground(
-        RES.TILE_WIDTH,
-        RES.TILE_HEIGHT,
+    level.bg.forEachChunk(chunk => {
+        for (let obj of chunk.things)
         {
-            wallHeight: RES.WALL_HEIGHT,
-            textures: Utils.getTextures(RES.MAPTILES),
-            grid: grid
-        }
-    );
-    var level = new Level(bg);
-
-    // Now add some random gates throughout the level
-    var pos = 0;
-    while (true) 
-    {
-        if (Math.random() < 0.6 && pos > 0) 
-        {
-            // Find the bottom-most section of wall
-            var found = -1;
-            for (var row = grid.rows-1; row >= 0; row--) {
-                if (grid[row][pos] && 
-                    grid[row][pos] !== "wall_behind" && 
-                    grid[row][pos] !== "wall_behind2" && 
-                    grid[row][pos].indexOf("wall") !== -1)
-                {
-                    found = row;
-                    break
-                }
-            }
-            if (found !== -1) {
-                var gate = new Gate();
-                gate.sprite.x = pos*RES.TILE_WIDTH;
-                gate.sprite.y = found*RES.TILE_HEIGHT+0.01;
-                level.addThing(gate);
-            }
-        }
-        pos += randint(5, 15);
-        if (pos >= grid.cols-5) break;
-    }
-
-    // Break the level down into "arena" sections where the player gets
-    // to fight monsters. We start with an arena at the very end of the 
-    // level, then work backwards from there.
-    var endx = level.getWidth()-1;
-    var arenaWidth = level.camera.width;
-    // The starting monster "budget" for this level. Harder monsters cost
-    // more and multiples of the same monster may have an additional
-    // cost. Each round is populated with monsters that fall within this 
-    // budget. This is gradually reduced working backwards through the 
-    // level to make earlier rounds a little easier.
-
-    var budget = (levelNum+1)*6;
-    var firstChest = null;
-    while (endx > arenaWidth*1.75)
-    {
-        var arena = new Arena(level, arenaWidth, endx);
-        level.addArena(arena);
-
-        // Find the visible gates (for gate spawning below)
-        var gates = [];
-        for (let thing of level.things) {
-            if (thing instanceof Gate &&
-                thing.sprite.x > arena.startx && 
-                thing.sprite.x < arena.endx)
+            if (obj.name == 'start')
             {
-                gates.push(thing);
+                let x = obj.x - tileset.tileWidth/2;
+                let y = obj.y - tileset.tileHeight/2;
+
+                // Add a door to enter the level
+                door = new Door();
+                door.sprite.x = x + door.sprite.anchor.x * door.sprite.texture.width;
+                door.sprite.y = y + door.sprite.anchor.y * door.sprite.texture.height;
+                level.addThing(door);
+                level.addThing(new EnterScene(door));
+            }
+            else if (obj.type == 'spawn') {
+                console.log('spawner!');
+                let spawn = new Spawn(obj.x, obj.y);
+                level.addThing(spawn);
             }
         }
+    });
 
-        // Higher levels have more rounds per arena on average
-        for (var rnum = 0; rnum < randint(2, 4+levelNum); rnum++) 
-        {
-            var round = new Round(randUniform(0.5, 1));
-            var monsters = null;
-
-            if (rnum === 0 && levelNum === 0 && 
-                endx === level.getWidth()-1) {
-                // Lots of rats!
-                monsters = [];
-                for (var n = 0; n < randint(10, 20); n++) {
-                    monsters.push(Rat);
-                }
-            } else {
-                monsters = chooseMonsters(budget);
-            }
-
-            for (let klass of monsters) 
-            {
-                var spawn = null;
-                var ypos = randUniform(0, level.camera.height);
-                var style = randint(1, 5);
-
-                if (style === 1 && klass !== Ghost) {
-                    var xpos = randint(arena.startx+20, arena.endx-20);
-                    spawn = new DropSpawn(
-                        level, new klass(), xpos, ypos);
-                } else if (style === 2 && gates.length > 0) {
-                    spawn = new GateSpawn(
-                        level, new klass(), randomChoice(gates));
-                } else {
-                    var xdir = randomChoice([-1, 1]);
-                    if (endx >= level.getWidth()-1) xdir = -1;
-                    spawn = new Spawn(level, new klass(), xdir, ypos);
-                }
-                round.addSpawn(spawn, randUniform(0, 1));
-            }
-            arena.rounds.push(round);
-        }
-        // Randomly add a chest into the arena
-        if (randint(1, 10) < 7)
-        {
-            // Find some clear space to add it
-            var xpos = randint(arena.startx+30, arena.endx-30);
-            var ypos = randint(10, level.getHeight()-30);
-
-            ypos = level.findClearSpace(xpos, ypos);
-            if (ypos !== null) {
-                let treasures = randomTreasures(levelNum);
-                let chest = new Chest(treasures);
-                chest.sprite.x = xpos;
-                chest.sprite.y = ypos;
-                level.addThing(chest);
-                firstChest = chest;
-            }
-        }
-        // Skip some space to the previous arena (working backwards)
-        endx -= (arenaWidth*randUniform(1, 1.25))|0;
-        // Decrease the monster 'budget' so the arenas are slightly easier
-        if (budget > 3) budget--;
+    if (!door) {
+        throw Error('level does not contain a starting door');
     }
-
-    if (levelNum === 0 && firstChest) {
-        firstChest.items = [Item.Table.SMALL_BOW];
-    }
-
-    // Add random coins scattered throughout the level
-    for (var n = 0; n < randint(10, 20); n++) {
-        var xpos = randint(level.camera.width+10, level.getWidth()-10);
-        var ypos = randint(10, level.getHeight()-10);
-        ypos = level.findClearSpace(xpos, ypos);
-        if (ypos !== null) {
-            var coin = new GroundItem(Item.Table.COIN, xpos, ypos);
-            level.addThing(coin);
-        }
-    }
-
-    // Add some health potions in the second half of the level
-    for (var n = 0; n < randint(1, 5); n++) {
-        var xpos = randint(level.getWidth()/2, level.getWidth()-10);
-        var ypos = randint(10, level.getHeight()-10);
-        ypos = level.findClearSpace(xpos, ypos);
-        if (ypos !== null) {
-            var coin = new GroundItem(Item.Table.SMALL_HEALTH, xpos, ypos);
-            level.addThing(coin);
-        }
-    }
-
-    if (levelNum === 0) {
-        // First level in the game. Add a chest of starter items. Have the 
-        // chest eject items to the right away from the first NPC. (so none
-        // of the items become hidden behind)
-        var items = [Item.Table.COIN, Item.Table.COIN, 
-                     Item.Table.COIN, Item.Table.SMALL_SWORD];
-        var chest = new Chest(items, {ejectX: 1});
-        chest.sprite.x = 60;
-        chest.sprite.y = 24;
-        level.addThing(chest);
-
-        // Add an NPC to give the player some dialog
-        var npc = new NPC();
-        npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
-        npc.sprite.x = 46;
-        npc.sprite.y = 25;
-        level.addThing(npc);
-
-        // Add an NPC to give the player some dialog
-        var npc = new NPC("npc3_south_1");
-        npc.setDialog("GOOD LUCK!");
-        npc.sprite.x = 80;
-        npc.sprite.y = 40;
-        level.addThing(npc);
-    }
-
-    // Add a door to enter the level
-    var door = new Door();
-    door.sprite.x = 20;
-    door.sprite.y = 12.8;
-    level.addThing(door);
-
-    var scn = new EnterScene(door);
-    level.addThing(scn);
-
-    // Add a door to exit the level
-    var door = new Door();
-    door.sprite.x = level.getWidth()-24;
-    door.sprite.y = 12.8;
-    level.exitDoor = door;
-    //door.startOpening();
-    level.addThing(door);
-
-    return level;
 }
-*/
 
 export function generateLevel(levelNum)
 {
-    let tileset = Utils.getTileset();
     let bg = new CompoundBackground();
 
     let chunk = Utils.getChunk('start');
@@ -503,26 +267,7 @@ export function generateLevel(levelNum)
     }
 
     var level = new Level(bg);
-
-    let door = null;
-    for (let obj of chunk.objects)
-    {
-        if (obj.name == 'start') {
-            let x = obj.x - tileset.tileWidth/2;
-            let y = obj.y - tileset.tileHeight/2;
-
-            // Add a door to enter the level
-            door = new Door();
-            door.sprite.x = x + door.sprite.anchor.x * door.sprite.texture.width;
-            door.sprite.y = y + door.sprite.anchor.y * door.sprite.texture.height;
-            level.addThing(door);
-            level.addThing(new EnterScene(door));
-        }
-    }
-
-    if (!door) {
-        throw Error('level does not contain a starting door');
-    }
+    spawnThings(level);
 
     // First level in the game. Add a chest of starter items. Have the 
     // chest eject items to the right away from the first NPC. (so none
@@ -562,4 +307,3 @@ export function generateEmptyLevel(rows, cols, value)
     chunk.renderTexture();
     return new Level(new TiledBackground(chunk));
 }
-
