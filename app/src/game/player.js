@@ -69,7 +69,7 @@ export function Player(controls)
     this.kills = {};
 
     // Define the hitbox
-    this.hitbox = new Hitbox(0, -4, 6, 6);
+    this.hitbox = new Hitbox(0, -2, 2, 2);
 
     this.setCharFrames(RES.FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
@@ -94,7 +94,7 @@ export function Player(controls)
 
     // Minimum amount of time after taking damage, until the player can be
     // damaged again.
-    this.damageCooldown = 1;
+    this.damageCooldown = 0.5;
     // The timer used for tracking the cooldown
     this.damageTimer = 0;
 
@@ -268,16 +268,6 @@ Player.prototype.getFacing = function()
         this.waterSprite.visible = false;
     }
 
-    if (this.damageTimer > 0) {
-        this.damageTimer -= dt;
-        if (this.damageTimer <= 0 || 
-            this.damageCooldown-this.damageTimer > 0.1) 
-        {
-            // Stop flashing red
-            this.spriteChar.tint = NO_TINT;
-        }
-    }
-
     //if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
     // Check for collisions with other things
@@ -318,6 +308,17 @@ Player.prototype.update = function(dt)
         }
     }
 
+    if (this.damageTimer > 0)
+    {
+        this.damageTimer -= dt;
+        if (this.damageTimer <= 0 || 
+            this.damageCooldown-this.damageTimer > 0.1) 
+        {
+            // Stop flashing red
+            this.spriteChar.tint = NO_TINT;
+        }
+    }
+
     if (velx !== 0 || vely !== 0)
     {
         this.frame += dt;
@@ -340,6 +341,12 @@ Player.prototype.update = function(dt)
 
     this.velx = velx;
     this.vely = vely;
+
+    // Check for collisions with other things
+    this.level.forEachThingHit(
+        this.sprite.x, this.sprite.y, 
+        this.hitbox, this, 
+        this.handleCollisionCallback);
 
     // Update animation
     let frameNum = ((this.frame*this.walkFPS)|0) % this.frames.length;

@@ -27,13 +27,12 @@ import { Audio } from './audio';
 /* Snake */
 /*********/
 
-var SNAKE_IDLE = 0;
-var SNAKE_ATTACKING = 1;
-var SNAKE_HURT = 2;
-var SNAKE_DEAD = 3;
-
 export function Snake(state)
 {
+    this.STATE_PACING = 0;
+    this.STATE_IDLE = 1;
+    this.STATE_FORWARD = 2;
+
     this.name = "Snake";
     this.frames = Utils.getFrames(RES.ENEMIES, Snake.FRAMES);
     this.speed = 16;
@@ -41,7 +40,6 @@ export function Snake(state)
     this.frame = 0;
     this.facing = 1;
     this.dead = false;
-    this.travel = 0;
     // The sprite container holding the snake and splash sprite
     this.sprite = new PIXI.Container();
     // The actual snake sprite
@@ -54,8 +52,10 @@ export function Snake(state)
     this.sprite.addChild(this.waterSprite);
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = state || SNAKE_ATTACKING;
-    this.hitbox = new Hitbox(0, -1, 6, 6);
+    this.state = state || this.STATE_PACING;
+    this.hitbox = new Hitbox(0, -1, 4, 4);
+    this.timer = 0;
+    this.velx = 0;
 }
 
 Snake.FRAMES = ["snake_south_1", "snake_south_2"];
@@ -69,14 +69,44 @@ Snake.prototype.getDropTable = function()
 
 Snake.prototype.update = function(dt)
 {
-    if (this.state === SNAKE_IDLE) this.updateIdle(dt);
+    /*if (this.state === SNAKE_IDLE) this.updateIdle(dt);
     else if (this.state === SNAKE_ATTACKING) this.updateAttacking(dt);
     else if (this.state === SNAKE_HURT) this.updateHurt(dt);
     else if (this.state === SNAKE_DEAD) {
         this.level.removeThing(this);
+        }*/
+
+    if (this.state === this.STATE_PACING)
+    {
+        // Pacing back and forth
+        this.timer -= dt;
+        if (this.timer <= 0) {
+            this.timer = 0.5;
+            this.facing = -this.facing;
+        }
+        this.velx = this.speed*this.facing;
     }
+    else if (this.state === this.STATE_IDLE)
+    {
+    }
+    else if (this.state === this.STATE_FORWARD)
+    {
+        // Marching forward if the player is close enough
+        if (this.level.isThingVisible(this)) {
+            this.velx = -this.speed;
+            this.facing = -1;
+        }
+    }
+
+    if (this.velx != 0) {
+        this.frame += 2*dt;
+        this.sprite.x += this.velx*dt;
+        this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+    }
+    this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
 }
 
+/*
 Snake.prototype.updateIdle = function(dt)
 {
     let player = this.level.player;
@@ -158,7 +188,7 @@ Snake.prototype.updateHurt = function(dt)
         this.state = SNAKE_ATTACKING;
         this.travel = 0;
     }
-}
+}*/
 
 Snake.prototype.handleHit = function(srcx, srcy, dmg)
 {
@@ -206,14 +236,13 @@ export function Rat()
     Snake.call(this);
     this.name = "Rat";
     this.frames = Utils.getFrames(RES.ENEMIES, Rat.FRAMES);
-    this.health = 1;
+    this.health = -1;
     this.speed = 20;
     this.frame = 0;
-    this.facing = 1;
-    this.travel = 20;
+    this.facing = -1;
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = SNAKE_ATTACKING;
+    this.state = this.STATE_FORWARD;
     this.snakeSprite.texture = this.frames[0];
     this.waterSprite.y = -0.9;
 }
@@ -234,11 +263,10 @@ export function Scorpion()
     this.health = 4;
     this.speed = 10;
     this.frame = 0;
-    this.facing = 1;
-    this.travel = 20;
+    this.facing = -1;
     this.knocked = 0;
     this.knockedTimer = 0;
-    this.state = SNAKE_ATTACKING;
+    this.state = this.STATE_FORWARD;
     this.snakeSprite.texture = this.frames[0];
     this.waterSprite.y = -0.85;
 }

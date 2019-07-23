@@ -42,14 +42,24 @@ export function GroundItem(item, x, y)
     // other sprites)
     this.sprite.zpos = y;
     this.velx = 0;
-    this.velz = 0;
-    this.velh = 0;
+    this.vely = 0;
+    this.accely = 0;
+    this.accelx = 0;
     this.bouncy = 0.5;
     this.hitbox = new Hitbox(0, 0, 5, 5);
+
+    this.taking = false;
 }
 
 GroundItem.prototype.update = function(dt)
 {
+    this.velx += this.accelx*dt;
+    this.vely += this.accely*dt;
+
+    this.sprite.x += this.velx*dt;
+    this.sprite.y += this.vely*dt;
+    
+    /*
     if (this.velh !== 0) 
     {
         // First move the item into/out of the scene (Z-axis) and make sure
@@ -87,17 +97,20 @@ GroundItem.prototype.update = function(dt)
             }
         }
         this.sprite.y = this.ypos - this.height;
-    }
+    }*/
 }
 
 GroundItem.prototype.handlePlayerCollision = function(player)
 {
-    // The player takes the item if it's falling down (or resting) and close
-    // enough to the ground.
-    if (this.height < 3 && this.velh >= 0) 
+    if (!this.taking && this.item && player.handleTakeItem(this.item))
     {
-        if (this.item && player.handleTakeItem(this.item)) {
-            this.level.removeThing(this);
-        }
+        this.velx = 2*player.velx;
+        this.vely = -40;
+        this.accelx = -20;
+        this.accely = -20;
+        this.taking = true;
+    }
+    if (this.sprite.y < -this.sprite.height) {
+        this.level.removeThing(this);
     }
 }

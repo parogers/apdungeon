@@ -136,12 +136,12 @@ EnterScene.prototype.update = function(dt)
     case this.PLAYER_LOOK_LEFT:
         player.faceDirection(-1);
         this.state = this.PLAYER_LOOK_RIGHT;
-        this.timer = 0.5;
+        this.timer = 0.25;
         break;
 
     case this.PLAYER_LOOK_RIGHT:
         player.faceDirection(1);
-        this.timer = 0.5;
+        this.timer = 0.25;
         // Done!
         this.state = this.PLAYER_DONE;
         break;

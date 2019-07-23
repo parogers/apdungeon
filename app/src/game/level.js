@@ -333,6 +333,13 @@ Level.prototype.getTileAt = function(x, y) {
     return this.compound.getTileAt(x, y);
 }
 
+Level.prototype.isThingVisible = function(thing) {
+    return (
+        thing.sprite.x < this.camera.x + this.camera.width &&
+        thing.sprite.x + thing.sprite.width > this.camera.x
+    );
+}
+
 Level.BEHIND_BACKGROUND_POS = -1;
 Level.BACKGROUND_POS = 0;
 Level.FLOOR_POS = 1;

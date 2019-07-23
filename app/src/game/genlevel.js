@@ -120,7 +120,43 @@ export function generateLevel(levelNum)
     var level = new Level(bg);
     for (let chunk of level.compound.chunks)
     {
-        chunk.spawnThings(level);
+        chunk.spawnThings();
+    }
+
+    let x = 80;
+    while (x < level.getWidth())
+    {
+        let thing = new GroundItem(
+            Item.Table.COIN,
+            x,
+            level.getTrack(randint(0, 2)).y-2,
+        );
+        level.addThing(thing);
+        x += randint(40, 60);
+    }
+
+    x = 64;
+    while (x < level.getWidth())
+    {
+        let monster = null;
+        let n = randint(0, 2);
+
+        if (n === 0) monster = new Snake();
+        else if (n === 1) monster = new Rat();
+        else if (n === 2) monster = new Scorpion();
+
+        monster.sprite.x = x;
+        monster.sprite.y = level.getTrack(randint(0, 2)).y-1;
+        level.addThing(monster);
+        x += randint(40, 120);
+    }
+
+    let rat = new Rat();
+    rat.sprite.x = 60;
+    rat.sprite.y = level.getBottomTrack().y;
+    level.addThing(rat);
+
+    for (let n = 0; n < 10; n++) {
     }
 
     // First level in the game. Add a chest of starter items. Have the 
