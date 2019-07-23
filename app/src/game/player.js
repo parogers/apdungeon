@@ -43,8 +43,8 @@ export function Player(controls)
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 8;
     this.health = this.maxHealth;
-    this.verticalSpeed = 40;
-    this.maxSpeed = 30; // pixels/second
+    this.verticalSpeed = 70;
+    this.maxSpeed = 50; // pixels/second
     // Inventory stuff
     this.numCoins = 0;
     this.numArrows = 0;
@@ -283,8 +283,6 @@ Player.prototype.getFacing = function()
 
 Player.prototype.update = function(dt)
 {
-    let nextX = this.sprite.x;
-    let nextY = this.sprite.y;
     let velx = 0;
     let vely = 0;
 
@@ -302,9 +300,10 @@ Player.prototype.update = function(dt)
     {
         // Check if the player wants to change tracks
         if (this.track && this.controls.getY() !== 0) {
-            this.nextTrack = this.level.getTrack(
+            
+            this.moveToTrack(this.level.getTrack(
                 this.track.number + Math.sign(this.controls.getY())
-            );
+            ));
         }
     }
 
@@ -331,7 +330,7 @@ Player.prototype.update = function(dt)
     if (this.nextTrack)
     {
         if (vely > 0 && this.sprite.y >= this.nextTrack.y ||
-            vely < 0 && nextY <= this.nextTrack.y)
+            vely < 0 && this.sprite.y <= this.nextTrack.y)
         {
             this.sprite.y = this.nextTrack.y;
             this.track = this.nextTrack;
@@ -571,9 +570,18 @@ Player.prototype.showMessage = function()
     }
 }
 
-/* Start the player moving onto the given track */
-Player.prototype.moveToTrack = function(track) {
-    this.nextTrack = track;
+/* Start the player moving onto the given track. Returns true if the player can
+ * move onto the track, and false otherwise. */
+Player.prototype.moveToTrack = function(track)
+{
+    if (!track) {
+        return false;
+    }
+    if (track.checkSolidAt(this.sprite.x, this.sprite.width)) {
+        return false;
+    }
+    this.nextTrack = track;    
+    return true;
 }
 
 Player.prototype.isMovingToTrack = function() {

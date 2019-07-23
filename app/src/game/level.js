@@ -42,9 +42,14 @@ function Camera(w, h)
 
 class Track
 {
-    constructor(number, y) {
+    constructor(level, number, y) {
+        this.level = level;
         this.y = y;
         this.number = number;
+    }
+
+    checkSolidAt(x, width) {
+        return this.level.checkSolidAt(x, this.y, width);
     }
 };
 
@@ -84,9 +89,9 @@ export function Level(compound)
     let tileHeight = this.compound.getTileHeight();
     let y = this.compound.getHeight() - 1;
     this.tracks = [
-        new Track(0, y-tileHeight*2),
-        new Track(1, y-tileHeight),
-        new Track(2, y),
+        new Track(this, 0, y-tileHeight*2),
+        new Track(this, 1, y-tileHeight),
+        new Track(this, 2, y),
     ];
 }
 
