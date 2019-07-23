@@ -42,25 +42,25 @@
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":3},
     "sourceSize" : {"w":8, "h":3}
 },"blood1" : {
-    "frame" : {"x":10, "y":1, "w":8, "h":8},
+    "frame" : {"x":1, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
 },"blood2" : {
-    "frame" : {"x":19, "y":1, "w":8, "h":8},
+    "frame" : {"x":10, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
 },"blood3" : {
-    "frame" : {"x":28, "y":1, "w":8, "h":8},
+    "frame" : {"x":19, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
 },"blood4" : {
-    "frame" : {"x":37, "y":1, "w":8, "h":8},
+    "frame" : {"x":28, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},

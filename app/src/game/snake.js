@@ -32,6 +32,8 @@ export function Snake(state)
     this.STATE_PACING = 0;
     this.STATE_IDLE = 1;
     this.STATE_FORWARD = 2;
+    this.STATE_HURT = 3;
+    this.STATE_DEAD = 4;
 
     this.name = "Snake";
     this.frames = Utils.getFrames(RES.ENEMIES, Snake.FRAMES);
@@ -69,13 +71,6 @@ Snake.prototype.getDropTable = function()
 
 Snake.prototype.update = function(dt)
 {
-    /*if (this.state === SNAKE_IDLE) this.updateIdle(dt);
-    else if (this.state === SNAKE_ATTACKING) this.updateAttacking(dt);
-    else if (this.state === SNAKE_HURT) this.updateHurt(dt);
-    else if (this.state === SNAKE_DEAD) {
-        this.level.removeThing(this);
-        }*/
-
     if (this.state === this.STATE_PACING)
     {
         // Pacing back and forth
@@ -96,6 +91,14 @@ Snake.prototype.update = function(dt)
             this.velx = -this.speed;
             this.facing = -1;
         }
+    }
+    else if (this.state === this.STATE_HURT)
+    {
+    }
+    else if (this.state === this.STATE_DEAD)
+    {
+        this.level.removeThing(this);
+        return;
     }
 
     if (this.velx != 0) {
@@ -193,11 +196,11 @@ Snake.prototype.updateHurt = function(dt)
 Snake.prototype.handleHit = function(srcx, srcy, dmg)
 {
     let player = this.level.player;
-    if (this.state === SNAKE_DEAD) return false;
+    if (this.state === this.STATE_DEAD) return false;
     this.health -= 1;
     if (this.health <= 0) {
         Audio.playSound(RES.DEAD_SND);
-        this.state = SNAKE_DEAD;
+        this.state = this.STATE_DEAD;
         // Drop a reward
         this.level.handleTreasureDrop(
             this.getDropTable(), this.sprite.x, this.sprite.y);
@@ -208,7 +211,7 @@ Snake.prototype.handleHit = function(srcx, srcy, dmg)
         Audio.playSound(RES.SNAKE_HURT_SND);
         this.knocked = Math.sign(this.sprite.x-srcx)*60;
         this.knockedTimer = 0.1;
-        this.state = SNAKE_HURT;
+        this.state = this.STATE_HURT;
     }
 
     // Add some random blood, but only if we're not currently in water

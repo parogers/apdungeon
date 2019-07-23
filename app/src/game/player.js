@@ -122,6 +122,8 @@ export function Player(controls)
         }
     }).bind(this);
     //this.upgradeSword(Item.Table.SMALL_SWORD);
+    this.upgradeBow(Item.Table.SMALL_BOW);
+    this.numArrows = 99;
 }
 
 /* Have the player face the given direction */
@@ -290,6 +292,15 @@ Player.prototype.update = function(dt)
         velx = this.maxSpeed;
     }
     
+    // Handle attacking
+    if (this.controls.primary.pressed) this.startAttack();
+    if (!this.controls.primary.released) this.stopAttack();
+
+    // Update the equipped weapon
+    if (this.weaponSlot && this.weaponSlot.update) {
+        this.weaponSlot.update(dt);
+    }
+
     if (this.nextTrack)
     {
         // Player is in the process of moving to another track
@@ -483,7 +494,7 @@ Player.prototype.swapWeapons = function()
 
 Player.prototype.startAttack = function()
 {
-    if (this.weaponSlot) 
+    if (this.weaponSlot)
         this.weaponSlot.startAttack();
 }
 
