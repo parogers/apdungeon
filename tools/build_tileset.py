@@ -134,14 +134,15 @@ def dump_sprite_atlas(tileset, dest):
     with open(dest, 'w') as fd:
         fd.write(json.dumps(data, indent=4))
 
-src = './rawdata/maps/Tileset2.tsx'
-tileset = load_tileset(src)
+if __name__ == '__main__':
+    src = './rawdata/maps/Tileset2.tsx'
+    tileset = load_tileset(src)
 
-dump_tileset(tileset, './app/src/assets/map-tileset.json')
+    dump_tileset(tileset, './app/src/assets/map.tileset.json')
 
-dest = os.path.join(
-    os.path.dirname(tileset.src),
-    'Tileset2.json'
-)
+    dest = os.path.join(
+        os.path.dirname(tileset.src),
+        'Tileset2.json'
+    )
 
-dump_sprite_atlas(tileset, dest)
+    dump_sprite_atlas(tileset, dest)

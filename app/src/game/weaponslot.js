@@ -154,7 +154,7 @@ BowWeaponSlot.prototype.startAttack = function()
     if (this.player.numArrows <= 0) return;
     if (this.attackCooldown > 0) return;
     Audio.playSound(RES.ATTACK_SWORD_SND);
-    this.attackCooldown = 0.2;
+    this.attackCooldown = 0.15;
 
     this.player.numArrows--;
 

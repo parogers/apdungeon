@@ -20,6 +20,8 @@
 import { Render } from './render';
 import { Utils } from './utils';
 import { RES } from './res';
+import { Door, EnterScene } from './door';
+import { Spawn } from './spawn';
 
 export class Tile
 {
@@ -62,12 +64,13 @@ export class Tileset
     }
 };
 
-export class Chunk
+export class ChunkTemplate
 {
-    constructor(background, foreground, objects)
+    constructor(background, midground, things)
     {
         this.grid = background;
-        this.objects = objects
+        this.midground = midground;
+        this.things = things;
         this.texture = null;
     }
 
@@ -103,21 +106,59 @@ export class Chunk
         Render.getRenderer().render(cnt, this.texture);
         return this.texture;
     }
+
+    // Spawn any things defined by this template into the given chunk
+    spawnThings(chunk)
+    {
+        let level = chunk.compound.level;
+        for (let obj of this.things)
+        {
+            if (obj.name == 'start')
+            {
+                let x = obj.x - chunk.tileset.tileWidth/2;
+                let y = obj.y - chunk.tileset.tileHeight/2;
+
+                // Add a door to enter the level
+                let door = new Door();
+                door.sprite.x = x + door.sprite.anchor.x * door.sprite.texture.width;
+                door.sprite.y = y + door.sprite.anchor.y * door.sprite.texture.height;
+                level.addThing(door);
+                level.addThing(new EnterScene(door));
+            }
+            else if (obj.type == 'spawn')
+            {
+                console.log('spawner!');
+                let spawn = new Spawn(obj.x, obj.y);
+                level.addThing(spawn);
+            }
+        }
+    }
 };
 
-export class TiledBackground
+export class Chunk
 {
-    constructor(chunk)
+    constructor(template)
     {
         this.tileset = Utils.getTileset();
-        this.chunk = chunk;
-        this.grid = chunk.grid;
+        this.template = template;
+        this.grid = template.grid;
         this.tileWidth = this.tileset.tileWidth;
         this.tileHeight = this.tileset.tileHeight;
         this.sprite = new PIXI.Sprite();
-        this.sprite.texture = chunk.renderTexture();
+        this.sprite.texture = template.renderTexture();
         this.sprite.x = 0;
         this.sprite.y = 0;
+        // Whether this chunk has spawned things are not
+        this.spawned = false;
+        this.compound = null;
+    }
+
+    spawnThings()
+    {
+        if (!this.spawned) {
+            this.template.spawnThings(this);
+            this.spawned = true;
+        }
     }
 
     containsX(x) {
@@ -159,47 +200,42 @@ export class TiledBackground
         return this.sprite.height;
     }
 
+    getTileHeight() {
+        return this.tileset.tileHeight;
+    }
+
     addToLevel(level)
     {
         level.stage.addChild(this.sprite);
     }
 };
 
-export class CompoundBackground
+export class Compound
 {
     constructor()
     {
-        this.bgList = [];
+        this.chunks = [];
         this.width = 0;
         this.height = 0;
-        this.onSizeChanged = null;
+        this.level = null;
     }
 
-    updateLayout()
+    getTileHeight() {
+        return this.chunks[0].getTileHeight();
+    }
+
+    addChunk(chunk)
     {
+        chunk.compound = this;
+        this.chunks.push(chunk);
+        // Update the tiled grid layout to make sure everything lines up
         this.width = 0;
         this.height = 0;
-
-        for (let bg of this.bgList) {
-            bg.sprite.x = this.width;
-            this.width += bg.getWidth();
-            this.height = Math.max(this.height, bg.getHeight());
+        for (let chunk of this.chunks) {
+            chunk.sprite.x = this.width;
+            this.width += chunk.getWidth();
+            this.height = Math.max(this.height, chunk.getHeight());
         }
-        if (this.onSizeChanged)
-        {
-            this.onSizeChanged();
-        }
-    }
-
-    appendBackground(bg)
-    {
-        this.bgList.push(bg);
-        this.updateLayout();
-
-        // Update our size whenever a child background changes size
-        bg.onSizeChanged = () => {
-            this.updateLayout();
-        };
     }
 
     getWidth() {
@@ -212,36 +248,36 @@ export class CompoundBackground
 
     getTileAt(x, y)
     {
-        if (this.bgList.length === 0) {
+        if (this.chunks.length === 0) {
             return null;
         }
-        // Use binary search to figure out which TiledBackground contains
-        // the coordinates.
+        // Use binary search to figure out which Chunk contains the coordinates
         let start = 0;
-        let end = this.bgList.length-1;
+        let end = this.chunks.length-1;
 
         while (start <= end)
         {
             let mid = Math.floor((start + end) / 2);
-            let bg = this.bgList[mid];
+            let chunk = this.chunks[mid];
 
-            if (bg.containsX(x)) {
+            if (chunk.containsX(x)) {
                 // Found it
-                return bg.getTileAt(x, y);
+                return chunk.getTileAt(x, y);
             }
-            if (x >= bg.getX()) {
+            if (x >= chunk.getX()) {
                 start = mid+1;
             } else {
                 end = mid-1;
             }
         }
-        return this.bgList[0].getWallTile();
+        return this.chunks[0].getWallTile();
     }
 
     addToLevel(level)
     {
-        for (let bg of this.bgList) {
-            bg.addToLevel(level);
+        this.level = level;
+        for (let chunk of this.chunks) {
+            chunk.addToLevel(level);
         }
     }
 };
@@ -250,15 +286,15 @@ export class ChunkLoaderPlugin
 {
     use(resource, next)
     {
-        if (resource.name.endsWith('-chunks.json'))
+        if (resource.name.endsWith('.chunks.json'))
         {
             resource.chunks = {};
             for (let name in resource.data)
             {
-                resource.chunks[name] = new Chunk(
+                resource.chunks[name] = new ChunkTemplate(
                     resource.data[name].background,
-                    null,
-                    resource.data[name].objects,
+                    resource.data[name].midground,
+                    resource.data[name].things,
                 );
             }
         }
@@ -270,7 +306,7 @@ export class TilesetLoaderPlugin
 {
     use(resource, next)
     {
-        if (resource.name.endsWith('-tileset.json'))
+        if (resource.name.endsWith('.tileset.json'))
         {
             resource.tileset = new Tileset(
                 resource.data.tile_width,

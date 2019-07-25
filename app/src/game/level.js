@@ -37,6 +37,23 @@ function Camera(w, h)
 //Camera.autoFit
 
 /*********/
+/* Track */
+/*********/
+
+class Track
+{
+    constructor(level, number, y) {
+        this.level = level;
+        this.y = y;
+        this.number = number;
+    }
+
+    checkSolidAt(x, width) {
+        return this.level.checkSolidAt(x, this.y, width);
+    }
+};
+
+/*********/
 /* Level */
 /*********/
 
@@ -48,38 +65,68 @@ function compareDepth(s1, s2) {
     return (z1>z2) - (z2>z1);
 }
 
-export function Level(bg)
+export function Level(compound)
 {
-    // The various level states:
-    // Player is within an active arena
-    this.ACTIVE_ARENA = 1;
-    // Showing the go arrow, indicating the player should advance forward
-    this.SHOWING_GO = 2;
-    // Player is moving towards next arena (not active yet)
-    this.NEXT_ARENA = 3;
-    // All monsters defeated - exit is open
-    this.EXIT_OPEN = 4;
-    // Player has passed through the exit
-    this.FINISHED = 5;
+    // The various level states
+    this.PLAYING = 0;
+    this.FINISHED = 1;
 
     this.camera = new Camera(Level.CAMERA_WIDTH, Level.CAMERA_HEIGHT);
     this.player = null;
-    this.state = this.NEXT_ARENA;
+    this.state = this.PLAYING;
     // The background sprite (TiledBackground)
-    this.bg = bg;
-    this.bg.zpos = Level.BACKGROUND_POS;
+    this.compound = compound;
+    this.compound.zpos = Level.BACKGROUND_POS;
     // List of enemies, interactable objects etc and the player
     this.things = [];
     // The PIXI container for everything we want to draw
     this.stage = new PIXI.Container();
-    this.bg.addToLevel(this);
+    this.compound.addToLevel(this);
     
-    // List of arenas in this level (Arena instances)
-    this.arenas = [];
-    // Current active arena (number)
-    this.arenaNum = 0;
     this.smoothTracking = true;
     this.exitDoor = null;
+
+    let tileHeight = this.compound.getTileHeight();
+    let y = this.compound.getHeight() - 1;
+    this.tracks = [
+        new Track(this, 0, y-tileHeight*2),
+        new Track(this, 1, y-tileHeight),
+        new Track(this, 2, y),
+    ];
+}
+
+Level.prototype.isFinished = function() {
+    return this.state === this.FINISHED;
+}
+
+Level.prototype.getTopTrack = function(n) {
+    return this.tracks[0];
+}
+
+Level.prototype.getMiddleTrack = function(n) {
+    return this.tracks[1];
+}
+
+Level.prototype.getBottomTrack = function(n) {
+    return this.tracks[2];
+}
+
+Level.prototype.getTrackAbove = function(track) {
+    if (!track) return null;
+    return this.getTrack(track.number-1);
+}
+
+Level.prototype.getTrackBelow = function(track) {
+    if (!track) return null;
+    return this.getTrack(track.number+1);
+}
+
+Level.prototype.getTrack = function(n)
+{
+    if (n >= 0 && n < this.tracks.length) {
+        return this.tracks[n];
+    }
+    return null;
 }
 
 Level.prototype.destroy = function()
@@ -98,13 +145,13 @@ Level.prototype.destroy = function()
 // Returns the width of the level in pixels (ie render size)
 Level.prototype.getWidth = function()
 {
-    return this.bg.getWidth();
+    return this.compound.getWidth();
 }
 
 // Returns the height of the level in pixels (ie render size)
 Level.prototype.getHeight = function()
 {
-    return this.bg.getHeight();
+    return this.compound.getHeight();
 }
 
 /* Find some clear space to spawn a thing at the given location. This code
@@ -115,15 +162,15 @@ Level.prototype.findClearSpace = function(x, y)
     var offset = 0;
     while(true)
     {
-        var north = this.bg.getTileAt(x, y + offset);
-        var south = this.bg.getTileAt(x, y - offset);
+        var north = this.compound.getTileAt(x, y + offset);
+        var south = this.compound.getTileAt(x, y - offset);
         if (!north.solid) {
             return y + offset;
         }
         if (!south.solid) {
             return y - offset;
         }
-        if (y + offset > this.bg.getHeight() && y - offset < 0) {
+        if (y + offset > this.compound.getHeight() && y - offset < 0) {
             // We've gone completely outside the level - no space found
             return null;
         }
@@ -131,61 +178,28 @@ Level.prototype.findClearSpace = function(x, y)
     }
 }
 
-/* Adds an arena to this level. This function also maintains the correct
- * ordering of arenas sorted by ending position. */
-Level.prototype.addArena = function(arena)
-{
-    this.arenas.push(arena);
-    this.arenas.sort(function(a1, a2) {
-        return (a1.endx > a2.endx) - (a2.endx > a1.endx);
-    });
-}
-
 // Called every frame to update the general level state
 Level.prototype.update = function(dt)
 {
-    var arena = this.arenas[this.arenaNum];
-    switch(this.state) {
-    case this.ACTIVE_ARENA:
-        // Wait for the current arena to be finished (ie player defeats 
-        // all the monsters)
-        if (arena.done) {
-            if (this.arenaNum < this.arenas.length-1) {
-                // Show the "go forward" marker
-                //gamestate.screen.goMarker.show();
-                // Advance to the next arena
-                this.arenaNum++;
-                this.state = this.SHOWING_GO;
-            } else {
-                // No more arenas - open the exit door
-                this.state = this.EXIT_OPEN;
-                if (this.exitDoor) this.exitDoor.startOpening();
-            }
-        } else {
-            arena.update(dt);
-        }
-        // Update the camera - the player has full mobility within the 
-        // start and stop bounds of the arena.
-        //var xpos = this.player.sprite.x - this.camera.width/2;
-        //xpos = Math.max(xpos, arena.startx);
-        //xpos = Math.min(xpos, arena.endx-this.camera.width);
-        break;
-        
-    case this.SHOWING_GO:
-        // Wait for the player to move the level forward by "pushing" the
-        // edge of the screen.
-        if (this.player.sprite.x > this.camera.x + this.camera.width*0.8) {
-            this.state = this.NEXT_ARENA;
-            this.smoothTracking = true;
-        }
-        break;
+    // TODO - this could be better optimized by despawning things that are
+    // no longer visible. (ie blood spatters etc)
 
-    case this.NEXT_ARENA:
+    // Re-sort the sprites by Z-depth so things are rendered in the correct
+    // order.
+    this.stage.children.sort(compareDepth);
+    // Update everything in the level
+    for (let thing of this.things) {
+        // TODO - only update things within camera view (+/- bounds)
+        if (thing.update) thing.update(dt);
+    }
+
+    if (this.player.velx != 0)
+    {
         // Update the camera to track the player. Have the camera move
         // smoothly towards the player to avoid jumping around.
-        var xpos = this.player.sprite.x - this.camera.width/2;
+        var xpos = this.player.sprite.x - this.camera.width/8;
         xpos = Math.max(xpos, 0);
-        xpos = Math.min(xpos, this.bg.getWidth()-this.camera.width);
+        xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
         if (this.smoothTracking) {
             var dirx = Math.sign(xpos-this.camera.x);
             this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
@@ -196,47 +210,15 @@ Level.prototype.update = function(dt)
         } else {
             this.camera.x = xpos;
         }
-
-        // Also remove the go marker (if it's done animated) since the player
-        // already knows to move forward by now.
-        /*if (gamestate.screen.goMarker.sprite.visible && 
-          gamestate.screen.goMarker.done) {
-          gamestate.screen.goMarker.hide();
-          }*/
-
-        // Wait for the player to move into the next arena
-        if (arena && this.camera.x + this.camera.width >= arena.endx)
-        {
-            // Snap the camera into place and activate the next arena
-            this.camera.x = arena.endx - this.camera.width;
-            arena.activate();
-            this.state = this.ACTIVE_ARENA;
-            // If somehow the go marker is sticking around (maybe the player
-            // is moving _really_ fast) remove it now, done or not.
-            /*if (gamestate.screen.goMarker.sprite.visible) {
-              gamestate.screen.goMarker.hide();
-              }*/
-        }
-        break;
-
-    case this.EXIT_OPEN:
-        break;
-
     }
 
-    // TODO - this could be better optimized by despawning things that are
-    // no longer visible. (ie blood spatters etc)
+    if (this.player.sprite.x > this.getWidth()) {
+        this.state = this.FINISHED;
+    }
 
-    // Re-sort the sprites by Z-depth so things are rendered in the correct
-    // order.
-    this.stage.children.sort(compareDepth);
     // Position the camera
     this.stage.x = -this.camera.x;
     this.stage.y = -this.camera.y;
-    // Update everything in the level
-    for (let thing of this.things) {
-        if (thing.update) thing.update(dt);
-    }
 }
 
 /* Check if the given hitbox, at the given position, overlaps with any thing 
@@ -285,8 +267,8 @@ Level.prototype.forEachThingHit = function(x, y, hitbox, ignore, callback)
 
 Level.prototype.checkSolidAt = function(x, y, width)
 {
-    var left = this.bg.getTileAt(x-width/2, y);
-    var right = this.bg.getTileAt(x+width/2, y);
+    var left = this.compound.getTileAt(x-width/2, y);
+    var right = this.compound.getTileAt(x+width/2, y);
     return left.solid || right.solid;
 }
 
@@ -357,7 +339,14 @@ Level.prototype.createBloodSpatter = function(x, y, imgs)
 }
 
 Level.prototype.getTileAt = function(x, y) {
-    return this.bg.getTileAt(x, y);
+    return this.compound.getTileAt(x, y);
+}
+
+Level.prototype.isThingVisible = function(thing) {
+    return (
+        thing.sprite.x < this.camera.x + this.camera.width &&
+        thing.sprite.x + thing.sprite.width > this.camera.x
+    );
 }
 
 Level.BEHIND_BACKGROUND_POS = -1;

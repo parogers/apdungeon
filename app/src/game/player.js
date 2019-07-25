@@ -43,7 +43,8 @@ export function Player(controls)
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 8;
     this.health = this.maxHealth;
-    this.maxSpeed = 40; // pixels/second
+    this.verticalSpeed = 40;
+    this.maxSpeed = 30; // pixels/second
     // Inventory stuff
     this.numCoins = 0;
     this.numArrows = 0;
@@ -55,6 +56,8 @@ export function Player(controls)
     //this.hasControl = true;
     this.dirx = 0;
     this.diry = 0;
+    this.running = false;
+    this.walkFPS = 10;
     // Process of dying (showing animation)
     this.dying = false;
     // Actually dead
@@ -66,7 +69,7 @@ export function Player(controls)
     this.kills = {};
 
     // Define the hitbox
-    this.hitbox = new Hitbox(0, -4, 6, 6);
+    this.hitbox = new Hitbox(0, -2, 2, 2);
 
     this.setCharFrames(RES.FEMALE_MELEE, "melee1");
     /* Setup a PIXI container to hold the player sprite, and any other 
@@ -91,11 +94,14 @@ export function Player(controls)
 
     // Minimum amount of time after taking damage, until the player can be
     // damaged again.
-    this.damageCooldown = 1;
+    this.damageCooldown = 0.5;
     // The timer used for tracking the cooldown
     this.damageTimer = 0;
 
     this.weaponSlot = null;
+
+    this.track = null;
+    this.nextTrack = null;
 
     // Knockback timer and speed
     this.knockedTimer = 0;
@@ -116,6 +122,8 @@ export function Player(controls)
         }
     }).bind(this);
     //this.upgradeSword(Item.Table.SMALL_SWORD);
+    this.upgradeBow(Item.Table.SMALL_BOW);
+    this.numArrows = 99;
 }
 
 /* Have the player face the given direction */
@@ -131,7 +139,7 @@ Player.prototype.getFacing = function()
     return Math.sign(this.sprite.scale.x);
 }
 
-Player.prototype.update = function(dt)
+/*Player.prototype.update = function(dt)
 {
     var dirx = 0;
     var diry = 0;
@@ -194,13 +202,13 @@ Player.prototype.update = function(dt)
             this.faceDirection(dirx);
             this.velx = dirx * this.maxSpeed;
 
-            /*if (this.controls.left.doublePressed || 
-                this.controls.right.doublePressed)
-            {
-                console.log("LUNGE!");
-                this.velx *= 2;
-                this.lungeTimer = 1;
-            }*/
+            //if (this.controls.left.doublePressed || 
+            //    this.controls.right.doublePressed)
+            //{
+            //    console.log("LUNGE!");
+            //    this.velx *= 2;
+            //    this.lungeTimer = 1;
+            //}
         } else {
             this.velx *= 0.75;
         }
@@ -262,16 +270,6 @@ Player.prototype.update = function(dt)
         this.waterSprite.visible = false;
     }
 
-    if (this.damageTimer > 0) {
-        this.damageTimer -= dt;
-        if (this.damageTimer <= 0 || 
-            this.damageCooldown-this.damageTimer > 0.1) 
-        {
-            // Stop flashing red
-            this.spriteChar.tint = NO_TINT;
-        }
-    }
-
     //if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
     // Check for collisions with other things
@@ -283,6 +281,86 @@ Player.prototype.update = function(dt)
     // Update animation
     var frame = this.frames[((this.frame*10)|0) % this.frames.length];
     this.spriteChar.texture = frame;
+}*/
+
+Player.prototype.update = function(dt)
+{
+    let velx = 0;
+    let vely = 0;
+
+    if (this.running) {
+        velx = this.maxSpeed;
+    }
+    
+    // Handle attacking
+    if (this.controls.primary.pressed) this.startAttack();
+    if (!this.controls.primary.released) this.stopAttack();
+
+    // Update the equipped weapon
+    if (this.weaponSlot && this.weaponSlot.update) {
+        this.weaponSlot.update(dt);
+    }
+
+    if (this.nextTrack)
+    {
+        // Player is in the process of moving to another track
+        let dirY = Math.sign(this.nextTrack.y-this.sprite.y);
+        vely = dirY*this.verticalSpeed;
+    }
+    else
+    {
+        // Check if the player wants to change tracks
+        if (this.track && this.controls.getY() !== 0) {
+            
+            this.moveToTrack(this.level.getTrack(
+                this.track.number + Math.sign(this.controls.getY())
+            ));
+        }
+    }
+
+    if (this.damageTimer > 0)
+    {
+        this.damageTimer -= dt;
+        if (this.damageTimer <= 0 || 
+            this.damageCooldown-this.damageTimer > 0.1) 
+        {
+            // Stop flashing red
+            this.spriteChar.tint = NO_TINT;
+        }
+    }
+
+    if (velx !== 0 || vely !== 0)
+    {
+        this.frame += dt;
+    }
+
+    this.sprite.x += velx*dt;
+    this.sprite.y += vely*dt;
+
+    // If the player is changing tracks, check if they've made it
+    if (this.nextTrack)
+    {
+        if (vely > 0 && this.sprite.y >= this.nextTrack.y ||
+            vely < 0 && this.sprite.y <= this.nextTrack.y)
+        {
+            this.sprite.y = this.nextTrack.y;
+            this.track = this.nextTrack;
+            this.nextTrack = null;
+        }
+    }
+
+    this.velx = velx;
+    this.vely = vely;
+
+    // Check for collisions with other things
+    this.level.forEachThingHit(
+        this.sprite.x, this.sprite.y, 
+        this.hitbox, this, 
+        this.handleCollisionCallback);
+
+    // Update animation
+    let frameNum = ((this.frame*this.walkFPS)|0) % this.frames.length;
+    this.spriteChar.texture = this.frames[frameNum];
 }
 
 Player.prototype.setCharFrames = function(res, name)
@@ -416,7 +494,7 @@ Player.prototype.swapWeapons = function()
 
 Player.prototype.startAttack = function()
 {
-    if (this.weaponSlot) 
+    if (this.weaponSlot)
         this.weaponSlot.startAttack();
 }
 
@@ -501,4 +579,22 @@ Player.prototype.showMessage = function()
     } else {
         this.textSprite.visible = false;
     }
+}
+
+/* Start the player moving onto the given track. Returns true if the player can
+ * move onto the track, and false otherwise. */
+Player.prototype.moveToTrack = function(track)
+{
+    if (!track) {
+        return false;
+    }
+    if (track.checkSolidAt(this.sprite.x, this.sprite.width)) {
+        return false;
+    }
+    this.nextTrack = track;    
+    return true;
+}
+
+Player.prototype.isMovingToTrack = function() {
+    return this.nextTrack !== null;
 }
