@@ -43,8 +43,8 @@ export function Player(controls)
     // Player health in half hearts. This should always be a multiple of two
     this.maxHealth = 8;
     this.health = this.maxHealth;
-    this.verticalSpeed = 70;
-    this.maxSpeed = 50; // pixels/second
+    this.verticalSpeed = 40;
+    this.maxSpeed = 30; // pixels/second
     // Inventory stuff
     this.numCoins = 0;
     this.numArrows = 0;
