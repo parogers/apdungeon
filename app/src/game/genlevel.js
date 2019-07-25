@@ -151,6 +151,11 @@ export function generateLevel(levelNum)
         x += randint(40, 120);
     }
 
+    let skel = new SkelWarrior();
+    skel.sprite.x = 80;
+    skel.sprite.y = 30;
+    level.addThing(skel);
+
     // First level in the game. Add a chest of starter items. Have the 
     // chest eject items to the right away from the first NPC. (so none
     // of the items become hidden behind)
