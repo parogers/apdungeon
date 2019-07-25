@@ -86,6 +86,7 @@ EnterScene.prototype.update = function(dt)
         player.sprite.y = this.door.sprite.y+1;
         player.sprite.zpos = Level.BEHIND_BACKGROUND_POS;
         player.controls = new ManualControls();
+        player.running = false;
         this.timer = 0.75;
         this.state = this.START;
         break;

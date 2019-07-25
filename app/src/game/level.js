@@ -212,6 +212,10 @@ Level.prototype.update = function(dt)
         }
     }
 
+    if (this.player.sprite.x > this.getWidth()) {
+        this.state = this.FINISHED;
+    }
+
     // Position the camera
     this.stage.x = -this.camera.x;
     this.stage.y = -this.camera.y;
