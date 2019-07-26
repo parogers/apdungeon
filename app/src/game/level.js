@@ -197,7 +197,7 @@ Level.prototype.update = function(dt)
     {
         // Update the camera to track the player. Have the camera move
         // smoothly towards the player to avoid jumping around.
-        var xpos = this.player.sprite.x - this.camera.width/8;
+        var xpos = this.player.x - this.camera.width/8;
         xpos = Math.max(xpos, 0);
         xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
         if (this.smoothTracking) {
@@ -212,7 +212,7 @@ Level.prototype.update = function(dt)
         }
     }
 
-    if (this.player.sprite.x > this.getWidth()) {
+    if (this.player.x > this.getWidth()) {
         this.state = this.FINISHED;
     }
 
@@ -344,8 +344,8 @@ Level.prototype.getTileAt = function(x, y) {
 
 Level.prototype.isThingVisible = function(thing) {
     return (
-        thing.sprite.x < this.camera.x + this.camera.width &&
-        thing.sprite.x + thing.sprite.width > this.camera.x
+        thing.x < this.camera.x + this.camera.width &&
+        thing.x + thing.width > this.camera.x
     );
 }
 

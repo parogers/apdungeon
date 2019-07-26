@@ -135,9 +135,9 @@ export class SkelWarrior
         if (this.timer <= 0)
         {
             if (this.level.player.track === this.track ||
-                this.sprite.x < this.level.player.sprite.x + this.alwaysChargeDist)
+                this.sprite.x < this.level.player.x + this.alwaysChargeDist)
             {
-                this.chargeOffset = this.sprite.x - this.level.player.sprite.x;
+                this.chargeOffset = this.sprite.x - this.level.player.x;
                 this.state = STATE_CHARGING;
             }
             else if (this.level.player.track)
@@ -165,7 +165,7 @@ export class SkelWarrior
         this.sprite.x += this.velx*dt;
 
         if (this.chargeOffset > this.alwaysChargeDist) {
-            if (this.sprite.x <= this.level.player.sprite.x) {
+            if (this.sprite.x <= this.level.player.x) {
                 this.state = STATE_RETREAT;
             }
         }
@@ -183,9 +183,9 @@ export class SkelWarrior
         this.velx = this.level.player.velx + this.speed/2.0;
         this.sprite.x += this.velx*dt;
 
-        if (this.sprite.x >= this.level.player.sprite.x + this.chargeOffset)
+        if (this.sprite.x >= this.level.player.x + this.chargeOffset)
         {
-            this.sprite.x = this.level.player.sprite.x + this.chargeOffset;
+            this.sprite.x = this.level.player.x + this.chargeOffset;
             this.timer = this.chargeTimeout;
             this.state = STATE_IDLE;
         }

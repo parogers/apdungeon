@@ -50,7 +50,7 @@ NPC.prototype.setDialog = function(lines)
 NPC.prototype.update = function(dt)
 {
     // Always face the player
-    var dirx = Math.sign(this.level.player.sprite.x-this.sprite.x);
+    var dirx = Math.sign(this.level.player.x-this.sprite.x);
     this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
 
     if (this.visibleTimer > 0) {

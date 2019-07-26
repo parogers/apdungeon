@@ -51,8 +51,8 @@ export function SwordWeaponSlot(player)
 
     this.handleHitCallback = (function(hit) {
         if (hit.handleHit) {
-            hit.handleHit(this.player.sprite.x, 
-                          this.player.sprite.y, 1);
+            hit.handleHit(this.player.x, 
+                          this.player.y, 1);
         }
     }).bind(this);
 }
@@ -92,8 +92,8 @@ SwordWeaponSlot.prototype.startAttack = function()
     this.attackCooldown = 0.15;
 
     this.player.level.forEachThingHit(
-        this.player.sprite.x + this.player.getFacing()*this.weaponReach, 
-        this.player.sprite.y,
+        this.player.x + this.player.getFacing()*this.weaponReach, 
+        this.player.y,
         this.hitbox, this.player,
         this.handleHitCallback);
 }
@@ -160,8 +160,8 @@ BowWeaponSlot.prototype.startAttack = function()
 
     var arrow = new Arrow(
         this.player,
-        this.player.sprite.x,
-        this.player.sprite.y+this.sprite.y,
+        this.player.x,
+        this.player.y+this.sprite.y,
         this.player.getFacing()*100, 0,
         Math.abs(this.sprite.y));
     //level.things.push(arrow);

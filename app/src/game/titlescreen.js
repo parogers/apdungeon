@@ -120,6 +120,8 @@ export function TitleScreen()
     Render.getContainer().addEventListener("mouseup", this.onMouseUp);
     Render.getContainer().addEventListener("touchend", this.onTouchEnd);
 
+    return;
+
     this.sequence = new Sequence(
         {
             stage: this.stage,
@@ -219,7 +221,9 @@ TitleScreen.prototype.update = function(dt)
         return;
     }
 
-    this.sequence.update(dt);
+    if (this.sequence) {
+        this.sequence.update(dt);
+    }
 
     if (GameControls.getControls().space.released || 
         this.mouseClicked || this.touchClicked) {

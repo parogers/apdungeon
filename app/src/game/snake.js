@@ -64,137 +64,148 @@ export class DeathAnimation
 /* Snake */
 /*********/
 
-export function Snake(state)
+export class Snake extends Thing
 {
-    this.STATE_PACING = 0;
-    this.STATE_IDLE = 1;
-    this.STATE_FORWARD = 2;
-    this.STATE_HURT = 3;
-    this.STATE_DEAD = 4;
-
-    this.name = "Snake";
-    this.frames = Utils.getFrames(RES.ENEMIES, Snake.FRAMES);
-    this.speed = 16;
-    this.health = 3;
-    this.frame = 0;
-    this.facing = 1;
-    // The sprite container holding the snake and splash sprite
-    this.sprite = new PIXI.Container();
-    // The actual snake sprite
-    this.snakeSprite = new PIXI.Sprite(this.frames[0]);
-    this.snakeSprite.anchor.set(0.5, 6.5/8);
-    this.sprite.addChild(this.snakeSprite);
-    // Make the splash/water sprite
-    this.waterSprite = Utils.createSplashSprite();
-    this.waterSprite.y = -1.25;
-    this.sprite.addChild(this.waterSprite);
-    this.knocked = 0;
-    this.knockedTimer = 0;
-    this.state = state || this.STATE_PACING;
-    this.hitbox = new Hitbox(0, -1, 4, 4);
-    this.timer = 0;
-    this.velx = 0;
-}
-
-Snake.FRAMES = ["snake_south_1", "snake_south_2"];
-
-Snake.prototype.getDropTable = function() 
-{
-    return [[Item.Table.COIN, 2],
-            [Item.Table.ARROW, 1],
-            [Item.Table.SMALL_HEALTH, 1]];
-}
-
-Snake.prototype.update = function(dt)
-{
-    if (this.state === this.STATE_PACING)
+    constructor()
     {
-        // Pacing back and forth
-        this.timer -= dt;
-        if (this.timer <= 0) {
-            this.timer = 0.5;
-            this.facing = -this.facing;
-        }
-        this.velx = this.speed*this.facing;
+        super();
+        this.STATE_PACING = 0;
+        this.STATE_IDLE = 1;
+        this.STATE_FORWARD = 2;
+        this.STATE_HURT = 3;
+        this.STATE_DEAD = 4;
+
+        this.name = "Snake";
+        this.frames = Utils.getFrames(RES.ENEMIES, ['snake_south_1', 'snake_south_2']);
+        this.speed = 16;
+        this.health = 3;
+        this.frame = 0;
+        this.facing = 1;
+        // The sprite container holding the snake and splash sprite
+        this.sprite = new PIXI.Container();
+        // The actual snake sprite
+        this.snakeSprite = new PIXI.Sprite(this.frames[0]);
+        this.snakeSprite.anchor.set(0.5, 6.5/8);
+        this.sprite.addChild(this.snakeSprite);
+        // Make the splash/water sprite
+        this.waterSprite = Utils.createSplashSprite();
+        this.waterSprite.y = -1.25;
+        this.sprite.addChild(this.waterSprite);
+        this.knocked = 0;
+        this.knockedTimer = 0;
+        this.state = this.STATE_PACING;
+        this.hitbox = new Hitbox(0, -1, 4, 4);
+        this.timer = 0;
+        this.velx = 0;
     }
-    else if (this.state === this.STATE_IDLE)
-    {
+
+    get width() {
+        return Math.abs(this.snakeSprite.width);
     }
-    else if (this.state === this.STATE_FORWARD)
-    {
-        // Marching forward if the player is close enough
-        if (this.level.isThingVisible(this)) {
-            this.velx = -this.speed;
-            this.facing = -1;
-        }
+
+    get height() {
+        return Math.abs(this.snakeSprite.height);
     }
-    else if (this.state === this.STATE_HURT)
+
+    getDropTable() 
     {
-        // The snake keeps its eyes closed while hurt
-        this.snakeSprite.texture = this.frames[1];
-        // Slide backwards from the hit
-        if (this.knockedTimer > 0) {
-            var dx = this.knocked*dt;
-            var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
-            if (!tile.solid) {
-                this.sprite.x += dx;
+        return [[Item.Table.COIN, 2],
+                [Item.Table.ARROW, 1],
+                [Item.Table.SMALL_HEALTH, 1]];
+    }
+
+    update(dt)
+    {
+        if (this.state === this.STATE_PACING)
+        {
+            // Pacing back and forth
+            this.timer -= dt;
+            if (this.timer <= 0) {
+                this.timer = 0.5;
+                this.facing = -this.facing;
             }
-            this.knockedTimer -= dt;
-        } else {
-            // Resume/start attacking
-            this.state = this.STATE_FORWARD;
+            this.velx = this.speed*this.facing;
         }
+        else if (this.state === this.STATE_IDLE)
+        {
+        }
+        else if (this.state === this.STATE_FORWARD)
+        {
+            // Marching forward if the player is close enough
+            if (this.level.isThingVisible(this)) {
+                this.velx = -this.speed;
+                this.facing = -1;
+            }
+        }
+        else if (this.state === this.STATE_HURT)
+        {
+            // The snake keeps its eyes closed while hurt
+            this.snakeSprite.texture = this.frames[1];
+            // Slide backwards from the hit
+            if (this.knockedTimer > 0) {
+                var dx = this.knocked*dt;
+                var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
+                if (!tile.solid) {
+                    this.sprite.x += dx;
+                }
+                this.knockedTimer -= dt;
+            } else {
+                // Resume/start attacking
+                this.state = this.STATE_FORWARD;
+            }
+        }
+        else if (this.state === this.STATE_DEAD)
+        {
+            return;
+        }
+
+        if (this.velx != 0) {
+            this.frame += 2*dt;
+            this.sprite.x += this.velx*dt;
+            this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+        }
+        this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
     }
-    else if (this.state === this.STATE_DEAD)
+
+    handleHit(srcx, srcy, dmg)
     {
-        return;
+        let player = this.level.player;
+        if (this.state === this.STATE_DEAD) return false;
+        this.health -= 1;
+        if (this.health <= 0) {
+            // Dead
+            Audio.playSound(RES.DEAD_SND);
+            this.state = this.STATE_DEAD;
+            // Drop a reward
+            this.level.handleTreasureDrop(
+                this.getDropTable(), this.sprite.x, this.sprite.y);
+            player.handleMonsterKilled(this);
+
+            // Show the death animation
+            this.level.addThing(new DeathAnimation(this));
+
+        } else {
+            // Damaged and knocked back
+            Audio.playSound(RES.SNAKE_HURT_SND);
+            this.knocked = Math.sign(this.sprite.x-srcx)*60;
+            this.knockedTimer = 0.1;
+            this.state = this.STATE_HURT;
+        }
+
+        // Add some random blood, but only if we're not currently in water
+        let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
+        if (!tile.water) {
+            this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
+        }
+        return true;
     }
 
-    if (this.velx != 0) {
-        this.frame += 2*dt;
-        this.sprite.x += this.velx*dt;
-        this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+    handlePlayerCollision(player)
+    {
+        player.takeDamage(1, this);
     }
-    this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
 }
 
-Snake.prototype.handleHit = function(srcx, srcy, dmg)
-{
-    let player = this.level.player;
-    if (this.state === this.STATE_DEAD) return false;
-    this.health -= 1;
-    if (this.health <= 0) {
-        // Dead
-        Audio.playSound(RES.DEAD_SND);
-        this.state = this.STATE_DEAD;
-        // Drop a reward
-        this.level.handleTreasureDrop(
-            this.getDropTable(), this.sprite.x, this.sprite.y);
-        player.handleMonsterKilled(this);
-
-        // Show the death animation
-        this.level.addThing(new DeathAnimation(this));
-
-    } else {
-        // Damaged and knocked back
-        Audio.playSound(RES.SNAKE_HURT_SND);
-        this.knocked = Math.sign(this.sprite.x-srcx)*60;
-        this.knockedTimer = 0.1;
-        this.state = this.STATE_HURT;
-    }
-
-    // Add some random blood, but only if we're not currently in water
-    let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
-    if (!tile.water) {
-        this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
-    }
-    return true;
-}
-
-Snake.prototype.handlePlayerCollision = function(player)
-{
-    player.takeDamage(1, this);
-}
 
 /* Other snake-like things */
 
@@ -202,46 +213,44 @@ Snake.prototype.handlePlayerCollision = function(player)
 /* Rat */
 /*******/
 
-export function Rat()
+export class Rat extends Snake
 {
-    Snake.call(this);
-    this.name = "Rat";
-    this.frames = Utils.getFrames(RES.ENEMIES, Rat.FRAMES);
-    this.health = -1;
-    this.speed = 20;
-    this.frame = 0;
-    this.facing = -1;
-    this.knocked = 0;
-    this.knockedTimer = 0;
-    this.state = this.STATE_FORWARD;
-    this.snakeSprite.texture = this.frames[0];
-    this.waterSprite.y = -0.9;
+    constructor() 
+    {
+        super();
+        this.name = "Rat";
+        this.frames = Utils.getFrames(RES.ENEMIES, ["rat_south_1", "rat_south_2"]);
+        this.health = -1;
+        this.speed = 20;
+        this.frame = 0;
+        this.facing = -1;
+        this.knocked = 0;
+        this.knockedTimer = 0;
+        this.state = this.STATE_FORWARD;
+        this.snakeSprite.texture = this.frames[0];
+        this.waterSprite.y = -0.9;
+    }
 }
-
-Rat.FRAMES = ["rat_south_1", "rat_south_2"];
-
-Rat.prototype = Object.create(Snake.prototype);
 
 /************/
 /* Scorpion */
 /************/
 
-export function Scorpion()
+export class Scorpion extends Snake
 {
-    Snake.call(this);
-    this.name = "Scorpion";
-    this.frames = Utils.getFrames(RES.ENEMIES, Scorpion.FRAMES);
-    this.health = 4;
-    this.speed = 10;
-    this.frame = 0;
-    this.facing = -1;
-    this.knocked = 0;
-    this.knockedTimer = 0;
-    this.state = this.STATE_FORWARD;
-    this.snakeSprite.texture = this.frames[0];
-    this.waterSprite.y = -0.85;
+    constructor()
+    {
+        super();
+        this.name = "Scorpion";
+        this.frames = Utils.getFrames(RES.ENEMIES, ["scorpion_south_1", "scorpion_south_2"]);
+        this.health = 4;
+        this.speed = 10;
+        this.frame = 0;
+        this.facing = -1;
+        this.knocked = 0;
+        this.knockedTimer = 0;
+        this.state = this.STATE_FORWARD;
+        this.snakeSprite.texture = this.frames[0];
+        this.waterSprite.y = -0.85;
+    }
 }
-
-Scorpion.FRAMES = ["scorpion_south_1", "scorpion_south_2"];
-
-Scorpion.prototype = Object.create(Snake.prototype);
