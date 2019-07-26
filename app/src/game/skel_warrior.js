@@ -24,17 +24,6 @@ import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
 
-var SKEL_WARRIOR_IDLE = 0;
-// Slowly approaching the player
-var SKEL_WARRIOR_START_APPROACH = 1;
-var SKEL_WARRIOR_APPROACH = 2;
-// Actually attacking the player
-var SKEL_WARRIOR_ATTACKING = 3;
-var SKEL_WARRIOR_POST_ATTACK = 4;
-// Knocked back
-var SKEL_WARRIOR_HURT = 5;
-var SKEL_WARRIOR_DEAD = 6;
-
 var STATE_IDLE = 0;
 var STATE_CHARGING = 1;
 var STATE_RETREAT = 2;
@@ -56,7 +45,7 @@ export class SkelWarrior
         this.velx = 0;
         this.vely = 0;
         this.speed = 60;
-        this.health = 3;
+        this.health = 4;
         this.alwaysChargeDist = 24;
         this.frame = 0;
         this.facing = 1;
@@ -102,91 +91,123 @@ export class SkelWarrior
                 [Item.Table.SMALL_BOW, 1]];
     }
 
-    update(dt)
+    incrementFrame(dt)
     {
-        if (this.state === STATE_IDLE && this.level.player.running)
-        {
-            // Facing the player, but slowly moving towards them
-            this.velx = this.level.player.velx*0.9;
-            this.sprite.x += this.velx*dt;
-
-            // Occasionally either charge the player, or change tracks to find them
-            this.timer -= dt;
-            if (this.timer <= 0)
-            {
-                if (this.level.player.track === this.track ||
-                    this.sprite.x < this.level.player.sprite.x + this.alwaysChargeDist)
-                {
-                    this.chargeOffset = this.sprite.x - this.level.player.sprite.x;
-                    this.state = STATE_CHARGING;
-                }
-                else if (this.level.player.track)
-                {
-                    // Move towards the player
-                    if (this.level.player.track.number < this.track.number) {
-                        this.nextTrack = this.level.getTrackAbove(this.track);
-                    } else {
-                        this.nextTrack = this.level.getTrackBelow(this.track);
-                    }
-                    this.state = STATE_CHANGE_TRACK;
-                    this.timer = this.chargeTimeout;
-                }
-                else
-                {
-                    this.timer = this.chargeTimeout;
-                }
-            }
-        }
-        else if (this.state === STATE_CHARGING)
-        {
-            this.velx = this.level.player.velx - this.speed;
-            this.sprite.x += this.velx*dt;
-
-            if (this.chargeOffset > this.alwaysChargeDist) {
-                if (this.sprite.x <= this.level.player.sprite.x) {
-                    this.state = STATE_RETREAT;
-                }
-            }
-            else
-            {
-                if (this.sprite.x + this.monsterSprite.texture.width < 0) {
-                    this.level.removeThing(this);
-                }
-            }
-        }
-        else if (this.state === STATE_RETREAT)
-        {
-            this.velx = this.level.player.velx + this.speed/2.0;
-            this.sprite.x += this.velx*dt;
-
-            if (this.sprite.x >= this.level.player.sprite.x + this.chargeOffset)
-            {
-                this.sprite.x = this.level.player.sprite.x + this.chargeOffset;
-                this.timer = this.chargeTimeout;
-                this.state = STATE_IDLE;
-            }
-        }
-        else if (this.state === STATE_CHANGE_TRACK)
-        {
-            let vely = 0;
-            if (this.nextTrack.y > this.track.y) {
-                vely = this.speed;
-            } else {
-                vely = -this.speed;
-            }
-            this.sprite.y += vely*dt;
-
-            if ((vely >= 0 && this.sprite.y > this.nextTrack.y) ||
-                (vely < 0 && this.sprite.y < this.nextTrack.y))
-            {
-                this.setTrack(this.nextTrack, this.sprite.x);
-                this.state = STATE_IDLE;
-            }
-        }
-
         this.frame += 4*dt;
         let frameNum = this.frame % this.frames.length;
         this.monsterSprite.texture = this.frames[frameNum|0];
+    }
+
+    update(dt)
+    {
+        if (this.state === STATE_IDLE)
+        {
+            this.updateIdle(dt);
+        }
+        else if (this.state === STATE_CHARGING)
+        {
+            this.updateCharging(dt);
+        }
+        else if (this.state === STATE_RETREAT)
+        {
+            this.updateRetreat(dt);
+        }
+        else if (this.state === STATE_CHANGE_TRACK)
+        {
+            this.updateChangeTrack(dt);
+        }
+        this.incrementFrame(dt);
+    }
+
+    // Keep distance from the player
+    updateIdle(dt)
+    {
+        if (!this.level.player.running) {
+            return;
+        }
+        
+        // Facing the player, but slowly moving towards them
+        this.velx = this.level.player.velx*0.9;
+        this.sprite.x += this.velx*dt;
+
+        // Occasionally either charge the player, or change tracks to find them
+        this.timer -= dt;
+        if (this.timer <= 0)
+        {
+            if (this.level.player.track === this.track ||
+                this.sprite.x < this.level.player.sprite.x + this.alwaysChargeDist)
+            {
+                this.chargeOffset = this.sprite.x - this.level.player.sprite.x;
+                this.state = STATE_CHARGING;
+            }
+            else if (this.level.player.track)
+            {
+                // Move towards the player
+                if (this.level.player.track.number < this.track.number) {
+                    this.nextTrack = this.level.getTrackAbove(this.track);
+                } else {
+                    this.nextTrack = this.level.getTrackBelow(this.track);
+                }
+                this.state = STATE_CHANGE_TRACK;
+                this.timer = this.chargeTimeout;
+            }
+            else
+            {
+                this.timer = this.chargeTimeout;
+            }
+        }
+    }
+
+    // Charging at the player
+    updateCharging(dt)
+    {
+        this.velx = this.level.player.velx - this.speed;
+        this.sprite.x += this.velx*dt;
+
+        if (this.chargeOffset > this.alwaysChargeDist) {
+            if (this.sprite.x <= this.level.player.sprite.x) {
+                this.state = STATE_RETREAT;
+            }
+        }
+        else
+        {
+            if (this.sprite.x + this.monsterSprite.texture.width < 0) {
+                this.level.removeThing(this);
+            }
+        }
+    }
+
+    // Retreating back to a safe distance
+    updateRetreat(dt)
+    {
+        this.velx = this.level.player.velx + this.speed/2.0;
+        this.sprite.x += this.velx*dt;
+
+        if (this.sprite.x >= this.level.player.sprite.x + this.chargeOffset)
+        {
+            this.sprite.x = this.level.player.sprite.x + this.chargeOffset;
+            this.timer = this.chargeTimeout;
+            this.state = STATE_IDLE;
+        }
+    }
+
+    // Switching tracks to find the player
+    updateChangeTrack(dt)
+    {
+        let vely = 0;
+        if (this.nextTrack.y > this.track.y) {
+            vely = this.speed;
+        } else {
+            vely = -this.speed;
+        }
+        this.sprite.y += vely*dt;
+
+        if ((vely >= 0 && this.sprite.y > this.nextTrack.y) ||
+            (vely < 0 && this.sprite.y < this.nextTrack.y))
+        {
+            this.setTrack(this.nextTrack, this.sprite.x);
+            this.state = STATE_IDLE;
+        }
     }
 
     handleHit(srcx, srcy, dmg)
