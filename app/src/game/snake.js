@@ -24,7 +24,7 @@ import { Item } from './item';
 import { Audio } from './audio';
 
 // Animates a monster falling off the screen as a death animation
-class DeathAnimation
+export class DeathAnimation
 {
     constructor(monster) {
         this.STATE_FLIP = 0;

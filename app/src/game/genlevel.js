@@ -152,8 +152,7 @@ export function generateLevel(levelNum)
     }
 
     let skel = new SkelWarrior();
-    skel.sprite.x = 80;
-    skel.sprite.y = 30;
+    skel.setTrack(level.getMiddleTrack(), 90);
     level.addThing(skel);
 
     // First level in the game. Add a chest of starter items. Have the 
