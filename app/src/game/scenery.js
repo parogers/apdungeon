@@ -17,37 +17,40 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-export function Scenery(frames)
+export class Scenery
 {
-    if (!(frames instanceof Array)) frames = [frames];
-    this.frames = frames;
-    this.sprite = new PIXI.Sprite(frames[0]);
-    this.sprite.anchor.set(0.5, 1);
-    this.timer = 0;
-    this.velx = 0;
-    this.vely = 0;
-    this.fps = 5;
-    this.frame = 0;
-}
-
-Scenery.prototype.faceDirection = function(dir)
-{
-    this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dir);
-}
-
-Scenery.prototype.update = function(dt)
-{
-    this.sprite.x += this.velx*dt;
-    this.sprite.y += this.vely*dt;
-    if (this.timer > 0) {
-        this.timer -= dt;
-        if (this.timer <= 0) {
-            this.level.removeThing(this);
-        }
+    constructor(frames)
+    {
+        if (!(frames instanceof Array)) frames = [frames];
+        this.frames = frames;
+        this.sprite = new PIXI.Sprite(frames[0]);
+        this.sprite.anchor.set(0.5, 1);
+        this.timer = 0;
+        this.velx = 0;
+        this.vely = 0;
+        this.fps = 5;
+        this.frame = 0;
     }
-    if (this.frames.length > 1) {
-        this.frame += this.fps*dt;
-        var img = this.frames[(this.frame|0) % this.frames.length];
-        this.sprite.texture = img;
+
+    faceDirection(dir)
+    {
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dir);
+    }
+
+    update(dt)
+    {
+        this.sprite.x += this.velx*dt;
+        this.sprite.y += this.vely*dt;
+        if (this.timer > 0) {
+            this.timer -= dt;
+            if (this.timer <= 0) {
+                this.level.removeThing(this);
+            }
+        }
+        if (this.frames.length > 1) {
+            this.frame += this.fps*dt;
+            var img = this.frames[(this.frame|0) % this.frames.length];
+            this.sprite.texture = img;
+        }
     }
 }

@@ -24,30 +24,33 @@ import { Utils } from './utils';
 /* Items */
 /*********/
 
-export function Item(image, type, quality) {
-    this.image = image;
-    this.type = type;
-    this.quality = quality;
-};
-
-Item.prototype.isBetter = function(other)
+export class Item
 {
-    return (this.quality > other.quality);
-}
+    constructor(image, type, quality) {
+        this.image = image;
+        this.type = type;
+        this.quality = quality;
+    };
 
-Item.prototype.isArmour = function()
-{
-    return (this.type === Item.ARMOUR);
-}
+    isBetter(other)
+    {
+        return (this.quality > other.quality);
+    }
 
-Item.prototype.isSword = function()
-{
-    return (this.type === Item.SWORD);
-}
+    isArmour()
+    {
+        return (this.type === Item.ARMOUR);
+    }
 
-Item.prototype.isBow = function()
-{
-    return (this.type === Item.BOW);
+    isSword()
+    {
+        return (this.type === Item.SWORD);
+    }
+
+    isBow()
+    {
+        return (this.type === Item.BOW);
+    }
 }
 
 // The various item types
