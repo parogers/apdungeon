@@ -81,8 +81,6 @@ export class Snake extends Thing
         this.health = 3;
         this.frame = 0;
         this.facing = 1;
-        // The sprite container holding the snake and splash sprite
-        this.sprite = new PIXI.Container();
         // The actual snake sprite
         this.snakeSprite = new PIXI.Sprite(this.frames[0]);
         this.snakeSprite.anchor.set(0.5, 6.5/8);

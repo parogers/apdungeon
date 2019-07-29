@@ -36,7 +36,6 @@ export class Player extends Thing
     {
         super();
         this.controls = controls;
-        this.sprite = null;
         this.velx = 0;
         this.vely = 0;
         this.accelx = 0;
@@ -76,9 +75,6 @@ export class Player extends Thing
         this.hitbox = new Hitbox(0, -2, 2, 2);
 
         this.setCharFrames(RES.FEMALE_MELEE, "melee1");
-        /* Setup a PIXI container to hold the player sprite, and any other 
-         * equipment they're carrying. */
-        this.sprite = new PIXI.Container();
         // Setup the player sprite (texture comes later)
         this.spriteChar = new PIXI.Sprite();
         this.spriteChar.anchor.set(0.5, 1);
@@ -130,6 +126,14 @@ export class Player extends Thing
         this.numArrows = 99;
     }
 
+    get width() {
+        return Math.abs(this.spriteChar.width);
+    }
+
+    get height() {
+        return Math.abs(this.spriteChar.height);
+    }
+
     /* Have the player face the given direction */
     faceDirection(dirx)
     {
@@ -138,9 +142,13 @@ export class Player extends Thing
             this.textSprite.scale.x)*Math.sign(dirx);
     }
 
-    getFacing()
+    get facing()
     {
         return Math.sign(this.sprite.scale.x);
+    }
+
+    getFacing() {
+        return this.facing;
     }
 
     /*update(dt)
@@ -576,7 +584,7 @@ export class Player extends Thing
     {
         var lines = Array.prototype.slice.call(arguments);
         if (lines.length > 0) {
-            this.textSprite.y = -this.spriteChar.texture.height-1;
+            this.textSprite.y = -this.height-1;
             this.textSprite.texture = renderText(lines, {blackBG: true})
             this.textSprite.visible = true;
             this.textTimeout = 3;
@@ -592,7 +600,7 @@ export class Player extends Thing
         if (!track) {
             return false;
         }
-        if (track.checkSolidAt(this.sprite.x, this.sprite.width)) {
+        if (track.checkSolidAt(this.x, this.width)) {
             return false;
         }
         this.nextTrack = track;    

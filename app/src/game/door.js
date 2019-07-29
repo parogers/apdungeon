@@ -82,9 +82,9 @@ EnterScene.prototype.update = function(dt)
     case this.IDLE:
         // Position the player behind the level so they're hidden, and centered 
         // on the door so the camera renders in the right place.
-        player.sprite.x = this.door.sprite.x;
-        player.sprite.y = this.door.sprite.y+1;
-        player.sprite.zpos = Level.BEHIND_BACKGROUND_POS;
+        player.x = this.door.sprite.x;
+        player.y = this.door.sprite.y+1;
+        player.zpos = Level.BEHIND_BACKGROUND_POS;
         player.controls = new ManualControls();
         player.running = false;
         this.timer = 0.75;
@@ -100,7 +100,7 @@ EnterScene.prototype.update = function(dt)
     case this.OPENING_DOOR:
         // Waiting for the door to open
         if (this.door.isOpen()) {
-            player.sprite.zpos = undefined;
+            player.zpos = undefined;
             this.state = this.PLAYER_ENTERING;
             this.timer = 0.4;
             player.moveToTrack(this.level.getBottomTrack());
@@ -108,30 +108,10 @@ EnterScene.prototype.update = function(dt)
         break;
 
     case this.PLAYER_ENTERING:
-        // Player walking some ways into the level
-        /*player.controls.diry = 0.5;
-        if (player.sprite.y >= track.y)
-        {
-            player.sprite.y = track.y;
-            player.controls.diry = 0;
-            this.state = this.PLAYER_LOOK_LEFT;
-            }*/
-
         // Wait for the player to hit the track
         if (!player.isMovingToTrack()) {
             this.state = this.PLAYER_LOOK_LEFT;
         }
-
-        /*this.travelTime -= dt;
-        if (this.travelTime <= 0) {
-            this.state = this.PLAYER_LOOK_LEFT;
-            this.timer = 0.5;
-            this.door.startClosing();
-            player.controls.dirx = 0;
-            player.controls.diry = 0;
-        } else if (this.travelTime < 0.35) {
-            player.controls.dirx = 0.25;
-        }*/
         break;
 
     case this.PLAYER_LOOK_LEFT:

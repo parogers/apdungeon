@@ -86,8 +86,6 @@ LevelScreen.prototype.update = function(dt)
     case this.NEW_GAME:
         // Generate a new level and player character
         this.player = new Player(GameControls.getControls());
-        this.player.sprite.x = 0;
-        this.player.sprite.y = 0;
         this.levelNum = 0;
         // Auto-generate the first level
         let level = generateLevel(this.levelNum);

@@ -162,7 +162,7 @@ BowWeaponSlot.prototype.startAttack = function()
         this.player,
         this.player.x,
         this.player.y+this.sprite.y,
-        this.player.getFacing()*100, 0,
+        this.player.velx + this.player.facing*50, 0,
         Math.abs(this.sprite.y));
     //level.things.push(arrow);
     //level.stage.addChild(arrow.sprite);
@@ -187,7 +187,7 @@ export function Arrow(owner, x, y, velx, vely, height)
     this.height = height;
     this.state = ARROW_FLIGHT;
     this.timer = 0;
-    this.hitbox = new Hitbox(0, 0, 5, 5);
+    this.hitbox = new Hitbox(0, 0, 8, 4);
 }
 
 Arrow.prototype.update = function(dt)

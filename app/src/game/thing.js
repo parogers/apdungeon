@@ -28,9 +28,10 @@ export class Thing
 {
     constructor()
     {
-        // Position of the hit box, relative to the sprite position
-        //this.hitbox = new Hitbox(0, 0, 5, 5);
+        // The top-level container that holds all pieces of the sprite
         this.sprite = new PIXI.Container();
+        // Position of the hit box relative to the sprite position
+        this.hitbox = new Hitbox(0, 0, 4, 4);
     }
 
     get width() {
@@ -49,12 +50,20 @@ export class Thing
         return this.sprite.y;
     }
 
+    get zpos() {
+        return this.sprite.zpos;
+    }
+
     set x(value) {
         this.sprite.x = value;
     }
 
     set y(value) {
         this.sprite.y = value;
+    }
+
+    set zpos(value) {
+        this.sprite.zpos = value;
     }
 
     update(dt)
