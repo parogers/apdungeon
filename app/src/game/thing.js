@@ -32,6 +32,7 @@ export class Thing
         this.sprite = new PIXI.Container();
         // Position of the hit box relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 4, 4);
+        this.level = null;
     }
 
     get width() {
@@ -76,6 +77,13 @@ export class Thing
 
     handlePlayerCollision(player)
     {
+    }
+
+    removeSelf()
+    {
+        if (this.level) {
+            this.level.removeThing(this);
+        }
     }
 }
 

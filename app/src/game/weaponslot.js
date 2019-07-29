@@ -183,10 +183,11 @@ export class BowWeaponSlot
 /* Arrow */
 /*********/
 
-export class Arrow
+export class Arrow extends Thing
 {
-    constructor(owner, x, y, velx, vely, height)
+    constructor(owner, x, y, velx, vely, h)
     {
+        super();
         this.owner = owner;
         this.sprite = new PIXI.Sprite(Utils.getFrame(RES.WEAPONS, "arrow"));
         this.sprite.anchor.set(0.5, 0.5);
@@ -194,9 +195,9 @@ export class Arrow
         this.sprite.scale.y = 1;
         this.sprite.x = x;
         this.sprite.y = y;
+        this.h = h;
         this.velx = velx;
         this.vely = vely;
-        this.height = height;
         this.state = ARROW_FLIGHT;
         this.timer = 0;
         this.hitbox = new Hitbox(0, 0, 8, 4);
@@ -212,12 +213,12 @@ export class Arrow
             if (this.sprite.x < level.camera.x || 
                 this.sprite.x > level.camera.x + level.camera.width) 
             {
-                level.removeThing(this);
+                this.removeSelf();
             }
             // Check if the arrow hits a wall
             var tile = level.getTileAt(
                 this.sprite.x+Math.sign(this.velx)*4,
-                this.sprite.y+this.height);
+                this.sprite.y+this.h);
             if (tile.solid) {
                 this.velx *= -0.25;
                 this.vely = 0;
@@ -232,22 +233,22 @@ export class Arrow
             if (other && other.handleHit) {
                 var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
                 if (ret === true) {
-                    level.removeThing(this);
+                    this.removeSelf();
                 }
             }
 
         } else if (this.state === ARROW_FALLING) {
             this.vely -= 700*dt;
-            this.height += this.vely*dt;
+            this.h += this.vely*dt;
             this.sprite.x += this.velx*dt;
             this.sprite.y -= this.vely*dt;
-            if (this.height <= 0) {
+            if (this.h <= 0) {
                 this.timer = 1;
                 this.state = ARROW_DISAPPEAR;
             }
         } else {
             this.timer -= dt;
-            if (this.timer <= 0) level.removeThing(this);
+            if (this.timer <= 0) this.removeSelf();
         }
     }
 }

@@ -24,9 +24,11 @@ import { Item } from './item';
 import { Audio } from './audio';
 
 // Animates a monster falling off the screen as a death animation
-export class DeathAnimation
+export class DeathAnimation extends Thing
 {
-    constructor(monster) {
+    constructor(monster)
+    {
+        super();
         this.STATE_FLIP = 0;
         this.STATE_FALLING = 1;
 
@@ -53,8 +55,8 @@ export class DeathAnimation
 
             if (!this.level.isThingVisible(this.monster))
             {
-                this.level.removeThing(this.monster);
-                this.level.removeThing(this);
+                this.monster.removeSelf();
+                this.removeSelf();
             }
         }
     }

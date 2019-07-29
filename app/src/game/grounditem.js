@@ -113,7 +113,7 @@ export class GroundItem
             this.taking = true;
         }
         if (this.sprite.y < -this.sprite.height) {
-            this.level.removeThing(this);
+            this.removeSelf();
         }
     }
 }
