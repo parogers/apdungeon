@@ -22,55 +22,58 @@ import { RES } from './res';
 import { Thing, Hitbox } from './thing';
 import { Utils } from './utils';
 
-export function NPC(img)
+export class NPC
 {
-    // Position of the hit box, relative to the sprite position
-    this.hitbox = new Hitbox(0, 0, 5, 5);
-    var texture = Utils.getFrame(RES.NPC_TILESET, img || "npc1_south_1");
-    this.sprite = new PIXI.Container();
-    this.npcSprite = new PIXI.Sprite(texture);
-    this.npcSprite.anchor.set(0.5, 1);
-    this.sprite.addChild(this.npcSprite);
+    constructor(img)
+    {
+        // Position of the hit box, relative to the sprite position
+        this.hitbox = new Hitbox(0, 0, 5, 5);
+        var texture = Utils.getFrame(RES.NPC_TILESET, img || "npc1_south_1");
+        this.sprite = new PIXI.Container();
+        this.npcSprite = new PIXI.Sprite(texture);
+        this.npcSprite.anchor.set(0.5, 1);
+        this.sprite.addChild(this.npcSprite);
 
-    this.textSprite = new PIXI.Sprite(renderText("?"));
-    this.textSprite.scale.set(3/5.);
-    this.textSprite.anchor.set(0.5, 1);
-    this.textSprite.y = -this.npcSprite.height-2;
-    this.textSprite.visible = false;
-    this.sprite.addChild(this.textSprite);
+        this.textSprite = new PIXI.Sprite(renderText("?"));
+        this.textSprite.scale.set(3/5.);
+        this.textSprite.anchor.set(0.5, 1);
+        this.textSprite.y = -this.npcSprite.height-2;
+        this.textSprite.visible = false;
+        this.sprite.addChild(this.textSprite);
 
-    this.visibleTimer = 0;
-}
+        this.visibleTimer = 0;
+    }
 
-NPC.prototype.setDialog = function(lines)
-{
-    this.textSprite.texture = renderText(lines, {blackBG: true})
-}
+    setDialog(lines)
+    {
+        this.textSprite.texture = renderText(lines, {blackBG: true})
+    }
 
-NPC.prototype.update = function(dt)
-{
-    // Always face the player
-    var dirx = Math.sign(this.level.player.sprite.x-this.sprite.x);
-    this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
+    update(dt)
+    {
+        // Always face the player
+        var dirx = Math.sign(this.level.player.x-this.sprite.x);
+        this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
 
-    if (this.visibleTimer > 0) {
-        this.visibleTimer -= dt;
-        if (this.visibleTimer <= 0) {
-            this.textSprite.visible = false;
+        if (this.visibleTimer > 0) {
+            this.visibleTimer -= dt;
+            if (this.visibleTimer <= 0) {
+                this.textSprite.visible = false;
+            }
         }
     }
-}
 
-NPC.prototype.handleHit = function(x, y, dmg)
-{
-    this.setDialog(["HEY CAREFUL", "WITH THAT!"]);
-    this.handlePlayerCollision();
-}
-
-NPC.prototype.handlePlayerCollision = function(player)
-{
-    if (!this.textSprite.visible) {
-        this.textSprite.visible = true;
+    handleHit(x, y, dmg)
+    {
+        this.setDialog(["HEY CAREFUL", "WITH THAT!"]);
+        this.handlePlayerCollision();
     }
-    this.visibleTimer = 1;
+
+    handlePlayerCollision(player)
+    {
+        if (!this.textSprite.visible) {
+            this.textSprite.visible = true;
+        }
+        this.visibleTimer = 1;
+    }
 }

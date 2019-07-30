@@ -26,10 +26,6 @@ import { GameState } from './gamestate';
 import { Utils } from './utils';
 import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
 
-var gamestate = null;
-var stage = null;
-var progress = null;
-
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
  * calls 'update' on all things in the level, plus arena controllers, etc.
@@ -38,156 +34,175 @@ var progress = null;
  * benefit where entities that don't need to do anything (eg blood spatter),
  * or objects waiting for a trigger (eg door) don't waste processor time */
 
-var lastCheck = 0;
-var fps = 0;
-var lastTime = null;
-function gameLoop()
+export class Game
 {
-    var now = (new Date()).getTime()/1000.0;
-    var dt = 0;
-    if (lastTime !== null) {
-        dt = Math.min(1.0/30, now - lastTime);
-        //dt /= 4;
-    }
-    lastTime = now;
-
-    fps++;
-    if (now-lastCheck >= 2) {
-        //console.log(fps/(now-lastCheck));
-        lastCheck = now;
-        fps = 0;
-    }
-
-    gamestate.update(dt);
-    GameControls.update(dt);
-    gamestate.render();
-    requestAnimationFrame(gameLoop)
-}
-
-function graphicsLoaded()
-{
-    let chunks = PIXI.loader.resources[RES.CHUNKS].chunks;
-    for (let name in chunks) {
-        chunks[name].renderTexture();
-    }
-
-    sounds.whenLoaded = audioLoaded;
-    sounds.onFailed = function(source) {
-        console.log("Failed to load audio file: " + source);
-    };
-    // Show and update the new progress bar for loading audio
-    progress.setText("LOADING AUDIO...");
-    sounds.onProgress = function(percent) {
-        progress.update(percent/100.0);
-        requestAnimationFrame(function() {
-            Render.getRenderer().render(stage);
-        });
-    };
-    sounds.load([
-        RES.ATTACK_SWORD_SND,
-        RES.SNAKE_HURT_SND,
-        RES.DEAD_SND,
-        RES.ARROW_DING_SND,
-        RES.SPLASH_SND,
-        RES.GO_SND,
-        RES.HIT_SND,
-        RES.COIN_SND,
-        RES.GATE_SND,
-        RES.DROP_SND,
-        RES.POWERUP1_SND,
-        RES.POWERUP2_SND,
-        RES.POWERUP3_SND,
-        RES.POWERUP4_SND,
-        RES.CHEST_SND,
-        //RES.GAME_MUSIC
-    ]);
-}
-
-function audioLoaded()
-{
-    /* TODO - error handling here */
-    console.log('done loading audio');
-    setup();
-}
-
-function setup()
-{
-    for (name in PIXI.loader.resources) 
+    constructor(element)
     {
-        var err = PIXI.loader.resources[name].error;
-        if (err) {
-            console.log("Failed to load image: " + name + " (" + err + ")");
-        }
+        this.element = element;
+        this.lastCheck = 0;
+        this.fps = 0;
+        this.lastTime = null;
+
+        this.gamestate = null;
+        this.stage = null;
+        this.progress = null;
+
+        PIXI.Loader.registerPlugin(new ChunkLoaderPlugin());
+        PIXI.Loader.registerPlugin(new TilesetLoaderPlugin());
     }
-    stage.children = [];
-    requestAnimationFrame(gameLoop)
-}
 
-function start(element)
-{
-    element.focus();
+    resize() {
+        this.gamestate.handleResize();
+    }
 
-    // Use the level screen to determine what the render view aspect
-    // ratio should be.
-    Render.configure(element, LevelScreen.getAspectRatio());
+    gameloop()
+    {
+        var now = (new Date()).getTime()/1000.0;
+        var dt = 0;
+        if (this.lastTime !== null) {
+            dt = Math.min(1.0/30, now - this.lastTime);
+            //dt /= 4;
+        }
+        this.lastTime = now;
 
-    stage = new PIXI.Container();
-    progress = new ProgressBar(200, 20, "LOADING IMAGES...");
-    progress.sprite.x = 100;
-    progress.sprite.y = 100;
-    stage.addChild(progress.sprite);
+        this.fps++;
+        if (now-this.lastCheck >= 2) {
+            //console.log(fps/(now-lastCheck));
+            this.lastCheck = now;
+            this.fps = 0;
+        }
 
-    GameControls.configure();
+        this.gamestate.update(dt);
+        GameControls.update(dt);
+        this.gamestate.render();
+        requestAnimationFrame(() => {
+            this.gameloop()
+        });
+    }
 
-    gamestate = new GameState();
-
-    function progresscb(loader, resource) {
+    progressCallback(loader, resource)
+    {
         console.log("loading: " + resource.url + 
                     " (" + (loader.progress|0) + "%)"); 
-        progress.update(loader.progress/100.0);
-        requestAnimationFrame(function() {
-            Render.getRenderer().render(stage);
+        this.progress.update(loader.progress/100.0);
+        requestAnimationFrame(() => {
+            Render.getRenderer().render(this.stage);
         });
     }
 
-    PIXI.Loader.registerPlugin(new ChunkLoaderPlugin());
-    PIXI.Loader.registerPlugin(new TilesetLoaderPlugin());
-    
-    // Add a random query string when loading the JSON files below. This avoids
-    // persistent caching problems, where the browser (eg FF) uses the cached
-    // without checking in with the server first.
-    var now = (new Date()).getTime();
-    PIXI.loader.defaultQueryString = "nocache=" + now;
-    PIXI.loader
-        .add(RES.MALE_MELEE)
-        .add(RES.FEMALE_MELEE)
-        .add(RES.NPC_TILESET)
-        .add(RES.MAPTILES)
-        .add(RES.ENEMIES)
-        .add(RES.WEAPONS)
-        .add(RES.GROUND_ITEMS)
-        .add(RES.UI)
-        .add(RES.CHUNKS)
-        .add(RES.TILESET)
-        .add(RES.MAP_OBJS)
-        //.add(RES.DRAGON)
-    //.add({name: "hit", url: "media/hit.wav"})
-        .on("progress", progresscb)
-        .load(graphicsLoaded);
+    start()
+    {
+        this.element.focus();
+
+        // Use the level screen to determine what the render view aspect
+        // ratio should be.
+        Render.configure(this.element, LevelScreen.getAspectRatio());
+
+        this.stage = new PIXI.Container();
+        /*this.progress = new ProgressBar(200, 20, "LOADING IMAGES...");
+        this.progress.sprite.x = 100;
+        this.progress.sprite.y = 100;
+        this.stage.addChild(this.progress.sprite);*/
+
+        function progress(loader, resource) {
+            //this.progressCallback(loader, resource);
+        }
+
+        GameControls.configure();
+        this.gamestate = new GameState();
+
+        Promise.all([
+            loadGraphics(progress),
+            loadAudio(progress)
+
+        ]).then(() => {
+            // Render the chunks (now that the map tiles are loaded)
+            let chunks = PIXI.loader.resources[RES.CHUNKS].chunks;
+            for (let name in chunks) {
+                chunks[name].renderTexture();
+            }
+
+        }).then(() => {
+            console.log('done loading audio');
+
+            for (name in PIXI.loader.resources) 
+            {
+                var err = PIXI.loader.resources[name].error;
+                if (err) {
+                    console.log("Failed to load image: " + name + " (" + err + ")");
+                }
+            }
+            this.stage.children = [];
+            requestAnimationFrame(() => { this.gameloop() });
+
+        });
+        /* TODO - error handling here */
+    }
 }
 
-function resize()
+// Returns a promise that resolves when all graphics resources are loaded
+function loadGraphics(progressCB)
 {
-    gamestate.handleResize();
+    return new Promise((resolve, reject) => {
+        // Add a random query string when loading the JSON files below. This avoids
+        // persistent caching problems, where the browser (eg FF) uses the cached
+        // without checking in with the server first.
+        var now = (new Date()).getTime();
+        PIXI.loader.defaultQueryString = "nocache=" + now;
+        PIXI.loader
+            .add(RES.MALE_MELEE)
+            .add(RES.FEMALE_MELEE)
+            .add(RES.NPC_TILESET)
+            .add(RES.MAPTILES)
+            .add(RES.ENEMIES)
+            .add(RES.WEAPONS)
+            .add(RES.GROUND_ITEMS)
+            .add(RES.UI)
+            .add(RES.CHUNKS)
+            .add(RES.TILESET)
+            .add(RES.MAP_OBJS)
+            //.add(RES.DRAGON)
+            //.add({name: "hit", url: "media/hit.wav"})
+            .on("progress", progressCB)
+            .load(resolve);
+    });
 }
 
-function getGameState()
+function loadAudio(progressCB)
 {
-    return gamestate;
+    return new Promise((resolve, reject) => {
+        sounds.whenLoaded = function() {
+            resolve();
+        };
+        sounds.onFailed = function(source) {
+            console.log("Failed to load audio file: " + source);
+            reject();
+        };
+        // Show and update the new progress bar for loading audio
+        //this.progress.setText("LOADING AUDIO...");
+        /*sounds.onProgress = (percent) => {
+            this.progress.update(percent/100.0);
+            requestAnimationFrame(() => {
+                Render.getRenderer().render(this.stage);
+            });
+        };*/
+        sounds.load([
+            RES.ATTACK_SWORD_SND,
+            RES.SNAKE_HURT_SND,
+            RES.DEAD_SND,
+            RES.ARROW_DING_SND,
+            RES.SPLASH_SND,
+            RES.GO_SND,
+            RES.HIT_SND,
+            RES.COIN_SND,
+            RES.GATE_SND,
+            RES.DROP_SND,
+            RES.POWERUP1_SND,
+            RES.POWERUP2_SND,
+            RES.POWERUP3_SND,
+            RES.POWERUP4_SND,
+            RES.CHEST_SND,
+            //RES.GAME_MUSIC
+        ]);
+    });
 }
-
-export var Game = {
-    start: start,
-    resize: resize,
-    getGameState: getGameState,
-};

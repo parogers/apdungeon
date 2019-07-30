@@ -52,6 +52,4 @@ export var RES = {
     TILE_WIDTH: 8,
     TILE_HEIGHT: 8,
     WALL_HEIGHT: 13,
-
-    renderer: null
 };

@@ -23,77 +23,79 @@ import { Thing, Hitbox } from './thing';
 import { GameControls } from './controls';
 import { Audio } from './audio';
 
-export function Gate()
+export class Gate
 {
-    this.frames = [
-        Utils.getFrame(RES.MAPTILES, "gate_wall_1"),
-        Utils.getFrame(RES.MAPTILES, "gate_wall_2"),
-        Utils.getFrame(RES.MAPTILES, "gate_wall_3")
-    ];
-    this.hitbox = new Hitbox(0, 0, 5, 5);
-    this.sprite = new PIXI.Sprite(this.frames[0]);
-    this.sprite.anchor.set(0,0);
-    this.frameNum = 0;
-    this.fps = 2;
-    this.moving = 0;
-}
-
-Gate.prototype.isOpen = function()
-{
-    return (this.frameNum === this.frames.length-1 && this.moving === 0);
-}
-
-Gate.prototype.startOpening = function()
-{
-    if (this.frameNum < this.frames.length-1) {
-        this.moving = 1;
-    }
-}
-
-Gate.prototype.startClosing = function()
-{
-    if (this.frameNum > 0) {
-        this.moving = -1;
-    }
-}
-
-Gate.prototype.update = function(dt)
-{
-    // The gate is opening or closing
-    if (this.moving !== 0) {
-        var fnum = Math.round(2*this.frameNum);
-        this.frameNum += this.moving*this.fps*dt;
-        if (this.frameNum < 0) {
-            // Finished closing
-            this.frameNum = 0;
-            this.moving = 0;
-        } else if (this.frameNum >= this.frames.length-1) {
-            // Finished opening
-            this.frameNum = this.frames.length-1;
-            this.moving = 0;
-        }
-        // Make a "clicksh" noise as the gate is opening. (we do this every
-        // other frame to make it more obvious, hence the '2' here and above)
-        if (fnum !== Math.round(2*this.frameNum)) {
-            Audio.playSound(RES.GATE_SND, 0.2);
-        }
-    }
-    this.sprite.texture = this.frames[Math.round(this.frameNum)|0];
-}
-
-Gate.prototype.handleHit = function(x, y, dmg)
-{
-}
-
-Gate.prototype.handlePlayerCollision = function(player)
-{
-    if (this.isOpen() && 
-        this === this.level.exitDoor && 
-        GameControls.getControls().up && 
-        Math.abs(player.sprite.y-this.sprite.y) < 5) 
+    constructor() 
     {
-        // Next level
-        this.level.state = this.level.FINISHED;
+        this.frames = [
+            Utils.getFrame(RES.MAPTILES, "gate_wall_1"),
+            Utils.getFrame(RES.MAPTILES, "gate_wall_2"),
+            Utils.getFrame(RES.MAPTILES, "gate_wall_3")
+        ];
+        this.hitbox = new Hitbox(0, 0, 5, 5);
+        this.sprite = new PIXI.Sprite(this.frames[0]);
+        this.sprite.anchor.set(0,0);
+        this.frameNum = 0;
+        this.fps = 2;
+        this.moving = 0;
+    }
+
+    isOpen()
+    {
+        return (this.frameNum === this.frames.length-1 && this.moving === 0);
+    }
+
+    startOpening()
+    {
+        if (this.frameNum < this.frames.length-1) {
+            this.moving = 1;
+        }
+    }
+
+    startClosing()
+    {
+        if (this.frameNum > 0) {
+            this.moving = -1;
+        }
+    }
+
+    update(dt)
+    {
+        // The gate is opening or closing
+        if (this.moving !== 0) {
+            var fnum = Math.round(2*this.frameNum);
+            this.frameNum += this.moving*this.fps*dt;
+            if (this.frameNum < 0) {
+                // Finished closing
+                this.frameNum = 0;
+                this.moving = 0;
+            } else if (this.frameNum >= this.frames.length-1) {
+                // Finished opening
+                this.frameNum = this.frames.length-1;
+                this.moving = 0;
+            }
+            // Make a "clicksh" noise as the gate is opening. (we do this every
+            // other frame to make it more obvious, hence the '2' here and above)
+            if (fnum !== Math.round(2*this.frameNum)) {
+                Audio.playSound(RES.GATE_SND, 0.2);
+            }
+        }
+        this.sprite.texture = this.frames[Math.round(this.frameNum)|0];
+    }
+
+    handleHit(x, y, dmg)
+    {
+    }
+
+    handlePlayerCollision(player)
+    {
+        if (this.isOpen() && 
+            this === this.level.exitDoor && 
+            GameControls.getControls().up && 
+            Math.abs(player.sprite.y-this.sprite.y) < 5) 
+        {
+            // Next level
+            this.level.state = this.level.FINISHED;
+        }
     }
 }
-

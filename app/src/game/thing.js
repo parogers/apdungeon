@@ -17,31 +17,74 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import { RES } from './res';
 import { Utils } from "./utils";
 
 /* Template code for defining a 'thing' in a level. Generally things have 
  * sprites associated with them, and can be interacted with by the player.
  * Note there's no need to subclass because this code doesn't contain any
  * useful base functionality. Just copy+paste and change what's needed. */
-export function Thing()
+export class Thing
 {
-    // Position of the hit box, relative to the sprite position
-    this.hitbox = new Hitbox(0, 0, 5, 5);
-    var texture = Utils.getFrame(RES.GROUND_ITEMS, "coin");
-    this.sprite = new PIXI.Sprite(texture);
-    this.sprite.anchor.set(0,0);
-}
+    constructor()
+    {
+        // The top-level container that holds all pieces of the sprite
+        this.sprite = new PIXI.Container();
+        // Position of the hit box relative to the sprite position
+        this.hitbox = new Hitbox(0, 0, 4, 4);
+        this.level = null;
+    }
 
-Thing.prototype.update = function(dt)
-{
-}
+    get width() {
+        return Math.abs(this.sprite.width);
+    }
 
-Thing.prototype.handleHit = function(x, y, dmg)
-{
-}
+    get height() {
+        return Math.abs(this.sprite.height);
+    }
 
-Thing.prototype.handlePlayerCollision = function(player)
-{
+    get x() {
+        return this.sprite.x;
+    }
+
+    get y() {
+        return this.sprite.y;
+    }
+
+    get zpos() {
+        return this.sprite.zpos;
+    }
+
+    set x(value) {
+        this.sprite.x = value;
+    }
+
+    set y(value) {
+        this.sprite.y = value;
+    }
+
+    set zpos(value) {
+        this.sprite.zpos = value;
+    }
+
+    update(dt)
+    {
+    }
+
+    handleHit(x, y, dmg)
+    {
+    }
+
+    handlePlayerCollision(player)
+    {
+    }
+
+    removeSelf()
+    {
+        if (this.level) {
+            this.level.removeThing(this);
+        }
+    }
 }
 
 /**********/

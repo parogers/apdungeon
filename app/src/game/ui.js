@@ -69,65 +69,68 @@ export function renderText(lines, options)
 /* HealthUI */
 /************/
 
-export function HealthUI()
+export class HealthUI
 {
-    this.player = null;
-    this.sprite = new PIXI.Container();
-    this.hearts = [];
-    this.fullHeart = Utils.getFrame(RES.UI, "full_bigheart");
-    this.halfHeart = Utils.getFrame(RES.UI, "half_bigheart");
-    this.emptyHeart = Utils.getFrame(RES.UI, "empty_bigheart");
+    constructor()
+    {
+        this.player = null;
+        this.sprite = new PIXI.Container();
+        this.hearts = [];
+        this.fullHeart = Utils.getFrame(RES.UI, "full_bigheart");
+        this.halfHeart = Utils.getFrame(RES.UI, "half_bigheart");
+        this.emptyHeart = Utils.getFrame(RES.UI, "empty_bigheart");
 
-    for (var n = 0; n < 3; n++) {
-        this.addHeart();
-    }
-}
-
-// Adds a heart to the UI
-HealthUI.prototype.addHeart = function()
-{
-    var heart = new PIXI.Sprite(this.fullHeart);
-    this.hearts.push(heart);
-    this.sprite.addChild(heart);
-
-    var x = -this.hearts.length*(this.fullHeart.width+1);
-    for (let heart of this.hearts) {
-        heart.x = x;
-        x += (this.fullHeart.width+1);
-    }
-}
-
-// Removes the last heart from this UI
-HealthUI.prototype.removeHeart = function()
-{
-    if (this.hearts.length > 0) {
-        this.sprite.removeChild(this.hearts.pop());
-    }
-}
-
-HealthUI.prototype.update = function(dt)
-{
-    if (!this.player) return;
-
-    // Add hearts to match the player's max health
-    while (this.hearts.length < Math.floor(this.player.maxHealth/2)) {
-        this.addHeart();
-    }
-    // Remove hearts to match the player's max health
-    while (this.hearts.length > Math.floor(this.player.maxHealth/2)) {
-        this.removeHeart();
-    }
-    // Synchronize the hearts to reflect the player's health
-    for (var n = 0; n < this.hearts.length; n++) {
-        var img = null;
-        if (n < Math.floor(this.player.health/2)) {
-            img = this.fullHeart;
-        } else if (n < Math.floor((this.player.health+1)/2)) {
-            img = this.halfHeart;
-        } else {
-            img = this.emptyHeart;
+        for (var n = 0; n < 3; n++) {
+            this.addHeart();
         }
-        this.hearts[n].texture = img;
+    }
+
+    // Adds a heart to the UI
+    addHeart()
+    {
+        var heart = new PIXI.Sprite(this.fullHeart);
+        this.hearts.push(heart);
+        this.sprite.addChild(heart);
+
+        var x = -this.hearts.length*(this.fullHeart.width+1);
+        for (let heart of this.hearts) {
+            heart.x = x;
+            x += (this.fullHeart.width+1);
+        }
+    }
+
+    // Removes the last heart from this UI
+    removeHeart()
+    {
+        if (this.hearts.length > 0) {
+            this.sprite.removeChild(this.hearts.pop());
+        }
+    }
+
+    update(dt)
+    {
+        if (!this.player) return;
+
+        // Add hearts to match the player's max health
+        while (this.hearts.length < Math.floor(this.player.maxHealth/2)) {
+            this.addHeart();
+        }
+        // Remove hearts to match the player's max health
+        while (this.hearts.length > Math.floor(this.player.maxHealth/2)) {
+            this.removeHeart();
+        }
+        // Synchronize the hearts to reflect the player's health
+        for (var n = 0; n < this.hearts.length; n++) {
+            var img = null;
+            if (n < Math.floor(this.player.health/2)) {
+                img = this.fullHeart;
+            } else if (n < Math.floor((this.player.health+1)/2)) {
+                img = this.halfHeart;
+            } else {
+                img = this.emptyHeart;
+            }
+            this.hearts[n].texture = img;
+        }
     }
 }
 
@@ -137,55 +140,58 @@ HealthUI.prototype.update = function(dt)
 
 // A single inventory slot, showing the picture of an item (from the tile
 // sheet GROUND_ITEMS) and optionally a quantity value below.
-export function ItemSlotUI(item, args)
+export class ItemSlotUI
 {
-    this.sprite = new PIXI.Container();
-    this.baseItem = item;
-    this.item = item;
-    this.count = 0;
-    this.itemSprite = new PIXI.Sprite(
-        Utils.getFrame(RES.GROUND_ITEMS, item.image));
-    this.itemSprite.anchor.set(0.5, 0);
-    this.itemSprite.x = 0.5;
-    this.itemSprite.y = 0;
-    this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "small_slot"));
-    this.slotSprite.anchor.set(0.5, 0);
-    this.sprite.addChild(this.slotSprite);
-    this.sprite.addChild(this.itemSprite);
-
-    if (args && args.x) this.itemSprite.x += args.x;
-    if (args && args.y) this.itemSprite.y += args.y;
-
-    if (args && args.showCount) 
+    constructor(item, args)
     {
-        var img = renderText("--");
-        this.textSprite = new PIXI.Sprite(img);
-        this.textSprite.anchor.set(0.5, 0.5);
-        this.textSprite.x = 0;
-        this.textSprite.y = 12;
-        this.textSprite.scale.set(0.75);
-        this.sprite.addChild(this.textSprite);
-    }
-}
-
-ItemSlotUI.prototype.setCount = function(count)
-{
-    if (this.textSprite && this.count !== count)
-    {
-        this.count = count;
-        if (count === 0) count = "--";
-        else if (count < 9) count = "0" + count;
-        this.textSprite.texture = renderText(""+count);
-    }
-}
-
-ItemSlotUI.prototype.setItem = function(item)
-{
-    // If no item is specified, use the item passed to the constructor instead
-    if (item === Item.Table.NONE) item = this.baseItem;
-    if (this.item !== item) {
+        this.sprite = new PIXI.Container();
+        this.baseItem = item;
         this.item = item;
-        this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
+        this.count = 0;
+        this.itemSprite = new PIXI.Sprite(
+            Utils.getFrame(RES.GROUND_ITEMS, item.image));
+        this.itemSprite.anchor.set(0.5, 0);
+        this.itemSprite.x = 0.5;
+        this.itemSprite.y = 0;
+        this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, "small_slot"));
+        this.slotSprite.anchor.set(0.5, 0);
+        this.sprite.addChild(this.slotSprite);
+        this.sprite.addChild(this.itemSprite);
+
+        if (args && args.x) this.itemSprite.x += args.x;
+        if (args && args.y) this.itemSprite.y += args.y;
+
+        if (args && args.showCount) 
+        {
+            var img = renderText("--");
+            this.textSprite = new PIXI.Sprite(img);
+            this.textSprite.anchor.set(0.5, 0.5);
+            this.textSprite.x = 0;
+            this.textSprite.y = 12;
+            this.textSprite.scale.set(0.75);
+            this.sprite.addChild(this.textSprite);
+        }
+    }
+
+    setCount(count)
+    {
+        if (this.textSprite && this.count !== count)
+        {
+            this.count = count;
+            if (count === 0) count = "--";
+            else if (count < 9) count = "0" + count;
+            this.textSprite.texture = renderText(""+count);
+        }
+    }
+
+    setItem(item)
+    {
+        // If no item is specified, use the item passed to the constructor instead
+        if (item === Item.Table.NONE) item = this.baseItem;
+        if (this.item !== item) {
+            this.item = item;
+            this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
+        }
     }
 }
 
@@ -194,45 +200,48 @@ ItemSlotUI.prototype.setItem = function(item)
 /***************/
 
 // Show the player inventory as a set of item slots (ItemSlotUI instances)
-export function InventoryUI()
+export class InventoryUI
 {
-    this.player = null;
-    this.sprite = new PIXI.Container();
-    this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
-    this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
-    this.bowSlot = new ItemSlotUI(Item.Table.NO_BOW, {x: -0.5});
-    this.arrowSlot = new ItemSlotUI(Item.Table.ARROW, {showCount: true});
-    this.coinSlot = new ItemSlotUI(
-        Item.Table.COIN, {
-            showCount: true,
-            x: -0.5,
-            y: 0.5
-        });
+    constructor()
+    {
+        this.player = null;
+        this.sprite = new PIXI.Container();
+        this.armourSlot = new ItemSlotUI(Item.Table.NO_ARMOUR);
+        this.swordSlot = new ItemSlotUI(Item.Table.NO_SWORD);
+        this.bowSlot = new ItemSlotUI(Item.Table.NO_BOW, {x: -0.5});
+        this.arrowSlot = new ItemSlotUI(Item.Table.ARROW, {showCount: true});
+        this.coinSlot = new ItemSlotUI(
+            Item.Table.COIN, {
+                showCount: true,
+                x: -0.5,
+                y: 0.5
+            });
 
-    this.slots = [
-        this.armourSlot,
-        this.swordSlot,
-        this.bowSlot,
-        this.arrowSlot,
-        this.coinSlot,
-    ];
-    var x = 0;
-    for (let slot of this.slots) {
-        this.sprite.addChild(slot.sprite);
-        slot.sprite.x = x;
-        x += (slot.slotSprite.texture.width+1);
+        this.slots = [
+            this.armourSlot,
+            this.swordSlot,
+            this.bowSlot,
+            this.arrowSlot,
+            this.coinSlot,
+        ];
+        var x = 0;
+        for (let slot of this.slots) {
+            this.sprite.addChild(slot.sprite);
+            slot.sprite.x = x;
+            x += (slot.slotSprite.texture.width+1);
+        }
     }
-}
 
-InventoryUI.prototype.update = function(dt)
-{
-    if (this.player) {
-        // TODO - use an event/listener system instead of doing this
-        this.armourSlot.setItem(this.player.armour);
-        this.swordSlot.setItem(this.player.sword);
-        this.bowSlot.setItem(this.player.bow);
-        this.arrowSlot.setCount(this.player.numArrows);
-        this.coinSlot.setCount(this.player.numCoins);
+    update(dt)
+    {
+        if (this.player) {
+            // TODO - use an event/listener system instead of doing this
+            this.armourSlot.setItem(this.player.armour);
+            this.swordSlot.setItem(this.player.sword);
+            this.bowSlot.setItem(this.player.bow);
+            this.arrowSlot.setCount(this.player.numArrows);
+            this.coinSlot.setCount(this.player.numCoins);
+        }
     }
 }
 

@@ -32,10 +32,11 @@ var STATE_CHANGE_TRACK = 4;
 
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
-export class SkelWarrior
+export class SkelWarrior extends Thing
 {
     constructor()
     {
+        super();
         this.name = "Skeleton";
         this.idleFrame = Utils.getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
         this.frames = Utils.getFrames(RES.ENEMIES, [
@@ -56,8 +57,6 @@ export class SkelWarrior
         // When approaching the player, how far to keep distance
         this.approachDist = 30;
         this.counter = 0;
-        // The sprite container holding the monster and splash sprite
-        this.sprite = new PIXI.Container(this.frames[0]);
         // The actual goblin sprite
         this.monsterSprite = new PIXI.Sprite();
         this.monsterSprite.anchor.set(0.5, 1);
@@ -135,9 +134,9 @@ export class SkelWarrior
         if (this.timer <= 0)
         {
             if (this.level.player.track === this.track ||
-                this.sprite.x < this.level.player.sprite.x + this.alwaysChargeDist)
+                this.sprite.x < this.level.player.x + this.alwaysChargeDist)
             {
-                this.chargeOffset = this.sprite.x - this.level.player.sprite.x;
+                this.chargeOffset = this.sprite.x - this.level.player.x;
                 this.state = STATE_CHARGING;
             }
             else if (this.level.player.track)
@@ -165,7 +164,7 @@ export class SkelWarrior
         this.sprite.x += this.velx*dt;
 
         if (this.chargeOffset > this.alwaysChargeDist) {
-            if (this.sprite.x <= this.level.player.sprite.x) {
+            if (this.sprite.x <= this.level.player.x) {
                 this.state = STATE_RETREAT;
             }
         }
@@ -183,9 +182,9 @@ export class SkelWarrior
         this.velx = this.level.player.velx + this.speed/2.0;
         this.sprite.x += this.velx*dt;
 
-        if (this.sprite.x >= this.level.player.sprite.x + this.chargeOffset)
+        if (this.sprite.x >= this.level.player.x + this.chargeOffset)
         {
-            this.sprite.x = this.level.player.sprite.x + this.chargeOffset;
+            this.sprite.x = this.level.player.x + this.chargeOffset;
             this.timer = this.chargeTimeout;
             this.state = STATE_IDLE;
         }
