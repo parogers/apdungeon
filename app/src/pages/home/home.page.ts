@@ -13,6 +13,7 @@ declare var PIXI: any;
 export class HomePage
 {
     @ViewChild('playarea') playArea;
+    private game: any;
 
     constructor(private menuCtrl: MenuController) {
         
@@ -33,7 +34,8 @@ export class HomePage
         div.style.width = width + "px";
         div.style.height = height + "px";
 
-        Game.start(div);
+        this.game = new Game(div);
+        this.game.start();
 
         window.addEventListener("resize", () => this.resizeCallback());
         setTimeout(() => this.resizeCallback(), 500);
@@ -51,7 +53,7 @@ export class HomePage
         let div = this.playArea.nativeElement;
         div.style.width = width + "px";
         div.style.height = height + "px";
-        Game.resize();
+        this.game.resize();
     }
 
     handleMenu() {
