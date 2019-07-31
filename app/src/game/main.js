@@ -25,6 +25,7 @@ import { LevelScreen } from './levelscreen';
 import { GameState } from './gamestate';
 import { Utils } from './utils';
 import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
+import { GestureManager } from './gesture';
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
@@ -97,6 +98,12 @@ export class Game
         // Use the level screen to determine what the render view aspect
         // ratio should be.
         Render.configure(this.element, LevelScreen.getAspectRatio());
+
+        this.gestureMgr = new GestureManager();
+        this.gestureMgr.attach(Render.getRenderer().view);
+        this.gestureMgr.gestureCallback = (gesture) => {
+            this.gamestate.handleGesture(gesture);
+        };
 
         this.stage = new PIXI.Container();
         /*this.progress = new ProgressBar(200, 20, "LOADING IMAGES...");
