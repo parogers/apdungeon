@@ -19,27 +19,32 @@
 
 class Gesture
 {
-    constructor() {
-        this.tap = false;
-        this.line = false;
-        this.diagonal = false;
-        this.leftToRight = false;
-        this.rightToLeft = false;
-        this.topToBottom = false;
-        this.bottomToTop = false;
-        this.speed = 0; // pixels per second
+    public tap: boolean = false;
+    public line: boolean = false;
+    public diagonal: boolean = false;
+    public leftToRight: boolean = false;
+    public rightToLeft: boolean = false;
+    public topToBottom: boolean = false;
+    public bottomToTop: boolean = false;
+    public speed: number = 0; // pixels per second
 
-        this.startx = 0;
-        this.starty = 0;
+    public startx: number = 0;
+    public starty: number = 0;
 
-        this.endx = 0;
-        this.endy = 0;
-    }
+    public endx: number = 0;
+    public endy: number = 0;
 }
-
 
 class Touch
 {
+    public startTime: number;
+    public id: number;
+    public startx: number;
+    public starty: number;
+    public lastx: number;
+    public lasty: number;
+    public totalDistance: number = 0;
+
     constructor(id, x, y)
     {
         this.startTime = (new Date()).getTime()/1000.0;
@@ -136,6 +141,14 @@ class Touch
  */
 export class GestureManager
 {
+    private onTouchStart: any;
+    private onTouchMove: any;
+    private onTouchEnd: any;
+
+    private element: any;
+    private touches: any;
+    public gestureCallback: any;
+
     constructor() {
         this.touches = {};
         this.gestureCallback = null;
