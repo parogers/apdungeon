@@ -121,6 +121,13 @@ export class GameState
         }
     }
 
+    handleGesture(gesture)
+    {
+        if (this.screen && this.screen.handleGesture) {
+            this.screen.handleGesture(gesture);
+        }
+    }
+
     handleResize()
     {
         Render.resize();

@@ -28,6 +28,34 @@ import { GameControls } from './controls';
 import { Audio } from './audio';
 import { TouchUI } from './touchui';
 
+class TouchControls
+{
+    constructor() {
+        // Gestures on the left and right side of the screen respectively.
+        // Once set these are held for a single frame and then discarded.
+        // (so the player object has a single frame to handle the gesture
+        // via player.update)
+        this.leftGesture = null;
+        this.rightGesture = null;
+    }
+
+    reset() {
+        // Discard any gestures since they (should) have been handled above
+        this.leftGesture = null;
+        this.rightGesture = null;
+    }
+
+    handleGesture(gesture)
+    {
+        // Decide what side of the screen the gesture belongs to
+        if (gesture.startx < Render.getRenderer().width/2) {
+            this.leftGesture = gesture;
+        } else {
+            this.rightGesture = gesture;
+        }
+    }
+}
+
 /***************/
 /* LevelScreen */
 /***************/
@@ -82,7 +110,8 @@ export class LevelScreen
         switch(this.state) {
         case this.NEW_GAME:
             // Generate a new level and player character
-            this.player = new Player(GameControls.getControls());
+            this.controls = GameControls.getControls();
+            this.player = new Player(this.controls);
             this.levelNum = 0;
             // Auto-generate the first level
             let level = generateLevel(this.levelNum);
@@ -114,6 +143,9 @@ export class LevelScreen
 
         case this.GAME_OVER:
             break;
+        }
+        if (this.controls) {
+            this.controls.gesture = null;
         }
     }
 
@@ -158,6 +190,13 @@ export class LevelScreen
         this.gameUI.update(0);
 
         this.handleResize()
+    }
+
+    handleGesture(gesture)
+    {
+        if (this.controls) {
+            this.controls.gesture = gesture;
+        }
     }
 
     handleResize()

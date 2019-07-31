@@ -29,13 +29,16 @@ import { Audio } from './audio';
 var DAMAGE_TINT = 0xFF0000;
 var NO_TINT = 0xFFFFFF;
 
+const STATE_IDLE = 0;
+const STATE_CHANGING_TRACK = 1;
+
 export class Player extends Thing
 {
-
     constructor(controls)
     {
         super();
         this.controls = controls;
+        this.state = STATE_IDLE;
         this.velx = 0;
         this.vely = 0;
         this.accelx = 0;
@@ -297,81 +300,92 @@ export class Player extends Thing
 
     update(dt)
     {
-        let velx = 0;
-        let vely = 0;
-
         if (this.running) {
-            velx = this.maxSpeed;
-        }
-        
-        // Handle attacking
-        if (this.controls.primary.pressed) this.startAttack();
-        if (!this.controls.primary.released) this.stopAttack();
-
-        // Update the equipped weapon
-        if (this.weaponSlot && this.weaponSlot.update) {
-            this.weaponSlot.update(dt);
+            this.velx = this.maxSpeed;
+        } else {
+            this.velx = 0;
         }
 
-        if (this.nextTrack)
+        if (this.state === STATE_IDLE)
+        {
+            if (this.controls.primary.pressed ||
+                (this.controls.gesture && this.controls.gesture.tap))
+            {
+                this.startAttack();
+            }
+
+            // Update the equipped weapon
+            if (this.weaponSlot && this.weaponSlot.update) {
+                this.weaponSlot.update(dt);
+            }
+
+            if (this.track &&
+                this.controls.gesture &&
+                this.controls.gesture.isVerticalLine)
+            {
+                let diry = Math.sign(this.controls.gesture.dy);
+                let nextTrack = this.level.getTrack(this.track.number + diry);
+
+                this.moveToTrack(nextTrack);
+            }
+            else if (this.track && this.controls.getY() != 0)
+            {
+                let diry = Math.sign(this.controls.getY());
+                let nextTrack = this.level.getTrack(this.track.number + diry);
+
+                this.moveToTrack(nextTrack);
+            }
+
+            if (this.damageTimer > 0)
+            {
+                this.damageTimer -= dt;
+                if (this.damageTimer <= 0 || 
+                    this.damageCooldown-this.damageTimer > 0.1) 
+                {
+                    // Stop flashing red
+                    this.spriteChar.tint = NO_TINT;
+                }
+            }
+
+            if (this.velx !== 0 || this.vely !== 0)
+            {
+                this.frame += this.walkFPS*dt;
+            }
+
+            this.sprite.x += this.velx*dt;
+            this.sprite.y += this.vely*dt;
+
+            // Check for collisions with other things
+            this.level.forEachThingHit(
+                this.sprite.x,
+                this.sprite.y, 
+                this.hitbox,
+                this,
+                this.handleCollisionCallback
+            );
+        }
+        else if (this.state === STATE_CHANGING_TRACK)
         {
             // Player is in the process of moving to another track
-            let dirY = Math.sign(this.nextTrack.y-this.sprite.y);
-            vely = dirY*this.verticalSpeed;
-        }
-        else
-        {
-            // Check if the player wants to change tracks
-            if (this.track && this.controls.getY() !== 0) {
-                
-                this.moveToTrack(this.level.getTrack(
-                    this.track.number + Math.sign(this.controls.getY())
-                ));
-            }
-        }
+            let diry = Math.sign(this.nextTrack.y-this.sprite.y);
 
-        if (this.damageTimer > 0)
-        {
-            this.damageTimer -= dt;
-            if (this.damageTimer <= 0 || 
-                this.damageCooldown-this.damageTimer > 0.1) 
+            // Check if they've made it
+            this.vely = diry*this.verticalSpeed;
+            this.sprite.x += this.velx*dt;
+            this.sprite.y += this.vely*dt;
+
+            if (diry > 0 && this.sprite.y >= this.nextTrack.y ||
+                diry < 0 && this.sprite.y <= this.nextTrack.y)
             {
-                // Stop flashing red
-                this.spriteChar.tint = NO_TINT;
-            }
-        }
-
-        if (velx !== 0 || vely !== 0)
-        {
-            this.frame += dt;
-        }
-
-        this.sprite.x += velx*dt;
-        this.sprite.y += vely*dt;
-
-        // If the player is changing tracks, check if they've made it
-        if (this.nextTrack)
-        {
-            if (vely > 0 && this.sprite.y >= this.nextTrack.y ||
-                vely < 0 && this.sprite.y <= this.nextTrack.y)
-            {
+                this.vely = 0;
                 this.sprite.y = this.nextTrack.y;
                 this.track = this.nextTrack;
                 this.nextTrack = null;
+                this.state = STATE_IDLE;
             }
         }
-
-        this.velx = velx;
-        this.vely = vely;
-
-        // Check for collisions with other things
-        this.level.forEachThingHit(
-            this.sprite.x, this.sprite.y, 
-            this.hitbox, this, 
-            this.handleCollisionCallback);
-
         // Update animation
-        let frameNum = ((this.frame*this.walkFPS)|0) % this.frames.length;
+        let frameNum = (this.frame|0) % this.frames.length;
         this.spriteChar.texture = this.frames[frameNum];
     }
 
@@ -597,13 +611,17 @@ export class Player extends Thing
      * move onto the track, and false otherwise. */
     moveToTrack(track)
     {
+        if (this.state !== STATE_IDLE) {
+            return false;
+        }
         if (!track) {
             return false;
         }
         if (track.checkSolidAt(this.x, this.width)) {
             return false;
         }
-        this.nextTrack = track;    
+        this.nextTrack = track;
+        this.state = STATE_CHANGING_TRACK;
         return true;
     }
 

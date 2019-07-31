@@ -84,7 +84,8 @@ export class TitleScreen
         txt.y = 25;
         this.stage.addChild(txt);
 
-        txt = new PIXI.Sprite(renderText("CLICK OR PRESS SPACE TO PLAY"));
+        txt = new PIXI.Sprite(renderText("TAP TO PLAY"));
+        //txt = new PIXI.Sprite(renderText("CLICK OR PRESS SPACE TO PLAY"));
         txt.scale.set(0.75);
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
@@ -114,10 +115,10 @@ export class TitleScreen
         this.mouseClicked = false;
         this.touchClicked = false;
         this.onMouseUp = (evt) => {
-            this.mouseClicked = true;
+            //this.mouseClicked = true;
         };
         this.onTouchEnd = (evt) => {
-            this.touchClicked = true;
+            //this.touchClicked = true;
         }
         Render.getContainer().addEventListener("mouseup", this.onMouseUp);
         Render.getContainer().addEventListener("touchend", this.onTouchEnd);
@@ -236,6 +237,14 @@ export class TitleScreen
     render()
     {
         Render.getRenderer().render(this.stage);
+    }
+
+    handleGesture(gesture)
+    {
+        // Wait for the player to tap the screen before starting
+        if (gesture.tap) {
+            this.mouseClicked = true;
+        }
     }
 
     handleResize()

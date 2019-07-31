@@ -122,14 +122,18 @@ export class BowWeaponSlot
         this.attackCooldown = 0;
         this.textureName = null;
         this.setTexture("bow1");
+        // Vertical offset from the player position where the arrow
+        // is fired.
+        this.arrowOffsetY = -3;
     }
 
     update(dt)
     {
         if (this.attackCooldown <= 0) {
             /* Have the bow rock back and forth as the player moves. */
-            this.sprite.rotation = Math.PI/5 + 
-                (Math.PI/40)*Math.cos(10*this.player.frame);
+            //this.sprite.rotation = Math.PI/5 + 
+            //(Math.PI/40)*Math.cos(10*this.player.frame);
+            this.sprite.rotation = Math.PI/5;
             this.sprite.x = 3.0;
             this.sprite.y = -2.5;
         } else {
@@ -166,7 +170,7 @@ export class BowWeaponSlot
         var arrow = new Arrow(
             this.player,
             this.player.x,
-            this.player.y+this.sprite.y,
+            this.player.y + this.arrowOffsetY,
             this.player.velx + this.player.facing*50, 0,
             Math.abs(this.sprite.y));
         //level.things.push(arrow);
