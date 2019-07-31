@@ -302,11 +302,15 @@ export class Player extends Thing
     {
         if (this.running) {
             this.velx = this.maxSpeed;
+        } else {
+            this.velx = 0;
         }
 
         if (this.state === STATE_IDLE)
         {
-            if (this.controls.gesture && this.controls.gesture.tap) {
+            if (this.controls.primary.pressed ||
+                (this.controls.gesture && this.controls.gesture.tap))
+            {
                 this.startAttack();
             }
 
@@ -320,6 +324,13 @@ export class Player extends Thing
                 this.controls.gesture.isVerticalLine)
             {
                 let diry = Math.sign(this.controls.gesture.dy);
+                let nextTrack = this.level.getTrack(this.track.number + diry);
+
+                this.moveToTrack(nextTrack);
+            }
+            else if (this.track && this.controls.getY() != 0)
+            {
+                let diry = Math.sign(this.controls.getY());
                 let nextTrack = this.level.getTrack(this.track.number + diry);
 
                 this.moveToTrack(nextTrack);
