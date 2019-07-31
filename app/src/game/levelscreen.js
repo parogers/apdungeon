@@ -89,8 +89,6 @@ export class LevelScreen
             this.touchUI = new TouchUI();
             this.stage.addChild(this.touchUI.container);
         }
-
-        this.touchControls = new TouchControls();
     }
 
     destroy()
@@ -112,8 +110,8 @@ export class LevelScreen
         switch(this.state) {
         case this.NEW_GAME:
             // Generate a new level and player character
-            this.player = new Player(GameControls.getControls());
-            this.player.touchControls = this.touchControls;
+            this.controls = GameControls.getControls();
+            this.player = new Player(this.controls);
             this.levelNum = 0;
             // Auto-generate the first level
             let level = generateLevel(this.levelNum);
@@ -146,7 +144,9 @@ export class LevelScreen
         case this.GAME_OVER:
             break;
         }
-        this.touchControls.reset();
+        if (this.controls) {
+            this.controls.gesture = null;
+        }
     }
 
     render()
@@ -194,7 +194,9 @@ export class LevelScreen
 
     handleGesture(gesture)
     {
-        this.touchControls.handleGesture(gesture);
+        if (this.controls) {
+            this.controls.gesture = gesture;
+        }
     }
 
     handleResize()

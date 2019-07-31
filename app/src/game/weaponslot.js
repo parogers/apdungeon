@@ -122,6 +122,9 @@ export class BowWeaponSlot
         this.attackCooldown = 0;
         this.textureName = null;
         this.setTexture("bow1");
+        // Vertical offset from the player position where the arrow
+        // is fired.
+        this.arrowOffsetY = -3;
     }
 
     update(dt)
@@ -167,7 +170,7 @@ export class BowWeaponSlot
         var arrow = new Arrow(
             this.player,
             this.player.x,
-            this.player.y+this.sprite.y,
+            this.player.y + this.arrowOffsetY,
             this.player.velx + this.player.facing*50, 0,
             Math.abs(this.sprite.y));
         //level.things.push(arrow);

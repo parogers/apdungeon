@@ -38,7 +38,6 @@ export class Player extends Thing
     {
         super();
         this.controls = controls;
-        this.touchControls = null;
         this.state = STATE_IDLE;
         this.velx = 0;
         this.vely = 0;
@@ -307,21 +306,22 @@ export class Player extends Thing
 
         if (this.state === STATE_IDLE)
         {
-            // Handle attacking
-            if (this.controls.primary.pressed) this.startAttack();
-            if (!this.controls.primary.released) this.stopAttack();
+            if (this.controls.gesture && this.controls.gesture.tap) {
+                this.startAttack();
+            }
 
             // Update the equipped weapon
             if (this.weaponSlot && this.weaponSlot.update) {
                 this.weaponSlot.update(dt);
             }
 
-            // Check if the player wants to change tracks
-            if (this.track && this.controls.getY() !== 0)
+            if (this.track &&
+                this.controls.gesture &&
+                this.controls.gesture.isVerticalLine)
             {
-                let nextTrack = this.level.getTrack(
-                    this.track.number + Math.sign(this.controls.getY())
-                );
+                let diry = Math.sign(this.controls.gesture.dy);
+                let nextTrack = this.level.getTrack(this.track.number + diry);
+
                 this.moveToTrack(nextTrack);
             }
 
