@@ -33,6 +33,22 @@ class Gesture
 
     public endx: number = 0;
     public endy: number = 0;
+
+    get dx() {
+        return this.endx - this.startx;
+    }
+
+    get dy() {
+        return this.endy - this.starty;
+    }
+
+    get isVerticalLine() {
+        return this.line && (this.topToBottom || this.bottomToTop);
+    }
+
+    get isHorizontalLine() {
+        return this.line && (this.leftToRight || this.rightToLeft);
+    }
 }
 
 class Touch
