@@ -128,8 +128,9 @@ export class BowWeaponSlot
     {
         if (this.attackCooldown <= 0) {
             /* Have the bow rock back and forth as the player moves. */
-            this.sprite.rotation = Math.PI/5 + 
-                (Math.PI/40)*Math.cos(10*this.player.frame);
+            //this.sprite.rotation = Math.PI/5 + 
+            //(Math.PI/40)*Math.cos(10*this.player.frame);
+            this.sprite.rotation = Math.PI/5;
             this.sprite.x = 3.0;
             this.sprite.y = -2.5;
         } else {
