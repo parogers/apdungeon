@@ -37,8 +37,9 @@ import { GestureManager } from './gesture';
 
 export class Game
 {
-    constructor(element)
+    constructor(element, requestAnimationFrame)
     {
+        this.requestAnimationFrame = requestAnimationFrame;
         this.element = element;
         this.lastCheck = 0;
         this.fps = 0;
@@ -76,7 +77,7 @@ export class Game
         this.gamestate.update(dt);
         GameControls.update(dt);
         this.gamestate.render();
-        requestAnimationFrame(() => {
+        this.requestAnimationFrame(() => {
             this.gameloop()
         });
     }
@@ -86,7 +87,7 @@ export class Game
         console.log("loading: " + resource.url + 
                     " (" + (loader.progress|0) + "%)"); 
         this.progress.update(loader.progress/100.0);
-        requestAnimationFrame(() => {
+        this.requestAnimationFrame(() => {
             Render.getRenderer().render(this.stage);
         });
     }
@@ -140,7 +141,9 @@ export class Game
                 }
             }
             this.stage.children = [];
-            requestAnimationFrame(() => { this.gameloop() });
+            this.requestAnimationFrame(() => {
+                this.gameloop()
+            });
 
         });
         /* TODO - error handling here */

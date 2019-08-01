@@ -1,6 +1,24 @@
+/* APDUNGEON - A dungeon crawler demo written in javascript + pixi.js
+ * Copyright (C) 2017  Peter Rogers (peter.rogers@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * See LICENSE.txt for the full text of the license.
+ */
 
 import { MenuController } from '@ionic/angular';
-import { ViewChild, Component } from '@angular/core';
+import { NgZone, ViewChild, Component } from '@angular/core';
 import { Game } from '../../game/main';
 
 declare var PIXI: any;
@@ -14,9 +32,19 @@ export class HomePage
 {
     @ViewChild('playarea') playArea;
     private game: any;
+    private wrappedRequestAnimationFrame: any;
 
-    constructor(private menuCtrl: MenuController) {
-        
+    constructor(
+        private menuCtrl: MenuController,
+        private ngZone: NgZone,
+    ) {
+        // Create a wrapper around requestAnimationFrame that prevents the
+        // angular digest cycle from being triggered unnecessary
+        this.wrappedRequestAnimationFrame = (func) => {
+            return this.ngZone.runOutsideAngular(() => {
+                return requestAnimationFrame(func);
+            });
+        };
     }
 
     closeCreditsCallback()
@@ -34,7 +62,7 @@ export class HomePage
         div.style.width = width + "px";
         div.style.height = height + "px";
 
-        this.game = new Game(div);
+        this.game = new Game(div, this.wrappedRequestAnimationFrame);
         this.game.start();
 
         window.addEventListener("resize", () => this.resizeCallback());

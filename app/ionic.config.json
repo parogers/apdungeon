@@ -1,5 +1,7 @@
 {
   "name": "apdungeon",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
