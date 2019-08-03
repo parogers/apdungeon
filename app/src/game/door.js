@@ -83,8 +83,8 @@ export class EnterScene
 
         switch(this.state) {
         case this.IDLE:
-            // Position the player behind the level so they're hidden, and centered 
-            // on the door so the camera renders in the right place.
+            // Position the player behind the level so they're hidden, and
+            // centered on the door so the camera renders in the right place.
             player.x = this.door.sprite.x;
             player.y = this.door.sprite.y+1;
             player.zpos = Level.BEHIND_BACKGROUND_POS;
@@ -103,7 +103,10 @@ export class EnterScene
         case this.OPENING_DOOR:
             // Waiting for the door to open
             if (this.door.isOpen()) {
+                // Move the door into the background behind all other
+                // sprites, and let the players z-pos vary again.
                 player.zpos = undefined;
+                this.door.zpos = Level.FLOOR_POS;
                 this.state = this.PLAYER_ENTERING;
                 this.timer = 0.4;
                 player.moveToTrack(this.level.getBottomTrack());

@@ -23,10 +23,11 @@ import { Thing, Hitbox } from './thing';
 import { GameControls } from './controls';
 import { Audio } from './audio';
 
-export class Gate
+export class Gate extends Thing
 {
     constructor() 
     {
+        super();
         this.frames = [
             Utils.getFrame(RES.MAPTILES, "gate_wall_1"),
             Utils.getFrame(RES.MAPTILES, "gate_wall_2"),

@@ -124,7 +124,7 @@ export class BowWeaponSlot
         this.setTexture("bow1");
         // Vertical offset from the player position where the arrow
         // is fired.
-        this.arrowOffsetY = -3;
+        this.arrowFireHeight = 3;
     }
 
     update(dt)
@@ -170,9 +170,9 @@ export class BowWeaponSlot
         var arrow = new Arrow(
             this.player,
             this.player.x,
-            this.player.y + this.arrowOffsetY,
+            this.player.y,
             this.player.velx + this.player.facing*50, 0,
-            Math.abs(this.sprite.y));
+            this.arrowFireHeight);
         //level.things.push(arrow);
         //level.stage.addChild(arrow.sprite);
         this.player.level.addThing(arrow);
@@ -197,11 +197,12 @@ export class Arrow extends Thing
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.scale.x = Math.sign(velx);
         this.sprite.scale.y = 1;
-        this.sprite.x = x;
-        this.sprite.y = y;
+        this.x = x;
+        this.y = y;
         this.h = h;
         this.velx = velx;
         this.vely = vely;
+        this.velh = 0;
         this.state = ARROW_FLIGHT;
         this.timer = 0;
         this.hitbox = new Hitbox(0, 0, 8, 4);
@@ -211,8 +212,8 @@ export class Arrow extends Thing
     {
         var level = this.owner.level;
         if (this.state === ARROW_FLIGHT) {
-            this.sprite.x += this.velx*dt;
-            this.sprite.y += this.vely*dt;
+            this.x += this.velx*dt;
+            this.y += this.vely*dt;
             // The arrow disappears when it's no longer visible
             if (this.sprite.x < level.camera.x || 
                 this.sprite.x > level.camera.x + level.camera.width) 
@@ -226,6 +227,7 @@ export class Arrow extends Thing
             if (tile.solid) {
                 this.velx *= -0.25;
                 this.vely = 0;
+                this.velh = 0;
                 this.state = ARROW_FALLING;
                 Audio.playSound(RES.ARROW_DING_SND, 0.4);
                 return;
@@ -235,17 +237,20 @@ export class Arrow extends Thing
                 this.sprite.x, this.sprite.y, 
                 this.hitbox, this.owner);
             if (other && other.handleHit) {
-                var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
+                var ret = other.handleHit(
+                    this.sprite.x,
+                    this.sprite.y,
+                    1
+                );
                 if (ret === true) {
                     this.removeSelf();
                 }
             }
 
         } else if (this.state === ARROW_FALLING) {
-            this.vely -= 700*dt;
-            this.h += this.vely*dt;
-            this.sprite.x += this.velx*dt;
-            this.sprite.y -= this.vely*dt;
+            this.velh -= 500*dt;
+            this.h += this.velh*dt;
+            this.x += this.velx*dt;
             if (this.h <= 0) {
                 this.timer = 1;
                 this.state = ARROW_DISAPPEAR;

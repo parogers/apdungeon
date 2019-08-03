@@ -32,6 +32,51 @@ var NO_TINT = 0xFFFFFF;
 const STATE_IDLE = 0;
 const STATE_CHANGING_TRACK = 1;
 
+/* Moves a thing between tracks */
+class TrackMover
+{
+    constructor(thing, targetTrack, speed) {
+        this.accelh = -1000;
+        this.thing = thing;
+        this.targetTrack = targetTrack;
+        this.speed = speed;
+        this.done = false;
+        this.duration = Math.abs(this.thing.y - this.targetTrack.y)/speed;
+        this.vely = Math.sign(this.targetTrack.y - this.thing.y)*speed;
+        this.velh = -this.accelh*this.duration/2;
+    }
+
+    update(dt)
+    {
+        if (this.done) return;
+
+        if (this.targetTrack === this.thing.track) {
+            this.done = true;
+            return;
+        }
+
+        this.velh += this.accelh*dt;
+        this.thing.y += this.vely*dt;
+        this.thing.h += this.velh*dt;
+
+        /*if (this.vely > 0 && this.thing.y >= this.targetTrack.y ||
+          this.vely < 0 && this.thing.y <= this.targetTrack.y)*/
+
+        // Clamp the thing to the floor just in case rounding errors
+        // make the initial vertical speed estimate wrong.
+        if (this.thing.h < 0) this.thing.h = 0;
+
+        this.duration -= dt;
+        if (this.duration <= 0)
+        {
+            this.thing.y = this.targetTrack.y;
+            this.thing.h = 0;
+            this.thing.track = this.targetTrack;
+            this.done = true;
+        }
+    }
+}
+
 export class Player extends Thing
 {
     constructor(controls)
@@ -39,6 +84,7 @@ export class Player extends Thing
         super();
         this.controls = controls;
         this.state = STATE_IDLE;
+        this.trackMover = null;
         this.velx = 0;
         this.vely = 0;
         this.accelx = 0;
@@ -49,7 +95,7 @@ export class Player extends Thing
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
-        this.verticalSpeed = 40;
+        this.verticalSpeed = 60;
         this.maxSpeed = 30; // pixels/second
         // Inventory stuff
         this.numCoins = 0;
@@ -104,7 +150,6 @@ export class Player extends Thing
         this.weaponSlot = null;
 
         this.track = null;
-        this.nextTrack = null;
 
         // Knockback timer and speed
         this.knockedTimer = 0;
@@ -366,21 +411,12 @@ export class Player extends Thing
         }
         else if (this.state === STATE_CHANGING_TRACK)
         {
-            // Player is in the process of moving to another track
-            let diry = Math.sign(this.nextTrack.y-this.sprite.y);
-
-            // Check if they've made it
-            this.vely = diry*this.verticalSpeed;
+            this.frame += this.walkFPS*dt;
             this.sprite.x += this.velx*dt;
-            this.sprite.y += this.vely*dt;
-
-            if (diry > 0 && this.sprite.y >= this.nextTrack.y ||
-                diry < 0 && this.sprite.y <= this.nextTrack.y)
-            {
+            this.trackMover.update(dt);
+            if (this.trackMover.done) {
+                this.trackMover = null;
                 this.vely = 0;
-                this.sprite.y = this.nextTrack.y;
-                this.track = this.nextTrack;
-                this.nextTrack = null;
                 this.state = STATE_IDLE;
             }
         }
@@ -620,13 +656,14 @@ export class Player extends Thing
         if (track.checkSolidAt(this.x, this.width)) {
             return false;
         }
-        this.nextTrack = track;
+        //this.nextTrack = track;
         this.state = STATE_CHANGING_TRACK;
+        this.trackMover = new TrackMover(this, track, 1.5*this.maxSpeed)
         return true;
     }
 
     isMovingToTrack() {
-        return this.nextTrack !== null;
+        return this.trackMover !== null;
     }
 
 }
