@@ -33,6 +33,8 @@ export class Thing
         // Position of the hit box relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 4, 4);
         this.level = null;
+        this._y = 0;
+        this._h = 0;
     }
 
     get width() {
@@ -43,14 +45,24 @@ export class Thing
         return Math.abs(this.sprite.height);
     }
 
+    // The horizontal position of the thing (equal to the sprite position)
     get x() {
         return this.sprite.x;
     }
 
+    // The vertical/depth position of the thing. Note this is different
+    // than the sprite y-pos if the sprite isn't sitting on the floor.
     get y() {
-        return this.sprite.y;
+        return this._y;
     }
 
+    // How far the thing is off the ground (positive values go up the screen
+    // and negative values go down)
+    get h() {
+        return this._h;
+    }
+
+    // The z-depth of the sprite for sorting/rendering purposes
     get zpos() {
         return this.sprite.zpos;
     }
@@ -59,8 +71,20 @@ export class Thing
         this.sprite.x = value;
     }
 
-    set y(value) {
-        this.sprite.y = value;
+    // Set the y-pos of this thing (on the floor)
+    set y(value)
+    {
+        this._y = value;
+        // This is confusing - the sprite y-pos increases going down
+        // the screen while the height off the floor decreases
+        this.sprite.y = this._y - this._h;
+    }
+
+    // Set the height off the floor for this sprite
+    set h(value)
+    {
+        this._h = value;
+        this.sprite.y = this._y - this._h;
     }
 
     set zpos(value) {
