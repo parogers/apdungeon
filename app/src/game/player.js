@@ -611,7 +611,7 @@ export class Player extends Thing
         if (!track) {
             return false;
         }
-        if (track.checkSolidAt(this.x, this.width)) {
+        if (track.checkSolidAt(this.fx, this.width)) {
             return false;
         }
         //this.nextTrack = track;

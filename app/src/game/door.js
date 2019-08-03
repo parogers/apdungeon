@@ -85,8 +85,8 @@ export class EnterScene
         case this.IDLE:
             // Position the player behind the level so they're hidden, and
             // centered on the door so the camera renders in the right place.
-            player.x = this.door.sprite.x;
-            player.y = this.door.sprite.y+1;
+            player.fx = this.door.sprite.x;
+            player.fy = this.door.sprite.y+1;
             player.zpos = Level.BEHIND_BACKGROUND_POS;
             player.controls = new ManualControls();
             player.running = false;

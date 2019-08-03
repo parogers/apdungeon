@@ -45,20 +45,38 @@ export class Thing
         return Math.abs(this.sprite.height);
     }
 
-    // The horizontal position of the thing (equal to the sprite position)
     get x() {
+        return this.sprite.x;
+    }
+
+    get y() {
+        return this.sprite.y;
+    }
+
+    set x(value) {
+        this.sprite.x = value;
+    }
+
+    set y(value) {
+        this._h = 0;
+        this._y = value;
+        this.sprite.y = value;
+    }
+
+    // The horizontal position of the thing (equal to the sprite position)
+    get fx() {
         return this.sprite.x;
     }
 
     // The vertical/depth position of the thing. Note this is different
     // than the sprite y-pos if the sprite isn't sitting on the floor.
-    get y() {
+    get fy() {
         return this._y;
     }
 
     // How far the thing is off the ground (positive values go up the screen
     // and negative values go down)
-    get h() {
+    get fh() {
         return this._h;
     }
 
@@ -67,12 +85,12 @@ export class Thing
         return this.sprite.zpos;
     }
 
-    set x(value) {
+    set fx(value) {
         this.sprite.x = value;
     }
 
     // Set the y-pos of this thing (on the floor)
-    set y(value)
+    set fy(value)
     {
         this._y = value;
         // This is confusing - the sprite y-pos increases going down
@@ -81,7 +99,7 @@ export class Thing
     }
 
     // Set the height off the floor for this sprite
-    set h(value)
+    set fh(value)
     {
         this._h = value;
         this.sprite.y = this._y - this._h;
@@ -154,21 +172,20 @@ export class TrackMover
         }
 
         this.velh += this.accelh*dt;
-        this.thing.y += this.vely*dt;
-        this.thing.h += this.velh*dt;
+        this.thing.fy += this.vely*dt;
+        this.thing.fh += this.velh*dt;
 
         // Clamp the thing to the floor just in case rounding errors
         // make the initial vertical speed estimate wrong.
-        if (this.thing.h < 0) this.thing.h = 0;
+        if (this.thing.fh < 0) this.thing.fh = 0;
 
         this.duration -= dt;
         if (this.duration <= 0)
         {
-            this.thing.y = this.targetTrack.y;
-            this.thing.h = 0;
+            this.thing.fy = this.targetTrack.y;
+            this.thing.fh = 0;
             this.thing.track = this.targetTrack;
             this.done = true;
         }
     }
 }
-
