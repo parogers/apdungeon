@@ -33,6 +33,8 @@ export class Thing
         // Position of the hit box relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 4, 4);
         this.level = null;
+        this._y = 0;
+        this._h = 0;
     }
 
     get width() {
@@ -51,16 +53,56 @@ export class Thing
         return this.sprite.y;
     }
 
-    get zpos() {
-        return this.sprite.zpos;
-    }
-
     set x(value) {
         this.sprite.x = value;
     }
 
     set y(value) {
+        this._h = 0;
+        this._y = value;
         this.sprite.y = value;
+    }
+
+    // The horizontal position of the thing (equal to the sprite position)
+    get fx() {
+        return this.sprite.x;
+    }
+
+    // The vertical/depth position of the thing. Note this is different
+    // than the sprite y-pos if the sprite isn't sitting on the floor.
+    get fy() {
+        return this._y;
+    }
+
+    // How far the thing is off the ground (positive values go up the screen
+    // and negative values go down)
+    get fh() {
+        return this._h;
+    }
+
+    // The z-depth of the sprite for sorting/rendering purposes
+    get zpos() {
+        return this.sprite.zpos;
+    }
+
+    set fx(value) {
+        this.sprite.x = value;
+    }
+
+    // Set the y-pos of this thing (on the floor)
+    set fy(value)
+    {
+        this._y = value;
+        // This is confusing - the sprite y-pos increases going down
+        // the screen while the height off the floor decreases
+        this.sprite.y = this._y - this._h;
+    }
+
+    // Set the height off the floor for this sprite
+    set fh(value)
+    {
+        this._h = value;
+        this.sprite.y = this._y - this._h;
     }
 
     set zpos(value) {
@@ -100,4 +142,50 @@ export function Hitbox(x, y, w, h)
     this.y = y;
     this.w = w;
     this.h = h;
+}
+
+/**************/
+/* TrackMover */
+/**************/
+
+/* Moves a thing between tracks */
+export class TrackMover
+{
+    constructor(thing, targetTrack, speed, accelh) {
+        this.accelh = accelh;
+        this.thing = thing;
+        this.targetTrack = targetTrack;
+        this.speed = speed;
+        this.done = false;
+        this.duration = Math.abs(this.thing.y - this.targetTrack.y)/speed;
+        this.vely = Math.sign(this.targetTrack.y - this.thing.y)*speed;
+        this.velh = -this.accelh*this.duration/2;
+    }
+
+    update(dt)
+    {
+        if (this.done) return;
+
+        if (this.targetTrack === this.thing.track) {
+            this.done = true;
+            return;
+        }
+
+        this.velh += this.accelh*dt;
+        this.thing.fy += this.vely*dt;
+        this.thing.fh += this.velh*dt;
+
+        // Clamp the thing to the floor just in case rounding errors
+        // make the initial vertical speed estimate wrong.
+        if (this.thing.fh < 0) this.thing.fh = 0;
+
+        this.duration -= dt;
+        if (this.duration <= 0)
+        {
+            this.thing.fy = this.targetTrack.y;
+            this.thing.fh = 0;
+            this.thing.track = this.targetTrack;
+            this.done = true;
+        }
+    }
 }

@@ -53,8 +53,8 @@ export class SwordWeaponSlot
 
         this.handleHitCallback = (function(hit) {
             if (hit.handleHit) {
-                hit.handleHit(this.player.x, 
-                              this.player.y, 1);
+                hit.handleHit(this.player.fx, 
+                              this.player.fy, 1);
             }
         }).bind(this);
     }
@@ -94,8 +94,8 @@ export class SwordWeaponSlot
         this.attackCooldown = 0.15;
 
         this.player.level.forEachThingHit(
-            this.player.x + this.player.getFacing()*this.weaponReach, 
-            this.player.y,
+            this.player.fx + this.player.getFacing()*this.weaponReach, 
+            this.player.fy,
             this.hitbox, this.player,
             this.handleHitCallback);
     }
@@ -124,7 +124,7 @@ export class BowWeaponSlot
         this.setTexture("bow1");
         // Vertical offset from the player position where the arrow
         // is fired.
-        this.arrowOffsetY = -3;
+        this.arrowFireHeight = 2.5;
     }
 
     update(dt)
@@ -169,10 +169,10 @@ export class BowWeaponSlot
 
         var arrow = new Arrow(
             this.player,
-            this.player.x,
-            this.player.y + this.arrowOffsetY,
+            this.player.fx,
+            this.player.fy,
             this.player.velx + this.player.facing*50, 0,
-            Math.abs(this.sprite.y));
+            this.arrowFireHeight);
         //level.things.push(arrow);
         //level.stage.addChild(arrow.sprite);
         this.player.level.addThing(arrow);
@@ -197,11 +197,12 @@ export class Arrow extends Thing
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.scale.x = Math.sign(velx);
         this.sprite.scale.y = 1;
-        this.sprite.x = x;
-        this.sprite.y = y;
-        this.h = h;
+        this.fx = x;
+        this.fy = y;
+        this.fh = h;
         this.velx = velx;
         this.vely = vely;
+        this.velh = 0;
         this.state = ARROW_FLIGHT;
         this.timer = 0;
         this.hitbox = new Hitbox(0, 0, 8, 4);
@@ -211,8 +212,8 @@ export class Arrow extends Thing
     {
         var level = this.owner.level;
         if (this.state === ARROW_FLIGHT) {
-            this.sprite.x += this.velx*dt;
-            this.sprite.y += this.vely*dt;
+            this.fx += this.velx*dt;
+            this.fy += this.vely*dt;
             // The arrow disappears when it's no longer visible
             if (this.sprite.x < level.camera.x || 
                 this.sprite.x > level.camera.x + level.camera.width) 
@@ -221,11 +222,15 @@ export class Arrow extends Thing
             }
             // Check if the arrow hits a wall
             var tile = level.getTileAt(
-                this.sprite.x+Math.sign(this.velx)*4,
-                this.sprite.y+this.h);
-            if (tile.solid) {
+                this.sprite.x + Math.sign(this.velx)*4,
+                this.sprite.y + this.fh
+            );
+
+            if (tile.solid)
+            {
                 this.velx *= -0.25;
                 this.vely = 0;
+                this.velh = 0;
                 this.state = ARROW_FALLING;
                 Audio.playSound(RES.ARROW_DING_SND, 0.4);
                 return;
@@ -235,18 +240,21 @@ export class Arrow extends Thing
                 this.sprite.x, this.sprite.y, 
                 this.hitbox, this.owner);
             if (other && other.handleHit) {
-                var ret = other.handleHit(this.sprite.x, this.sprite.y, 1);
+                var ret = other.handleHit(
+                    this.sprite.x,
+                    this.sprite.y,
+                    1
+                );
                 if (ret === true) {
                     this.removeSelf();
                 }
             }
 
         } else if (this.state === ARROW_FALLING) {
-            this.vely -= 700*dt;
-            this.h += this.vely*dt;
-            this.sprite.x += this.velx*dt;
-            this.sprite.y -= this.vely*dt;
-            if (this.h <= 0) {
+            this.velh -= 500*dt;
+            this.fh += this.velh*dt;
+            this.fx += this.velx*dt;
+            if (this.fh <= 0) {
                 this.timer = 1;
                 this.state = ARROW_DISAPPEAR;
             }

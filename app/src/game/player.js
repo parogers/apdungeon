@@ -21,13 +21,16 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Thing, Hitbox } from './thing';
+import { TrackMover, Thing, Hitbox } from './thing';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
 // What tint of colour to use when the player takes damage
 var DAMAGE_TINT = 0xFF0000;
 var NO_TINT = 0xFFFFFF;
+
+// Vertical acceleration when jumping
+const JUMP_ACCEL = -1000;
 
 const STATE_IDLE = 0;
 const STATE_CHANGING_TRACK = 1;
@@ -39,6 +42,7 @@ export class Player extends Thing
         super();
         this.controls = controls;
         this.state = STATE_IDLE;
+        this.trackMover = null;
         this.velx = 0;
         this.vely = 0;
         this.accelx = 0;
@@ -49,7 +53,7 @@ export class Player extends Thing
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
-        this.verticalSpeed = 40;
+        this.verticalSpeed = 60;
         this.maxSpeed = 30; // pixels/second
         // Inventory stuff
         this.numCoins = 0;
@@ -104,7 +108,6 @@ export class Player extends Thing
         this.weaponSlot = null;
 
         this.track = null;
-        this.nextTrack = null;
 
         // Knockback timer and speed
         this.knockedTimer = 0;
@@ -366,21 +369,12 @@ export class Player extends Thing
         }
         else if (this.state === STATE_CHANGING_TRACK)
         {
-            // Player is in the process of moving to another track
-            let diry = Math.sign(this.nextTrack.y-this.sprite.y);
-
-            // Check if they've made it
-            this.vely = diry*this.verticalSpeed;
+            this.frame += this.walkFPS*dt;
             this.sprite.x += this.velx*dt;
-            this.sprite.y += this.vely*dt;
-
-            if (diry > 0 && this.sprite.y >= this.nextTrack.y ||
-                diry < 0 && this.sprite.y <= this.nextTrack.y)
-            {
+            this.trackMover.update(dt);
+            if (this.trackMover.done) {
+                this.trackMover = null;
                 this.vely = 0;
-                this.sprite.y = this.nextTrack.y;
-                this.track = this.nextTrack;
-                this.nextTrack = null;
                 this.state = STATE_IDLE;
             }
         }
@@ -607,8 +601,8 @@ export class Player extends Thing
         }
     }
 
-    /* Start the player moving onto the given track. Returns true if the player can
-     * move onto the track, and false otherwise. */
+    /* Start the player moving onto the given track. Returns true if the player 
+     * can move onto the track, and false otherwise. */
     moveToTrack(track)
     {
         if (this.state !== STATE_IDLE) {
@@ -617,16 +611,21 @@ export class Player extends Thing
         if (!track) {
             return false;
         }
-        if (track.checkSolidAt(this.x, this.width)) {
+        if (track.checkSolidAt(this.fx, this.width)) {
             return false;
         }
-        this.nextTrack = track;
+        //this.nextTrack = track;
         this.state = STATE_CHANGING_TRACK;
+        this.trackMover = new TrackMover(
+            this,
+            track,
+            1.5*this.maxSpeed,
+            JUMP_ACCEL,
+        );
         return true;
     }
 
     isMovingToTrack() {
-        return this.nextTrack !== null;
+        return this.trackMover !== null;
     }
-
 }

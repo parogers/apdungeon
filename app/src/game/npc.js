@@ -52,7 +52,7 @@ export class NPC
     update(dt)
     {
         // Always face the player
-        var dirx = Math.sign(this.level.player.x-this.sprite.x);
+        var dirx = Math.sign(this.level.player.fx-this.sprite.x);
         this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
 
         if (this.visibleTimer > 0) {
