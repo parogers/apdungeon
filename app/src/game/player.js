@@ -107,8 +107,6 @@ export class Player extends Thing
 
         this.weaponSlot = null;
 
-        this.track = null;
-
         // Knockback timer and speed
         this.knockedTimer = 0;
         this.knocked = 0;
@@ -371,8 +369,8 @@ export class Player extends Thing
         {
             this.frame += this.walkFPS*dt;
             this.sprite.x += this.velx*dt;
-            this.trackMover.update(dt);
-            if (this.trackMover.done) {
+            if (this.trackMover.update(dt))
+            {
                 this.trackMover = null;
                 this.vely = 0;
                 this.state = STATE_IDLE;

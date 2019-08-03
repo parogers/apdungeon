@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing, Hitbox } from './thing';
+import { TrackMover, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
@@ -51,9 +51,7 @@ export class SkelWarrior extends Thing
         this.frame = 0;
         this.facing = 1;
         this.chargeTimeout = 1;
-        // Which level Track this monster occupies
-        this.track = null;
-        this.nextTrack = null;
+        this.trackMover = null;
         // When approaching the player, how far to keep distance
         this.approachDist = 30;
         this.counter = 0;
@@ -73,14 +71,6 @@ export class SkelWarrior extends Thing
         this.knockedTimer = 0;
         this.state = STATE_IDLE;
         this.hitbox = new Hitbox(0, -1, 6, 8);
-    }
-
-    setTrack(track, x)
-    {
-        this.track = track;
-        this.sprite.x = x;
-        this.sprite.y = track.y;
-        this.nextTrack = null;
     }
 
     getDropTable() 
@@ -127,26 +117,33 @@ export class SkelWarrior extends Thing
         
         // Facing the player, but slowly moving towards them
         this.velx = this.level.player.velx*0.9;
-        this.sprite.x += this.velx*dt;
+        this.x += this.velx*dt;
 
         // Occasionally either charge the player, or change tracks to find them
         this.timer -= dt;
         if (this.timer <= 0)
         {
             if (this.level.player.track === this.track ||
-                this.sprite.x < this.level.player.fx + this.alwaysChargeDist)
+                this.x < this.level.player.fx + this.alwaysChargeDist)
             {
-                this.chargeOffset = this.sprite.x - this.level.player.fx;
+                this.chargeOffset = this.x - this.level.player.fx;
                 this.state = STATE_CHARGING;
             }
             else if (this.level.player.track)
             {
                 // Move towards the player
+                let track = null;
                 if (this.level.player.track.number < this.track.number) {
-                    this.nextTrack = this.level.getTrackAbove(this.track);
+                    track = this.level.getTrackAbove(this.track);
                 } else {
-                    this.nextTrack = this.level.getTrackBelow(this.track);
+                    track = this.level.getTrackBelow(this.track);
                 }
+                this.trackMover = new TrackMover(
+                    this,
+                    track,
+                    1.25*this.speed,
+                    0
+                );
                 this.state = STATE_CHANGE_TRACK;
                 this.timer = this.chargeTimeout;
             }
@@ -161,16 +158,16 @@ export class SkelWarrior extends Thing
     updateCharging(dt)
     {
         this.velx = this.level.player.velx - this.speed;
-        this.sprite.x += this.velx*dt;
+        this.x += this.velx*dt;
 
         if (this.chargeOffset > this.alwaysChargeDist) {
-            if (this.sprite.x <= this.level.player.fx) {
+            if (this.x <= this.level.player.fx) {
                 this.state = STATE_RETREAT;
             }
         }
         else
         {
-            if (this.sprite.x + this.monsterSprite.texture.width < 0) {
+            if (this.x + this.monsterSprite.texture.width < 0) {
                 this.level.removeThing(this);
             }
         }
@@ -180,11 +177,11 @@ export class SkelWarrior extends Thing
     updateRetreat(dt)
     {
         this.velx = this.level.player.velx + this.speed/2.0;
-        this.sprite.x += this.velx*dt;
+        this.x += this.velx*dt;
 
-        if (this.sprite.x >= this.level.player.fx + this.chargeOffset)
+        if (this.x >= this.level.player.fx + this.chargeOffset)
         {
-            this.sprite.x = this.level.player.fx + this.chargeOffset;
+            this.x = this.level.player.fx + this.chargeOffset;
             this.timer = this.chargeTimeout;
             this.state = STATE_IDLE;
         }
@@ -193,18 +190,9 @@ export class SkelWarrior extends Thing
     // Switching tracks to find the player
     updateChangeTrack(dt)
     {
-        let vely = 0;
-        if (this.nextTrack.y > this.track.y) {
-            vely = this.speed;
-        } else {
-            vely = -this.speed;
-        }
-        this.sprite.y += vely*dt;
-
-        if ((vely >= 0 && this.sprite.y > this.nextTrack.y) ||
-            (vely < 0 && this.sprite.y < this.nextTrack.y))
+        if (this.trackMover.update(dt))
         {
-            this.setTrack(this.nextTrack, this.sprite.x);
+            this.trackMover = null;
             this.state = STATE_IDLE;
         }
     }
@@ -219,7 +207,7 @@ export class SkelWarrior extends Thing
             this.state = STATE_DEAD;
             // Drop a reward
             this.level.handleTreasureDrop(
-                this.getDropTable(), this.sprite.x, this.sprite.y);
+                this.getDropTable(), this.x, this.y);
             player.handleMonsterKilled(this);
             this.level.addThing(new DeathAnimation(this));
 
@@ -228,10 +216,10 @@ export class SkelWarrior extends Thing
         }
 
         // Add some random dust, but only if we're not currently in water
-        var tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
+        var tile = this.level.getTileAt(this.x, this.y);
         if (!tile.water) {
             this.level.createBloodSpatter(
-                this.sprite.x, this.sprite.y-1,
+                this.x, this.y-1,
                 ["dust1", "dust2", "dust3", "dust4"]);
         }
         return true;
