@@ -125,3 +125,50 @@ export function Hitbox(x, y, w, h)
     this.w = w;
     this.h = h;
 }
+
+/**************/
+/* TrackMover */
+/**************/
+
+/* Moves a thing between tracks */
+export class TrackMover
+{
+    constructor(thing, targetTrack, speed, accelh) {
+        this.accelh = accelh;
+        this.thing = thing;
+        this.targetTrack = targetTrack;
+        this.speed = speed;
+        this.done = false;
+        this.duration = Math.abs(this.thing.y - this.targetTrack.y)/speed;
+        this.vely = Math.sign(this.targetTrack.y - this.thing.y)*speed;
+        this.velh = -this.accelh*this.duration/2;
+    }
+
+    update(dt)
+    {
+        if (this.done) return;
+
+        if (this.targetTrack === this.thing.track) {
+            this.done = true;
+            return;
+        }
+
+        this.velh += this.accelh*dt;
+        this.thing.y += this.vely*dt;
+        this.thing.h += this.velh*dt;
+
+        // Clamp the thing to the floor just in case rounding errors
+        // make the initial vertical speed estimate wrong.
+        if (this.thing.h < 0) this.thing.h = 0;
+
+        this.duration -= dt;
+        if (this.duration <= 0)
+        {
+            this.thing.y = this.targetTrack.y;
+            this.thing.h = 0;
+            this.thing.track = this.targetTrack;
+            this.done = true;
+        }
+    }
+}
+

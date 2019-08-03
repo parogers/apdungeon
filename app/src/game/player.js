@@ -21,7 +21,7 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Thing, Hitbox } from './thing';
+import { TrackMover, Thing, Hitbox } from './thing';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
@@ -29,53 +29,11 @@ import { Audio } from './audio';
 var DAMAGE_TINT = 0xFF0000;
 var NO_TINT = 0xFFFFFF;
 
+// Vertical acceleration when jumping
+const JUMP_ACCEL = -1000;
+
 const STATE_IDLE = 0;
 const STATE_CHANGING_TRACK = 1;
-
-/* Moves a thing between tracks */
-class TrackMover
-{
-    constructor(thing, targetTrack, speed) {
-        this.accelh = -1000;
-        this.thing = thing;
-        this.targetTrack = targetTrack;
-        this.speed = speed;
-        this.done = false;
-        this.duration = Math.abs(this.thing.y - this.targetTrack.y)/speed;
-        this.vely = Math.sign(this.targetTrack.y - this.thing.y)*speed;
-        this.velh = -this.accelh*this.duration/2;
-    }
-
-    update(dt)
-    {
-        if (this.done) return;
-
-        if (this.targetTrack === this.thing.track) {
-            this.done = true;
-            return;
-        }
-
-        this.velh += this.accelh*dt;
-        this.thing.y += this.vely*dt;
-        this.thing.h += this.velh*dt;
-
-        /*if (this.vely > 0 && this.thing.y >= this.targetTrack.y ||
-          this.vely < 0 && this.thing.y <= this.targetTrack.y)*/
-
-        // Clamp the thing to the floor just in case rounding errors
-        // make the initial vertical speed estimate wrong.
-        if (this.thing.h < 0) this.thing.h = 0;
-
-        this.duration -= dt;
-        if (this.duration <= 0)
-        {
-            this.thing.y = this.targetTrack.y;
-            this.thing.h = 0;
-            this.thing.track = this.targetTrack;
-            this.done = true;
-        }
-    }
-}
 
 export class Player extends Thing
 {
@@ -643,8 +601,8 @@ export class Player extends Thing
         }
     }
 
-    /* Start the player moving onto the given track. Returns true if the player can
-     * move onto the track, and false otherwise. */
+    /* Start the player moving onto the given track. Returns true if the player 
+     * can move onto the track, and false otherwise. */
     moveToTrack(track)
     {
         if (this.state !== STATE_IDLE) {
@@ -658,12 +616,16 @@ export class Player extends Thing
         }
         //this.nextTrack = track;
         this.state = STATE_CHANGING_TRACK;
-        this.trackMover = new TrackMover(this, track, 1.5*this.maxSpeed)
+        this.trackMover = new TrackMover(
+            this,
+            track,
+            1.5*this.maxSpeed,
+            JUMP_ACCEL,
+        );
         return true;
     }
 
     isMovingToTrack() {
         return this.trackMover !== null;
     }
-
 }
