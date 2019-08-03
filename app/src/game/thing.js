@@ -35,6 +35,19 @@ export class Thing
         this.level = null;
         this._y = 0;
         this._h = 0;
+        this._track = null;
+    }
+
+    get track() {
+        return this._track;
+    }
+
+    // Moves this thing onto the given track maintaining the same x-pos
+    // and height off the floor.
+    set track(track)
+    {
+        this._track = track;
+        if (track) this.fy = track.y;
     }
 
     get width() {
@@ -162,13 +175,18 @@ export class TrackMover
         this.velh = -this.accelh*this.duration/2;
     }
 
+    // Move the thing closer to the target track. This function returns true
+    // if the movement is finished and false otherwise.
     update(dt)
     {
-        if (this.done) return;
+        if (this.done) {
+            return true;
+        }
 
-        if (this.targetTrack === this.thing.track) {
+        if (this.targetTrack === this.thing.track)
+        {
             this.done = true;
-            return;
+            return true;
         }
 
         this.velh += this.accelh*dt;
@@ -187,5 +205,6 @@ export class TrackMover
             this.thing.track = this.targetTrack;
             this.done = true;
         }
+        return false;
     }
 }
