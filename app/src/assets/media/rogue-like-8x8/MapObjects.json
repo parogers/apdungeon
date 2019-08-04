@@ -23,12 +23,30 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"shadow" : {
-    "frame" : {"x":54, "y":2, "w":8, "h":3},
+},"shadow_sm" : {
+    "frame" : {"x":54, "y":1, "w":6, "h":3},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":6, "h":3},
+    "sourceSize" : {"w":6, "h":3}
+},"shadow_md" : {
+    "frame" : {"x":54, "y":5, "w":7, "h":3},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":7, "h":3},
+    "sourceSize" : {"w":7, "h":3}
+},"shadow_lg" : {
+    "frame" : {"x":54, "y":9, "w":8, "h":3},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":3},
     "sourceSize" : {"w":8, "h":3}
+},"shadow_arrow" : {
+    "frame" : {"x":55, "y":13, "w":6, "h":1},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":6, "h":1},
+    "sourceSize" : {"w":6, "h":1}
 },"rippling_water" : {
     "frame" : {"x":64, "y":6, "w":8, "h":3},
     "rotated" : false,

@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing, Hitbox } from './thing';
+import { Shadow, Thing, Hitbox } from './thing';
 import { Audio } from './audio';
 
 var ARROW_FLIGHT = 0;
@@ -193,10 +193,13 @@ export class Arrow extends Thing
     {
         super();
         this.owner = owner;
-        this.sprite = new PIXI.Sprite(Utils.getFrame(RES.WEAPONS, "arrow"));
-        this.sprite.anchor.set(0.5, 0.5);
-        this.sprite.scale.x = Math.sign(velx);
-        this.sprite.scale.y = 1;
+        this.arrowSprite = new PIXI.Sprite(
+            Utils.getFrame(RES.WEAPONS, "arrow")
+        );
+        this.arrowSprite.anchor.set(0.5, 0.5);
+        this.arrowSprite.scale.x = Math.sign(velx);
+        this.arrowSprite.scale.y = 1;
+        this.sprite.addChild(this.arrowSprite);
         this.fx = x;
         this.fy = y;
         this.fh = h;
@@ -206,12 +209,14 @@ export class Arrow extends Thing
         this.state = ARROW_FLIGHT;
         this.timer = 0;
         this.hitbox = new Hitbox(0, 0, 8, 4);
+        //this.shadow = new Shadow(this, Shadow.ARROW);
     }
 
     update(dt)
     {
         var level = this.owner.level;
-        if (this.state === ARROW_FLIGHT) {
+        if (this.state === ARROW_FLIGHT)
+        {
             this.fx += this.velx*dt;
             this.fy += this.vely*dt;
             // The arrow disappears when it's no longer visible
@@ -237,9 +242,13 @@ export class Arrow extends Thing
             }
             // Now check if we've hit an enemy
             var other = level.checkHit(
-                this.sprite.x, this.sprite.y, 
-                this.hitbox, this.owner);
-            if (other && other.handleHit) {
+                this.sprite.x,
+                this.sprite.y, 
+                this.hitbox,
+                this.owner
+            );
+            if (other && other.handleHit)
+            {
                 var ret = other.handleHit(
                     this.sprite.x,
                     this.sprite.y,
@@ -262,5 +271,6 @@ export class Arrow extends Thing
             this.timer -= dt;
             if (this.timer <= 0) this.removeSelf();
         }
+        //this.shadow.update(dt);
     }
 }
