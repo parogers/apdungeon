@@ -221,7 +221,7 @@ export class Shadow
             Utils.getFrame(RES.MAP_OBJS, size)
         );
         this.shadowSprite.anchor.set(0.5, 0.5);
-        this.thing.sprite.addChild(this.shadowSprite);
+        this.thing.sprite.addChildAt(this.shadowSprite, 0);
     }
 
     update(dt)
@@ -248,5 +248,5 @@ export class Shadow
 Shadow.SMALL = 'shadow_sm';
 Shadow.MEDIUM = 'shadow_md';
 Shadow.LARGE = 'shadow_lg';
-Shadow.ARROW = 'shadow_arrow';
+Shadow.THIN = 'shadow_thin';
 
