@@ -208,3 +208,45 @@ export class TrackMover
         return false;
     }
 }
+
+// Adds a basic shadow to a thing. The shadow sprite always sticks to
+// the floor and changes size slightly based on how far the thing
+// moves vertically.
+export class Shadow
+{
+    constructor(thing, size)
+    {
+        this.thing = thing;
+        this.shadowSprite = new PIXI.Sprite(
+            Utils.getFrame(RES.MAP_OBJS, size)
+        );
+        this.shadowSprite.anchor.set(0.5, 0.5);
+        this.thing.sprite.addChildAt(this.shadowSprite, 0);
+    }
+
+    update(dt)
+    {
+        // Make sure the shadow stays on the floor when we jump
+        this.shadowSprite.y = this.thing.fh;
+        // Have the shadow increase size slightly when the player is 
+        // further away from the floor.
+        this.shadowSprite.scale.set(
+            1 + this.thing.fh / 50.0,
+            1 + this.thing.fh / 30.0
+        );
+    }
+
+    get visible() {
+        return this.shadowSprite.visible;
+    }
+
+    set visible(value) {
+        this.shadowSprite.visible = value;
+    }
+}
+
+Shadow.SMALL = 'shadow_sm';
+Shadow.MEDIUM = 'shadow_md';
+Shadow.LARGE = 'shadow_lg';
+Shadow.THIN = 'shadow_thin';
+

@@ -21,7 +21,7 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { TrackMover, Thing, Hitbox } from './thing';
+import { Shadow, TrackMover, Thing, Hitbox } from './thing';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
@@ -99,6 +99,8 @@ export class Player extends Thing
         this.sprite.addChild(this.textSprite);
         this.textTimeout = 0;
 
+        this.shadow = new Shadow(this, Shadow.MEDIUM);
+
         // Minimum amount of time after taking damage, until the player can be
         // damaged again.
         this.damageCooldown = 0.5;
@@ -111,8 +113,8 @@ export class Player extends Thing
         this.knockedTimer = 0;
         this.knocked = 0;
         // Weapon slots are used to manage the weapon sprite. (ie attack and
-        // running animations, etc) We add both slot sprites to the player sprite,
-        // then use the 'visible' flag to control which is rendered.
+        // running animations, etc) We add both slot sprites to the player
+        // sprite, then use the 'visible' flag to control which is rendered.
         this.bowWeaponSlot = new BowWeaponSlot(this);
         this.swordWeaponSlot = new SwordWeaponSlot(this);
         this.sprite.addChild(this.bowWeaponSlot.sprite);
@@ -367,7 +369,8 @@ export class Player extends Thing
         }
         else if (this.state === STATE_CHANGING_TRACK)
         {
-            this.frame += this.walkFPS*dt;
+            //this.frame += this.walkFPS*dt;
+            this.frame = 0;
             this.sprite.x += this.velx*dt;
             if (this.trackMover.update(dt))
             {
@@ -376,6 +379,9 @@ export class Player extends Thing
                 this.state = STATE_IDLE;
             }
         }
+
+        this.shadow.update(dt);
+        
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;
         this.spriteChar.texture = this.frames[frameNum];

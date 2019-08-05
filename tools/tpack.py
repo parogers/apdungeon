@@ -298,7 +298,12 @@ img = PIL.Image.open(srcpath)
 frames = []
 
 frames += gen_grid((1, 1), (8, 8), [('door1', 'door2', 'door3', 'door4'),])
-frames += gen_grid((54, 2), (8, 3), 'shadow')
+frames += gen_grid((54, 1), (6, 3), 'shadow_sm')
+frames += gen_grid((61, 1), (1, 1), 'dark_shadow_square')
+frames += gen_grid((61, 3), (1, 1), 'light_shadow_square')
+frames += gen_grid((54, 5), (7, 3), 'shadow_md')
+frames += gen_grid((54, 9), (8, 3), 'shadow_lg')
+frames += gen_grid((55, 13), (5, 1), 'shadow_thin')
 frames += gen_grid((64, 6), (8, 3), 'rippling_water')
 frames += gen_grid((64, 6), (8, 3), 'treading_water')
 frames += gen_grid((1, 10), (8, 8), [['blood1', 'blood2', 'blood3', 'blood4']])

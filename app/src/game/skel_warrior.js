@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { TrackMover, Thing, Hitbox } from './thing';
+import { Shadow, TrackMover, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
@@ -60,6 +60,8 @@ export class SkelWarrior extends Thing
         this.monsterSprite.anchor.set(0.5, 1);
         this.sprite.addChild(this.monsterSprite);
         this.sprite.scale.x = -1;
+        this.shadow = new Shadow(this, Shadow.SMALL);
+
         // Make the splash/water sprite
         this.waterSprite = Utils.createSplashSprite();
         this.waterSprite.y = -0.5;
@@ -106,6 +108,7 @@ export class SkelWarrior extends Thing
             this.updateChangeTrack(dt);
         }
         this.incrementFrame(dt);
+        this.shadow.update(dt);
     }
 
     // Keep distance from the player

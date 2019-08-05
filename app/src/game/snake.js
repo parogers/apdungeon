@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing, Hitbox } from './thing';
+import { Shadow, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -42,6 +42,9 @@ export class DeathAnimation extends Thing
     {
         if (this.state === this.STATE_FLIP)
         {
+            if (this.monster.shadow) {
+                this.monster.shadow.visible = false;
+            }
             this.monster.sprite.y -= 3; // TODO - magic number
             this.monster.sprite.scale.y = -1;
             this.state = this.STATE_FALLING;
@@ -78,7 +81,10 @@ export class Snake extends Thing
         this.STATE_DEAD = 4;
 
         this.name = "Snake";
-        this.frames = Utils.getFrames(RES.ENEMIES, ['snake_south_1', 'snake_south_2']);
+        this.frames = Utils.getFrames(
+            RES.ENEMIES,
+            ['snake_south_1', 'snake_south_2']
+        );
         this.speed = 16;
         this.health = 3;
         this.frame = 0;
@@ -91,12 +97,17 @@ export class Snake extends Thing
         this.waterSprite = Utils.createSplashSprite();
         this.waterSprite.y = -1.25;
         this.sprite.addChild(this.waterSprite);
+        this.shadow = new Shadow(this, this.shadowType);
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_PACING;
         this.hitbox = new Hitbox(0, -1, 4, 4);
         this.timer = 0;
         this.velx = 0;
+    }
+
+    get shadowType() {
+        return Shadow.MEDIUM;
     }
 
     get width() {
@@ -156,8 +167,10 @@ export class Snake extends Thing
         }
         else if (this.state === this.STATE_DEAD)
         {
-            return;
+            this.velx = 0;
         }
+
+        this.shadow.update(dt);
 
         if (this.velx != 0) {
             this.frame += 2*dt;
@@ -229,6 +242,11 @@ export class Rat extends Snake
         this.state = this.STATE_FORWARD;
         this.snakeSprite.texture = this.frames[0];
         this.waterSprite.y = -0.9;
+        this.shadow.shadowSprite.anchor.set(0.5, -0.1);
+    }
+
+    get shadowType() {
+        return Shadow.THIN;
     }
 }
 
@@ -242,7 +260,10 @@ export class Scorpion extends Snake
     {
         super();
         this.name = "Scorpion";
-        this.frames = Utils.getFrames(RES.ENEMIES, ["scorpion_south_1", "scorpion_south_2"]);
+        this.frames = Utils.getFrames(
+            RES.ENEMIES,
+            ["scorpion_south_1", "scorpion_south_2"]
+        );
         this.health = 4;
         this.speed = 10;
         this.frame = 0;
@@ -252,5 +273,6 @@ export class Scorpion extends Snake
         this.state = this.STATE_FORWARD;
         this.snakeSprite.texture = this.frames[0];
         this.waterSprite.y = -0.85;
+        this.snakeSprite.anchor.set(0.5, 1);
     }
 }
