@@ -109,7 +109,7 @@ export class EnterScene
                 this.door.zpos = Level.FLOOR_POS;
                 this.state = this.PLAYER_ENTERING;
                 this.timer = 0.4;
-                player.moveToTrack(this.level.getBottomTrack());
+                player.moveToTrack(this.level.getMiddleTrack());
             }
             break;
 

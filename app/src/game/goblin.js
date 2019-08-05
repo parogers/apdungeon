@@ -23,41 +23,48 @@ import { Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
-var GOBLIN_IDLE = 0;
+// Waiting until the goblin is visible on screen
+const STATE_IDLE = 0;
 // Approaching the player, but keeping a distance away
-var GOBLIN_APPROACH = 1;
+const STATE_APPROACH = 1;
 // Rushing the player to attack
-var GOBLIN_ATTACKING = 2;
+const STATE_ATTACKING = 2;
 // Initiates a jump at the player (transitional state)
-var GOBLIN_START_JUMP = 3;
+const STATE_START_JUMP = 3;
 // Jumping at the player to attack
-var GOBLIN_JUMPING = 4;
+const STATE_JUMPING = 4;
 // Knocked back
-var GOBLIN_HURT = 5;
-var GOBLIN_DEAD = 6;
+const STATE_HURT = 5;
+const STATE_DEAD = 6;
+const STATE_CHANGING_TRACK = 7;
 
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
-var GOBLIN_GRAVITY = 200;
+const GRAVITY = 200;
 
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
-export class Goblin
+export class Goblin extends Thing
 {
-    constructor(state)
+    constructor()
     {
+        super();
         this.name = "Goblin";
         this.idleFrame = Utils.getFrame(RES.ENEMIES, "goblin_south_1");
-        this.frames = Utils.getFrames(RES.ENEMIES, Goblin.FRAMES);
+        this.frames = Utils.getFrames(
+            RES.ENEMIES,
+            ['goblin_south_2', 'goblin_south_3']
+        );
+        this.velx = 0;
         this.speed = 14;
         this.health = 3;
         this.frame = 0;
-        this.facing = 1;
+        this.fps = 6;
+        this.maxSpeed = 40;
+        this.safeDistance = 50;
         // The horizontal and vertical jumping speeds
         this.jumpVerSpeed = 50;
         this.jumpHorSpeed = 24;
         this.dead = false;
-        // How high we're off the ground (when jumping)
-        this.height = 0;
         // Our Y-position when we started jumping
         this.jumpStartY = 0;
         // Our current vertical velocity (when jumping)
@@ -66,7 +73,8 @@ export class Goblin
         this.approachDist = 30;
         // At what distance to the player we should do our jump attack
         this.jumpDist = 20;
-        // When in the approach state, used to determine when to jump at the player
+        // When in the approach state, used to determine when to jump at
+        // the player
         this.jumpTimeout = 1.5;
         this.jumpTimer = 0;
         // The sprite container holding the monster and splash sprite
@@ -79,9 +87,10 @@ export class Goblin
         this.waterSprite = Utils.createSplashSprite();
         this.waterSprite.y = -0.75;
         this.sprite.addChild(this.waterSprite);
+        this.sprite.scale.set(-1, 1);
         this.knocked = 0;
         this.knockedTimer = 0;
-        this.state = state || GOBLIN_APPROACH;
+        this.state = STATE_IDLE;
         this.hitbox = new Hitbox(0, -1, 6, 6);
     }
 
@@ -96,45 +105,94 @@ export class Goblin
 
     update(dt)
     {
-        switch(this.state)
+        if (this.state === STATE_IDLE)
         {
-            case GOBLIN_ATTACKING:
+            if (this.isOnCamera()) {
+                this.state = STATE_APPROACH;
+            }
+        }
+        else if (this.state === STATE_APPROACH)
+        {
+            // Maintain a safe distance from the player by accelerating
+            // back and forth until we're "close enough".
+            let targetX = this.level.player.fx + this.safeDistance;
+            let buffer = 2;
+            let accel = 400;
+
+            if (this.fx < targetX-buffer) this.velx += accel*dt;
+            else if (this.fx > targetX+buffer) this.velx -= accel*dt;
+            else {
+                // Otherwise we're far enough away from the player. Put the
+                // breaks otherwise we will annoying oscillate around the
+                // target distance which doesn't look good. (this still
+                // leaves an oscillation but it's somewhat erratic and looks
+                // more natural)
+                this.velx -= this.velx*dt;
+            }
+            // Clamp the velocity so it never moves too fast
+            if (this.velx > this.maxSpeed)
+            {
+                this.velx = this.maxSpeed
+            }
+            else if (this.velx < -this.maxSpeed)
+            {
+                this.velx = -this.maxSpeed;
+            }
+            // Have the goblin bob to make it look more "skittering"
+            this.fx += this.velx*dt;
+            this.fy = this.track.y + Math.sin(this.frame)/2;
+        }
+        else if (this.state === STATE_ATTACKING)
+        {
+        }
+        else if (this.state === STATE_RETREATING)
+        {
+        }
+
+        // Update animation
+        this.frame += this.fps*dt;
+        let frameNum = (this.frame|0) % this.frames.length;
+        this.goblinSprite.texture = this.frames[frameNum];
+
+        /*switch(this.state)
+        {
+            case STATE_ATTACKING:
             this.updateAttacking(dt);
             break;
-            case GOBLIN_START_JUMP:
+            case STATE_START_JUMP:
             // Jump at the player
             this.sprite.zpos = this.sprite.y;
             this.height = 0;
             this.jumpStartY = this.sprite.y;
             this.velh = this.jumpVerSpeed;
             this.waterSprite.visible = false;
-            this.state = GOBLIN_JUMPING;
+            this.state = STATE_JUMPING;
             break;
-            case GOBLIN_JUMPING:
+            case STATE_JUMPING:
             this.updateJumping(dt);
             break;
-            case GOBLIN_APPROACH:
+            case STATE_APPROACH:
             this.updateApproach(dt);
             break;
-            case GOBLIN_HURT:
+            case STATE_HURT:
             this.updateHurt(dt);
             break;
-            case GOBLIN_DEAD:
+            case STATE_DEAD:
             this.level.removeThing(this);
             break;
-        }
+        }*/
     }
 
     updateJumping(dt)
     {
-        this.velh -= GOBLIN_GRAVITY*dt;
+        this.velh -= GRAVITY*dt;
         this.height += this.velh*dt;
         if (this.height <= 0) {
             // Hit the ground. Go back to carefully approaching the player. Also
             // we snap the Y-position to the ground to avoid cumulative rounding
             // errors if we jump repeatedly.
             this.sprite.y = this.jumpStartY;
-            this.state = GOBLIN_APPROACH;
+            this.state = STATE_APPROACH;
             return;
         }
         this.sprite.y = this.jumpStartY - this.height;
@@ -165,12 +223,12 @@ export class Goblin
         // Go back to a careful approach if the player is facing us (note the
         // goblin always faces the player)
         if (player.getFacing()*this.facing < 0) {
-            this.state = GOBLIN_APPROACH;
+            this.state = STATE_APPROACH;
             return;
         }
 
         if (Math.abs(this.sprite.x - player.sprite.x) < this.jumpDist) {
-            this.state = GOBLIN_START_JUMP;
+            this.state = STATE_START_JUMP;
             return;
         }
 
@@ -222,14 +280,14 @@ export class Goblin
         // Rush the player for an attack, if they're facing away from us
         // (note the goblin always faces the player)
         if (player.getFacing()*this.facing > 0) {
-            this.state = GOBLIN_ATTACKING;
+            this.state = STATE_ATTACKING;
             return;
         }
 
         this.jumpTimer += dt;
         if (this.jumpTimer > this.jumpTimeout) {
             this.jumpTimer = 0;
-            this.state = GOBLIN_START_JUMP;
+            this.state = STATE_START_JUMP;
             return;
         }
 
@@ -270,7 +328,7 @@ export class Goblin
             this.knockedTimer -= dt;
         } else {
             // Resume/start attacking
-            this.state = GOBLIN_APPROACH;
+            this.state = STATE_APPROACH;
             // Also increase the rate of jumping at the player (when approaching)
             this.jumpTimeout *= 0.5;
         }
@@ -280,11 +338,11 @@ export class Goblin
     {
         let player = this.level.player;
 
-        if (this.state === GOBLIN_DEAD) return false;
+        if (this.state === STATE_DEAD) return false;
         this.health -= 1;
         if (this.health <= 0) {
             Audio.playSound(RES.DEAD_SND);
-            this.state = GOBLIN_DEAD;
+            this.state = STATE_DEAD;
             // Drop a reward
             this.level.handleTreasureDrop(
                 this.getDropTable(), this.sprite.x, this.sprite.y);
@@ -295,7 +353,7 @@ export class Goblin
             Audio.playSound(RES.SNAKE_HURT_SND);
             this.knocked = Math.sign(this.sprite.x-srcx)*60;
             this.knockedTimer = 0.1;
-            this.state = GOBLIN_HURT;
+            this.state = STATE_HURT;
         }
 
         // Add some random blood, but only if we're not currently in water

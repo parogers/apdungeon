@@ -36,6 +36,8 @@ export class Thing
         this._y = 0;
         this._h = 0;
         this._track = null;
+        this.level = null;
+        this.frame = 0;
     }
 
     get track() {
@@ -132,6 +134,10 @@ export class Thing
 
     handlePlayerCollision(player)
     {
+    }
+
+    isOnCamera() {
+        return this.level && this.level.isThingVisible(this);
     }
 
     removeSelf()
