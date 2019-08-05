@@ -84,6 +84,12 @@ export class Level
         // The PIXI container for everything we want to draw
         this.stage = new PIXI.Container();
         this.compound.addToLevel(this);
+
+        this.darknessSprite = new PIXI.Sprite(
+            Utils.renderDarkness(100, 60, 52, 32)
+        );
+        this.darknessSprite.zpos = Level.FRONT_POS;
+        this.stage.addChild(this.darknessSprite);
         
         this.smoothTracking = true;
         this.exitDoor = null;
@@ -221,6 +227,7 @@ export class Level
         // Position the camera
         this.stage.x = -this.camera.x;
         this.stage.y = -this.camera.y;
+        this.darknessSprite.x = this.camera.x;
     }
 
     /* Check if the given hitbox, at the given position, overlaps with any thing 
