@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Thing, Hitbox } from './thing';
+import { Shadow, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -30,7 +30,7 @@ const STATE_APPROACH = 1;
 // Rushing the player to attack
 const STATE_ATTACKING = 2;
 // Initiates a jump at the player (transitional state)
-const STATE_START_JUMP = 3;
+const STATE_START_ATTACK = 3;
 // Jumping at the player to attack
 const STATE_JUMPING = 4;
 // Knocked back
@@ -55,7 +55,7 @@ export class Goblin extends Thing
             ['goblin_south_2', 'goblin_south_3']
         );
         this.velx = 0;
-        this.speed = 14;
+        this.velh = 0;
         this.health = 3;
         this.frame = 0;
         this.fps = 6;
@@ -64,24 +64,21 @@ export class Goblin extends Thing
         // The horizontal and vertical jumping speeds
         this.jumpVerSpeed = 50;
         this.jumpHorSpeed = 24;
-        this.dead = false;
         // Our Y-position when we started jumping
         this.jumpStartY = 0;
         // Our current vertical velocity (when jumping)
         this.velh = 0;
         // When approaching the player, how far to keep distance
         this.approachDist = 30;
-        // At what distance to the player we should do our jump attack
-        this.jumpDist = 20;
         // When in the approach state, used to determine when to jump at
         // the player
-        this.jumpTimeout = 1.5;
-        this.jumpTimer = 0;
+        this.attackTimeout = 1.5;
+        this.attackTimer = 0;
         // The sprite container holding the monster and splash sprite
         this.sprite = new PIXI.Container();
         // The actual goblin sprite
         this.goblinSprite = new PIXI.Sprite(this.frames[0]);
-        this.goblinSprite.anchor.set(0.5, 6.5/8);
+        this.goblinSprite.anchor.set(0.5, 7/8);
         this.sprite.addChild(this.goblinSprite);
         // Make the splash/water sprite
         this.waterSprite = Utils.createSplashSprite();
@@ -92,6 +89,8 @@ export class Goblin extends Thing
         this.knockedTimer = 0;
         this.state = STATE_IDLE;
         this.hitbox = new Hitbox(0, -1, 6, 6);
+        this.shadow = new Shadow(this, Shadow.GOBLIN);
+        this.shadow.shadowSprite.anchor.set(0.5, 0);
     }
 
     getDropTable() 
@@ -107,40 +106,14 @@ export class Goblin extends Thing
     {
         if (this.state === STATE_IDLE)
         {
+            this.frame = 0;
             if (this.isOnCamera()) {
                 this.state = STATE_APPROACH;
             }
         }
         else if (this.state === STATE_APPROACH)
         {
-            // Maintain a safe distance from the player by accelerating
-            // back and forth until we're "close enough".
-            let targetX = this.level.player.fx + this.safeDistance;
-            let buffer = 2;
-            let accel = 400;
-
-            if (this.fx < targetX-buffer) this.velx += accel*dt;
-            else if (this.fx > targetX+buffer) this.velx -= accel*dt;
-            else {
-                // Otherwise we're far enough away from the player. Put the
-                // breaks otherwise we will annoying oscillate around the
-                // target distance which doesn't look good. (this still
-                // leaves an oscillation but it's somewhat erratic and looks
-                // more natural)
-                this.velx -= this.velx*dt;
-            }
-            // Clamp the velocity so it never moves too fast
-            if (this.velx > this.maxSpeed)
-            {
-                this.velx = this.maxSpeed
-            }
-            else if (this.velx < -this.maxSpeed)
-            {
-                this.velx = -this.maxSpeed;
-            }
-            // Have the goblin bob to make it look more "skittering"
-            this.fx += this.velx*dt;
-            this.fy = this.track.y + Math.sin(this.frame)/2;
+            this.updateApproach(dt);
         }
         else if (this.state === STATE_ATTACKING)
         {
@@ -149,38 +122,11 @@ export class Goblin extends Thing
         {
         }
 
+        this.shadow.update(dt);
+
         // Update animation
-        this.frame += this.fps*dt;
         let frameNum = (this.frame|0) % this.frames.length;
         this.goblinSprite.texture = this.frames[frameNum];
-
-        /*switch(this.state)
-        {
-            case STATE_ATTACKING:
-            this.updateAttacking(dt);
-            break;
-            case STATE_START_JUMP:
-            // Jump at the player
-            this.sprite.zpos = this.sprite.y;
-            this.height = 0;
-            this.jumpStartY = this.sprite.y;
-            this.velh = this.jumpVerSpeed;
-            this.waterSprite.visible = false;
-            this.state = STATE_JUMPING;
-            break;
-            case STATE_JUMPING:
-            this.updateJumping(dt);
-            break;
-            case STATE_APPROACH:
-            this.updateApproach(dt);
-            break;
-            case STATE_HURT:
-            this.updateHurt(dt);
-            break;
-            case STATE_DEAD:
-            this.level.removeThing(this);
-            break;
-        }*/
     }
 
     updateJumping(dt)
@@ -207,113 +153,45 @@ export class Goblin extends Thing
 
     updateAttacking(dt)
     {
-        // Rush towards the player
-        let player = this.level.player;
-        let dx = 0, dy = 0;
-
-        if (player.sprite.x > this.sprite.x) {
-            dx = 1.5*this.speed*dt;
-            this.facing = 1;
-        } else {
-            dx = -1.5*this.speed*dt;
-            this.facing = -1;
-        }
-        this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
-
-        // Go back to a careful approach if the player is facing us (note the
-        // goblin always faces the player)
-        if (player.getFacing()*this.facing < 0) {
-            this.state = STATE_APPROACH;
-            return;
-        }
-
-        if (Math.abs(this.sprite.x - player.sprite.x) < this.jumpDist) {
-            this.state = STATE_START_JUMP;
-            return;
-        }
-
-        // Move up/down towards the player more slowly (and don't overshoot)
-        var dist = player.sprite.y - this.sprite.y;
-        if (Math.abs(dist) > 5) {
-            dy = dt*20*Math.sign(dist);
-        }
-
-        // Check if we can move left/right
-        var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
-        if (!tile.solid) {
-            this.sprite.x += dx;
-            this.waterSprite.visible = tile.water;
-        }
-
-        // Now check if it can move up/down. Doing this separately from the check
-        // above means we can "slide" along walls and such.
-        var tile2 = this.level.getTileAt(this.sprite.x, this.sprite.y+dy);
-        if (!tile2.solid) {
-            // Go a bit faster if we're just moving up/down
-            if (tile.solid) this.sprite.y += 3*dy;
-            else {
-                this.sprite.y += dy;
-                this.waterSprite.visible = tile2.water;
-            }
-        }
-        this.frame += 4*dt;
-        this.goblinSprite.texture = this.frames[(this.frame%this.frames.length)|0];
     }
 
     updateApproach(dt)
     {
-        // Move towards the player, but try to keep a fixed distance away. 
-        // Initially the target is set to the player's position, plus/minus
-        // a fixed offset.
-        let player = this.level.player;
-        let targetx = 0;
+        // Maintain a safe distance from the player by accelerating
+        // back and forth until we're "close enough".
+        let targetX = this.level.player.fx + this.safeDistance;
+        let buffer = 2;
+        let accel = 400;
 
-        if (this.sprite.x < player.sprite.x) {
-            targetx = player.sprite.x - this.approachDist;
-            this.facing = 1;
-        } else if (this.sprite.x > player.sprite.x) {
-            targetx = player.sprite.x + this.approachDist;
-            this.facing = -1;
+        if (this.fx < targetX-buffer) this.velx += accel*dt;
+        else if (this.fx > targetX+buffer) this.velx -= accel*dt;
+        else {
+            // Otherwise we're far enough away from the player. Put the
+            // breaks otherwise we will annoying oscillate around the
+            // target distance which doesn't look good. (this still
+            // leaves an oscillation but it's somewhat erratic and looks
+            // more natural)
+            this.velx -= this.velx*dt;
         }
-        this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
+        // Clamp the velocity so we never moves too fast
+        if (this.velx > this.maxSpeed)
+        {
+            this.velx = this.maxSpeed
+        }
+        else if (this.velx < -this.maxSpeed)
+        {
+            this.velx = -this.maxSpeed;
+        }
+        // Have the goblin bob to make it look more "skittering"
+        this.fx += this.velx*dt;
+        this.fy = this.track.y + Math.sin(this.frame)/2;
+        this.frame += this.fps*dt;
 
-        // Rush the player for an attack, if they're facing away from us
-        // (note the goblin always faces the player)
-        if (player.getFacing()*this.facing > 0) {
+        this.attackTimer -= dt;
+        if (this.attackTimer <= 0)
+        {
             this.state = STATE_ATTACKING;
-            return;
         }
-
-        this.jumpTimer += dt;
-        if (this.jumpTimer > this.jumpTimeout) {
-            this.jumpTimer = 0;
-            this.state = STATE_START_JUMP;
-            return;
-        }
-
-        // Add a bit of variation to the target position, so the goblin kind of
-        // waivers back and forth making it a bit harder to hit.
-        var dx = 0;
-        var dy = 0;
-        targetx += 15*Math.cos(this.frame/4);
-        if (Math.abs(this.sprite.x-targetx) > 2) {
-            dx = this.speed*dt*Math.sign(targetx - this.sprite.x);
-        }
-
-        // Move up/down towards the player more slowly (and don't overshoot)
-        var dist = (player.sprite.y+50*Math.sin(this.frame/2)) - this.sprite.y;
-        if (Math.abs(dist) > 2) {
-            dy = dt*30*Math.sign(dist);
-        }
-        // Check if we can move where we want to
-        var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y+dy);
-        if (!tile.solid) {
-            this.sprite.x += dx;
-            this.sprite.y += dy;
-            this.waterSprite.visible = tile.water;
-        }
-        this.frame += 4*dt;
-        this.goblinSprite.texture = this.frames[(this.frame%this.frames.length)|0];
     }
 
     updateHurt(dt)

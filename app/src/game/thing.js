@@ -255,4 +255,4 @@ Shadow.SMALL = 'shadow_sm';
 Shadow.MEDIUM = 'shadow_md';
 Shadow.LARGE = 'shadow_lg';
 Shadow.THIN = 'shadow_thin';
-
+Shadow.GOBLIN = 'shadow_goblin';
