@@ -103,6 +103,14 @@ export class Level
         ];
     }
 
+    get basePos() {
+        return this.player.basePos;
+    }
+
+    get baseSpeed() {
+        return this.player.baseSpeed;
+    }
+
     isFinished() {
         return this.state === this.FINISHED;
     }
@@ -205,9 +213,12 @@ export class Level
         {
             // Update the camera to track the player. Have the camera move
             // smoothly towards the player to avoid jumping around.
-            var xpos = this.player.basePos - this.camera.width/8;
+            let xpos = this.basePos - this.camera.width/8;
+
+            // Make sure the camera stays within the level (compound)
             xpos = Math.max(xpos, 0);
             xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
+
             if (this.smoothTracking) {
                 var dirx = Math.sign(xpos-this.camera.x);
                 this.camera.x += dt*1.25*this.player.maxSpeed*dirx;

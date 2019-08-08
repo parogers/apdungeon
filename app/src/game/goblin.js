@@ -32,14 +32,21 @@ const STATE_ATTACKING = 2;
 // Initiates a jump at the player (transitional state)
 const STATE_START_ATTACK = 3;
 // Jumping at the player to attack
-const STATE_JUMPING = 4;
+const STATE_START_RETREAT = 4;
 // Knocked back
-const STATE_HURT = 5;
+const STATE_RETREATING = 5;
 const STATE_DEAD = 6;
 const STATE_CHANGING_TRACK = 7;
 
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
 const GRAVITY = 200;
+// How fast to move when tracking the player
+const MAX_SPEED = 40;
+// How far to stay away from the player (when not attacking)
+const SAFE_DISTANCE = 50;
+// How fast the goblin jumps at the player (relative to the player speed)
+const ATTACK_SPEED = 60;
+const RETREAT_SPEED = ATTACK_SPEED*1.5;
 
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
@@ -59,17 +66,8 @@ export class Goblin extends Thing
         this.health = 3;
         this.frame = 0;
         this.fps = 6;
-        this.maxSpeed = 40;
-        this.safeDistance = 50;
-        // The horizontal and vertical jumping speeds
-        this.jumpVerSpeed = 50;
-        this.jumpHorSpeed = 24;
-        // Our Y-position when we started jumping
-        this.jumpStartY = 0;
-        // Our current vertical velocity (when jumping)
-        this.velh = 0;
-        // When approaching the player, how far to keep distance
-        this.approachDist = 30;
+        this.maxSpeed = MAX_SPEED;
+        this.safeDistance = SAFE_DISTANCE;
         // When in the approach state, used to determine when to jump at
         // the player
         this.attackTimeout = 1.5;
@@ -107,19 +105,61 @@ export class Goblin extends Thing
         if (this.state === STATE_IDLE)
         {
             this.frame = 0;
-            if (this.isOnCamera()) {
+            if (this.isOnCamera())
+            {
                 this.state = STATE_APPROACH;
+                this.attackTimer = this.attackTimeout*2;
             }
         }
         else if (this.state === STATE_APPROACH)
         {
             this.updateApproach(dt);
         }
+        else if (this.state === STATE_START_ATTACK)
+        {
+            // Calculate how fast we should jump up based on gravity and
+            // how fast we're jumping at the player
+            let dist = this.fx - this.level.basePos;
+            let duration = dist / ATTACK_SPEED;
+            this.velx = -ATTACK_SPEED + this.level.baseSpeed;
+            this.vely = -duration*GRAVITY/2;
+            this.state = STATE_ATTACKING;
+            this.fy = this.track.y;
+        }
         else if (this.state === STATE_ATTACKING)
         {
+            // Jumping at the player
+            this.vely += GRAVITY*dt;
+            this.fx += this.velx*dt;
+            this.fy += this.vely*dt;
+
+            if (this.fy > this.track.y)
+            {
+                this.fy = this.track.y;
+                this.state = STATE_START_RETREAT;
+            }
+        }
+        else if (this.state === STATE_START_RETREAT)
+        {
+            // Calculate how fast we should jump up based on gravity
+            let duration = this.safeDistance / RETREAT_SPEED;
+            this.velx = RETREAT_SPEED + this.level.baseSpeed;
+            this.vely = -duration*GRAVITY/2;
+            this.state = STATE_RETREATING;
         }
         else if (this.state === STATE_RETREATING)
         {
+            // Jumping at the player
+            this.vely += GRAVITY*dt;
+            this.fx += this.velx*dt;
+            this.fy += this.vely*dt;
+
+            if (this.fy > this.track.y)
+            { 
+                this.fy = this.track.y;
+                this.state = STATE_APPROACH;
+                this.attackTimer = this.attackTimeout;
+            }
         }
 
         this.shadow.update(dt);
@@ -151,15 +191,11 @@ export class Goblin extends Thing
         }
     }
 
-    updateAttacking(dt)
-    {
-    }
-
     updateApproach(dt)
     {
         // Maintain a safe distance from the player by accelerating
         // back and forth until we're "close enough".
-        let targetX = this.level.player.fx + this.safeDistance;
+        let targetX = this.level.basePos + this.safeDistance;
         let buffer = 2;
         let accel = 400;
 
@@ -190,7 +226,7 @@ export class Goblin extends Thing
         this.attackTimer -= dt;
         if (this.attackTimer <= 0)
         {
-            this.state = STATE_ATTACKING;
+            this.state = STATE_START_ATTACK;
         }
     }
 
@@ -207,7 +243,8 @@ export class Goblin extends Thing
         } else {
             // Resume/start attacking
             this.state = STATE_APPROACH;
-            // Also increase the rate of jumping at the player (when approaching)
+            // Also increase the rate of jumping at the player
+            // (when approaching)
             this.jumpTimeout *= 0.5;
         }
     }

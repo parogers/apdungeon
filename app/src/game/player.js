@@ -137,6 +137,10 @@ export class Player extends Thing
         this.numArrows = 99;
     }
 
+    get baseSpeed() {
+        return this.maxSpeed;
+    }
+
     get width() {
         return Math.abs(this.spriteChar.width);
     }
