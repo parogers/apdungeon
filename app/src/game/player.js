@@ -43,6 +43,11 @@ export class Player extends Thing
         this.controls = controls;
         this.state = STATE_IDLE;
         this.trackMover = null;
+        // The "nominal" X-pos of the player within the level. The player
+        // may stray from this position (eg when jumping) but generally
+        // will tend back to it. This is also the position that is tracked
+        // by the camera.
+        this.basePos = 0;
         this.velx = 0;
         this.vely = 0;
         this.accelx = 0;
@@ -350,13 +355,13 @@ export class Player extends Thing
                 }
             }
 
-            if (this.velx !== 0 || this.vely !== 0)
+            if (this.running)
             {
+                this.sprite.x += this.maxSpeed*dt;
                 this.frame += this.walkFPS*dt;
             }
 
-            this.sprite.x += this.velx*dt;
-            this.sprite.y += this.vely*dt;
+            this.basePos = this.fx;
 
             // Check for collisions with other things
             this.level.forEachThingHit(
@@ -371,7 +376,11 @@ export class Player extends Thing
         {
             //this.frame += this.walkFPS*dt;
             this.frame = 0;
-            this.sprite.x += this.velx*dt;
+            if (this.running)
+            {
+                this.sprite.x += this.maxSpeed*dt;
+                this.basePos = this.fx;
+            }
             if (this.trackMover.update(dt))
             {
                 this.trackMover = null;

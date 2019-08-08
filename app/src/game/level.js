@@ -205,7 +205,7 @@ export class Level
         {
             // Update the camera to track the player. Have the camera move
             // smoothly towards the player to avoid jumping around.
-            var xpos = this.player.fx - this.camera.width/8;
+            var xpos = this.player.basePos - this.camera.width/8;
             xpos = Math.max(xpos, 0);
             xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
             if (this.smoothTracking) {
