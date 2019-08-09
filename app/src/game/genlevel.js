@@ -151,8 +151,8 @@ export function generateLevel(levelNum)
         x += randint(40, 120);
     }
 
-    let skel = new SkelWarrior();
-    skel.x = 90;
+    let skel = new Goblin();
+    skel.fx = 90;
     skel.track = level.getMiddleTrack();
     level.addThing(skel);
 

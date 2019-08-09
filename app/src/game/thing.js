@@ -36,6 +36,8 @@ export class Thing
         this._y = 0;
         this._h = 0;
         this._track = null;
+        this.level = null;
+        this.frame = 0;
     }
 
     get track() {
@@ -134,6 +136,10 @@ export class Thing
     {
     }
 
+    isOnCamera() {
+        return this.level && this.level.isThingVisible(this);
+    }
+
     removeSelf()
     {
         if (this.level) {
@@ -165,7 +171,7 @@ export function Hitbox(x, y, w, h)
 export class TrackMover
 {
     constructor(thing, targetTrack, speed, accelh) {
-        this.accelh = accelh;
+        this.accelh = -Math.abs(accelh);
         this.thing = thing;
         this.targetTrack = targetTrack;
         this.speed = speed;
@@ -249,4 +255,4 @@ Shadow.SMALL = 'shadow_sm';
 Shadow.MEDIUM = 'shadow_md';
 Shadow.LARGE = 'shadow_lg';
 Shadow.THIN = 'shadow_thin';
-
+Shadow.GOBLIN = 'shadow_goblin';

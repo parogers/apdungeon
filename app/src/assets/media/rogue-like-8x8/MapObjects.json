@@ -59,6 +59,12 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":5, "h":1},
     "sourceSize" : {"w":5, "h":1}
+},"shadow_goblin" : {
+    "frame" : {"x":66, "y":23, "w":5, "h":2},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":5, "h":2},
+    "sourceSize" : {"w":5, "h":2}
 },"rippling_water" : {
     "frame" : {"x":64, "y":6, "w":8, "h":3},
     "rotated" : false,
