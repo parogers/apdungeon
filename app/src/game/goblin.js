@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Shadow, Thing, Hitbox } from './thing';
+import { TrackMover, Shadow, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
@@ -36,7 +36,7 @@ const STATE_START_ATTACK = 3;
 const STATE_START_RETREAT = 4;
 const STATE_RETREATING = 5;
 const STATE_DEAD = 6;
-const STATE_CHANGING_TRACK = 7;
+const STATE_CHANGE_TRACK = 7;
 
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
 const GRAVITY = 200;
@@ -68,6 +68,7 @@ export class Goblin extends Thing
         this.fps = 6;
         this.maxSpeed = MAX_SPEED;
         this.safeDistance = SAFE_DISTANCE;
+        this.trackMover = null;
         // When in the approach state, used to determine when to jump at
         // the player
         this.attackTimeout = 1.5;
@@ -159,6 +160,15 @@ export class Goblin extends Thing
                 this.attackTimer = this.attackTimeout;
             }
         }
+        else if (this.state === STATE_CHANGE_TRACK)
+        {
+            if (this.trackMover.update(dt))
+            {
+                this.trackMover = null;
+                this.state = STATE_APPROACH;
+                this.attackTimer = this.attackTimeout;
+            }
+        }
 
         this.shadow.update(dt);
 
@@ -224,7 +234,21 @@ export class Goblin extends Thing
         this.attackTimer -= dt;
         if (this.attackTimer <= 0)
         {
-            this.state = STATE_START_ATTACK;
+            if (this.level.player.track &&
+                this.level.player.track === this.track)
+            {
+                this.state = STATE_START_ATTACK;
+            }
+            else
+            {
+                this.state = STATE_CHANGE_TRACK;
+                this.trackMover = new TrackMover(
+                    this,
+                    this.level.player.track,
+                    1.25*this.maxSpeed,
+                    GRAVITY
+                );
+            }
         }
     }
 
