@@ -22,6 +22,7 @@ import { Utils } from './utils';
 import { Shadow, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
+import { DeathAnimation } from './snake';
 
 // Waiting until the goblin is visible on screen
 const STATE_IDLE = 0;
@@ -33,7 +34,6 @@ const STATE_ATTACKING = 2;
 const STATE_START_ATTACK = 3;
 // Jumping at the player to attack
 const STATE_START_RETREAT = 4;
-// Knocked back
 const STATE_RETREATING = 5;
 const STATE_DEAD = 6;
 const STATE_CHANGING_TRACK = 7;
@@ -83,8 +83,6 @@ export class Goblin extends Thing
         this.waterSprite.y = -0.75;
         this.sprite.addChild(this.waterSprite);
         this.sprite.scale.set(-1, 1);
-        this.knocked = 0;
-        this.knockedTimer = 0;
         this.state = STATE_IDLE;
         this.hitbox = new Hitbox(0, -1, 6, 6);
         this.shadow = new Shadow(this, Shadow.GOBLIN);
@@ -230,52 +228,43 @@ export class Goblin extends Thing
         }
     }
 
-    updateHurt(dt)
-    {
-        // Slide backwards from the hit
-        if (this.knockedTimer > 0) {
-            var dx = this.knocked*dt;
-            var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
-            if (!tile.solid) {
-                this.sprite.x += dx;
-            }
-            this.knockedTimer -= dt;
-        } else {
-            // Resume/start attacking
-            this.state = STATE_APPROACH;
-            // Also increase the rate of jumping at the player
-            // (when approaching)
-            this.jumpTimeout *= 0.5;
-        }
-    }
-
     handleHit(srcx, srcy, dmg)
     {
-        let player = this.level.player;
+        if (this.state === STATE_DEAD) {
+            return false;
+        }
 
-        if (this.state === STATE_DEAD) return false;
         this.health -= 1;
-        if (this.health <= 0) {
+        if (this.health <= 0)
+        {
             Audio.playSound(RES.DEAD_SND);
             this.state = STATE_DEAD;
             // Drop a reward
             this.level.handleTreasureDrop(
-                this.getDropTable(), this.sprite.x, this.sprite.y);
-            player.handleMonsterKilled(this);
-            this.dead = true;
-
-        } else {
+                this.getDropTable(),
+                this.sprite.x,
+                this.sprite.y
+            );
+            this.level.player.handleMonsterKilled(this);
+            this.level.addThing(new DeathAnimation(this));
+        }
+        else
+        {
             Audio.playSound(RES.SNAKE_HURT_SND);
-            this.knocked = Math.sign(this.sprite.x-srcx)*60;
-            this.knockedTimer = 0.1;
-            this.state = STATE_HURT;
         }
 
         // Add some random blood, but only if we're not currently in water
         // (looks better this way)
-        var tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
-        if (!tile.water) {
-            this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
+        let tile = this.level.getTileAt(
+            this.sprite.x,
+            this.sprite.y
+        );
+        if (!tile.water)
+        {
+            this.level.createBloodSpatter(
+                this.sprite.x,
+                this.sprite.y-1
+            );
         }
         return true;
     }

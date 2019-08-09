@@ -101,7 +101,7 @@ export class Snake extends Thing
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_PACING;
-        this.hitbox = new Hitbox(0, -1, 4, 4);
+        this.hitbox = new Hitbox(0, -1, 6, 4);
         this.timer = 0;
         this.velx = 0;
     }
