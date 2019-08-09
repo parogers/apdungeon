@@ -171,7 +171,7 @@ export function Hitbox(x, y, w, h)
 export class TrackMover
 {
     constructor(thing, targetTrack, speed, accelh) {
-        this.accelh = accelh;
+        this.accelh = -Math.abs(accelh);
         this.thing = thing;
         this.targetTrack = targetTrack;
         this.speed = speed;

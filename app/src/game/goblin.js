@@ -121,20 +121,20 @@ export class Goblin extends Thing
             let dist = this.fx - this.level.basePos;
             let duration = dist / ATTACK_SPEED;
             this.velx = -ATTACK_SPEED + this.level.baseSpeed;
-            this.vely = -duration*GRAVITY/2;
+            this.velh = duration*GRAVITY/2;
             this.state = STATE_ATTACKING;
             this.fy = this.track.y;
         }
         else if (this.state === STATE_ATTACKING)
         {
             // Jumping at the player
-            this.vely += GRAVITY*dt;
+            this.velh -= GRAVITY*dt;
             this.fx += this.velx*dt;
-            this.fy += this.vely*dt;
+            this.fh += this.velh*dt;
 
-            if (this.fy > this.track.y)
+            if (this.fh <= 0)
             {
-                this.fy = this.track.y;
+                this.fh = 0;
                 this.state = STATE_START_RETREAT;
             }
         }
@@ -143,25 +143,26 @@ export class Goblin extends Thing
             // Calculate how fast we should jump up based on gravity
             let duration = this.safeDistance / RETREAT_SPEED;
             this.velx = RETREAT_SPEED + this.level.baseSpeed;
-            this.vely = -duration*GRAVITY/2;
+            this.velh = duration*GRAVITY/2;
             this.state = STATE_RETREATING;
         }
         else if (this.state === STATE_RETREATING)
         {
             // Jumping at the player
-            this.vely += GRAVITY*dt;
+            this.velh -= GRAVITY*dt;
             this.fx += this.velx*dt;
-            this.fy += this.vely*dt;
+            this.fh += this.velh*dt;
 
-            if (this.fy > this.track.y)
+            if (this.fh <= 0)
             { 
-                this.fy = this.track.y;
+                this.fh = 0;
                 this.state = STATE_APPROACH;
                 this.attackTimer = this.attackTimeout;
             }
         }
         else if (this.state === STATE_CHANGE_TRACK)
         {
+            this.fx += this.level.baseSpeed*dt;
             if (this.trackMover.update(dt))
             {
                 this.trackMover = null;
@@ -175,28 +176,6 @@ export class Goblin extends Thing
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;
         this.goblinSprite.texture = this.frames[frameNum];
-    }
-
-    updateJumping(dt)
-    {
-        this.velh -= GRAVITY*dt;
-        this.height += this.velh*dt;
-        if (this.height <= 0) {
-            // Hit the ground. Go back to carefully approaching the player. Also
-            // we snap the Y-position to the ground to avoid cumulative rounding
-            // errors if we jump repeatedly.
-            this.sprite.y = this.jumpStartY;
-            this.state = STATE_APPROACH;
-            return;
-        }
-        this.sprite.y = this.jumpStartY - this.height;
-
-        // Check if we can move where we want to
-        var x = this.sprite.x + this.facing*this.jumpHorSpeed*dt;
-        var tile = this.level.getTileAt(x, this.jumpStartY);
-        if (!tile.solid) {
-            this.sprite.x = x;
-        }
     }
 
     updateApproach(dt)
@@ -234,8 +213,7 @@ export class Goblin extends Thing
         this.attackTimer -= dt;
         if (this.attackTimer <= 0)
         {
-            if (this.level.player.track &&
-                this.level.player.track === this.track)
+            if (this.level.player.track === this.track)
             {
                 this.state = STATE_START_ATTACK;
             }
@@ -245,8 +223,8 @@ export class Goblin extends Thing
                 this.trackMover = new TrackMover(
                     this,
                     this.level.player.track,
-                    1.25*this.maxSpeed,
-                    GRAVITY
+                    this.maxSpeed,
+                    GRAVITY*2
                 );
             }
         }
