@@ -138,7 +138,8 @@ export class Player extends Thing
     }
 
     get baseSpeed() {
-        return this.maxSpeed;
+        if (this.running) return this.maxSpeed;
+        return 0;
     }
 
     get width() {

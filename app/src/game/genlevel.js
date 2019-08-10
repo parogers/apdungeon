@@ -32,6 +32,7 @@ import { Chest } from './chest';
 import { Item } from './item';
 import { GroundItem } from './grounditem';
 import { Spawn } from './spawn';
+import { Bat } from './bat';
 
 var randint = Utils.randint;
 var randomChoice = Utils.randomChoice;
@@ -151,10 +152,10 @@ export function generateLevel(levelNum)
         x += randint(40, 120);
     }
 
-    let skel = new Goblin();
-    skel.fx = 90;
-    skel.track = level.getMiddleTrack();
-    level.addThing(skel);
+    let mon = new Bat();
+    mon.fx = 90;
+    mon.track = level.getMiddleTrack();
+    level.addThing(mon);
 
     // First level in the game. Add a chest of starter items. Have the 
     // chest eject items to the right away from the first NPC. (so none
