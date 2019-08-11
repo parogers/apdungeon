@@ -21,7 +21,7 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Shadow, TrackMover, Thing, Hitbox } from './thing';
+import { Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
@@ -92,9 +92,7 @@ export class Player extends Thing
         this.spriteChar.anchor.set(0.5, 1);
         this.sprite.addChild(this.spriteChar);
         // Setup the sprite for when the player is treading water
-        this.waterSprite = Utils.createSplashSprite();
-        this.waterSprite.y = -1.5;
-        this.sprite.addChild(this.waterSprite);
+        this.splash = new Splash(this, -1.5);
 
         // Sprite for showing messages to the player
         this.textSprite = new PIXI.Sprite(renderText("?"));
@@ -164,11 +162,11 @@ export class Player extends Thing
     }
 
     get inWater() {
-        return this.waterSprite.visible;
+        return this.splash.visible;
     }
 
     set inWater(value) {
-        this.waterSprite.visible = value;
+        this.splash.visible = value;
     }
 
     /*update(dt)
@@ -398,24 +396,11 @@ export class Player extends Thing
             }
         }
 
-        // Check if the player is entering/leaving water
-        let tile = this.level.getTileAt(this.x, this.y);
-        if (tile && tile.type === 'water' && this.fh === 0)
-        {
-            if (!this.inWater) {
-                Audio.playSound(RES.SPLASH_SND);
-            }
-            this.shadow.visible = false;
-            this.inWater = true;
-        }
-        else
-        {
-            this.shadow.visible = true;
-            this.inWater = false;
-        }
-
+        // Update shadow and splash components
         this.shadow.update(dt);
-        
+        this.splash.update(dt);
+        this.shadow.visible = !this.splash.visible;
+
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;
         this.spriteChar.texture = this.frames[frameNum];

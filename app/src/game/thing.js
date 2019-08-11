@@ -19,6 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from "./utils";
+import { Audio } from './audio';
 
 /* Template code for defining a 'thing' in a level. Generally things have 
  * sprites associated with them, and can be interacted with by the player.
@@ -146,6 +147,10 @@ export class Thing
             this.level.removeThing(this);
         }
     }
+
+    getTileUnder() {
+        return this.level.getTileAt(this.fx, this.fy)
+    }
 }
 
 /**********/
@@ -256,3 +261,48 @@ Shadow.MEDIUM = 'shadow_md';
 Shadow.LARGE = 'shadow_lg';
 Shadow.THIN = 'shadow_thin';
 Shadow.GOBLIN = 'shadow_goblin';
+
+
+// Adds "splashy water" to the base of a thing when they enter water
+export class Splash
+{
+    constructor(thing, ypos)
+    {
+        this.thing = thing;
+
+        this.waterSprite = new PIXI.Sprite();
+        this.waterSprite.anchor.set(0.5, 0.5);
+        this.waterSprite.visible = false;
+        this.waterSprite.texture = Utils.getFrame(
+            RES.MAP_OBJS,
+            'treading_water'
+        );
+        this.waterSprite.y = ypos;
+        this.thing.sprite.addChild(this.waterSprite);
+    }
+
+    get visible() {
+        return this.waterSprite.visible;
+    }
+
+    set visible(value) {
+        this.waterSprite.visible = value;
+    }
+
+    update(dt)
+    {
+        let tile = this.thing.getTileUnder();
+
+        if (tile && tile.type === 'water' && this.thing.fh === 0)
+        {
+            if (!this.visible) {
+                Audio.playSound(RES.SPLASH_SND);
+            }
+            this.visible = true;
+        }
+        else
+        {
+            this.visible = false;
+        }
+    }
+}
