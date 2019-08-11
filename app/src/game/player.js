@@ -163,8 +163,12 @@ export class Player extends Thing
         return Math.sign(this.sprite.scale.x);
     }
 
-    getFacing() {
-        return this.facing;
+    get inWater() {
+        return this.waterSprite.visible;
+    }
+
+    set inWater(value) {
+        this.waterSprite.visible = value;
     }
 
     /*update(dt)
@@ -392,6 +396,22 @@ export class Player extends Thing
                 this.vely = 0;
                 this.state = STATE_IDLE;
             }
+        }
+
+        // Check if the player is entering/leaving water
+        let tile = this.level.getTileAt(this.x, this.y);
+        if (tile && tile.type === 'water' && this.fh === 0)
+        {
+            if (!this.inWater) {
+                Audio.playSound(RES.SPLASH_SND);
+            }
+            this.shadow.visible = false;
+            this.inWater = true;
+        }
+        else
+        {
+            this.shadow.visible = true;
+            this.inWater = false;
         }
 
         this.shadow.update(dt);
@@ -632,13 +652,13 @@ export class Player extends Thing
         if (track.checkSolidAt(this.fx, this.width)) {
             return false;
         }
-        //this.nextTrack = track;
+        // Note: we have the player jump unless they're currently in water
         this.state = STATE_CHANGING_TRACK;
         this.trackMover = new TrackMover(
             this,
             track,
             1.5*this.maxSpeed,
-            JUMP_ACCEL,
+            this.inWater ? 0 : JUMP_ACCEL,
         );
         return true;
     }

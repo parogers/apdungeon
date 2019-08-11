@@ -94,7 +94,7 @@ export class SwordWeaponSlot
         this.attackCooldown = 0.15;
 
         this.player.level.forEachThingHit(
-            this.player.fx + this.player.getFacing()*this.weaponReach, 
+            this.player.fx + this.player.facing*this.weaponReach, 
             this.player.fy,
             this.hitbox, this.player,
             this.handleHitCallback);
