@@ -40,6 +40,7 @@ export class Player extends Thing
     constructor(controls)
     {
         super();
+        this.name = 'player';
         this.controls = controls;
         this.state = STATE_IDLE;
         this.trackMover = null;
@@ -92,7 +93,7 @@ export class Player extends Thing
         this.spriteChar.anchor.set(0.5, 1);
         this.sprite.addChild(this.spriteChar);
         // Setup the sprite for when the player is treading water
-        this.splash = new Splash(this, -1.5);
+        this.splash = new Splash(this, -1.5, true);
 
         // Sprite for showing messages to the player
         this.textSprite = new PIXI.Sprite(renderText("?"));

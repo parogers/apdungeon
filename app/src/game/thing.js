@@ -137,7 +137,7 @@ export class Thing
     {
     }
 
-    isOnCamera() {
+    get isOnCamera() {
         return this.level && this.level.isThingVisible(this);
     }
 
@@ -235,6 +235,14 @@ export class Shadow
         this.thing.sprite.addChildAt(this.shadowSprite, 0);
     }
 
+    get visible() {
+        return this.shadowSprite.visible;
+    }
+
+    set visible(value) {
+        this.shadowSprite.visible = value;
+    }
+
     update(dt)
     {
         // Make sure the shadow stays on the floor when we jump
@@ -247,12 +255,8 @@ export class Shadow
         );
     }
 
-    get visible() {
-        return this.shadowSprite.visible;
-    }
-
-    set visible(value) {
-        this.shadowSprite.visible = value;
+    remove() {
+        this.thing.sprite.removeChild(this.shadowSprite);
     }
 }
 
@@ -266,10 +270,11 @@ Shadow.GOBLIN = 'shadow_goblin';
 // Adds "splashy water" to the base of a thing when they enter water
 export class Splash
 {
-    constructor(thing, ypos)
+    constructor(thing, ypos, playSound)
     {
         this.thing = thing;
-
+        this.playSound = playSound;
+        this.enabled = true;
         this.waterSprite = new PIXI.Sprite();
         this.waterSprite.anchor.set(0.5, 0.5);
         this.waterSprite.visible = false;
@@ -289,13 +294,17 @@ export class Splash
         this.waterSprite.visible = value;
     }
 
+    remove() {
+        this.thing.sprite.removeChild(this.waterSprite);
+    }
+
     update(dt)
     {
         let tile = this.thing.getTileUnder();
 
         if (tile && tile.type === 'water' && this.thing.fh === 0)
         {
-            if (!this.visible) {
+            if (!this.visible && this.thing.isOnCamera && this.playSound) {
                 Audio.playSound(RES.SPLASH_SND);
             }
             this.visible = true;

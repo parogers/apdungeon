@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Shadow, Thing, Hitbox } from './thing';
+import { Splash, Shadow, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -43,7 +43,10 @@ export class DeathAnimation extends Thing
         if (this.state === this.STATE_FLIP)
         {
             if (this.monster.shadow) {
-                this.monster.shadow.visible = false;
+                this.monster.shadow.remove();
+            }
+            if (this.monster.splash) {
+                this.monster.splash.remove();
             }
             this.monster.sprite.y -= 3; // TODO - magic number
             this.monster.sprite.scale.y = -1;
@@ -93,11 +96,8 @@ export class Snake extends Thing
         this.snakeSprite = new PIXI.Sprite(this.frames[0]);
         this.snakeSprite.anchor.set(0.5, 6.5/8);
         this.sprite.addChild(this.snakeSprite);
-        // Make the splash/water sprite
-        this.waterSprite = Utils.createSplashSprite();
-        this.waterSprite.y = -1.25;
-        this.sprite.addChild(this.waterSprite);
         this.shadow = new Shadow(this, this.shadowType);
+        this.splash = new Splash(this, this.splashOffset, false);
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_PACING;
@@ -108,6 +108,10 @@ export class Snake extends Thing
 
     get shadowType() {
         return Shadow.MEDIUM;
+    }
+
+    get splashOffset() {
+        return 0;
     }
 
     get width() {
@@ -170,7 +174,9 @@ export class Snake extends Thing
             this.velx = 0;
         }
 
+        this.splash.update(dt);
         this.shadow.update(dt);
+        this.shadow.visible = !this.splash.visible;
 
         if (this.velx != 0) {
             this.frame += 2*dt;
@@ -241,7 +247,6 @@ export class Rat extends Snake
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
         this.snakeSprite.texture = this.frames[0];
-        this.waterSprite.y = -0.9;
         this.shadow.shadowSprite.anchor.set(0.5, -0.1);
     }
 
@@ -272,7 +277,6 @@ export class Scorpion extends Snake
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
         this.snakeSprite.texture = this.frames[0];
-        this.waterSprite.y = -0.85;
         this.snakeSprite.anchor.set(0.5, 1);
     }
 }

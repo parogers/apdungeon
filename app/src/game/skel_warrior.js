@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Shadow, TrackMover, Thing, Hitbox } from './thing';
+import { Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
@@ -61,11 +61,7 @@ export class SkelWarrior extends Thing
         this.sprite.addChild(this.monsterSprite);
         this.sprite.scale.x = -1;
         this.shadow = new Shadow(this, Shadow.SMALL);
-
-        // Make the splash/water sprite
-        this.waterSprite = Utils.createSplashSprite();
-        this.waterSprite.y = -0.5;
-        this.sprite.addChild(this.waterSprite);
+        this.splash = new Splash(this, 0, false);
         this.knocked = 0;
         // Where the skeleton was (relative to the player) when it started charging
         this.chargeOffset = 0;
@@ -108,7 +104,9 @@ export class SkelWarrior extends Thing
             this.updateChangeTrack(dt);
         }
         this.incrementFrame(dt);
+        this.splash.update(dt);
         this.shadow.update(dt);
+        this.shadow.visible = !this.splash.visible;
     }
 
     // Keep distance from the player
