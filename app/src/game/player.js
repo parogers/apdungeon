@@ -35,6 +35,54 @@ const JUMP_ACCEL = -1000;
 const STATE_IDLE = 0;
 const STATE_CHANGING_TRACK = 1;
 
+/* Tracks something taking damage. It tracks how long to flash the sprite 
+ * red and the damage cooldown time. */
+class DamageTimer
+{
+    constructor(sprite)
+    {
+        this.sprite = sprite;
+        // How long to flash the sprite red
+        this.flashTimeout = 0.1;
+        // How long we should be immune to damage after taking some
+        // (ie damage cooldown)
+        this.damageTimeout = 0.5;
+        // The timers for the above timeouts
+        this.flashTimer = 0;
+        this.damageTimer = 0;
+    }
+
+    get expired() {
+        return (this.damageTimer <= 0 && this.flashTimer <= 0);
+    }
+
+    start()
+    {
+        this.damageTimer = this.damageTimeout;
+        this.flashTimer = this.flashTimeout;
+    }
+
+    // Returns true/false if the timer has expired
+    update(dt)
+    {
+        if (this.expired) {
+            return true;
+        }
+        // Flash the red for a bit
+        if (this.flashTimer > 0)
+        {
+            this.flashTimer -= dt;
+            if (this.flashTimer <= 0) {
+                this.sprite.tint = NO_TINT;
+            } else {
+                this.sprite.tint = DAMAGE_TINT;
+            }
+        }
+        this.damageTimer -= dt;
+        return this.expired;
+    }
+}
+
 export class Player extends Thing
 {
     constructor(controls)
@@ -76,7 +124,6 @@ export class Player extends Thing
         this.walkFPS = 10;
         // Process of dying (showing animation)
         this.dying = false;
-        // Actually dead
         this.dead = false;
         this.lungeTimer = 0;
         // The number of kills (stored by monster name). Also stores the 
@@ -106,17 +153,15 @@ export class Player extends Thing
         this.shadow = new Shadow(this, Shadow.MEDIUM);
         this.flame = new Flame(this, Flame.SMALL);
 
-        // Minimum amount of time after taking damage, until the player can be
-        // damaged again.
-        this.damageCooldown = 0.5;
-        // The timer used for tracking the cooldown
-        this.damageTimer = 0;
+        // Timer for regular damage
+        this.damageTimer = new DamageTimer(this.spriteChar);
+        // Timer for fire based damage (eg running through lava) This is a
+        // separate timer because we don't want the player to be able to hide
+        // from a larger source of damage (ie boss) by hiding in lava.
+        this.fireDamageTimer = new DamageTimer(this.spriteChar);
 
         this.weaponSlot = null;
 
-        // Knockback timer and speed
-        this.knockedTimer = 0;
-        this.knocked = 0;
         // Weapon slots are used to manage the weapon sprite. (ie attack and
         // running animations, etc) We add both slot sprites to the player
         // sprite, then use the 'visible' flag to control which is rendered.
@@ -353,17 +398,6 @@ export class Player extends Thing
                 this.moveToTrack(nextTrack);
             }
 
-            if (this.damageTimer > 0)
-            {
-                this.damageTimer -= dt;
-                if (this.damageTimer <= 0 || 
-                    this.damageCooldown-this.damageTimer > 0.1) 
-                {
-                    // Stop flashing red
-                    this.spriteChar.tint = NO_TINT;
-                }
-            }
-
             if (this.running)
             {
                 this.sprite.x += this.maxSpeed*dt;
@@ -398,11 +432,20 @@ export class Player extends Thing
             }
         }
 
+        this.damageTimer.update(dt);
+
         // Update shadow and splash components
         this.shadow.update(dt);
         this.flame.update(dt);
         this.splash.update(dt);
         this.shadow.visible = !this.splash.visible && !this.flame.visible;
+
+        if (this.flame.visible)
+        {
+            // We're currently on fire
+            this.takeDamage(1, 'fire');
+        }
+        this.fireDamageTimer.update(dt);
 
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;
@@ -487,38 +530,38 @@ export class Player extends Thing
 
     takeDamage(amt, src)
     {
-        if (this.damageTimer <= 0) 
+        if (src === 'fire')
+        {
+            if (this.fireDamageTimer.expired)
+            {
+                this.health -= amt;
+                this.fireDamageTimer.start();
+                Audio.playSound(RES.HIT_SND);
+            }
+        }
+        else if (this.damageTimer.expired)
         {
             // Adjust the damage parameters based on our armour
-            var cooldown = this.damageCooldown;
-            var knockedVel = 100;
-            var knockedTimer = 0.1;
+            let timeout = this.damageTimeout;
 
+            /*
             if (this.armour === Item.Table.LEATHER_ARMOUR) {
-                cooldown = this.damageCooldown*1.25;
-                knockedVel = 90;
-                knockedTimer = 0.08;
+                timeout = this.damageTimeout*1.25;
                 if (Utils.randint(1, 4) === 1) {
                     if (amt > 1) amt--;
                 }
             } else if (this.armour === Item.Table.STEEL_ARMOUR) {
-                cooldown = this.damageCooldown*1.5;
-                knockedVel = 80;
-                knockedTimer = 0.05;
+                timeout = this.damageTimeout*1.5;
                 if (Utils.randint(1, 2) === 1) {
                     amt--;
                 }
-            }
+            }*/
 
             Audio.playSound(RES.HIT_SND);
 
             // Take damage and have the player flash red for a moment
             this.health -= amt;
-            this.damageTimer = this.damageCooldown;
-            this.spriteChar.tint = DAMAGE_TINT;
-            // Knock the player back a bit too
-            this.knocked = knockedVel*Math.sign(this.sprite.x - src.sprite.x);
-            this.knockedTimer = knockedTimer;
+            this.damageTimer.start();
         }
     }
 
