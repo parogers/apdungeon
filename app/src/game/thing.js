@@ -275,6 +275,7 @@ export class Splash
         this.thing = thing;
         this.playSound = playSound;
         this.enabled = true;
+        this.timer = 0;
         this.waterSprite = new PIXI.Sprite();
         this.waterSprite.anchor.set(0.5, 0.5);
         this.waterSprite.visible = false;
@@ -312,6 +313,16 @@ export class Splash
         else
         {
             this.visible = false;
+        }
+
+        // Animate the splash a little bit (expand/contract as if the thing
+        // is bobbing in the water)
+        this.timer += dt;
+        if (this.visible)
+        {
+            this.waterSprite.scale.set(
+                1 + 0.08*Math.sin(this.timer*5)**2, 1
+            );
         }
     }
 }
@@ -359,5 +370,3 @@ export class Flame
 Flame.SMALL = 'flame_small';
 Flame.MEDIUM = 'flame_medium';
 Flame.LARGE = 'flame_large';
-
-
