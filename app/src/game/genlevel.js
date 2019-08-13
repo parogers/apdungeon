@@ -113,8 +113,8 @@ export function generateLevel(levelNum)
 {
     let bg = new Compound();
     bg.addChunk(new Chunk(Utils.getChunk('start')));
+    bg.addChunk(new Chunk(Utils.getChunk('lavatest')));
     for (let n = 0; n < 10; n++) {
-        bg.addChunk(new Chunk(Utils.getChunk('straight')));
         bg.addChunk(new Chunk(Utils.getChunk('straight2')));
     }
 
@@ -146,8 +146,8 @@ export function generateLevel(levelNum)
         else if (n === 1) monster = new Rat();
         else if (n === 2) monster = new Scorpion();
 
-        monster.sprite.x = x;
-        monster.sprite.y = level.getTrack(randint(0, 2)).y-1;
+        monster.fx = x;
+        monster.track = level.getTrack(randint(0, 2));
         level.addThing(monster);
         x += randint(40, 120);
     }
@@ -156,6 +156,11 @@ export function generateLevel(levelNum)
     mon.fx = 90;
     mon.track = level.getMiddleTrack();
     level.addThing(mon);
+
+    /*let mon = new Bat();
+    mon.fx = 90;
+    mon.track = level.getMiddleTrack();
+    level.addThing(mon);*/
 
     // First level in the game. Add a chest of starter items. Have the 
     // chest eject items to the right away from the first NPC. (so none

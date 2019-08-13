@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="20" height="5" tilewidth="8" tileheight="8" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="Tileset2.tsx"/>
+ <layer id="1" name="background" width="20" height="5">
+  <data encoding="csv">
+40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,
+72,72,59,72,72,72,72,72,59,72,72,72,59,72,72,72,59,72,72,72,
+2,2,2,2,82,82,82,82,2,2,2,2,2,2,2,2,82,2,2,2,
+2,2,2,2,82,82,82,82,2,2,2,82,2,2,2,2,82,2,2,82,
+2,2,2,2,2,2,2,2,2,2,2,82,82,82,2,2,2,2,2,82
+</data>
+ </layer>
+</map>

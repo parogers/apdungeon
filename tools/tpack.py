@@ -308,7 +308,7 @@ frames += gen_grid((66, 23), (5, 2), 'shadow_goblin')
 frames += gen_grid((64, 6), (8, 3), 'rippling_water')
 frames += gen_grid((64, 6), (8, 3), 'treading_water')
 frames += gen_grid((1, 10), (8, 8), [['blood1', 'blood2', 'blood3', 'blood4']])
-frames += gen_grid((1, 37), (8, 8), [['dust1', 'dust2', 'dust3', 'dust4']])
+frames += gen_grid((1, 37), (8, 8), [['dust1', 'dust2', 'dust3', 'dust4', 'flame_small', 'flame_medium', 'flame_large']])
 frames += gen_grid((37, 10), (8, 8), [['chest_closed', 'chest_open']])
 
 out = HEADER

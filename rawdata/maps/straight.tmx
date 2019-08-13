@@ -11,11 +11,6 @@
 </data>
  </layer>
  <objectgroup id="3" name="things">
-  <object id="3" gid="81" x="64.375" y="23.125" width="8" height="8"/>
-  <object id="4" gid="81" x="64.375" y="31.625" width="8" height="8"/>
-  <object id="5" gid="81" x="64.5" y="39.25" width="8" height="8"/>
   <object id="6" gid="81" x="32.25" y="23.25" width="8" height="8"/>
-  <object id="7" gid="81" x="32.625" y="31.25" width="8" height="8"/>
-  <object id="8" gid="81" x="32.5" y="39.5" width="8" height="8"/>
  </objectgroup>
 </map>

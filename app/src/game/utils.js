@@ -86,7 +86,11 @@ Utils.getTileset = function()
 
 Utils.getFrame = function(res, name)
 {
-    return Utils.getTextures(res)[name];
+    let texture = Utils.getTextures(res)[name];
+    if (!texture) {
+        console.log('ERROR: cannot find texture ' + name);
+    }
+    return texture;
 }
 
 Utils.getFrames = function(res, names)

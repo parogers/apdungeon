@@ -315,3 +315,49 @@ export class Splash
         }
     }
 }
+
+
+// Adds an "on fire" effect to a thing whenever it moves over lava
+export class Flame
+{
+    constructor(thing, size)
+    {
+        this.thing = thing;
+        this.flameSprite = new PIXI.Sprite(
+            Utils.getFrame(RES.MAP_OBJS, size || 'flame_small')
+        );
+        this.flameSprite.anchor.set(0.5, 1);
+        this.thing.sprite.addChild(this.flameSprite);
+        this.timer = 0;
+    }
+
+    get visible() {
+        return this.flameSprite.visible;
+    }
+
+    set visible(value) {
+        this.flameSprite.visible = value;
+    }
+
+    update(dt)
+    {
+        let tile = this.thing.getTileUnder();
+
+        this.visible = (tile && tile.type === 'lava' && this.thing.fh === 0);
+        if (this.visible)
+        {
+            this.timer += dt;
+            if (Math.sin(15*this.timer) > 0) {
+                this.flameSprite.scale.set(-1, 1);
+            } else {
+                this.flameSprite.scale.set(1, 1);
+            }
+        }
+    }
+}
+
+Flame.SMALL = 'flame_small';
+Flame.MEDIUM = 'flame_medium';
+Flame.LARGE = 'flame_large';
+
+

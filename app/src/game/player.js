@@ -21,7 +21,7 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
+import { Flame, Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
@@ -104,6 +104,7 @@ export class Player extends Thing
         this.textTimeout = 0;
 
         this.shadow = new Shadow(this, Shadow.MEDIUM);
+        this.flame = new Flame(this, Flame.SMALL);
 
         // Minimum amount of time after taking damage, until the player can be
         // damaged again.
@@ -399,8 +400,9 @@ export class Player extends Thing
 
         // Update shadow and splash components
         this.shadow.update(dt);
+        this.flame.update(dt);
         this.splash.update(dt);
-        this.shadow.visible = !this.splash.visible;
+        this.shadow.visible = !this.splash.visible && !this.flame.visible;
 
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;

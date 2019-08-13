@@ -325,6 +325,9 @@
         "80": {
             "type": "spawn"
         },
+        "81": {
+            "type": "lava"
+        },
         "93": {
             "type": "floor",
             "solid": false
