@@ -94,7 +94,7 @@ export class Snake extends Thing
         this.facing = 1;
         // The actual snake sprite
         this.snakeSprite = new PIXI.Sprite(this.frames[0]);
-        this.snakeSprite.anchor.set(0.5, 6.5/8);
+        this.snakeSprite.anchor.set(0.5, 7/8);
         this.sprite.addChild(this.snakeSprite);
         this.shadow = new Shadow(this, this.shadowType);
         this.splash = new Splash(this, this.splashOffset, false);
@@ -111,7 +111,7 @@ export class Snake extends Thing
     }
 
     get splashOffset() {
-        return 0;
+        return -1;
     }
 
     get width() {
@@ -247,11 +247,15 @@ export class Rat extends Snake
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
         this.snakeSprite.texture = this.frames[0];
-        this.shadow.shadowSprite.anchor.set(0.5, -0.1);
+        //this.shadow.shadowSprite.anchor.set(0.5, -0.1);
     }
 
     get shadowType() {
         return Shadow.THIN;
+    }
+
+    get splashOffset() {
+        return -0.5;
     }
 }
 
