@@ -34,8 +34,9 @@ const JUMP_ACCEL = -1000;
 // How fast the player accelerates while running
 const RUNNING_ACCEL = 500;
 
-const STATE_IDLE = 0;
-const STATE_CHANGING_TRACK = 1;
+const STATE_IDLE = 1;
+const STATE_CHANGING_TRACK = 2;
+const STATE_KNOCKED_BACK = 3;
 
 /* Tracks something taking damage. It tracks how long to flash the sprite 
  * red and the damage cooldown time. */
@@ -118,9 +119,6 @@ export class Player extends Thing
         this.armour = Item.Table.NONE;
         this.bow = Item.Table.NONE;
         this.sword = Item.Table.NONE;
-        // Whether the user has free control over the player (set to false 
-        // during a cutscene)
-        //this.hasControl = true;
         this.dirx = 0;
         this.diry = 0;
         this.running = false;
@@ -367,6 +365,7 @@ export class Player extends Thing
                 this.baseSpeed + RUNNING_ACCEL*dt,
                 this.maxSpeed
             );
+            this.basePos += this.baseSpeed*dt;
         }
         else
         {
@@ -415,10 +414,11 @@ export class Player extends Thing
                 );
                 if (tile && tile.solid) {
                     // The player collided with a wall
+                    this.state = STATE_KNOCKED_BACK;
                 }
             }
 
-            this.basePos = this.fx;
+            this.fx = this.basePos;
 
             // Check for collisions with other things
             this.level.forEachThingHit(
@@ -435,8 +435,7 @@ export class Player extends Thing
             this.frame = 0;
             if (this.running)
             {
-                this.sprite.x += this.maxSpeed*dt;
-                this.basePos = this.fx;
+                this.fx = this.basePos;
             }
             if (this.trackMover.update(dt))
             {
@@ -444,6 +443,9 @@ export class Player extends Thing
                 this.vely = 0;
                 this.state = STATE_IDLE;
             }
+        }
+        else if (this.state === STATE_KNOCKED_BACK)
+        {
         }
 
         this.damageTimer.update(dt);

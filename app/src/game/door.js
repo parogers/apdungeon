@@ -88,6 +88,7 @@ export class EnterScene
             player.fx = this.door.sprite.x;
             player.fy = this.door.sprite.y+1;
             player.zpos = Level.BEHIND_BACKGROUND_POS;
+            player.basePos = player.fx;
             player.controls = new ManualControls();
             player.running = false;
             this.timer = 0.75;
