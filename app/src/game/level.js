@@ -95,7 +95,7 @@ export class Level
         this.exitDoor = null;
 
         let tileHeight = this.compound.getTileHeight();
-        let y = this.compound.getHeight() - 1;
+        let y = this.compound.getHeight() - 2;
         this.tracks = [
             new Track(this, 0, y-tileHeight*2),
             new Track(this, 1, y-tileHeight),
