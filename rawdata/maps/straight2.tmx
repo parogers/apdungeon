@@ -5,17 +5,10 @@
   <data encoding="csv">
 40,40,40,40,40,40,40,40,40,40,
 72,59,70,59,72,72,59,70,72,72,
-2,2,2,2,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,2
+4,4,4,4,4,4,4,4,4,4,
+4,4,4,4,4,4,4,4,4,4,
+4,4,4,4,4,4,4,4,4,4
 </data>
  </layer>
- <objectgroup id="2" name="things">
-  <object id="1" gid="81" x="64.5" y="23.625" width="8" height="8"/>
-  <object id="2" gid="81" x="64.5" y="31.375" width="8" height="8"/>
-  <object id="3" gid="81" x="64.25" y="39.125" width="8" height="8"/>
-  <object id="4" gid="81" x="32.375" y="23.375" width="8" height="8"/>
-  <object id="5" gid="81" x="32.5" y="32" width="8" height="8"/>
-  <object id="6" gid="81" x="32.25" y="39.125" width="8" height="8"/>
- </objectgroup>
+ <objectgroup id="2" name="things"/>
 </map>

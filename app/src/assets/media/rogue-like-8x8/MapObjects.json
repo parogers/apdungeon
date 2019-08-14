@@ -125,6 +125,24 @@
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
+},"flame_small" : {
+    "frame" : {"x":37, "y":37, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"flame_medium" : {
+    "frame" : {"x":46, "y":37, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
+},"flame_large" : {
+    "frame" : {"x":55, "y":37, "w":8, "h":8},
+    "rotated" : false,
+    "trimmed" : false,
+    "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
+    "sourceSize" : {"w":8, "h":8}
 },"chest_closed" : {
     "frame" : {"x":37, "y":10, "w":8, "h":8},
     "rotated" : false,

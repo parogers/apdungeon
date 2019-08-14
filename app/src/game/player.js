@@ -21,7 +21,7 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Shadow, TrackMover, Thing, Hitbox } from './thing';
+import { Flame, Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
@@ -31,15 +31,67 @@ var NO_TINT = 0xFFFFFF;
 
 // Vertical acceleration when jumping
 const JUMP_ACCEL = -1000;
+// How fast the player accelerates while running
+const RUNNING_ACCEL = 500;
 
-const STATE_IDLE = 0;
-const STATE_CHANGING_TRACK = 1;
+const STATE_IDLE = 1;
+const STATE_CHANGING_TRACK = 2;
+const STATE_KNOCKED_BACK = 3;
+
+/* Tracks something taking damage. It tracks how long to flash the sprite 
+ * red and the damage cooldown time. */
+class DamageTimer
+{
+    constructor(sprite)
+    {
+        this.sprite = sprite;
+        // How long to flash the sprite red
+        this.flashTimeout = 0.1;
+        // How long we should be immune to damage after taking some
+        // (ie damage cooldown)
+        this.damageTimeout = 0.5;
+        // The timers for the above timeouts
+        this.flashTimer = 0;
+        this.damageTimer = 0;
+    }
+
+    get expired() {
+        return (this.damageTimer <= 0 && this.flashTimer <= 0);
+    }
+
+    start()
+    {
+        this.damageTimer = this.damageTimeout;
+        this.flashTimer = this.flashTimeout;
+    }
+
+    // Returns true/false if the timer has expired
+    update(dt)
+    {
+        if (this.expired) {
+            return true;
+        }
+        // Flash the red for a bit
+        if (this.flashTimer > 0)
+        {
+            this.flashTimer -= dt;
+            if (this.flashTimer <= 0) {
+                this.sprite.tint = NO_TINT;
+            } else {
+                this.sprite.tint = DAMAGE_TINT;
+            }
+        }
+        this.damageTimer -= dt;
+        return this.expired;
+    }
+}
 
 export class Player extends Thing
 {
     constructor(controls)
     {
         super();
+        this.name = 'player';
         this.controls = controls;
         this.state = STATE_IDLE;
         this.trackMover = null;
@@ -48,6 +100,7 @@ export class Player extends Thing
         // will tend back to it. This is also the position that is tracked
         // by the camera.
         this.basePos = 0;
+        this.baseSpeed = 0;
         this.velx = 0;
         this.vely = 0;
         this.accelx = 0;
@@ -66,16 +119,12 @@ export class Player extends Thing
         this.armour = Item.Table.NONE;
         this.bow = Item.Table.NONE;
         this.sword = Item.Table.NONE;
-        // Whether the user has free control over the player (set to false 
-        // during a cutscene)
-        //this.hasControl = true;
         this.dirx = 0;
         this.diry = 0;
         this.running = false;
         this.walkFPS = 10;
         // Process of dying (showing animation)
         this.dying = false;
-        // Actually dead
         this.dead = false;
         this.lungeTimer = 0;
         // The number of kills (stored by monster name). Also stores the 
@@ -92,9 +141,7 @@ export class Player extends Thing
         this.spriteChar.anchor.set(0.5, 1);
         this.sprite.addChild(this.spriteChar);
         // Setup the sprite for when the player is treading water
-        this.waterSprite = Utils.createSplashSprite();
-        this.waterSprite.y = -1.5;
-        this.sprite.addChild(this.waterSprite);
+        this.splash = new Splash(this, -1.5, true);
 
         // Sprite for showing messages to the player
         this.textSprite = new PIXI.Sprite(renderText("?"));
@@ -105,18 +152,17 @@ export class Player extends Thing
         this.textTimeout = 0;
 
         this.shadow = new Shadow(this, Shadow.MEDIUM);
+        this.flame = new Flame(this, Flame.SMALL);
 
-        // Minimum amount of time after taking damage, until the player can be
-        // damaged again.
-        this.damageCooldown = 0.5;
-        // The timer used for tracking the cooldown
-        this.damageTimer = 0;
+        // Timer for regular damage
+        this.damageTimer = new DamageTimer(this.spriteChar);
+        // Timer for fire based damage (eg running through lava) This is a
+        // separate timer because we don't want the player to be able to hide
+        // from a larger source of damage (ie boss) by hiding in lava.
+        this.fireDamageTimer = new DamageTimer(this.spriteChar);
 
         this.weaponSlot = null;
 
-        // Knockback timer and speed
-        this.knockedTimer = 0;
-        this.knocked = 0;
         // Weapon slots are used to manage the weapon sprite. (ie attack and
         // running animations, etc) We add both slot sprites to the player
         // sprite, then use the 'visible' flag to control which is rendered.
@@ -135,11 +181,6 @@ export class Player extends Thing
         //this.upgradeSword(Item.Table.SMALL_SWORD);
         this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
-    }
-
-    get baseSpeed() {
-        if (this.running) return this.maxSpeed;
-        return 0;
     }
 
     get width() {
@@ -163,8 +204,12 @@ export class Player extends Thing
         return Math.sign(this.sprite.scale.x);
     }
 
-    getFacing() {
-        return this.facing;
+    get inWater() {
+        return this.splash.visible;
+    }
+
+    set inWater(value) {
+        this.splash.visible = value;
     }
 
     /*update(dt)
@@ -313,10 +358,20 @@ export class Player extends Thing
 
     update(dt)
     {
-        if (this.running) {
-            this.velx = this.maxSpeed;
-        } else {
-            this.velx = 0;
+        if (this.running)
+        {
+            // Accelerate up to the maximum running speed
+            // TODO - clean up baseSpeed/basePos stuff (what if the baseSpeed is
+            // set below but runnning is false)
+            this.baseSpeed = Math.min(
+                this.baseSpeed + RUNNING_ACCEL*dt,
+                this.maxSpeed
+            );
+            this.basePos += this.baseSpeed*dt;
+        }
+        else
+        {
+            this.baseSpeed = 0;
         }
 
         if (this.state === STATE_IDLE)
@@ -339,34 +394,36 @@ export class Player extends Thing
                 let diry = Math.sign(this.controls.gesture.dy);
                 let nextTrack = this.level.getTrack(this.track.number + diry);
 
-                this.moveToTrack(nextTrack);
+                this.startMoveToTrack(nextTrack);
             }
             else if (this.track && this.controls.getY() != 0)
             {
                 let diry = Math.sign(this.controls.getY());
                 let nextTrack = this.level.getTrack(this.track.number + diry);
 
-                this.moveToTrack(nextTrack);
-            }
-
-            if (this.damageTimer > 0)
-            {
-                this.damageTimer -= dt;
-                if (this.damageTimer <= 0 || 
-                    this.damageCooldown-this.damageTimer > 0.1) 
-                {
-                    // Stop flashing red
-                    this.spriteChar.tint = NO_TINT;
-                }
+                this.startMoveToTrack(nextTrack);
             }
 
             if (this.running)
             {
                 this.sprite.x += this.maxSpeed*dt;
                 this.frame += this.walkFPS*dt;
+
+                // Check for a collision with a wall
+                let checkPos = this.fx + this.level.tileWidth/2;
+                let tile = this.level.getTileAt(checkPos, this.fy);
+
+                if (tile && tile.solid && checkPos < this.level.getWidth())
+                {
+                    // The player collided with a wall
+                    this.state = STATE_KNOCKED_BACK;
+                    this.running = false;
+                    this.velx = -1.5*this.baseSpeed;
+                    this.takeDamage(1, 'wall');
+                }
             }
 
-            this.basePos = this.fx;
+            this.fx = this.basePos;
 
             // Check for collisions with other things
             this.level.forEachThingHit(
@@ -383,8 +440,7 @@ export class Player extends Thing
             this.frame = 0;
             if (this.running)
             {
-                this.sprite.x += this.maxSpeed*dt;
-                this.basePos = this.fx;
+                this.fx = this.basePos;
             }
             if (this.trackMover.update(dt))
             {
@@ -393,12 +449,58 @@ export class Player extends Thing
                 this.state = STATE_IDLE;
             }
         }
+        else if (this.state === STATE_KNOCKED_BACK)
+        {
+            this.updateKnockedBack(dt);
+        }
 
+        this.damageTimer.update(dt);
+
+        // Update shadow and splash components
         this.shadow.update(dt);
-        
+        this.flame.update(dt);
+        this.splash.update(dt);
+        this.shadow.visible = !this.splash.visible && !this.flame.visible;
+
+        if (this.flame.visible)
+        {
+            // We're currently on fire
+            this.takeDamage(1, 'fire');
+        }
+        this.fireDamageTimer.update(dt);
+
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;
         this.spriteChar.texture = this.frames[frameNum];
+    }
+
+    // The player is being knocked back after hitting a wall
+    updateKnockedBack(dt)
+    {
+        function findTrack(level, xpos)
+        {
+            // Find a track that's not blocked
+            // TODO - prefer tracks that are safe to land on (eg no lava)
+            let x = xpos + level.tileWidth;
+            let w = level.tileWidth;
+            for (let track of level.tracks)
+            {
+                if (!track.checkSolidAt(x, w)) {
+                    return track;
+                }
+            }
+            return null;
+        }
+        this.velx -= this.velx*dt*8;
+        this.baseSpeed = this.velx;
+        this.basePos += this.velx*dt;
+        this.fx = this.basePos;
+        if (Math.abs(this.velx) <= 5)
+        {
+            let track = findTrack(this.level, this.fx);
+            this.running = true;
+            this.startMoveToTrack(track);
+        }
     }
 
     setCharFrames(res, name)
@@ -479,38 +581,38 @@ export class Player extends Thing
 
     takeDamage(amt, src)
     {
-        if (this.damageTimer <= 0) 
+        if (src === 'fire')
+        {
+            if (this.fireDamageTimer.expired)
+            {
+                this.health -= amt;
+                this.fireDamageTimer.start();
+                Audio.playSound(RES.HIT_SND);
+            }
+        }
+        else if (this.damageTimer.expired)
         {
             // Adjust the damage parameters based on our armour
-            var cooldown = this.damageCooldown;
-            var knockedVel = 100;
-            var knockedTimer = 0.1;
+            let timeout = this.damageTimeout;
 
+            /*
             if (this.armour === Item.Table.LEATHER_ARMOUR) {
-                cooldown = this.damageCooldown*1.25;
-                knockedVel = 90;
-                knockedTimer = 0.08;
+                timeout = this.damageTimeout*1.25;
                 if (Utils.randint(1, 4) === 1) {
                     if (amt > 1) amt--;
                 }
             } else if (this.armour === Item.Table.STEEL_ARMOUR) {
-                cooldown = this.damageCooldown*1.5;
-                knockedVel = 80;
-                knockedTimer = 0.05;
+                timeout = this.damageTimeout*1.5;
                 if (Utils.randint(1, 2) === 1) {
                     amt--;
                 }
-            }
+            }*/
 
             Audio.playSound(RES.HIT_SND);
 
             // Take damage and have the player flash red for a moment
             this.health -= amt;
-            this.damageTimer = this.damageCooldown;
-            this.spriteChar.tint = DAMAGE_TINT;
-            // Knock the player back a bit too
-            this.knocked = knockedVel*Math.sign(this.sprite.x - src.sprite.x);
-            this.knockedTimer = knockedTimer;
+            this.damageTimer.start();
         }
     }
 
@@ -621,9 +723,9 @@ export class Player extends Thing
 
     /* Start the player moving onto the given track. Returns true if the player 
      * can move onto the track, and false otherwise. */
-    moveToTrack(track)
+    startMoveToTrack(track)
     {
-        if (this.state !== STATE_IDLE) {
+        if (this.state !== STATE_IDLE && this.state !== STATE_KNOCKED_BACK) {
             return false;
         }
         if (!track) {
@@ -632,13 +734,13 @@ export class Player extends Thing
         if (track.checkSolidAt(this.fx, this.width)) {
             return false;
         }
-        //this.nextTrack = track;
+        // Note: we have the player jump unless they're currently in water
         this.state = STATE_CHANGING_TRACK;
         this.trackMover = new TrackMover(
             this,
             track,
             1.5*this.maxSpeed,
-            JUMP_ACCEL,
+            this.inWater ? 0 : JUMP_ACCEL,
         );
         return true;
     }

@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { TrackMover, Shadow, Thing, Hitbox } from './thing';
+import { TrackMover, Splash, Shadow, Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
@@ -88,6 +88,7 @@ export class Goblin extends Thing
         this.hitbox = new Hitbox(0, -1, 6, 6);
         this.shadow = new Shadow(this, Shadow.GOBLIN);
         this.shadow.shadowSprite.anchor.set(0.5, 0);
+        this.splash = new Splash(this, 0, false);
     }
 
     getDropTable() 
@@ -104,7 +105,7 @@ export class Goblin extends Thing
         if (this.state === STATE_IDLE)
         {
             this.frame = 0;
-            if (this.isOnCamera())
+            if (this.isOnCamera)
             {
                 this.state = STATE_APPROACH;
                 this.attackTimer = this.attackTimeout*2;
@@ -171,7 +172,9 @@ export class Goblin extends Thing
             }
         }
 
+        this.splash.update(dt);
         this.shadow.update(dt);
+        this.shadow.visible = !this.splash.visible;
 
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;

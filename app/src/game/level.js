@@ -95,12 +95,20 @@ export class Level
         this.exitDoor = null;
 
         let tileHeight = this.compound.getTileHeight();
-        let y = this.compound.getHeight() - 1;
+        let y = this.compound.getHeight() - 2;
         this.tracks = [
             new Track(this, 0, y-tileHeight*2),
             new Track(this, 1, y-tileHeight),
             new Track(this, 2, y),
         ];
+    }
+
+    get tileWidth() {
+        return this.compound.getTileWidth();
+    }
+
+    get tileHeight() {
+        return this.compound.getTileHeight();
     }
 
     get basePos() {
@@ -209,7 +217,7 @@ export class Level
             if (thing.update) thing.update(dt);
         }
 
-        if (this.player.velx != 0)
+        if (this.player.baseSpeed != 0)
         {
             // Update the camera to track the player. Have the camera move
             // smoothly towards the player to avoid jumping around.
