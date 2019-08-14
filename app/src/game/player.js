@@ -361,6 +361,8 @@ export class Player extends Thing
         if (this.running)
         {
             // Accelerate up to the maximum running speed
+            // TODO - clean up baseSpeed/basePos stuff (what if the baseSpeed is
+            // set below but runnning is false)
             this.baseSpeed = Math.min(
                 this.baseSpeed + RUNNING_ACCEL*dt,
                 this.maxSpeed
@@ -392,14 +394,14 @@ export class Player extends Thing
                 let diry = Math.sign(this.controls.gesture.dy);
                 let nextTrack = this.level.getTrack(this.track.number + diry);
 
-                this.moveToTrack(nextTrack);
+                this.startMoveToTrack(nextTrack);
             }
             else if (this.track && this.controls.getY() != 0)
             {
                 let diry = Math.sign(this.controls.getY());
                 let nextTrack = this.level.getTrack(this.track.number + diry);
 
-                this.moveToTrack(nextTrack);
+                this.startMoveToTrack(nextTrack);
             }
 
             if (this.running)
@@ -408,13 +410,16 @@ export class Player extends Thing
                 this.frame += this.walkFPS*dt;
 
                 // Check for a collision with a wall
-                let tile = this.level.getTileAt(
-                    this.fx + this.level.tileWidth/2,
-                    this.fy
-                );
-                if (tile && tile.solid) {
+                let checkPos = this.fx + this.level.tileWidth/2;
+                let tile = this.level.getTileAt(checkPos, this.fy);
+
+                if (tile && tile.solid && checkPos < this.level.getWidth())
+                {
                     // The player collided with a wall
                     this.state = STATE_KNOCKED_BACK;
+                    this.running = false;
+                    this.velx = -1.5*this.baseSpeed;
+                    this.takeDamage(1, 'wall');
                 }
             }
 
@@ -446,6 +451,7 @@ export class Player extends Thing
         }
         else if (this.state === STATE_KNOCKED_BACK)
         {
+            this.updateKnockedBack(dt);
         }
 
         this.damageTimer.update(dt);
@@ -466,6 +472,35 @@ export class Player extends Thing
         // Update animation
         let frameNum = (this.frame|0) % this.frames.length;
         this.spriteChar.texture = this.frames[frameNum];
+    }
+
+    // The player is being knocked back after hitting a wall
+    updateKnockedBack(dt)
+    {
+        function findTrack(level, xpos)
+        {
+            // Find a track that's not blocked
+            // TODO - prefer tracks that are safe to land on (eg no lava)
+            let x = xpos + level.tileWidth;
+            let w = level.tileWidth;
+            for (let track of level.tracks)
+            {
+                if (!track.checkSolidAt(x, w)) {
+                    return track;
+                }
+            }
+            return null;
+        }
+        this.velx -= this.velx*dt*8;
+        this.baseSpeed = this.velx;
+        this.basePos += this.velx*dt;
+        this.fx = this.basePos;
+        if (Math.abs(this.velx) <= 5)
+        {
+            let track = findTrack(this.level, this.fx);
+            this.running = true;
+            this.startMoveToTrack(track);
+        }
     }
 
     setCharFrames(res, name)
@@ -688,9 +723,9 @@ export class Player extends Thing
 
     /* Start the player moving onto the given track. Returns true if the player 
      * can move onto the track, and false otherwise. */
-    moveToTrack(track)
+    startMoveToTrack(track)
     {
-        if (this.state !== STATE_IDLE) {
+        if (this.state !== STATE_IDLE && this.state !== STATE_KNOCKED_BACK) {
             return false;
         }
         if (!track) {
