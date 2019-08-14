@@ -31,6 +31,8 @@ var NO_TINT = 0xFFFFFF;
 
 // Vertical acceleration when jumping
 const JUMP_ACCEL = -1000;
+// How fast the player accelerates while running
+const RUNNING_ACCEL = 500;
 
 const STATE_IDLE = 0;
 const STATE_CHANGING_TRACK = 1;
@@ -97,6 +99,7 @@ export class Player extends Thing
         // will tend back to it. This is also the position that is tracked
         // by the camera.
         this.basePos = 0;
+        this.baseSpeed = 0;
         this.velx = 0;
         this.vely = 0;
         this.accelx = 0;
@@ -180,11 +183,6 @@ export class Player extends Thing
         //this.upgradeSword(Item.Table.SMALL_SWORD);
         this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
-    }
-
-    get baseSpeed() {
-        if (this.running) return this.maxSpeed;
-        return 0;
     }
 
     get width() {
@@ -362,10 +360,17 @@ export class Player extends Thing
 
     update(dt)
     {
-        if (this.running) {
-            this.velx = this.maxSpeed;
-        } else {
-            this.velx = 0;
+        if (this.running)
+        {
+            // Accelerate up to the maximum running speed
+            this.baseSpeed = Math.min(
+                this.baseSpeed + RUNNING_ACCEL*dt,
+                this.maxSpeed
+            );
+        }
+        else
+        {
+            this.baseSpeed = 0;
         }
 
         if (this.state === STATE_IDLE)
@@ -402,6 +407,15 @@ export class Player extends Thing
             {
                 this.sprite.x += this.maxSpeed*dt;
                 this.frame += this.walkFPS*dt;
+
+                // Check for a collision with a wall
+                let tile = this.level.getTileAt(
+                    this.fx + this.level.tileWidth/2,
+                    this.fy
+                );
+                if (tile && tile.solid) {
+                    // The player collided with a wall
+                }
             }
 
             this.basePos = this.fx;

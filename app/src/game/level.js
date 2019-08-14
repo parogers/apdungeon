@@ -103,6 +103,14 @@ export class Level
         ];
     }
 
+    get tileWidth() {
+        return this.compound.getTileWidth();
+    }
+
+    get tileHeight() {
+        return this.compound.getTileHeight();
+    }
+
     get basePos() {
         return this.player.basePos;
     }
@@ -209,7 +217,7 @@ export class Level
             if (thing.update) thing.update(dt);
         }
 
-        if (this.player.velx != 0)
+        if (this.player.baseSpeed != 0)
         {
             // Update the camera to track the player. Have the camera move
             // smoothly towards the player to avoid jumping around.

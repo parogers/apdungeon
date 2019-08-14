@@ -200,6 +200,10 @@ export class Chunk
         return this.sprite.height;
     }
 
+    getTileWidth() {
+        return this.tileset.tileWidth;
+    }
+
     getTileHeight() {
         return this.tileset.tileHeight;
     }
@@ -218,6 +222,10 @@ export class Compound
         this.width = 0;
         this.height = 0;
         this.level = null;
+    }
+
+    getTileWidth() {
+        return this.chunks[0].getTileWidth();
     }
 
     getTileHeight() {
