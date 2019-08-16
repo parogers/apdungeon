@@ -116,7 +116,7 @@ Round.prototype.update = function(dt)
             // Still waiting for the next spawn to start
             this.spawns[0].roundDelay -= dt;
         } else {
-            var spawn = this.spawns.shift();
+            let spawn = this.spawns.shift();
             spawn.activate();
             this.running.push(spawn);
         }
@@ -176,10 +176,10 @@ Spawn.prototype.activate = function()
     // Start the monster somewhere off screen either left or right
     this.monster.sprite.x = this.level.camera.x + this.level.camera.width/2 + 
         this.direction*(this.level.camera.width/2+4);
-    var offset = 0;
+    let offset = 0;
 
     // Find some clear space to spawn the monster (ie don't spawn in a wall)
-    var y = this.level.findClearSpace(this.monster.sprite.x, this.ypos);
+    let y = this.level.findClearSpace(this.monster.sprite.x, this.ypos);
     if (y === null) {
         console.log("WARNING: can't spawn monster near " + this.ypos);
         this.monster.dead = true;
@@ -252,7 +252,7 @@ export function DropSpawn(level, monster, x, y)
     this.shadow.sprite.x = x;
     this.shadow.sprite.y = y;
     // The monster as it's falling
-    var img = this.monster.dropFrame || this.monster.frames[0];
+    let img = this.monster.dropFrame || this.monster.frames[0];
     this.falling = new Scenery(img);
     this.timer = 0.5;
     this.fallSpeed = 40;
@@ -260,7 +260,7 @@ export function DropSpawn(level, monster, x, y)
 
 DropSpawn.prototype.activate = function()
 {
-    var y = this.level.findClearSpace(this.xpos, this.ypos);
+    let y = this.level.findClearSpace(this.xpos, this.ypos);
     if (y === null) {
         console.log("WARNING: can't spawn monster near " + this.ypos);
         this.monster.dead = true;
@@ -312,7 +312,7 @@ export function WaterSpawn(level, monster, x, y)
     this.monster = monster;
     this.xpos = x;
     this.ypos = y;
-    var img = Utils.getFrame(RES.MAPTILES, "rippling_water");
+    let img = Utils.getFrame(RES.MAPTILES, "rippling_water");
     this.water = new Scenery(img);
     this.water.sprite.anchor.set(0.5, 0.7);
     this.water.sprite.x = x;

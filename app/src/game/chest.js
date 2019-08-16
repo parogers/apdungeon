@@ -54,12 +54,12 @@ export class Chest {
             if (this.timer <= 0) {
                 // Eject the contents from the chest
                 for (let item of this.items) {
-                    var gnd = new GroundItem(
+                    let gnd = new GroundItem(
                         item, 
                         this.sprite.x+1*Utils.randUniform(0, 1), 
                         this.sprite.y+2*Utils.randUniform(0.1, 1));
                     this.level.addThing(gnd);
-                    var spd = Utils.randUniform(6, 12);
+                    let spd = Utils.randUniform(6, 12);
                     if (this.options && this.options.ejectX) {
                         gnd.velx = this.options.ejectX*spd;
                     } else {

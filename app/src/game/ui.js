@@ -28,17 +28,17 @@ export function renderText(lines, options)
 {
     if (!(lines instanceof Array)) lines = [lines];
 
-    var maxWidth = 0;
-    var cnt = new PIXI.Container();
-    var y = 1;
-    for (var row = 0; row < lines.length; row++) 
+    let maxWidth = 0;
+    let cnt = new PIXI.Container();
+    let y = 1;
+    for (let row = 0; row < lines.length; row++) 
     {
-        var x = 1;
-        var msg = lines[row];
-        var height = 0;
-        for (var n = 0; n < msg.length; n++) 
+        let x = 1;
+        let msg = lines[row];
+        let height = 0;
+        for (let n = 0; n < msg.length; n++) 
         {
-            var sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
+            let sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
             sprite.anchor.set(0,0);
             sprite.x = x;
             sprite.y = y;
@@ -53,14 +53,14 @@ export function renderText(lines, options)
     }
 
     if (options && options.blackBG) {
-        var bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
+        let bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
         bg.scale.set(maxWidth/bg.width, y/bg.height);
         cnt.addChildAt(bg, 0);
         // TODO - why doesn't this work for render textures?
         //renderer.backgroundColor = 0x000000;
     }
 
-    var renderTexture = PIXI.RenderTexture.create(maxWidth, y);
+    let renderTexture = PIXI.RenderTexture.create(maxWidth, y);
     Render.getRenderer().render(cnt, renderTexture);
     return renderTexture;
 }
@@ -80,7 +80,7 @@ export class HealthUI
         this.halfHeart = Utils.getFrame(RES.UI, "half_bigheart");
         this.emptyHeart = Utils.getFrame(RES.UI, "empty_bigheart");
 
-        for (var n = 0; n < 3; n++) {
+        for (let n = 0; n < 3; n++) {
             this.addHeart();
         }
     }
@@ -88,11 +88,11 @@ export class HealthUI
     // Adds a heart to the UI
     addHeart()
     {
-        var heart = new PIXI.Sprite(this.fullHeart);
+        let heart = new PIXI.Sprite(this.fullHeart);
         this.hearts.push(heart);
         this.sprite.addChild(heart);
 
-        var x = -this.hearts.length*(this.fullHeart.width+1);
+        let x = -this.hearts.length*(this.fullHeart.width+1);
         for (let heart of this.hearts) {
             heart.x = x;
             x += (this.fullHeart.width+1);
@@ -120,8 +120,8 @@ export class HealthUI
             this.removeHeart();
         }
         // Synchronize the hearts to reflect the player's health
-        for (var n = 0; n < this.hearts.length; n++) {
-            var img = null;
+        for (let n = 0; n < this.hearts.length; n++) {
+            let img = null;
             if (n < Math.floor(this.player.health/2)) {
                 img = this.fullHeart;
             } else if (n < Math.floor((this.player.health+1)/2)) {
@@ -163,7 +163,7 @@ export class ItemSlotUI
 
         if (args && args.showCount) 
         {
-            var img = renderText("--");
+            let img = renderText("--");
             this.textSprite = new PIXI.Sprite(img);
             this.textSprite.anchor.set(0.5, 0.5);
             this.textSprite.x = 0;
@@ -224,7 +224,7 @@ export class InventoryUI
             this.arrowSlot,
             this.coinSlot,
         ];
-        var x = 0;
+        let x = 0;
         for (let slot of this.slots) {
             this.sprite.addChild(slot.sprite);
             slot.sprite.x = x;

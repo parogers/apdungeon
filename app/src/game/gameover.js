@@ -43,7 +43,7 @@ export class GameOverScreen
         this.DONE = 5;
 
         this.screenHeight = 80;
-        var scale = Render.getRenderer().height/this.screenHeight;
+        let scale = Render.getRenderer().height/this.screenHeight;
 
         this.screenWidth = Render.getRenderer().width/scale;
 
@@ -68,9 +68,9 @@ export class GameOverScreen
         this.row = 0;
         this.col = 0;
         this.killStats = [];
-        var names = Object.keys(levelScreen.player.kills);
-        for (var name of names) {
-            var stat = levelScreen.player.kills[name];
+        let names = Object.keys(levelScreen.player.kills);
+        for (let name of names) {
+            let stat = levelScreen.player.kills[name];
             this.killStats.push({
                 count: stat.count,
                 img: stat.img,
@@ -128,10 +128,10 @@ export class GameOverScreen
         case this.SHOWING_KILLS:
             while (this.killStats.length > 0) {
                 // Show the next killed monster
-                var xpos = 10+this.col*this.screenWidth/2;
-                var ypos = 30+this.row*11;
-                var stat = this.killStats.shift();
-                var monster = new PIXI.Sprite(stat.img);
+                let xpos = 10+this.col*this.screenWidth/2;
+                let ypos = 30+this.row*11;
+                let stat = this.killStats.shift();
+                let monster = new PIXI.Sprite(stat.img);
                 monster.anchor.set(0.5, 1);
                 monster.x = xpos;
                 monster.y = ypos;

@@ -49,7 +49,7 @@ export class Scenery
         }
         if (this.frames.length > 1) {
             this.frame += this.fps*dt;
-            var img = this.frames[(this.frame|0) % this.frames.length];
+            let img = this.frames[(this.frame|0) % this.frames.length];
             this.sprite.texture = img;
         }
     }

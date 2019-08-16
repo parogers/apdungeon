@@ -158,8 +158,8 @@ export class Snake extends Thing
             this.snakeSprite.texture = this.frames[1];
             // Slide backwards from the hit
             if (this.knockedTimer > 0) {
-                var dx = this.knocked*dt;
-                var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
+                let dx = this.knocked*dt;
+                let tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
                 if (!tile.solid) {
                     this.sprite.x += dx;
                 }

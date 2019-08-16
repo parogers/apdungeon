@@ -24,11 +24,11 @@ import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
 
-var STATE_IDLE = 0;
-var STATE_CHARGING = 1;
-var STATE_RETREAT = 2;
-var STATE_DEAD = 3;
-var STATE_CHANGE_TRACK = 4;
+const STATE_IDLE = 0;
+const STATE_CHARGING = 1;
+const STATE_RETREAT = 2;
+const STATE_DEAD = 3;
+const STATE_CHANGE_TRACK = 4;
 
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
@@ -217,7 +217,7 @@ export class SkelWarrior extends Thing
         }
 
         // Add some random dust, but only if we're not currently in water
-        var tile = this.level.getTileAt(this.x, this.y);
+        let tile = this.level.getTileAt(this.x, this.y);
         if (!tile.water) {
             this.level.createBloodSpatter(
                 this.x, this.y-1,

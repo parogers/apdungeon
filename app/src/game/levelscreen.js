@@ -202,7 +202,7 @@ export class LevelScreen
     handleResize()
     {
         if (this.level) {
-            var scale = Math.min(
+            let scale = Math.min(
                 Render.getRenderer().width / this.level.camera.width,
                 Render.getRenderer().height / this.level.camera.height);
             this.stage.scale.set(scale);

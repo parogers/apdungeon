@@ -26,8 +26,8 @@ import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
 // What tint of colour to use when the player takes damage
-var DAMAGE_TINT = 0xFF0000;
-var NO_TINT = 0xFFFFFF;
+const DAMAGE_TINT = 0xFF0000;
+const NO_TINT = 0xFFFFFF;
 
 // Vertical acceleration when jumping
 const JUMP_ACCEL = -1000;
@@ -214,8 +214,8 @@ export class Player extends Thing
 
     /*update(dt)
       {
-      var dirx = 0;
-      var diry = 0;
+      let dirx = 0;
+      let diry = 0;
 
       if (this.dead) return;
 
@@ -233,7 +233,7 @@ export class Player extends Thing
       this.frame = this.dyingFrames.length-1;
       this.dead = true;
       }
-      var frame = this.dyingFrames[(this.frame)|0];
+      let frame = this.dyingFrames[(this.frame)|0];
       this.spriteChar.texture = frame;
       return;
       }
@@ -299,16 +299,16 @@ export class Player extends Thing
       this.frame = 0;
       }
 
-      //var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
+      //let speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
       //if (speed > this.maxSpeed) {
       //this.velx *= this.maxSpeed/speed;
       //this.vely *= this.maxSpeed/speed;
       //}
 
       // Handle left/right movement
-      var w = this.spriteChar.texture.width*0.75;
+      let w = this.spriteChar.texture.width*0.75;
       if (this.velx) {
-      var x = this.sprite.x + this.velx*dt;
+      let x = this.sprite.x + this.velx*dt;
       // Keep the player visible to the camera
       if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
       x-w/2 >= this.level.camera.x && 
@@ -320,7 +320,7 @@ export class Player extends Thing
       }
       // Handle up/down movement
       if (this.vely) {
-      var y = this.sprite.y + this.vely*dt;
+      let y = this.sprite.y + this.vely*dt;
       if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
       this.sprite.y = y;
       } else {
@@ -334,7 +334,7 @@ export class Player extends Thing
       }
 
       // Make a splashy sound when we enter water
-      var tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
+      let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
       if (tile.water) {
       if (!this.waterSprite.visible) 
       Audio.playSound(RES.SPLASH_SND);
@@ -352,7 +352,7 @@ export class Player extends Thing
       this.handleCollisionCallback);
 
       // Update animation
-      var frame = this.frames[((this.frame*10)|0) % this.frames.length];
+      let frame = this.frames[((this.frame*10)|0) % this.frames.length];
       this.spriteChar.texture = frame;
       }*/
 
@@ -528,7 +528,7 @@ export class Player extends Thing
     updatePlayerAppearance()
     {
         // Update the player character sprite, based on the armour we're wearing
-        var img = "melee1";
+        let img = "melee1";
         if (this.armour === Item.Table.LEATHER_ARMOUR) img = "melee2";
         else if (this.armour == Item.Table.STEEL_ARMOUR) img = "melee3";
         this.setCharFrames(RES.FEMALE_MELEE, img);
@@ -536,10 +536,10 @@ export class Player extends Thing
         // ...
         // Update the bow sprite
         // ...
-        var b = (this.weaponSlot === this.bowWeaponSlot);
+        let b = (this.weaponSlot === this.bowWeaponSlot);
         this.bowWeaponSlot.sprite.visible = b;
 
-        var b = (this.weaponSlot === this.swordWeaponSlot);
+        b = (this.weaponSlot === this.swordWeaponSlot);
         this.swordWeaponSlot.sprite.visible = b;
 
         if (this.weaponSlot) this.weaponSlot.update(0);
@@ -710,7 +710,7 @@ export class Player extends Thing
 
     showMessage()
     {
-        var lines = Array.prototype.slice.call(arguments);
+        let lines = Array.prototype.slice.call(arguments);
         if (lines.length > 0) {
             this.textSprite.y = -this.height-1;
             this.textSprite.texture = renderText(lines, {blackBG: true})

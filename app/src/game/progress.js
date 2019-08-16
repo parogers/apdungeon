@@ -45,11 +45,11 @@ ProgressBar.prototype.setText = function(text)
 ProgressBar.prototype.update = function(value)
 {
     this.current = value;
-    var canvas = document.createElement("canvas");
+    let canvas = document.createElement("canvas");
     canvas.width = this.width;
     canvas.height = this.height;
 
-    var ctx = canvas.getContext("2d");
+    let ctx = canvas.getContext("2d");
     ctx.fillStyle = "#ddd";
     ctx.fillRect(0, 0, this.width*this.current, this.height);
     ctx.strokeStyle = "#f00";

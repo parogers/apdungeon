@@ -52,10 +52,10 @@ export class TitleScreen
             LevelScreen.getAspectRatio()*this.screenHeight);
         // Calculate the native-to-screen scaling so that the title screen fits
         // the available vertical space.
-        var scale = Render.getRenderer().height/this.screenHeight;
+        let scale = Render.getRenderer().height/this.screenHeight;
 
         // Now figure out how wide the screen is (to fill the space)
-        //var screenWidth = Render.getRenderer().width/scale;
+        //let screenWidth = Render.getRenderer().width/scale;
 
         // The PIXI container for rendering the scene
         this.stage = new PIXI.Container();
@@ -70,7 +70,7 @@ export class TitleScreen
         this.stage.addChild(this.bg);
         this.delay = 0;
 
-        var txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
+        let txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
         txt.x = this.screenWidth/2;
@@ -202,7 +202,7 @@ export class TitleScreen
                 if (this.player.sprite.x > this.screenRight+4) {
                     // New monster chases the player
                     this.monsterChoice++;
-                    var choice = this.monsterChoices[
+                    let choice = this.monsterChoices[
                         this.monsterChoice%this.monsterChoices.length];
                     this.monster.frames = Utils.getFrames(RES.ENEMIES, choice);
                     return "loop";
@@ -250,7 +250,7 @@ export class TitleScreen
     handleResize()
     {
         if (this.stage) {
-            var scale = Math.min(
+            let scale = Math.min(
                 Render.getRenderer().width / this.screenWidth,
                 Render.getRenderer().height / this.screenHeight);
             this.stage.scale.set(scale);

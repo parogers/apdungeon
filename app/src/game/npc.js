@@ -28,7 +28,7 @@ export class NPC
     {
         // Position of the hit box, relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 5, 5);
-        var texture = Utils.getFrame(RES.NPC_TILESET, img || "npc1_south_1");
+        let texture = Utils.getFrame(RES.NPC_TILESET, img || "npc1_south_1");
         this.sprite = new PIXI.Container();
         this.npcSprite = new PIXI.Sprite(texture);
         this.npcSprite.anchor.set(0.5, 1);
@@ -52,7 +52,7 @@ export class NPC
     update(dt)
     {
         // Always face the player
-        var dirx = Math.sign(this.level.player.fx-this.sprite.x);
+        let dirx = Math.sign(this.level.player.fx-this.sprite.x);
         this.npcSprite.scale.x = Math.abs(this.npcSprite.scale.x)*dirx;
 
         if (this.visibleTimer > 0) {

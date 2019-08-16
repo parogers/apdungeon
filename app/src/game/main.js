@@ -59,8 +59,8 @@ export class Game
 
     gameloop()
     {
-        var now = (new Date()).getTime()/1000.0;
-        var dt = 0;
+        let now = (new Date()).getTime()/1000.0;
+        let dt = 0;
         if (this.lastTime !== null) {
             dt = Math.min(1.0/30, now - this.lastTime);
             //dt /= 4;
@@ -135,7 +135,7 @@ export class Game
 
             for (name in PIXI.loader.resources) 
             {
-                var err = PIXI.loader.resources[name].error;
+                let err = PIXI.loader.resources[name].error;
                 if (err) {
                     console.log("Failed to load image: " + name + " (" + err + ")");
                 }
@@ -157,7 +157,7 @@ function loadGraphics(progressCB)
         // Add a random query string when loading the JSON files below. This avoids
         // persistent caching problems, where the browser (eg FF) uses the cached
         // without checking in with the server first.
-        var now = (new Date()).getTime();
+        let now = (new Date()).getTime();
         PIXI.loader.defaultQueryString = "nocache=" + now;
         PIXI.loader
             .add(RES.MALE_MELEE)

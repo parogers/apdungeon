@@ -34,9 +34,9 @@ import { GroundItem } from './grounditem';
 import { Spawn } from './spawn';
 import { Bat } from './bat';
 
-var randint = Utils.randint;
-var randomChoice = Utils.randomChoice;
-var randUniform = Utils.randUniform;
+const randint = Utils.randint;
+const randomChoice = Utils.randomChoice;
+const randUniform = Utils.randUniform;
 
 function monsterEntry(klass, score, addScore)
 {
@@ -81,7 +81,7 @@ function randomTreasures(levelNum)
 // Returns a list of randomly chosen monsters that fall within the budget
 function chooseMonsters(budget)
 {
-    var monsterTable = [
+    let monsterTable = [
         monsterEntry(Snake,       1, 1),
         monsterEntry(Rat,         1, 1),
         monsterEntry(Scorpion,    2, 1),
@@ -90,17 +90,17 @@ function chooseMonsters(budget)
         monsterEntry(Ghost,       5, 4)
     ];
 
-    var picks = [];
+    let picks = [];
     while (true)
     {
         // Compile a list of monster options to choose from
-        var options = [];
+        let options = [];
         for (let entry of monsterTable) {
             if (entry.score <= budget) options.push(entry);
         }
         if (options.length === 0) break;
         // Pick a monster at random
-        var opt = randomChoice(options)
+        let opt = randomChoice(options)
         picks.push(opt.klass);
         budget -= opt.score;
     }
@@ -118,7 +118,7 @@ export function generateLevel(levelNum)
         bg.addChunk(new Chunk(Utils.getChunk('straight2')));
     }
 
-    var level = new Level(bg);
+    let level = new Level(bg);
     for (let chunk of level.compound.chunks)
     {
         chunk.spawnThings();
@@ -165,26 +165,26 @@ export function generateLevel(levelNum)
     // First level in the game. Add a chest of starter items. Have the 
     // chest eject items to the right away from the first NPC. (so none
     // of the items become hidden behind)
-    var items = [
+    let items = [
         Item.Table.COIN,
         Item.Table.COIN, 
         Item.Table.COIN,
         Item.Table.SMALL_SWORD
     ];
-    var chest = new Chest(items, {ejectX: 1});
+    let chest = new Chest(items, {ejectX: 1});
     chest.sprite.x = 60;
     chest.sprite.y = 24;
     level.addThing(chest);
 
     // Add an NPC to give the player some dialog
-    var npc = new NPC();
+    let npc = new NPC();
     npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
     npc.sprite.x = 46;
     npc.sprite.y = 25;
     level.addThing(npc);
 
     // Add an NPC to give the player some dialog
-    var npc = new NPC("npc3_south_1");
+    npc = new NPC("npc3_south_1");
     npc.setDialog("GOOD LUCK!");
     npc.sprite.x = 80;
     npc.sprite.y = 40;

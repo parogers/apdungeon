@@ -64,7 +64,7 @@ export class Gate extends Thing
     {
         // The gate is opening or closing
         if (this.moving !== 0) {
-            var fnum = Math.round(2*this.frameNum);
+            let fnum = Math.round(2*this.frameNum);
             this.frameNum += this.moving*this.fps*dt;
             if (this.frameNum < 0) {
                 // Finished closing

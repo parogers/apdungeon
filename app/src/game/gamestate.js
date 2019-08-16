@@ -52,9 +52,9 @@ export class GameState
         this.enableTouch = false;
 
         window.addEventListener("resize", () => {
-            var div = Render.getContainer();
-            var width = window.innerWidth-5;
-            var height = window.innerHeight-5;
+            let div = Render.getContainer();
+            let width = window.innerWidth-5;
+            let height = window.innerHeight-5;
             div.style.width = width;
             div.style.height = height;
             Render.getRenderer().resize(width, height);

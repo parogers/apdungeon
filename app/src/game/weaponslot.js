@@ -22,9 +22,9 @@ import { Utils } from './utils';
 import { Shadow, Thing, Hitbox } from './thing';
 import { Audio } from './audio';
 
-var ARROW_FLIGHT = 0;
-var ARROW_FALLING = 1;
-var ARROW_DISAPPEAR = 2;
+const ARROW_FLIGHT = 0;
+const ARROW_FALLING = 1;
+const ARROW_DISAPPEAR = 2;
 
 /*********/
 /* Sword */
@@ -167,7 +167,7 @@ export class BowWeaponSlot
 
         this.player.numArrows--;
 
-        var arrow = new Arrow(
+        let arrow = new Arrow(
             this.player,
             this.player.fx,
             this.player.fy,
@@ -212,7 +212,7 @@ export class Arrow extends Thing
 
     update(dt)
     {
-        var level = this.owner.level;
+        let level = this.owner.level;
         if (this.state === ARROW_FLIGHT)
         {
             this.fx += this.velx*dt;
@@ -224,7 +224,7 @@ export class Arrow extends Thing
                 this.removeSelf();
             }
             // Check if the arrow hits a wall
-            var tile = level.getTileAt(
+            let tile = level.getTileAt(
                 this.sprite.x + Math.sign(this.velx)*4,
                 this.sprite.y + this.fh
             );
@@ -239,7 +239,7 @@ export class Arrow extends Thing
                 return;
             }
             // Now check if we've hit an enemy
-            var other = level.checkHit(
+            let other = level.checkHit(
                 this.sprite.x,
                 this.sprite.y, 
                 this.hitbox,
@@ -247,7 +247,7 @@ export class Arrow extends Thing
             );
             if (other && other.handleHit)
             {
-                var ret = other.handleHit(
+                let ret = other.handleHit(
                     this.sprite.x,
                     this.sprite.y,
                     1

@@ -17,19 +17,19 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-var PRIMARY = 90;
-var PRIMARY_ALT = 65;
-var SWAP = 88;
-var SPACE = 32;
-var ARROW_UP = 38;
-var ARROW_LEFT = 37;
-var ARROW_RIGHT = 39;
-var ARROW_DOWN = 40;
-var TEST_KEY = 75;
+const PRIMARY = 90;
+const PRIMARY_ALT = 65;
+const SWAP = 88;
+const SPACE = 32;
+const ARROW_UP = 38;
+const ARROW_LEFT = 37;
+const ARROW_RIGHT = 39;
+const ARROW_DOWN = 40;
+const TEST_KEY = 75;
 
-var DOUBLE_PRESS_TIME = 0.3;
+const DOUBLE_PRESS_TIME = 0.3;
 
-var DEFAULTS = [
+const DEFAULTS = [
     ["up", ARROW_UP],
     ["down", ARROW_DOWN],
     ["left", ARROW_LEFT],
@@ -115,7 +115,7 @@ GameControlsCls.prototype.update = function(dt)
 GameControlsCls.prototype.attachKeyboardEvents = function()
 {
     window.addEventListener("keydown", (event) => {
-        var input = this.inputByKey[event.keyCode];
+        let input = this.inputByKey[event.keyCode];
         if (input && !input.held) 
         {
             // Handle double-pressing the input
@@ -134,7 +134,7 @@ GameControlsCls.prototype.attachKeyboardEvents = function()
     });
 
     window.addEventListener("keyup", (event) => {
-        var input = this.inputByKey[event.keyCode];
+        let input = this.inputByKey[event.keyCode];
         if (input) {
             input.release();
             event.stopPropagation();

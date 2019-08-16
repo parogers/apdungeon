@@ -23,10 +23,10 @@ import { Thing, Hitbox } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
-var GHOST_IDLE = 0;
-var GHOST_ATTACKING = 1;
-var GHOST_HURT = 2;
-var GHOST_DEAD = 3;
+const GHOST_IDLE = 0;
+const GHOST_ATTACKING = 1;
+const GHOST_HURT = 2;
+const GHOST_DEAD = 3;
 
 export class Ghost
 {
@@ -84,7 +84,7 @@ export class Ghost
         this.velx += accelx*dt + 10*Math.cos(this.frame)*dt;
         this.vely += accely*dt + 10*Math.sin(this.frame)*dt;
 
-        var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
+        let speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
         if (speed > this.maxSpeed) {
             this.velx = this.maxSpeed*this.velx/speed;
             this.vely = this.maxSpeed*this.vely/speed;
@@ -101,8 +101,8 @@ export class Ghost
     {
         // Slide backwards from the hit
         if (this.knockedTimer > 0) {
-            var dx = this.knocked*dt;
-            var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
+            let dx = this.knocked*dt;
+            let tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
             if (!tile.solid) {
                 this.sprite.x += dx;
             }
