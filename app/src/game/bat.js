@@ -19,7 +19,8 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Shadow, Thing, Hitbox } from './thing';
+import { Thing, Hitbox } from './thing';
+import { Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';

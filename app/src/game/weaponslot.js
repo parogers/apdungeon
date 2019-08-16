@@ -19,7 +19,7 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Shadow, Thing, Hitbox } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Audio } from './audio';
 
 const ARROW_FLIGHT = 0;
@@ -207,7 +207,6 @@ export class Arrow extends Thing
         this.state = ARROW_FLIGHT;
         this.timer = 0;
         this.hitbox = new Hitbox(0, 0, 8, 4);
-        //this.shadow = new Shadow(this, Shadow.ARROW);
     }
 
     update(dt)
@@ -269,6 +268,5 @@ export class Arrow extends Thing
             this.timer -= dt;
             if (this.timer <= 0) this.removeSelf();
         }
-        //this.shadow.update(dt);
     }
 }

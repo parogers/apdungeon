@@ -21,7 +21,8 @@ import { renderText } from './ui';
 import { RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Flame, Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
+import { TrackMover, Thing, Hitbox } from './thing';
+import { Flame, Splash, Shadow } from './effects';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 

@@ -19,7 +19,8 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { TrackMover, Splash, Shadow, Thing, Hitbox } from './thing';
+import { TrackMover, Thing, Hitbox } from './thing';
+import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
