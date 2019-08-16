@@ -20,7 +20,6 @@
 import { RES } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
-import { LevelDarkness } from './effects';
 import { GroundItem } from './grounditem';
 
 /**********/
@@ -34,8 +33,6 @@ function Camera(w, h)
     this.width = w;
     this.height = h;
 }
-
-//Camera.autoFit
 
 /*********/
 /* Track */
@@ -53,6 +50,61 @@ class Track
         return this.level.checkSolidAt(x, this.y, width);
     }
 };
+
+/*****************/
+/* LevelDarkness */
+/*****************/
+
+export class LevelDarkness
+{
+    constructor()
+    {
+        function renderDarkness(w, h, xrad, yrad)
+        {
+            let texture = PIXI.RenderTexture.create(w, h);
+            let cnt = new PIXI.Container();
+            let dark_shadow = Utils.getFrame(RES.MAP_OBJS, 'dark_shadow_square');
+            let light_shadow = Utils.getFrame(RES.MAP_OBJS, 'light_shadow_square');
+
+            for (let y = 0; y < h; y++)
+            {
+                for (let x = 0; x < w; x++)
+                {
+                    let dist = ((x-w/2)/xrad)**2 + ((y-h/2)/yrad)**2;
+                    let shadow = null;
+
+                    if (dist > 1)
+                    {
+                        shadow = dark_shadow;
+                    }
+                    else if (dist > 0.85)
+                    {
+                        shadow = light_shadow;
+                    }
+                    if (shadow)
+                    {
+                        let sprite = new PIXI.Sprite(shadow);
+                        sprite.x = x;
+                        sprite.y = y;
+                        sprite.scale.set(1, 1);
+                        cnt.addChild(sprite);
+                    }
+                }
+            }
+            Render.getRenderer().render(cnt, texture);
+            return texture;
+        }
+
+        this.sprite = new PIXI.Sprite(
+            renderDarkness(100, 60, 52, 32)
+        );
+        this.sprite.zpos = Level.FRONT_POS;
+    }
+
+    update(dt) {
+        this.sprite.x = this.level.camera.x;
+    }
+}
 
 /*********/
 /* Level */
@@ -87,7 +139,6 @@ export class Level
         this.compound.addToLevel(this);
 
         this.darkness = new LevelDarkness();
-        this.darkness.sprite.zpos = Level.FRONT_POS;
         this.addThing(this.darkness);
         
         this.smoothTracking = true;
