@@ -26,7 +26,6 @@ import { Level } from './level';
 import { Utils } from './utils';
 import { GameControls } from './controls';
 import { Audio } from './audio';
-import { TouchUI } from './touchui';
 
 class TouchControls
 {
@@ -73,7 +72,6 @@ export class LevelScreen
         this.NEXT_LEVEL = 3;
         this.GAME_OVER = 4;
 
-        this.enableTouch = opts.enableTouch || false;
         this.levelNum = 0;
         this.level = null;
         this.state = this.NEW_GAME;
@@ -84,11 +82,6 @@ export class LevelScreen
         this.gameUI = new GameUI();
         this.stage.addChild(this.goMarker.sprite);
         this.stage.addChild(this.gameUI.container);
-
-        if (this.enableTouch) {
-            this.touchUI = new TouchUI();
-            this.stage.addChild(this.touchUI.container);
-        }
     }
 
     destroy()
@@ -98,10 +91,6 @@ export class LevelScreen
             this.level.destroy();
             this.gameUI = null;
             this.level = null;
-        }
-        if (this.touchUI) {
-            this.touchUI.destroy();
-            this.touchUI = null;
         }
     }
 
@@ -177,10 +166,6 @@ export class LevelScreen
         this.gameUI.doLayout(
             level.camera.width, 
             level.camera.height-level.getHeight());
-
-        if (this.touchUI) {
-            this.touchUI.doLayout(level.camera.width, level.getHeight());
-        }
 
         // Put the go marker in the top-right corner of the level area
         this.goMarker.sprite.position.set(level.camera.width-1, 2);

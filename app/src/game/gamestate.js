@@ -47,9 +47,6 @@ export class GameState
 
         this.state = this.SHOW_TITLE_SCREEN;
         this.screen = null;
-        // Whether we should enable touch by default. This is decided based on
-        // what the player does to star the game at the title screen.
-        this.enableTouch = false;
 
         window.addEventListener("resize", () => {
             let div = Render.getContainer();
@@ -82,15 +79,12 @@ export class GameState
             if (this.screen.state === this.screen.NEW_GAME) {
                 this.screen.destroy();
                 this.state = this.NEW_GAME;
-                this.enableTouch = this.screen.touchClicked;
             }
             break;
 
         case this.NEW_GAME:
             // Start a new game
-            this.screen = new LevelScreen({
-                enableTouch: this.enableTouch
-            });
+            this.screen = new LevelScreen();
             this.state = this.PLAYING_GAME;
             break;
 
