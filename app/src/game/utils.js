@@ -112,43 +112,6 @@ Utils.updateDict = function(dict, other)
     }
 }
 
-Utils.renderDarkness = function(w, h, xrad, yrad)
-{
-    let texture = PIXI.RenderTexture.create(w, h);
-    let cnt = new PIXI.Container();
-    let dark_shadow = Utils.getFrame(RES.MAP_OBJS, 'dark_shadow_square');
-    let light_shadow = Utils.getFrame(RES.MAP_OBJS, 'light_shadow_square');
-
-    for (let y = 0; y < h; y++)
-    {
-        for (let x = 0; x < w; x++)
-        {
-            let dist = ((x-w/2)/xrad)**2 + ((y-h/2)/yrad)**2;
-            let shadow = null;
-
-            if (dist > 1)
-            {
-                shadow = dark_shadow;
-            }
-            else if (dist > 0.85)
-            {
-                shadow = light_shadow;
-            }
-            if (shadow)
-            {
-                let sprite = new PIXI.Sprite(shadow);
-                sprite.x = x;
-                sprite.y = y;
-                sprite.scale.set(1, 1);
-                cnt.addChild(sprite);
-            }
-        }
-    }
-
-    Render.getRenderer().render(cnt, texture);
-    return texture;
-}
-
 /************/
 /* Sequence */
 /************/

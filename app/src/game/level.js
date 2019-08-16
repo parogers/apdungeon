@@ -20,6 +20,7 @@
 import { RES } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
+import { LevelDarkness } from './effects';
 import { GroundItem } from './grounditem';
 
 /**********/
@@ -85,11 +86,9 @@ export class Level
         this.stage = new PIXI.Container();
         this.compound.addToLevel(this);
 
-        this.darknessSprite = new PIXI.Sprite(
-            Utils.renderDarkness(100, 60, 52, 32)
-        );
-        this.darknessSprite.zpos = Level.FRONT_POS;
-        this.stage.addChild(this.darknessSprite);
+        this.darkness = new LevelDarkness();
+        this.darkness.sprite.zpos = Level.FRONT_POS;
+        this.addThing(this.darkness);
         
         this.smoothTracking = true;
         this.exitDoor = null;
@@ -246,7 +245,6 @@ export class Level
         // Position the camera
         this.stage.x = -this.camera.x;
         this.stage.y = -this.camera.y;
-        this.darknessSprite.x = this.camera.x;
     }
 
     /* Check if the given hitbox, at the given position, overlaps with any thing 
