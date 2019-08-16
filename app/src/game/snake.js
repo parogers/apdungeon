@@ -56,7 +56,7 @@ export class DeathAnimation extends Thing
         {
             // Have the monster "fall off" the screen and disappear
             this.vely += this.accely*dt;
-            this.monster.sprite.x += this.level.player.velx*1.5*dt;
+            this.monster.sprite.x += this.level.player.baseSpeed*1.5*dt;
             this.monster.sprite.y += this.vely*dt;
 
             if (!this.level.isThingVisible(this.monster))
