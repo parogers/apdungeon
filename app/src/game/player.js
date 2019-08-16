@@ -112,7 +112,6 @@ export class Player extends Thing
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
-        this.verticalSpeed = 60;
         this.maxSpeed = 30; // pixels/second
         // Inventory stuff
         this.numCoins = 0;
@@ -120,8 +119,6 @@ export class Player extends Thing
         this.armour = Item.Table.NONE;
         this.bow = Item.Table.NONE;
         this.sword = Item.Table.NONE;
-        this.dirx = 0;
-        this.diry = 0;
         this.running = false;
         this.walkFPS = 10;
         // Process of dying (showing animation)
@@ -141,8 +138,6 @@ export class Player extends Thing
         this.spriteChar = new PIXI.Sprite();
         this.spriteChar.anchor.set(0.5, 1);
         this.sprite.addChild(this.spriteChar);
-        // Setup the sprite for when the player is treading water
-        this.splash = new Splash(this, -1.5, true);
 
         // Sprite for showing messages to the player
         this.textSprite = new PIXI.Sprite(renderText("?"));
@@ -152,6 +147,8 @@ export class Player extends Thing
         this.sprite.addChild(this.textSprite);
         this.textTimeout = 0;
 
+        // Setup the sprite for when the player is treading water
+        this.splash = new Splash(this, -1.5, true);
         this.shadow = new Shadow(this, Shadow.MEDIUM);
         this.flame = new Flame(this, Flame.SMALL);
 
@@ -174,11 +171,11 @@ export class Player extends Thing
         this.bowWeaponSlot.sprite.visible = false;
         this.swordWeaponSlot.sprite.visible = false;
 
-        this.handleCollisionCallback = (function(thing) {
+        this.handleCollisionCallback = (thing) => {
             if (thing.handlePlayerCollision) {
                 thing.handlePlayerCollision(this);
             }
-        }).bind(this);
+        };
         //this.upgradeSword(Item.Table.SMALL_SWORD);
         this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
@@ -192,17 +189,16 @@ export class Player extends Thing
         return Math.abs(this.spriteChar.height);
     }
 
-    /* Have the player face the given direction */
-    faceDirection(dirx)
-    {
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
-        this.textSprite.scale.x = Math.abs(
-            this.textSprite.scale.x)*Math.sign(dirx);
-    }
-
     get facing()
     {
         return Math.sign(this.sprite.scale.x);
+    }
+
+    set facing(value)
+    {
+        let dirx = Math.sign(value);
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*dirx;
+        this.textSprite.scale.x = Math.abs(this.textSprite.scale.x)*dirx;
     }
 
     get inWater() {

@@ -32,11 +32,6 @@ export class Scenery
         this.frame = 0;
     }
 
-    faceDirection(dir)
-    {
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dir);
-    }
-
     update(dt)
     {
         this.sprite.x += this.velx*dt;

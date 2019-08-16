@@ -125,6 +125,15 @@ export class Thing
         this.sprite.zpos = value;
     }
 
+    set facing(dir)
+    {
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dir);
+    }
+
+    get facing() {
+        return Math.sign(this.sprite.scale.x);
+    }
+
     update(dt)
     {
     }

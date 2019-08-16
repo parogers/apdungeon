@@ -186,7 +186,7 @@ export class TitleScreen
                 this.player.update(dt);
                 this.monster.velx = -20;
                 this.monster.update(dt);
-                this.monster.faceDirection(-1);
+                this.monster.facing = -1;
                 if (this.player.sprite.x < this.screenLeft-4) {
                     this.player.upgradeSword(Item.Table.SMALL_SWORD);
                     return this.NEXT;
@@ -198,7 +198,7 @@ export class TitleScreen
                 this.player.update(dt);
                 this.monster.velx = 20;
                 this.monster.update(dt);
-                this.monster.faceDirection(1);
+                this.monster.facing = 1;
                 if (this.player.sprite.x > this.screenRight+4) {
                     // New monster chases the player
                     this.monsterChoice++;
