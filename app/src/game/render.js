@@ -38,7 +38,7 @@ Render.configure = function(div, aspect)
 
     let rect = div.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) {
-        throw Error("Invalid size for renderer");
+        throw Error('Invalid size for renderer');
     }
 
     // Maintain the aspect ratio when sizing the render view
@@ -60,7 +60,7 @@ Render.configure = function(div, aspect)
     });
     renderer.plugins.interaction.destroy();
 
-    div.innerHTML = "";
+    div.innerHTML = '';
     div.appendChild(renderer.view);
     container = div;
     aspectRatio = aspect;
@@ -87,6 +87,6 @@ Render.resize = function() {
     }
 
     renderer.resize(width, height);
-    //container.innerHTML = "";
+    //container.innerHTML = '';
     //container.appendChild(renderer.view);
 }

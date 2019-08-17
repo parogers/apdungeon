@@ -63,14 +63,14 @@ Utils.createSplashSprite = function()
     let waterSprite = new PIXI.Sprite();
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
-    waterSprite.texture = Utils.getFrame(RES.MAP_OBJS, "treading_water");
+    waterSprite.texture = Utils.getFrame(RES.MAP_OBJS, 'treading_water');
     return waterSprite;
 }
 
 // Helper function for returning a texture set given the resource string
 Utils.getTextures = function(res)
 {
-    if (!res) throw Error("must specify a resource");
+    if (!res) throw Error('must specify a resource');
     return PIXI.loader.resources[res].textures;
 }
 
@@ -98,7 +98,7 @@ Utils.getFrames = function(res, names)
     let frames = [];
     for (let n = 0; n < names.length; n++) {
         let frame = Utils.getTextures(res)[names[n]];
-        if (!frame) console.log("ERROR: missing frame " + names[n]);
+        if (!frame) console.log('ERROR: missing frame ' + names[n]);
         frames.push(frame);
     }
     return frames;
@@ -133,7 +133,7 @@ export function Sequence()
         } else {
             // Note functions are assigned to this object, so that calling
             // them this way gives us access to 'this' inside.
-            let name = "func_" + (n-1);
+            let name = 'func_' + (n-1);
             this[name] = arguments[n];
         }
     }
@@ -153,7 +153,7 @@ Sequence.prototype.update = function(dt)
         return;
     }
     // Check if the current state is a function (or a label)
-    let fname = "func_" + this.state;
+    let fname = 'func_' + this.state;
     if (this[fname]) {
         let ret = this[fname](dt);
         if (ret === this.NEXT) {

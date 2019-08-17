@@ -30,13 +30,13 @@ const TEST_KEY = 75;
 const DOUBLE_PRESS_TIME = 0.3;
 
 const DEFAULTS = [
-    ["up", ARROW_UP],
-    ["down", ARROW_DOWN],
-    ["left", ARROW_LEFT],
-    ["right", ARROW_RIGHT],
-    ["primary", [PRIMARY, PRIMARY_ALT]],
-    ["swap", SWAP],
-    ["space", SPACE]
+    ['up', ARROW_UP],
+    ['down', ARROW_DOWN],
+    ['left', ARROW_LEFT],
+    ['right', ARROW_RIGHT],
+    ['primary', [PRIMARY, PRIMARY_ALT]],
+    ['swap', SWAP],
+    ['space', SPACE]
 ];
 
 var controls = null;
@@ -79,7 +79,7 @@ function GameControlsCls()
         let name = arg[0];
         let keys = arg[1];
 
-        if (typeof(keys.push) !== "function") {
+        if (typeof(keys.push) !== 'function') {
             keys = [keys];
         }
 
@@ -114,7 +114,7 @@ GameControlsCls.prototype.update = function(dt)
 
 GameControlsCls.prototype.attachKeyboardEvents = function()
 {
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener('keydown', (event) => {
         let input = this.inputByKey[event.keyCode];
         if (input && !input.held) 
         {
@@ -133,7 +133,7 @@ GameControlsCls.prototype.attachKeyboardEvents = function()
         }
     });
 
-    window.addEventListener("keyup", (event) => {
+    window.addEventListener('keyup', (event) => {
         let input = this.inputByKey[event.keyCode];
         if (input) {
             input.release();

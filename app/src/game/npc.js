@@ -28,13 +28,13 @@ export class NPC
     {
         // Position of the hit box, relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 5, 5);
-        let texture = Utils.getFrame(RES.NPC_TILESET, img || "npc1_south_1");
+        let texture = Utils.getFrame(RES.NPC_TILESET, img || 'npc1_south_1');
         this.sprite = new PIXI.Container();
         this.npcSprite = new PIXI.Sprite(texture);
         this.npcSprite.anchor.set(0.5, 1);
         this.sprite.addChild(this.npcSprite);
 
-        this.textSprite = new PIXI.Sprite(renderText("?"));
+        this.textSprite = new PIXI.Sprite(renderText('?'));
         this.textSprite.scale.set(3/5.);
         this.textSprite.anchor.set(0.5, 1);
         this.textSprite.y = -this.npcSprite.height-2;
@@ -65,7 +65,7 @@ export class NPC
 
     handleHit(x, y, dmg)
     {
-        this.setDialog(["HEY CAREFUL", "WITH THAT!"]);
+        this.setDialog(['HEY CAREFUL', 'WITH THAT!']);
         this.handlePlayerCollision();
     }
 

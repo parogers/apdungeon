@@ -56,7 +56,7 @@ export class GameOverScreen
         levelScreen.stage.scale.set(levelScreen.stage.scale.x/scale);
 
         // Create a black sprite that covers the screen
-        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "black"));
+        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, 'black'));
         this.bg.anchor.set(0, 0);
         this.bg.scale.set(this.screenWidth/this.bg.texture.width,
                           this.screenHeight/this.bg.texture.height);
@@ -79,10 +79,10 @@ export class GameOverScreen
         }
 
         this.clicked = false;
-        Render.getContainer().addEventListener("mouseup", (evt) => {
+        Render.getContainer().addEventListener('mouseup', (evt) => {
             this.clicked = true;
         });
-        Render.getContainer().addEventListener("touchend", (evt) => {
+        Render.getContainer().addEventListener('touchend', (evt) => {
             this.clicked = true;
         });
 
@@ -115,7 +115,7 @@ export class GameOverScreen
             {
                 // Background is now fully black. Show the game over text
                 this.bg.alpha = 1;
-                let txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "game-over-text"));
+                let txt = new PIXI.Sprite(Utils.getFrame(RES.UI, 'game-over-text'));
                 txt.anchor.set(0.5, 0.5);
                 txt.x = this.screenWidth/2;
                 txt.y = this.screenHeight/8;
@@ -138,7 +138,7 @@ export class GameOverScreen
                 this.stage.addChild(monster);
 
                 // Show the name
-                let msg = stat.name.toUpperCase() + " *" + stat.count;
+                let msg = stat.name.toUpperCase() + ' *' + stat.count;
                 let txt = new PIXI.Sprite(renderText(msg));
                 txt.x = xpos + 8;
                 txt.y = ypos;
@@ -157,9 +157,9 @@ export class GameOverScreen
             break;
 
         case this.SHOW_CONTINUE_TEXT:
-            let msg = "PRESS SPACE TO PLAY AGAIN";
+            let msg = 'PRESS SPACE TO PLAY AGAIN';
             if (GameControls.getControls().hasTouch) {
-                msg = "TAP SCREEN TO PLAY AGAIN";
+                msg = 'TAP SCREEN TO PLAY AGAIN';
             }
 
             let txt = new PIXI.Sprite(renderText(msg));

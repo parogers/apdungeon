@@ -38,7 +38,7 @@ export class GameState
         this.TITLE_SCREEN = 3;
         // Playing through a level
         this.PLAYING_GAME = 4;
-        // Showing the "next level" transition screen
+        // Showing the 'next level' transition screen
         this.NEXT_SCREEN = 5;
         // Showing the game over screen
         this.GAME_OVER = 6;
@@ -48,7 +48,7 @@ export class GameState
         this.state = this.SHOW_TITLE_SCREEN;
         this.screen = null;
 
-        window.addEventListener("resize", () => {
+        window.addEventListener('resize', () => {
             let div = Render.getContainer();
             let width = window.innerWidth-5;
             let height = window.innerHeight-5;

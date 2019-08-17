@@ -49,7 +49,7 @@ export class SwordWeaponSlot
         this.hitbox = new Hitbox(0, -4, 10, 6);
         // Which weapon texture is currently displayed
         this.textureName = null;
-        this.setTexture("sword2");
+        this.setTexture('sword2');
 
         this.handleHitCallback = (function(hit) {
             if (hit.handleHit) {
@@ -121,7 +121,7 @@ export class BowWeaponSlot
         this.player = player;
         this.attackCooldown = 0;
         this.textureName = null;
-        this.setTexture("bow1");
+        this.setTexture('bow1');
         // Vertical offset from the player position where the arrow
         // is fired.
         this.arrowFireHeight = 2.5;
@@ -192,7 +192,7 @@ export class Arrow extends Thing
         super();
         this.owner = owner;
         this.arrowSprite = new PIXI.Sprite(
-            Utils.getFrame(RES.WEAPONS, "arrow")
+            Utils.getFrame(RES.WEAPONS, 'arrow')
         );
         this.arrowSprite.anchor.set(0.5, 0.5);
         this.arrowSprite.scale.x = Math.sign(velx);

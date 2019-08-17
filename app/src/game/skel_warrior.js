@@ -38,7 +38,7 @@ export class SkelWarrior extends Thing
     constructor()
     {
         super();
-        this.name = "Skeleton";
+        this.name = 'Skeleton';
         this.anim = new Animation(ANIM.SKEL_WARRIOR_WALK);
         this.velx = 0;
         this.vely = 0;
@@ -210,7 +210,7 @@ export class SkelWarrior extends Thing
         if (!tile.water) {
             this.level.createBloodSpatter(
                 this.x, this.y-1,
-                ["dust1", "dust2", "dust3", "dust4"]);
+                ['dust1', 'dust2', 'dust3', 'dust4']);
         }
         return true;
     }

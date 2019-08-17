@@ -134,7 +134,7 @@ export class Player extends Thing
         this.sprite.addChild(this.spriteChar);
 
         // Sprite for showing messages to the player
-        this.textSprite = new PIXI.Sprite(renderText("?"));
+        this.textSprite = new PIXI.Sprite(renderText('?'));
         this.textSprite.scale.set(3/5.);
         this.textSprite.anchor.set(0.5, 1);
         this.textSprite.visible = false;
@@ -269,7 +269,7 @@ export class Player extends Thing
       //if (this.controls.left.doublePressed || 
       //    this.controls.right.doublePressed)
       //{
-      //    console.log("LUNGE!");
+      //    console.log('LUNGE!');
       //    this.velx *= 2;
       //    this.lungeTimer = 1;
       //}
@@ -504,9 +504,9 @@ export class Player extends Thing
     updatePlayerAppearance()
     {
         // Update the player character sprite, based on the armour we're wearing
-        let base = "player1";
-        if (this.armour === Item.Table.LEATHER_ARMOUR) base = "player1";
-        else if (this.armour == Item.Table.STEEL_ARMOUR) base = "player1";
+        let base = 'player1';
+        if (this.armour === Item.Table.LEATHER_ARMOUR) base = 'player1';
+        else if (this.armour == Item.Table.STEEL_ARMOUR) base = 'player1';
         this.setCharFrames(base);
         // Update the sword sprite
         // ...
@@ -642,9 +642,9 @@ export class Player extends Thing
         if (item.isSword() && item.isBetter(this.sword)) {
             if (this.sword === Item.Table.NONE) {
                 if (this.controls.hasTouch) {
-                    this.showMessage("TAP BUTTON", " TO ATTACK");
+                    this.showMessage('TAP BUTTON', ' TO ATTACK');
                 } else {
-                    this.showMessage("  PRESS A", "TO ATTACK");
+                    this.showMessage('  PRESS A', 'TO ATTACK');
                 }
             }
             this.upgradeSword(item);
@@ -654,9 +654,9 @@ export class Player extends Thing
         if (item.isBow() && item.isBetter(this.bow)) {
             if (this.bow === Item.Table.NONE) {
                 if (this.controls.hasTouch) {
-                    this.showMessage("SWIPE BUTTON", "    TO SWAP");
+                    this.showMessage('SWIPE BUTTON', '    TO SWAP');
                 } else {
-                    this.showMessage("PRESS X", "TO SWAP");
+                    this.showMessage('PRESS X', 'TO SWAP');
                 }
             }
             this.upgradeBow(item);

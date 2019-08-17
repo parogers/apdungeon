@@ -68,7 +68,7 @@ Shadow.THIN = 'shadow_thin';
 Shadow.GOBLIN = 'shadow_goblin';
 
 
-// Adds "splashy water" to the base of a thing when they enter water
+// Adds 'splashy water' to the base of a thing when they enter water
 export class Splash
 {
     constructor(thing, ypos, playSound)
@@ -129,7 +129,7 @@ export class Splash
 }
 
 
-// Adds an "on fire" effect to a thing whenever it moves over lava
+// Adds an 'on fire' effect to a thing whenever it moves over lava
 export class Flame
 {
     constructor(thing, size)

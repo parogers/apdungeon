@@ -31,10 +31,10 @@ export class Door extends Gate
     {
         super();
         this.frames = [
-            Utils.getFrame(RES.MAP_OBJS, "door1"),
-            Utils.getFrame(RES.MAP_OBJS, "door2"),
-            Utils.getFrame(RES.MAP_OBJS, "door3"),
-            Utils.getFrame(RES.MAP_OBJS, "door4")
+            Utils.getFrame(RES.MAP_OBJS, 'door1'),
+            Utils.getFrame(RES.MAP_OBJS, 'door2'),
+            Utils.getFrame(RES.MAP_OBJS, 'door3'),
+            Utils.getFrame(RES.MAP_OBJS, 'door4')
         ];
         this.fps = 3;
         this.sprite.anchor.set(0.5,1);

@@ -178,14 +178,14 @@ export function generateLevel(levelNum)
 
     // Add an NPC to give the player some dialog
     let npc = new NPC();
-    npc.setDialog(["TAKE THIS AND", "GO FORTH!!!"]);
+    npc.setDialog(['TAKE THIS AND', 'GO FORTH!!!']);
     npc.sprite.x = 46;
     npc.sprite.y = 25;
     level.addThing(npc);
 
     // Add an NPC to give the player some dialog
-    npc = new NPC("npc3_south_1");
-    npc.setDialog("GOOD LUCK!");
+    npc = new NPC('npc3_south_1');
+    npc.setDialog('GOOD LUCK!');
     npc.sprite.x = 80;
     npc.sprite.y = 40;
     level.addThing(npc);

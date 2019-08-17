@@ -55,7 +55,7 @@ export class DeathAnimation extends Thing
         }
         else if (this.state === this.STATE_FALLING)
         {
-            // Have the monster "fall off" the screen and disappear
+            // Have the monster 'fall off' the screen and disappear
             this.vely += this.accely*dt;
             this.monster.sprite.x += this.level.player.baseSpeed*1.5*dt;
             this.monster.sprite.y += this.vely*dt;
@@ -84,7 +84,7 @@ export class Snake extends Thing
         this.STATE_HURT = 3;
         this.STATE_DEAD = 4;
 
-        this.name = "Snake";
+        this.name = 'Snake';
         this.anim = new Animation(ANIM.SNAKE_WALK);
         this.speed = 16;
         this.health = 3;
@@ -234,7 +234,7 @@ export class Rat extends Snake
     constructor() 
     {
         super();
-        this.name = "Rat";
+        this.name = 'Rat';
         this.anim = new Animation(ANIM.RAT_WALK);
         this.health = -1;
         this.speed = 20;
@@ -264,7 +264,7 @@ export class Scorpion extends Snake
     constructor()
     {
         super();
-        this.name = "Scorpion";
+        this.name = 'Scorpion';
         this.anim = new Animation(ANIM.SCORPION_WALK);
         this.health = 4;
         this.speed = 10;

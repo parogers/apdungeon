@@ -56,7 +56,7 @@ export class Goblin extends Thing
     constructor()
     {
         super();
-        this.name = "Goblin";
+        this.name = 'Goblin';
         this.anim = new Animation(ANIM.GOBLIN_WALK);
         this.velx = 0;
         this.velh = 0;
@@ -177,7 +177,7 @@ export class Goblin extends Thing
     updateApproach(dt)
     {
         // Maintain a safe distance from the player by accelerating
-        // back and forth until we're "close enough".
+        // back and forth until we're 'close enough'.
         let targetX = this.level.basePos + this.safeDistance;
         let buffer = 2;
         let accel = 400;

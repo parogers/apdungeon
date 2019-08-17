@@ -405,7 +405,7 @@ export class Level
 
     createBloodSpatter(x, y, imgs)
     {
-        let txt = Utils.randomChoice(imgs || ["blood1", "blood2", "blood3"]);
+        let txt = Utils.randomChoice(imgs || ['blood1', 'blood2', 'blood3']);
         let sprite = new PIXI.Sprite(Utils.getFrame(RES.MAP_OBJS, txt));
         sprite.zpos = Level.FLOOR_POS;
         sprite.anchor.set(0.5, 0.5);

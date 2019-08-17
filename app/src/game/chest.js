@@ -17,11 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from "./res";
-import { Utils } from "./utils";
-import { Thing, Hitbox } from "./thing";
-import { GroundItem } from "./grounditem";
-import { Audio } from "./audio";
+import { RES } from './res';
+import { Utils } from './utils';
+import { Thing, Hitbox } from './thing';
+import { GroundItem } from './grounditem';
+import { Audio } from './audio';
 
 /* A container for holding items. The chest is opened when the player touches
  * it, and the chests contents are ejected randomly.
@@ -34,10 +34,10 @@ export class Chest {
     constructor(items, options)
     {
         for (let item of items) {
-            if (!item) throw Error("item cannot be null");
+            if (!item) throw Error('item cannot be null');
         }
-        this.openTexture = Utils.getFrame(RES.MAP_OBJS, "chest_open");
-        this.closedTexture = Utils.getFrame(RES.MAP_OBJS, "chest_closed");
+        this.openTexture = Utils.getFrame(RES.MAP_OBJS, 'chest_open');
+        this.closedTexture = Utils.getFrame(RES.MAP_OBJS, 'chest_closed');
         this.sprite = new PIXI.Sprite(this.closedTexture);
         this.sprite.anchor.set(0.5, 0.75);
         this.isOpen = false;

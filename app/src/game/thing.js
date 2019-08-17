@@ -18,7 +18,7 @@
  */
 
 import { RES } from './res';
-import { Utils } from "./utils";
+import { Utils } from './utils';
 import { Audio } from './audio';
 
 /* Template code for defining a 'thing' in a level. Generally things have 

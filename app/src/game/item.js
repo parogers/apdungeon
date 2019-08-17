@@ -63,19 +63,19 @@ Item.HEALTH = 4;
 // The list of takeable items. The values here are used to identify the items
 // as well as referring to images on the GROUND_ITEMS sprite sheet.
 Item.Table = {
-    NO_ARMOUR:      new Item("helmet3", Item.ARMOUR, 0),
-    LEATHER_ARMOUR: new Item("helmet1", Item.ARMOUR, 1),
-    STEEL_ARMOUR:   new Item("helmet2", Item.ARMOUR, 2),
-    COIN:           new Item("coin", Item.OTHER, 0),
-    SMALL_HEALTH:   new Item("small_health", Item.HEALTH, 0),
-    LARGE_HEALTH:   new Item("large_health", Item.HEALTH, 1),
-    SMALL_BOW:      new Item("bow1", Item.BOW, 1),
-    LARGE_BOW:      new Item("bow2", Item.BOW, 2),
-    NO_BOW:         new Item("bow3", Item.BOW, 3),
-    ARROW:          new Item("arrow1", Item.OTHER, 0),
-    NO_SWORD:       new Item("sword4", Item.SWORD, 0),
-    SMALL_SWORD:    new Item("sword1", Item.SWORD, 1),
-    LARGE_SWORD:    new Item("sword2", Item.SWORD, 2),
-    MAGIC_SWORD:    new Item("sword3", Item.SWORD, 3),
+    NO_ARMOUR:      new Item('helmet3', Item.ARMOUR, 0),
+    LEATHER_ARMOUR: new Item('helmet1', Item.ARMOUR, 1),
+    STEEL_ARMOUR:   new Item('helmet2', Item.ARMOUR, 2),
+    COIN:           new Item('coin', Item.OTHER, 0),
+    SMALL_HEALTH:   new Item('small_health', Item.HEALTH, 0),
+    LARGE_HEALTH:   new Item('large_health', Item.HEALTH, 1),
+    SMALL_BOW:      new Item('bow1', Item.BOW, 1),
+    LARGE_BOW:      new Item('bow2', Item.BOW, 2),
+    NO_BOW:         new Item('bow3', Item.BOW, 3),
+    ARROW:          new Item('arrow1', Item.OTHER, 0),
+    NO_SWORD:       new Item('sword4', Item.SWORD, 0),
+    SMALL_SWORD:    new Item('sword1', Item.SWORD, 1),
+    LARGE_SWORD:    new Item('sword2', Item.SWORD, 2),
+    MAGIC_SWORD:    new Item('sword3', Item.SWORD, 3),
     NONE:           new Item(null, Item.OTHER, 0)
 };

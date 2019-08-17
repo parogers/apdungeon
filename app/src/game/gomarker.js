@@ -30,8 +30,8 @@ export function GoMarker(screen)
 {
     this.screen = screen;
     this.frames = [
-        Utils.getFrame(RES.UI, "go1"), 
-        Utils.getFrame(RES.UI, "go2")
+        Utils.getFrame(RES.UI, 'go1'), 
+        Utils.getFrame(RES.UI, 'go2')
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.anchor.set(1,0);

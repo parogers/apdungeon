@@ -32,7 +32,7 @@ export class Ghost
 {
     constructor(state)
     {
-        this.name = "Spectre";
+        this.name = 'Spectre';
         this.frames = Utils.getFrames(RES.ENEMIES, Ghost.FRAMES);
         this.health = 3;
         this.frame = 0;

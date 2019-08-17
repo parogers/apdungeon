@@ -62,7 +62,7 @@ export class TitleScreen
         this.stage.scale.set(scale);
         this.state = this.PLAYING_INTRO;
 
-        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, "brown3"));
+        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, 'brown3'));
         this.bg.anchor.set(0, 0);
         this.bg.scale.set(
             this.screenWidth/this.bg.texture.width+1,
@@ -70,22 +70,22 @@ export class TitleScreen
         this.stage.addChild(this.bg);
         this.delay = 0;
 
-        let txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "title-text"));
+        let txt = new PIXI.Sprite(Utils.getFrame(RES.UI, 'title-text'));
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
         txt.x = this.screenWidth/2;
         txt.y = 15;
         this.stage.addChild(txt);
 
-        txt = new PIXI.Sprite(Utils.getFrame(RES.UI, "demo-text"));
+        txt = new PIXI.Sprite(Utils.getFrame(RES.UI, 'demo-text'));
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
         txt.x = this.screenWidth/2;
         txt.y = 25;
         this.stage.addChild(txt);
 
-        txt = new PIXI.Sprite(renderText("TAP TO PLAY"));
-        //txt = new PIXI.Sprite(renderText("CLICK OR PRESS SPACE TO PLAY"));
+        txt = new PIXI.Sprite(renderText('TAP TO PLAY'));
+        //txt = new PIXI.Sprite(renderText('CLICK OR PRESS SPACE TO PLAY'));
         txt.scale.set(0.75);
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
@@ -93,7 +93,7 @@ export class TitleScreen
         txt.y = 35;
         this.stage.addChild(txt);
 
-        txt = new PIXI.Sprite(renderText("PROGRAMMING BY PETER ROGERS. ARTWORK IS PUBLIC DOMAIN."));
+        txt = new PIXI.Sprite(renderText('PROGRAMMING BY PETER ROGERS. ARTWORK IS PUBLIC DOMAIN.'));
         txt.scale.set(0.55);
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
@@ -102,7 +102,7 @@ export class TitleScreen
         this.stage.addChild(txt);
 
         txt = new PIXI.Sprite(renderText(
-            "MUSIC \"A JOURNEY AWAITS\" BY PIERRA BONDOERFFER @PBONDOER"));
+            'MUSIC \'A JOURNEY AWAITS\' BY PIERRA BONDOERFFER @PBONDOER'));
         txt.scale.set(0.55);
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
@@ -120,8 +120,8 @@ export class TitleScreen
         this.onTouchEnd = (evt) => {
             //this.touchClicked = true;
         }
-        Render.getContainer().addEventListener("mouseup", this.onMouseUp);
-        Render.getContainer().addEventListener("touchend", this.onTouchEnd);
+        Render.getContainer().addEventListener('mouseup', this.onMouseUp);
+        Render.getContainer().addEventListener('touchend', this.onTouchEnd);
 
         return;
 
@@ -133,11 +133,11 @@ export class TitleScreen
                 screenWidth: this.screenWidth,
                 screenHeight: this.screenHeight
             },
-            "start",
+            'start',
             function(dt) {
                 this.level = generateEmptyLevel(
                     2, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
-                    "1"); // floor tile
+                    '1'); // floor tile
                 this.level.stage.x = -RES.TILE_WIDTH*2;
                 this.level.stage.y = 44;
                 //this.level.camera.x = RES.TILE_WIDTH*2;
@@ -179,7 +179,7 @@ export class TitleScreen
                     return this.NEXT;
                 }
             },
-            "loop",
+            'loop',
             function(dt) {
                 // Have the player run the other way chased by a monster
                 this.controls.dirx = -1;
@@ -205,7 +205,7 @@ export class TitleScreen
                     let choice = this.monsterChoices[
                         this.monsterChoice%this.monsterChoices.length];
                     this.monster.frames = Utils.getFrames(RES.ENEMIES, choice);
-                    return "loop";
+                    return 'loop';
                 }
             }
         );
@@ -213,8 +213,8 @@ export class TitleScreen
 
     destroy()
     {
-        Render.getContainer().removeEventListener("mouseup", this.onMouseUp);
-        Render.getContainer().removeEventListener("touchend", this.onTouchEnd);
+        Render.getContainer().removeEventListener('mouseup', this.onMouseUp);
+        Render.getContainer().removeEventListener('touchend', this.onTouchEnd);
     }
 
     update(dt)
