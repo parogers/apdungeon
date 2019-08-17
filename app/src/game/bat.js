@@ -17,9 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { Thing, Hitbox } from './thing';
+import { Animation, Thing, Hitbox } from './thing';
 import { Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -35,13 +35,8 @@ export class Bat extends Thing
         super();
         this.state = STATE_FLYING;
         this.health = 1;
-        this.frame = 0;
-        this.fps = 4;
-        this.frames = Utils.getFrames(RES.ENEMIES, [
-            'bat_south_1', 
-            'bat_south_2',
-        ]);
-        this.bodySprite = new PIXI.Sprite(this.frames[0]);
+        this.anim = new Animation(ANIM.BAT_FLYING);
+        this.bodySprite = new PIXI.Sprite(this.anim.texture);
         this.bodySprite.anchor.set(0.5, 0.5);
         this.sprite.addChild(this.bodySprite);
         this.sprite.scale.set(-1, 1);
@@ -58,15 +53,12 @@ export class Bat extends Thing
         if (this.state === STATE_FLYING && this.track)
         {
             this.fx += (this.level.baseSpeed-10)*dt;
-            this.fy = this.track.y + Math.sin(this.frame/4);
-            this.fh = 6+4*Math.sin(this.frame);
+            this.fy = this.track.y + Math.sin(this.anim.frame/4);
+            this.fh = 6+4*Math.sin(this.anim.frame);
         }
 
         this.shadow.update();
-
-        this.frame += this.fps*dt;
-        let frameNum = (this.frame|0) % this.frames.length;
-        this.bodySprite.texture = this.frames[frameNum];
+        this.bodySprite.texture = this.anim.update(dt);
     }
 
     handleHit(srcx, srcy, dmg)

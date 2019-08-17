@@ -17,9 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { TrackMover, Thing, Hitbox } from './thing';
+import { Animation, TrackMover, Thing, Hitbox } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -57,16 +57,10 @@ export class Goblin extends Thing
     {
         super();
         this.name = "Goblin";
-        this.idleFrame = Utils.getFrame(RES.ENEMIES, "goblin_south_1");
-        this.frames = Utils.getFrames(
-            RES.ENEMIES,
-            ['goblin_south_2', 'goblin_south_3']
-        );
+        this.anim = new Animation(ANIM.GOBLIN_WALK);
         this.velx = 0;
         this.velh = 0;
         this.health = 3;
-        this.frame = 0;
-        this.fps = 6;
         this.maxSpeed = MAX_SPEED;
         this.safeDistance = SAFE_DISTANCE;
         this.trackMover = null;
@@ -77,7 +71,7 @@ export class Goblin extends Thing
         // The sprite container holding the monster and splash sprite
         this.sprite = new PIXI.Container();
         // The actual goblin sprite
-        this.goblinSprite = new PIXI.Sprite(this.frames[0]);
+        this.goblinSprite = new PIXI.Sprite(this.anim.texture);
         this.goblinSprite.anchor.set(0.5, 7/8);
         this.sprite.addChild(this.goblinSprite);
         // Make the splash/water sprite
@@ -105,7 +99,7 @@ export class Goblin extends Thing
     {
         if (this.state === STATE_IDLE)
         {
-            this.frame = 0;
+            this.anim.frame = 0;
             if (this.isOnCamera)
             {
                 this.state = STATE_APPROACH;
@@ -134,6 +128,7 @@ export class Goblin extends Thing
             this.fx += this.velx*dt;
             this.fh += this.velh*dt;
 
+            this.anim.frame = 0;
             if (this.fh <= 0)
             {
                 this.fh = 0;
@@ -176,10 +171,7 @@ export class Goblin extends Thing
         this.splash.update(dt);
         this.shadow.update(dt);
         this.shadow.visible = !this.splash.visible;
-
-        // Update animation
-        let frameNum = (this.frame|0) % this.frames.length;
-        this.goblinSprite.texture = this.frames[frameNum];
+        this.goblinSprite.texture = this.anim.texture;
     }
 
     updateApproach(dt)
@@ -211,8 +203,9 @@ export class Goblin extends Thing
         }
         // Have the goblin bob to make it look more "skittering"
         this.fx += this.velx*dt;
-        this.fy = this.track.y + Math.sin(this.frame)/2;
-        this.frame += this.fps*dt;
+        this.fy = this.track.y + Math.sin(this.anim.frame)/2;
+
+        this.anim.update(dt);
 
         this.attackTimer -= dt;
         if (this.attackTimer <= 0)

@@ -152,7 +152,7 @@ export function generateLevel(levelNum)
         x += randint(40, 120);
     }
 
-    let mon = new Bat();
+    let mon = new SkelWarrior();
     mon.fx = 90;
     mon.track = level.getMiddleTrack();
     level.addThing(mon);

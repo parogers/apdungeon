@@ -17,9 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { TrackMover, Thing, Hitbox } from './thing';
+import { Animation, TrackMover, Thing, Hitbox } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -39,17 +39,12 @@ export class SkelWarrior extends Thing
     {
         super();
         this.name = "Skeleton";
-        this.idleFrame = Utils.getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
-        this.frames = Utils.getFrames(RES.ENEMIES, [
-            'skeleton_warrior_south_2',
-            'skeleton_warrior_south_3',
-        ]);
+        this.anim = new Animation(ANIM.SKEL_WARRIOR_WALK);
         this.velx = 0;
         this.vely = 0;
         this.speed = 60;
         this.health = 4;
         this.alwaysChargeDist = 24;
-        this.frame = 0;
         this.facing = 1;
         this.chargeTimeout = 1;
         this.trackMover = null;
@@ -79,13 +74,6 @@ export class SkelWarrior extends Thing
                 [Item.Table.SMALL_BOW, 1]];
     }
 
-    incrementFrame(dt)
-    {
-        this.frame += 4*dt;
-        let frameNum = this.frame % this.frames.length;
-        this.monsterSprite.texture = this.frames[frameNum|0];
-    }
-
     update(dt)
     {
         if (this.state === STATE_IDLE)
@@ -104,7 +92,7 @@ export class SkelWarrior extends Thing
         {
             this.updateChangeTrack(dt);
         }
-        this.incrementFrame(dt);
+        this.monsterSprite.texture = this.anim.update(dt);
         this.splash.update(dt);
         this.shadow.update(dt);
         this.shadow.visible = !this.splash.visible;
@@ -118,7 +106,7 @@ export class SkelWarrior extends Thing
         }
         
         // Facing the player, but slowly moving towards them
-        this.velx = this.level.player.velx*0.9;
+        this.velx = this.level.baseSpeed*0.9;
         this.x += this.velx*dt;
 
         // Occasionally either charge the player, or change tracks to find them
@@ -159,7 +147,7 @@ export class SkelWarrior extends Thing
     // Charging at the player
     updateCharging(dt)
     {
-        this.velx = this.level.player.velx - this.speed;
+        this.velx = this.level.baseSpeed - this.speed;
         this.x += this.velx*dt;
 
         if (this.chargeOffset > this.alwaysChargeDist) {
@@ -178,7 +166,7 @@ export class SkelWarrior extends Thing
     // Retreating back to a safe distance
     updateRetreat(dt)
     {
-        this.velx = this.level.player.velx + this.speed/2.0;
+        this.velx = this.level.baseSpeed + this.speed/2.0;
         this.x += this.velx*dt;
 
         if (this.x >= this.level.player.fx + this.chargeOffset)

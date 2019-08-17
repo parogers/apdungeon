@@ -91,5 +91,24 @@ export var ANIM = {
         frames: ['melee3_south_1', 'melee3_south_2', 'melee3_south_3'],
         fps: 10,
     },
+
+    SKEL_WARRIOR_WALK: {
+        resource: RES.ENEMIES,
+        frames: ['skeleton_warrior_south_2', 'skeleton_warrior_south_3'],
+        fps: 4,
+    },
+
+    GOBLIN_WALK: {
+        resource: RES.ENEMIES,
+        frames: ['goblin_south_2', 'goblin_south_3'],
+        fps: 6,
+    },
+
+    BAT_FLYING: {
+        resource: RES.ENEMIES,
+        frames: ['bat_south_1', 'bat_south_2'],
+        fps: 4,
+    },
+    
 };
 
