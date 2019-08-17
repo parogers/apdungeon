@@ -53,3 +53,43 @@ export var RES = {
     TILE_HEIGHT: 8,
     WALL_HEIGHT: 13,
 };
+
+
+export var ANIM = {
+    SNAKE_WALK: {
+        resource: RES.ENEMIES,
+        frames: ['snake_south_1', 'snake_south_2'],
+        fps: 2,
+    },
+
+    RAT_WALK: {
+        resource: RES.ENEMIES,
+        frames: ['rat_south_1', 'rat_south_2'],
+        fps: 2,
+    },
+
+    SCORPION_WALK: {
+        resource: RES.ENEMIES,
+        frames: ['scorpion_south_1', 'scorpion_south_2'],
+        fps: 2,
+    },
+
+    PLAYER1_WALK: {
+        resource: RES.FEMALE_MELEE,
+        frames: ['melee1_south_1', 'melee1_south_2', 'melee1_south_3'],
+        fps: 10,
+    },
+
+    PLAYER2_WALK: {
+        resource: RES.FEMALE_MELEE,
+        frames: ['melee2_south_1', 'melee2_south_2', 'melee2_south_3'],
+        fps: 10,
+    },
+
+    PLAYER3_WALK: {
+        resource: RES.FEMALE_MELEE,
+        frames: ['melee3_south_1', 'melee3_south_2', 'melee3_south_3'],
+        fps: 10,
+    },
+};
+

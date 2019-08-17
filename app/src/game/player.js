@@ -18,10 +18,10 @@
  */
 
 import { renderText } from './ui';
-import { RES } from './res';
+import { ANIM, RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { TrackMover, Thing, Hitbox } from './thing';
+import { Animation, TrackMover, Thing, Hitbox } from './thing';
 import { Flame, Splash, Shadow } from './effects';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
@@ -106,9 +106,6 @@ export class Player extends Thing
         this.vely = 0;
         this.accelx = 0;
         this.accely = 0;
-        this.frame = 0;
-        this.frames = null;
-        this.lungeFrame = null;
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
@@ -120,11 +117,8 @@ export class Player extends Thing
         this.bow = Item.Table.NONE;
         this.sword = Item.Table.NONE;
         this.running = false;
-        this.walkFPS = 10;
         // Process of dying (showing animation)
-        this.dying = false;
         this.dead = false;
-        this.lungeTimer = 0;
         // The number of kills (stored by monster name). Also stores the 
         // image of the monster (for displaying stats later)
         //     {count: ZZZ, img: ZZZ}
@@ -133,7 +127,7 @@ export class Player extends Thing
         // Define the hitbox
         this.hitbox = new Hitbox(0, -2, 2, 2);
 
-        this.setCharFrames(RES.FEMALE_MELEE, "melee1");
+        this.setCharFrames('player1');
         // Setup the player sprite (texture comes later)
         this.spriteChar = new PIXI.Sprite();
         this.spriteChar.anchor.set(0.5, 1);
@@ -404,7 +398,7 @@ export class Player extends Thing
             if (this.running)
             {
                 this.sprite.x += this.maxSpeed*dt;
-                this.frame += this.walkFPS*dt;
+                this.walkAnim.update(dt);
 
                 // Check for a collision with a wall
                 let checkPos = this.fx + this.level.tileWidth/2;
@@ -433,8 +427,6 @@ export class Player extends Thing
         }
         else if (this.state === STATE_CHANGING_TRACK)
         {
-            //this.frame += this.walkFPS*dt;
-            this.frame = 0;
             if (this.running)
             {
                 this.fx = this.basePos;
@@ -465,10 +457,7 @@ export class Player extends Thing
             this.takeDamage(1, 'fire');
         }
         this.fireDamageTimer.update(dt);
-
-        // Update animation
-        let frameNum = (this.frame|0) % this.frames.length;
-        this.spriteChar.texture = this.frames[frameNum];
+        this.spriteChar.texture = this.walkAnim.texture;
     }
 
     // The player is being knocked back after hitting a wall
@@ -500,19 +489,9 @@ export class Player extends Thing
         }
     }
 
-    setCharFrames(res, name)
+    setCharFrames(base)
     {
-        this.frames = Utils.getFrames(
-            res, 
-            [name + "_south_1", 
-             name + "_south_2", 
-             name + "_south_3"]);
-        this.lungeFrame = Utils.getFrame(res, name + "_lunge_1");
-        this.dyingFrames = Utils.getFrames(
-            res, 
-            ["melee1_dying_1", 
-             "melee1_dying_2", 
-             "melee1_dying_3"]);
+        this.walkAnim = new Animation(ANIM[base.toUpperCase() + '_WALK']);
     }
 
     setArmour(item)
@@ -525,10 +504,10 @@ export class Player extends Thing
     updatePlayerAppearance()
     {
         // Update the player character sprite, based on the armour we're wearing
-        let img = "melee1";
-        if (this.armour === Item.Table.LEATHER_ARMOUR) img = "melee2";
-        else if (this.armour == Item.Table.STEEL_ARMOUR) img = "melee3";
-        this.setCharFrames(RES.FEMALE_MELEE, img);
+        let base = "player1";
+        if (this.armour === Item.Table.LEATHER_ARMOUR) base = "player1";
+        else if (this.armour == Item.Table.STEEL_ARMOUR) base = "player1";
+        this.setCharFrames(base);
         // Update the sword sprite
         // ...
         // Update the bow sprite
@@ -644,10 +623,10 @@ export class Player extends Thing
     /* Called when a monster (thing) is killed by the player */
     handleMonsterKilled(monster)
     {
-        if (this.kills[monster.name] === undefined) {
+        /*if (this.kills[monster.name] === undefined) {
             this.kills[monster.name] = {count: 0, img: monster.frames[0]};
         }
-        this.kills[monster.name].count++;
+        this.kills[monster.name].count++;*/
     }
 
     /* Called when the player walks over a takeable item (GroundItem). The item

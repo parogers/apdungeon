@@ -17,9 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { RES, ANIM } from './res';
 import { Utils } from './utils';
-import { Thing, Hitbox } from './thing';
+import { Animation, Thing, Hitbox } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -85,16 +85,12 @@ export class Snake extends Thing
         this.STATE_DEAD = 4;
 
         this.name = "Snake";
-        this.frames = Utils.getFrames(
-            RES.ENEMIES,
-            ['snake_south_1', 'snake_south_2']
-        );
+        this.anim = new Animation(ANIM.SNAKE_WALK);
         this.speed = 16;
         this.health = 3;
-        this.frame = 0;
         this.facing = 1;
         // The actual snake sprite
-        this.snakeSprite = new PIXI.Sprite(this.frames[0]);
+        this.snakeSprite = new PIXI.Sprite(this.anim.texture);
         this.snakeSprite.anchor.set(0.5, 7/8);
         this.sprite.addChild(this.snakeSprite);
         this.shadow = new Shadow(this, this.shadowType);
@@ -156,7 +152,7 @@ export class Snake extends Thing
         else if (this.state === this.STATE_HURT)
         {
             // The snake keeps its eyes closed while hurt
-            this.snakeSprite.texture = this.frames[1];
+            //this.snakeSprite.texture = this.frames[1];
             // Slide backwards from the hit
             if (this.knockedTimer > 0) {
                 let dx = this.knocked*dt;
@@ -179,10 +175,10 @@ export class Snake extends Thing
         this.shadow.update(dt);
         this.shadow.visible = !this.splash.visible;
 
-        if (this.velx != 0) {
-            this.frame += 2*dt;
+        if (this.velx != 0)
+        {
             this.sprite.x += this.velx*dt;
-            this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+            this.snakeSprite.texture = this.anim.update(dt);
         }
         this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
     }
@@ -239,7 +235,7 @@ export class Rat extends Snake
     {
         super();
         this.name = "Rat";
-        this.frames = Utils.getFrames(RES.ENEMIES, ["rat_south_1", "rat_south_2"]);
+        this.anim = new Animation(ANIM.RAT_WALK);
         this.health = -1;
         this.speed = 20;
         this.frame = 0;
@@ -247,8 +243,7 @@ export class Rat extends Snake
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
-        this.snakeSprite.texture = this.frames[0];
-        //this.shadow.shadowSprite.anchor.set(0.5, -0.1);
+        this.snakeSprite.texture = this.anim.texture;
     }
 
     get shadowType() {
@@ -270,10 +265,7 @@ export class Scorpion extends Snake
     {
         super();
         this.name = "Scorpion";
-        this.frames = Utils.getFrames(
-            RES.ENEMIES,
-            ["scorpion_south_1", "scorpion_south_2"]
-        );
+        this.anim = new Animation(ANIM.SCORPION_WALK);
         this.health = 4;
         this.speed = 10;
         this.frame = 0;
@@ -281,7 +273,7 @@ export class Scorpion extends Snake
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
-        this.snakeSprite.texture = this.frames[0];
+        this.snakeSprite.texture = this.anim.texture;
         this.snakeSprite.anchor.set(0.5, 1);
     }
 }

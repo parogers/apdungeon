@@ -228,3 +228,38 @@ export class TrackMover
         return false;
     }
 }
+
+
+/*************/
+/* Animation */
+/*************/
+
+export class Animation
+{
+    constructor(animResource)
+    {
+        this.frames = Utils.getFrames(
+            animResource.resource,
+            animResource.frames,
+        );
+        this.fps = animResource.fps;
+        this.frame = 0;
+    }
+
+    get frameNum() {
+        return (this.frame|0) % this.frames.length;
+    }
+
+    get texture() {
+        return this.frames[this.frameNum];
+    }
+
+    start() {
+    }
+
+    update(dt) {
+        this.frame += this.fps*dt;
+        return this.texture;
+    }
+}
+
