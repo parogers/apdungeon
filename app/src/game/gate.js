@@ -17,9 +17,9 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from "./res";
+import { ANIM, RES } from "./res";
 import { Utils } from "./utils";
-import { Thing, Hitbox } from './thing';
+import { Animation, Thing, Hitbox } from './thing';
 import { GameControls } from './controls';
 import { Audio } from './audio';
 
@@ -28,60 +28,44 @@ export class Gate extends Thing
     constructor() 
     {
         super();
-        this.frames = [
-            Utils.getFrame(RES.MAPTILES, "gate_wall_1"),
-            Utils.getFrame(RES.MAPTILES, "gate_wall_2"),
-            Utils.getFrame(RES.MAPTILES, "gate_wall_3")
-        ];
+        this.openingAnim = new Animation(ANIM.GATE_OPENING);
+        this.closingAnim = new Animation(ANIM.GATE_CLOSING);
+        this.anim = this.openingAnim;
+        this.anim.stop();
         this.hitbox = new Hitbox(0, 0, 5, 5);
-        this.sprite = new PIXI.Sprite(this.frames[0]);
+        this.sprite = new PIXI.Sprite(this.anim.texture);
         this.sprite.anchor.set(0,0);
         this.frameNum = 0;
-        this.fps = 2;
         this.moving = 0;
     }
 
     isOpen()
     {
-        return (this.frameNum === this.frames.length-1 && this.moving === 0);
+        return this.anim === this.openingAnim && this.anim.done;
     }
 
     startOpening()
     {
-        if (this.frameNum < this.frames.length-1) {
-            this.moving = 1;
-        }
+        this.anim = this.openingAnim;
+        this.anim.start(0);
     }
 
     startClosing()
     {
-        if (this.frameNum > 0) {
-            this.moving = -1;
-        }
+        this.anim = this.closingAnim;
+        this.anim.start(0);
     }
 
     update(dt)
     {
         // The gate is opening or closing
-        if (this.moving !== 0) {
-            let fnum = Math.round(2*this.frameNum);
-            this.frameNum += this.moving*this.fps*dt;
-            if (this.frameNum < 0) {
-                // Finished closing
-                this.frameNum = 0;
-                this.moving = 0;
-            } else if (this.frameNum >= this.frames.length-1) {
-                // Finished opening
-                this.frameNum = this.frames.length-1;
-                this.moving = 0;
-            }
-            // Make a "clicksh" noise as the gate is opening. (we do this every
-            // other frame to make it more obvious, hence the '2' here and above)
-            if (fnum !== Math.round(2*this.frameNum)) {
-                Audio.playSound(RES.GATE_SND, 0.2);
-            }
+        let oldFrame = (2*this.anim.frame)|0;
+        this.sprite.texture = this.anim.update(dt);
+
+        let frame = (2*this.anim.frame)|0;
+        if (this.anim.playing && !this.anim.done && frame !== oldFrame) {
+            Audio.playSound(RES.GATE_SND, 0.2);
         }
-        this.sprite.texture = this.frames[Math.round(this.frameNum)|0];
     }
 
     handleHit(x, y, dmg)

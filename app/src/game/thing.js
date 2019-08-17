@@ -243,23 +243,48 @@ export class Animation
             animResource.frames,
         );
         this.fps = animResource.fps;
+        this.looping = (
+            animResource.looping !== undefined ? animResource.looping : true
+        );
+        this.playing = true;
         this.frame = 0;
+        this.startedFrame = true;
     }
 
-    get frameNum() {
-        return (this.frame|0) % this.frames.length;
+    start(frameNum)
+    {
+        if (frameNum !== undefined) {
+            this.frame = frameNum;
+        }
+        this.playing = true;
+    }
+
+    stop() {
+        this.playing = false;
+    }
+
+    get frameNum()
+    {
+        if (this.looping) {
+            return (this.frame|0) % this.frames.length;
+        }
+        return Math.min(this.frame|0, this.frames.length-1);
     }
 
     get texture() {
         return this.frames[this.frameNum];
     }
 
-    start() {
+    get done() {
+        if (this.looping) return false;
+        return this.frameNum === this.frames.length-1;
     }
 
-    update(dt) {
-        this.frame += this.fps*dt;
+    update(dt)
+    {
+        if (this.playing) {
+            this.frame += this.fps*dt;
+        }
         return this.texture;
     }
 }
-

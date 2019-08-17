@@ -109,6 +109,34 @@ export var ANIM = {
         frames: ['bat_south_1', 'bat_south_2'],
         fps: 4,
     },
+
+    GATE_OPENING: {
+        resource: RES.MAP_OBJS,
+        frames: ["gate_wall_1", "gate_wall_2", "gate_wall_3"],
+        fps: 2,
+        looping: false,
+    },
+    
+    GATE_CLOSING: {
+        resource: RES.MAP_OBJS,
+        frames: ["gate_wall_3", "gate_wall_2", "gate_wall_1"],
+        fps: 3,
+        looping: false,
+    },
+
+    DOOR_OPENING: {
+        resource: RES.MAP_OBJS,
+        frames: ["door1", "door2", "door3", 'door4'],
+        fps: 2,
+        looping: false,
+    },
+    
+    DOOR_CLOSING: {
+        resource: RES.MAP_OBJS,
+        frames: ['door4', 'door3', 'door2', 'door1'],
+        fps: 3,
+        looping: false,
+    },
     
 };
 

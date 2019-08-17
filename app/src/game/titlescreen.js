@@ -102,7 +102,7 @@ export class TitleScreen
         this.stage.addChild(txt);
 
         txt = new PIXI.Sprite(renderText(
-            'MUSIC \'A JOURNEY AWAITS\' BY PIERRA BONDOERFFER @PBONDOER'));
+            'MUSIC \"A JOURNEY AWAITS\" BY PIERRA BONDOERFFER @PBONDOER'));
         txt.scale.set(0.55);
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
