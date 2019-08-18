@@ -17,11 +17,11 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from "./res";
-import { Utils } from "./utils";
-import { Thing, Hitbox } from "./thing";
-import { GroundItem } from "./grounditem";
-import { Audio } from "./audio";
+import { RES } from './res';
+import { Utils } from './utils';
+import { Thing, Hitbox } from './thing';
+import { GroundItem } from './grounditem';
+import { Audio } from './audio';
 
 /* A container for holding items. The chest is opened when the player touches
  * it, and the chests contents are ejected randomly.
@@ -34,10 +34,10 @@ export class Chest {
     constructor(items, options)
     {
         for (let item of items) {
-            if (!item) throw Error("item cannot be null");
+            if (!item) throw Error('item cannot be null');
         }
-        this.openTexture = Utils.getFrame(RES.MAP_OBJS, "chest_open");
-        this.closedTexture = Utils.getFrame(RES.MAP_OBJS, "chest_closed");
+        this.openTexture = Utils.getFrame(RES.MAP_OBJS, 'chest_open');
+        this.closedTexture = Utils.getFrame(RES.MAP_OBJS, 'chest_closed');
         this.sprite = new PIXI.Sprite(this.closedTexture);
         this.sprite.anchor.set(0.5, 0.75);
         this.isOpen = false;
@@ -54,12 +54,12 @@ export class Chest {
             if (this.timer <= 0) {
                 // Eject the contents from the chest
                 for (let item of this.items) {
-                    var gnd = new GroundItem(
+                    let gnd = new GroundItem(
                         item, 
                         this.sprite.x+1*Utils.randUniform(0, 1), 
                         this.sprite.y+2*Utils.randUniform(0.1, 1));
                     this.level.addThing(gnd);
-                    var spd = Utils.randUniform(6, 12);
+                    let spd = Utils.randUniform(6, 12);
                     if (this.options && this.options.ejectX) {
                         gnd.velx = this.options.ejectX*spd;
                     } else {

@@ -19,8 +19,9 @@
 
 import { Gate } from './gate';
 import { Utils } from './utils';
-import { RES } from './res';
+import { ANIM, RES } from './res';
 import { Level } from './level';
+import { Animation } from './thing';
 import { GameControls, ManualControls } from './controls';
 
 /* A door is basically a gate with different graphics, and an extra sprite
@@ -30,15 +31,13 @@ export class Door extends Gate
     constructor()
     {
         super();
-        this.frames = [
-            Utils.getFrame(RES.MAP_OBJS, "door1"),
-            Utils.getFrame(RES.MAP_OBJS, "door2"),
-            Utils.getFrame(RES.MAP_OBJS, "door3"),
-            Utils.getFrame(RES.MAP_OBJS, "door4")
-        ];
+        this.openingAnim = new Animation(ANIM.DOOR_OPENING);
+        this.closingAnim = new Animation(ANIM.DOOR_CLOSING);
+        this.anim = this.openingAnim;
+        this.anim.stop();
         this.fps = 3;
         this.sprite.anchor.set(0.5,1);
-        this.sprite.texture = this.frames[0];
+        this.sprite.texture = this.anim.texture;
     }
 }
 
@@ -122,13 +121,13 @@ export class EnterScene
             break;
 
         case this.PLAYER_LOOK_LEFT:
-            player.faceDirection(-1);
+            player.facing = -1;
             this.state = this.PLAYER_LOOK_RIGHT;
             this.timer = 0.25;
             break;
 
         case this.PLAYER_LOOK_RIGHT:
-            player.faceDirection(1);
+            player.facing = 1;
             this.timer = 0.25;
             // Done!
             this.state = this.PLAYER_DONE;

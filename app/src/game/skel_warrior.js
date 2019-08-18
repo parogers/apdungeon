@@ -17,18 +17,20 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
+import { Animation, TrackMover, Thing, Hitbox } from './thing';
+import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
+import { Blood } from './blood';
 
-var STATE_IDLE = 0;
-var STATE_CHARGING = 1;
-var STATE_RETREAT = 2;
-var STATE_DEAD = 3;
-var STATE_CHANGE_TRACK = 4;
+const STATE_IDLE = 0;
+const STATE_CHARGING = 1;
+const STATE_RETREAT = 2;
+const STATE_DEAD = 3;
+const STATE_CHANGE_TRACK = 4;
 
 /* The goblin keeps their distance while the player is facing them, and 
  * quickly approaches to attack when the player's back is turned */
@@ -37,18 +39,13 @@ export class SkelWarrior extends Thing
     constructor()
     {
         super();
-        this.name = "Skeleton";
-        this.idleFrame = Utils.getFrame(RES.ENEMIES, "skeleton_warrior_south_1");
-        this.frames = Utils.getFrames(RES.ENEMIES, [
-            'skeleton_warrior_south_2',
-            'skeleton_warrior_south_3',
-        ]);
+        this.name = 'Skeleton';
+        this.anim = new Animation(ANIM.SKEL_WARRIOR_WALK);
         this.velx = 0;
         this.vely = 0;
         this.speed = 60;
         this.health = 4;
         this.alwaysChargeDist = 24;
-        this.frame = 0;
         this.facing = 1;
         this.chargeTimeout = 1;
         this.trackMover = null;
@@ -78,13 +75,6 @@ export class SkelWarrior extends Thing
                 [Item.Table.SMALL_BOW, 1]];
     }
 
-    incrementFrame(dt)
-    {
-        this.frame += 4*dt;
-        let frameNum = this.frame % this.frames.length;
-        this.monsterSprite.texture = this.frames[frameNum|0];
-    }
-
     update(dt)
     {
         if (this.state === STATE_IDLE)
@@ -103,7 +93,7 @@ export class SkelWarrior extends Thing
         {
             this.updateChangeTrack(dt);
         }
-        this.incrementFrame(dt);
+        this.monsterSprite.texture = this.anim.update(dt);
         this.splash.update(dt);
         this.shadow.update(dt);
         this.shadow.visible = !this.splash.visible;
@@ -117,7 +107,7 @@ export class SkelWarrior extends Thing
         }
         
         // Facing the player, but slowly moving towards them
-        this.velx = this.level.player.velx*0.9;
+        this.velx = this.level.baseSpeed*0.9;
         this.x += this.velx*dt;
 
         // Occasionally either charge the player, or change tracks to find them
@@ -158,7 +148,7 @@ export class SkelWarrior extends Thing
     // Charging at the player
     updateCharging(dt)
     {
-        this.velx = this.level.player.velx - this.speed;
+        this.velx = this.level.baseSpeed - this.speed;
         this.x += this.velx*dt;
 
         if (this.chargeOffset > this.alwaysChargeDist) {
@@ -177,7 +167,7 @@ export class SkelWarrior extends Thing
     // Retreating back to a safe distance
     updateRetreat(dt)
     {
-        this.velx = this.level.player.velx + this.speed/2.0;
+        this.velx = this.level.baseSpeed + this.speed/2.0;
         this.x += this.velx*dt;
 
         if (this.x >= this.level.player.fx + this.chargeOffset)
@@ -216,13 +206,11 @@ export class SkelWarrior extends Thing
             Audio.playSound(RES.SNAKE_HURT_SND);
         }
 
-        // Add some random dust, but only if we're not currently in water
-        var tile = this.level.getTileAt(this.x, this.y);
-        if (!tile.water) {
-            this.level.createBloodSpatter(
-                this.x, this.y-1,
-                ["dust1", "dust2", "dust3", "dust4"]);
-        }
+        this.level.addThing(
+            new Blood(Blood.DUST),
+            this.sprite.x,
+            this.sprite.y-1
+        );
         return true;
     }
 

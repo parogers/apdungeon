@@ -30,8 +30,8 @@ export function GoMarker(screen)
 {
     this.screen = screen;
     this.frames = [
-        Utils.getFrame(RES.UI, "go1"), 
-        Utils.getFrame(RES.UI, "go2")
+        Utils.getFrame(RES.UI, 'go1'), 
+        Utils.getFrame(RES.UI, 'go2')
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.anchor.set(1,0);
@@ -60,7 +60,7 @@ GoMarker.prototype.hide = function()
 
 GoMarker.prototype.update = function(dt)
 {
-    var level = this.screen.level;
+    let level = this.screen.level;
     if (!this.sprite.visible) {
         // Become visible if the level is ready to advance to the next arena
         if (level.state === level.SHOWING_GO) {
@@ -77,7 +77,7 @@ GoMarker.prototype.update = function(dt)
         return;
     }
 
-    var next = this.timer + dt;
+    let next = this.timer + dt;
     if (this.timer < 0.3 && next >= 0.3) {
         if (this.dings-- > 0) Audio.playSound(RES.GO_SND);
         else this.done = true;

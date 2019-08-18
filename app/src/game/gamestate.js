@@ -38,7 +38,7 @@ export class GameState
         this.TITLE_SCREEN = 3;
         // Playing through a level
         this.PLAYING_GAME = 4;
-        // Showing the "next level" transition screen
+        // Showing the 'next level' transition screen
         this.NEXT_SCREEN = 5;
         // Showing the game over screen
         this.GAME_OVER = 6;
@@ -47,14 +47,11 @@ export class GameState
 
         this.state = this.SHOW_TITLE_SCREEN;
         this.screen = null;
-        // Whether we should enable touch by default. This is decided based on
-        // what the player does to star the game at the title screen.
-        this.enableTouch = false;
 
-        window.addEventListener("resize", () => {
-            var div = Render.getContainer();
-            var width = window.innerWidth-5;
-            var height = window.innerHeight-5;
+        window.addEventListener('resize', () => {
+            let div = Render.getContainer();
+            let width = window.innerWidth-5;
+            let height = window.innerHeight-5;
             div.style.width = width;
             div.style.height = height;
             Render.getRenderer().resize(width, height);
@@ -82,15 +79,12 @@ export class GameState
             if (this.screen.state === this.screen.NEW_GAME) {
                 this.screen.destroy();
                 this.state = this.NEW_GAME;
-                this.enableTouch = this.screen.touchClicked;
             }
             break;
 
         case this.NEW_GAME:
             // Start a new game
-            this.screen = new LevelScreen({
-                enableTouch: this.enableTouch
-            });
+            this.screen = new LevelScreen();
             this.state = this.PLAYING_GAME;
             break;
 

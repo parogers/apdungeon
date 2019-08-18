@@ -18,16 +18,17 @@
  */
 
 import { renderText } from './ui';
-import { RES } from './res';
+import { ANIM, RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Flame, Splash, Shadow, TrackMover, Thing, Hitbox } from './thing';
+import { Animation, TrackMover, Thing, Hitbox } from './thing';
+import { Flame, Splash, Shadow } from './effects';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
 
 // What tint of colour to use when the player takes damage
-var DAMAGE_TINT = 0xFF0000;
-var NO_TINT = 0xFFFFFF;
+const DAMAGE_TINT = 0xFF0000;
+const NO_TINT = 0xFFFFFF;
 
 // Vertical acceleration when jumping
 const JUMP_ACCEL = -1000;
@@ -105,13 +106,9 @@ export class Player extends Thing
         this.vely = 0;
         this.accelx = 0;
         this.accely = 0;
-        this.frame = 0;
-        this.frames = null;
-        this.lungeFrame = null;
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
-        this.verticalSpeed = 60;
         this.maxSpeed = 30; // pixels/second
         // Inventory stuff
         this.numCoins = 0;
@@ -119,14 +116,9 @@ export class Player extends Thing
         this.armour = Item.Table.NONE;
         this.bow = Item.Table.NONE;
         this.sword = Item.Table.NONE;
-        this.dirx = 0;
-        this.diry = 0;
         this.running = false;
-        this.walkFPS = 10;
         // Process of dying (showing animation)
-        this.dying = false;
         this.dead = false;
-        this.lungeTimer = 0;
         // The number of kills (stored by monster name). Also stores the 
         // image of the monster (for displaying stats later)
         //     {count: ZZZ, img: ZZZ}
@@ -135,22 +127,22 @@ export class Player extends Thing
         // Define the hitbox
         this.hitbox = new Hitbox(0, -2, 2, 2);
 
-        this.setCharFrames(RES.FEMALE_MELEE, "melee1");
+        this.setCharFrames('player1');
         // Setup the player sprite (texture comes later)
         this.spriteChar = new PIXI.Sprite();
         this.spriteChar.anchor.set(0.5, 1);
         this.sprite.addChild(this.spriteChar);
-        // Setup the sprite for when the player is treading water
-        this.splash = new Splash(this, -1.5, true);
 
         // Sprite for showing messages to the player
-        this.textSprite = new PIXI.Sprite(renderText("?"));
+        this.textSprite = new PIXI.Sprite(renderText('?'));
         this.textSprite.scale.set(3/5.);
         this.textSprite.anchor.set(0.5, 1);
         this.textSprite.visible = false;
         this.sprite.addChild(this.textSprite);
         this.textTimeout = 0;
 
+        // Setup the sprite for when the player is treading water
+        this.splash = new Splash(this, -1.5, true);
         this.shadow = new Shadow(this, Shadow.MEDIUM);
         this.flame = new Flame(this, Flame.SMALL);
 
@@ -173,11 +165,11 @@ export class Player extends Thing
         this.bowWeaponSlot.sprite.visible = false;
         this.swordWeaponSlot.sprite.visible = false;
 
-        this.handleCollisionCallback = (function(thing) {
+        this.handleCollisionCallback = (thing) => {
             if (thing.handlePlayerCollision) {
                 thing.handlePlayerCollision(this);
             }
-        }).bind(this);
+        };
         //this.upgradeSword(Item.Table.SMALL_SWORD);
         this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
@@ -191,17 +183,16 @@ export class Player extends Thing
         return Math.abs(this.spriteChar.height);
     }
 
-    /* Have the player face the given direction */
-    faceDirection(dirx)
-    {
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dirx);
-        this.textSprite.scale.x = Math.abs(
-            this.textSprite.scale.x)*Math.sign(dirx);
-    }
-
     get facing()
     {
         return Math.sign(this.sprite.scale.x);
+    }
+
+    set facing(value)
+    {
+        let dirx = Math.sign(value);
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*dirx;
+        this.textSprite.scale.x = Math.abs(this.textSprite.scale.x)*dirx;
     }
 
     get inWater() {
@@ -214,8 +205,8 @@ export class Player extends Thing
 
     /*update(dt)
       {
-      var dirx = 0;
-      var diry = 0;
+      let dirx = 0;
+      let diry = 0;
 
       if (this.dead) return;
 
@@ -233,7 +224,7 @@ export class Player extends Thing
       this.frame = this.dyingFrames.length-1;
       this.dead = true;
       }
-      var frame = this.dyingFrames[(this.frame)|0];
+      let frame = this.dyingFrames[(this.frame)|0];
       this.spriteChar.texture = frame;
       return;
       }
@@ -278,7 +269,7 @@ export class Player extends Thing
       //if (this.controls.left.doublePressed || 
       //    this.controls.right.doublePressed)
       //{
-      //    console.log("LUNGE!");
+      //    console.log('LUNGE!');
       //    this.velx *= 2;
       //    this.lungeTimer = 1;
       //}
@@ -299,16 +290,16 @@ export class Player extends Thing
       this.frame = 0;
       }
 
-      //var speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
+      //let speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
       //if (speed > this.maxSpeed) {
       //this.velx *= this.maxSpeed/speed;
       //this.vely *= this.maxSpeed/speed;
       //}
 
       // Handle left/right movement
-      var w = this.spriteChar.texture.width*0.75;
+      let w = this.spriteChar.texture.width*0.75;
       if (this.velx) {
-      var x = this.sprite.x + this.velx*dt;
+      let x = this.sprite.x + this.velx*dt;
       // Keep the player visible to the camera
       if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
       x-w/2 >= this.level.camera.x && 
@@ -320,7 +311,7 @@ export class Player extends Thing
       }
       // Handle up/down movement
       if (this.vely) {
-      var y = this.sprite.y + this.vely*dt;
+      let y = this.sprite.y + this.vely*dt;
       if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
       this.sprite.y = y;
       } else {
@@ -334,7 +325,7 @@ export class Player extends Thing
       }
 
       // Make a splashy sound when we enter water
-      var tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
+      let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
       if (tile.water) {
       if (!this.waterSprite.visible) 
       Audio.playSound(RES.SPLASH_SND);
@@ -352,7 +343,7 @@ export class Player extends Thing
       this.handleCollisionCallback);
 
       // Update animation
-      var frame = this.frames[((this.frame*10)|0) % this.frames.length];
+      let frame = this.frames[((this.frame*10)|0) % this.frames.length];
       this.spriteChar.texture = frame;
       }*/
 
@@ -407,7 +398,7 @@ export class Player extends Thing
             if (this.running)
             {
                 this.sprite.x += this.maxSpeed*dt;
-                this.frame += this.walkFPS*dt;
+                this.walkAnim.update(dt);
 
                 // Check for a collision with a wall
                 let checkPos = this.fx + this.level.tileWidth/2;
@@ -436,8 +427,6 @@ export class Player extends Thing
         }
         else if (this.state === STATE_CHANGING_TRACK)
         {
-            //this.frame += this.walkFPS*dt;
-            this.frame = 0;
             if (this.running)
             {
                 this.fx = this.basePos;
@@ -468,10 +457,7 @@ export class Player extends Thing
             this.takeDamage(1, 'fire');
         }
         this.fireDamageTimer.update(dt);
-
-        // Update animation
-        let frameNum = (this.frame|0) % this.frames.length;
-        this.spriteChar.texture = this.frames[frameNum];
+        this.spriteChar.texture = this.walkAnim.texture;
     }
 
     // The player is being knocked back after hitting a wall
@@ -503,19 +489,9 @@ export class Player extends Thing
         }
     }
 
-    setCharFrames(res, name)
+    setCharFrames(base)
     {
-        this.frames = Utils.getFrames(
-            res, 
-            [name + "_south_1", 
-             name + "_south_2", 
-             name + "_south_3"]);
-        this.lungeFrame = Utils.getFrame(res, name + "_lunge_1");
-        this.dyingFrames = Utils.getFrames(
-            res, 
-            ["melee1_dying_1", 
-             "melee1_dying_2", 
-             "melee1_dying_3"]);
+        this.walkAnim = new Animation(ANIM[base.toUpperCase() + '_WALK']);
     }
 
     setArmour(item)
@@ -528,18 +504,18 @@ export class Player extends Thing
     updatePlayerAppearance()
     {
         // Update the player character sprite, based on the armour we're wearing
-        var img = "melee1";
-        if (this.armour === Item.Table.LEATHER_ARMOUR) img = "melee2";
-        else if (this.armour == Item.Table.STEEL_ARMOUR) img = "melee3";
-        this.setCharFrames(RES.FEMALE_MELEE, img);
+        let base = 'player1';
+        if (this.armour === Item.Table.LEATHER_ARMOUR) base = 'player1';
+        else if (this.armour == Item.Table.STEEL_ARMOUR) base = 'player1';
+        this.setCharFrames(base);
         // Update the sword sprite
         // ...
         // Update the bow sprite
         // ...
-        var b = (this.weaponSlot === this.bowWeaponSlot);
+        let b = (this.weaponSlot === this.bowWeaponSlot);
         this.bowWeaponSlot.sprite.visible = b;
 
-        var b = (this.weaponSlot === this.swordWeaponSlot);
+        b = (this.weaponSlot === this.swordWeaponSlot);
         this.swordWeaponSlot.sprite.visible = b;
 
         if (this.weaponSlot) this.weaponSlot.update(0);
@@ -647,10 +623,10 @@ export class Player extends Thing
     /* Called when a monster (thing) is killed by the player */
     handleMonsterKilled(monster)
     {
-        if (this.kills[monster.name] === undefined) {
+        /*if (this.kills[monster.name] === undefined) {
             this.kills[monster.name] = {count: 0, img: monster.frames[0]};
         }
-        this.kills[monster.name].count++;
+        this.kills[monster.name].count++;*/
     }
 
     /* Called when the player walks over a takeable item (GroundItem). The item
@@ -666,9 +642,9 @@ export class Player extends Thing
         if (item.isSword() && item.isBetter(this.sword)) {
             if (this.sword === Item.Table.NONE) {
                 if (this.controls.hasTouch) {
-                    this.showMessage("TAP BUTTON", " TO ATTACK");
+                    this.showMessage('TAP BUTTON', ' TO ATTACK');
                 } else {
-                    this.showMessage("  PRESS A", "TO ATTACK");
+                    this.showMessage('  PRESS A', 'TO ATTACK');
                 }
             }
             this.upgradeSword(item);
@@ -678,9 +654,9 @@ export class Player extends Thing
         if (item.isBow() && item.isBetter(this.bow)) {
             if (this.bow === Item.Table.NONE) {
                 if (this.controls.hasTouch) {
-                    this.showMessage("SWIPE BUTTON", "    TO SWAP");
+                    this.showMessage('SWIPE BUTTON', '    TO SWAP');
                 } else {
-                    this.showMessage("PRESS X", "TO SWAP");
+                    this.showMessage('PRESS X', 'TO SWAP');
                 }
             }
             this.upgradeBow(item);
@@ -710,7 +686,7 @@ export class Player extends Thing
 
     showMessage()
     {
-        var lines = Array.prototype.slice.call(arguments);
+        let lines = Array.prototype.slice.call(arguments);
         if (lines.length > 0) {
             this.textSprite.y = -this.height-1;
             this.textSprite.texture = renderText(lines, {blackBG: true})

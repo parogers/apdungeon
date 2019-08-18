@@ -17,11 +17,13 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { RES, ANIM } from './res';
 import { Utils } from './utils';
-import { Splash, Shadow, Thing, Hitbox } from './thing';
+import { Animation, Thing, Hitbox } from './thing';
+import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
+import { Blood } from './blood';
 
 // Animates a monster falling off the screen as a death animation
 export class DeathAnimation extends Thing
@@ -54,9 +56,9 @@ export class DeathAnimation extends Thing
         }
         else if (this.state === this.STATE_FALLING)
         {
-            // Have the monster "fall off" the screen and disappear
+            // Have the monster 'fall off' the screen and disappear
             this.vely += this.accely*dt;
-            this.monster.sprite.x += this.level.player.velx*1.5*dt;
+            this.monster.sprite.x += this.level.player.baseSpeed*1.5*dt;
             this.monster.sprite.y += this.vely*dt;
 
             if (!this.level.isThingVisible(this.monster))
@@ -83,17 +85,13 @@ export class Snake extends Thing
         this.STATE_HURT = 3;
         this.STATE_DEAD = 4;
 
-        this.name = "Snake";
-        this.frames = Utils.getFrames(
-            RES.ENEMIES,
-            ['snake_south_1', 'snake_south_2']
-        );
+        this.name = 'Snake';
+        this.anim = new Animation(ANIM.SNAKE_WALK);
         this.speed = 16;
         this.health = 3;
-        this.frame = 0;
         this.facing = 1;
         // The actual snake sprite
-        this.snakeSprite = new PIXI.Sprite(this.frames[0]);
+        this.snakeSprite = new PIXI.Sprite(this.anim.texture);
         this.snakeSprite.anchor.set(0.5, 7/8);
         this.sprite.addChild(this.snakeSprite);
         this.shadow = new Shadow(this, this.shadowType);
@@ -155,11 +153,11 @@ export class Snake extends Thing
         else if (this.state === this.STATE_HURT)
         {
             // The snake keeps its eyes closed while hurt
-            this.snakeSprite.texture = this.frames[1];
+            //this.snakeSprite.texture = this.frames[1];
             // Slide backwards from the hit
             if (this.knockedTimer > 0) {
-                var dx = this.knocked*dt;
-                var tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
+                let dx = this.knocked*dt;
+                let tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
                 if (!tile.solid) {
                     this.sprite.x += dx;
                 }
@@ -178,10 +176,10 @@ export class Snake extends Thing
         this.shadow.update(dt);
         this.shadow.visible = !this.splash.visible;
 
-        if (this.velx != 0) {
-            this.frame += 2*dt;
+        if (this.velx != 0)
+        {
             this.sprite.x += this.velx*dt;
-            this.snakeSprite.texture = this.frames[(this.frame%this.frames.length)|0];
+            this.snakeSprite.texture = this.anim.update(dt);
         }
         this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
     }
@@ -211,11 +209,12 @@ export class Snake extends Thing
             this.state = this.STATE_HURT;
         }
 
-        // Add some random blood, but only if we're not currently in water
-        let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
-        if (!tile.water) {
-            this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
-        }
+        // Add a blood spatter
+        this.level.addThing(
+            new Blood(),
+            this.sprite.x,
+            this.sprite.y-1
+        );
         return true;
     }
 
@@ -237,8 +236,8 @@ export class Rat extends Snake
     constructor() 
     {
         super();
-        this.name = "Rat";
-        this.frames = Utils.getFrames(RES.ENEMIES, ["rat_south_1", "rat_south_2"]);
+        this.name = 'Rat';
+        this.anim = new Animation(ANIM.RAT_WALK);
         this.health = -1;
         this.speed = 20;
         this.frame = 0;
@@ -246,8 +245,7 @@ export class Rat extends Snake
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
-        this.snakeSprite.texture = this.frames[0];
-        //this.shadow.shadowSprite.anchor.set(0.5, -0.1);
+        this.snakeSprite.texture = this.anim.texture;
     }
 
     get shadowType() {
@@ -268,11 +266,8 @@ export class Scorpion extends Snake
     constructor()
     {
         super();
-        this.name = "Scorpion";
-        this.frames = Utils.getFrames(
-            RES.ENEMIES,
-            ["scorpion_south_1", "scorpion_south_2"]
-        );
+        this.name = 'Scorpion';
+        this.anim = new Animation(ANIM.SCORPION_WALK);
         this.health = 4;
         this.speed = 10;
         this.frame = 0;
@@ -280,7 +275,7 @@ export class Scorpion extends Snake
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
-        this.snakeSprite.texture = this.frames[0];
+        this.snakeSprite.texture = this.anim.texture;
         this.snakeSprite.anchor.set(0.5, 1);
     }
 }

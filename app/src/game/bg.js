@@ -31,6 +31,10 @@ export class Tile
         this.type = type;
         this.solid = args.solid || false;
     }
+
+    get isWater() {
+        return this.type === 'water';
+    }
 };
 
 export class Tileset
@@ -86,13 +90,13 @@ export class ChunkTemplate
             this.grid.length*tileset.tileHeight
         );
 
-        var cnt = new PIXI.Container();
-        for (var row = 0; row < this.grid.length; row++) 
+        let cnt = new PIXI.Container();
+        for (let row = 0; row < this.grid.length; row++) 
         {
-            for (var col = 0; col < this.grid[0].length; col++) 
+            for (let col = 0; col < this.grid[0].length; col++) 
             {
                 let tileID = this.grid[row][col];
-                var sprite = new PIXI.Sprite(
+                let sprite = new PIXI.Sprite(
                     tileset.getTexture(tileID)
                 );
                 sprite.anchor.set(0,1);
@@ -173,11 +177,11 @@ export class Chunk
     {
         // Account for the background offset, and also for the fact that the
         // first row of tiles are wall tiles. (ie taller)
-        var x = x-this.sprite.x;
-        var y = y-this.sprite.y;
+        x -= this.sprite.x;
+        y -= this.sprite.y;
 
-        var row = (y / this.tileHeight)|0;
-        var col = (x / this.tileWidth)|0;
+        let row = (y / this.tileHeight)|0;
+        let col = (x / this.tileWidth)|0;
         if (this.grid[row] && this.grid[row][col]) {
             return this.tileset.tiles[this.grid[row][col]];
         }

@@ -34,8 +34,6 @@ function Camera(w, h)
     this.height = h;
 }
 
-//Camera.autoFit
-
 /*********/
 /* Track */
 /*********/
@@ -53,6 +51,61 @@ class Track
     }
 };
 
+/*****************/
+/* LevelDarkness */
+/*****************/
+
+export class LevelDarkness
+{
+    constructor()
+    {
+        function renderDarkness(w, h, xrad, yrad)
+        {
+            let texture = PIXI.RenderTexture.create(w, h);
+            let cnt = new PIXI.Container();
+            let dark_shadow = Utils.getFrame(RES.MAP_OBJS, 'dark_shadow_square');
+            let light_shadow = Utils.getFrame(RES.MAP_OBJS, 'light_shadow_square');
+
+            for (let y = 0; y < h; y++)
+            {
+                for (let x = 0; x < w; x++)
+                {
+                    let dist = ((x-w/2)/xrad)**2 + ((y-h/2)/yrad)**2;
+                    let shadow = null;
+
+                    if (dist > 1)
+                    {
+                        shadow = dark_shadow;
+                    }
+                    else if (dist > 0.85)
+                    {
+                        shadow = light_shadow;
+                    }
+                    if (shadow)
+                    {
+                        let sprite = new PIXI.Sprite(shadow);
+                        sprite.x = x;
+                        sprite.y = y;
+                        sprite.scale.set(1, 1);
+                        cnt.addChild(sprite);
+                    }
+                }
+            }
+            Render.getRenderer().render(cnt, texture);
+            return texture;
+        }
+
+        this.sprite = new PIXI.Sprite(
+            renderDarkness(100, 60, 52, 32)
+        );
+        this.sprite.zpos = Level.FRONT_POS;
+    }
+
+    update(dt) {
+        this.sprite.x = this.level.camera.x;
+    }
+}
+
 /*********/
 /* Level */
 /*********/
@@ -60,8 +113,8 @@ class Track
 // Helper function for sorting sprites by depth, so sprites in the backround
 // are drawn below sprites in the foreground.
 function compareDepth(s1, s2) {
-    var z1 = s1.zpos || s1.y;
-    var z2 = s2.zpos || s2.y;
+    let z1 = s1.zpos || s1.y;
+    let z2 = s2.zpos || s2.y;
     return (z1>z2) - (z2>z1);
 }
 
@@ -85,11 +138,8 @@ export class Level
         this.stage = new PIXI.Container();
         this.compound.addToLevel(this);
 
-        this.darknessSprite = new PIXI.Sprite(
-            Utils.renderDarkness(100, 60, 52, 32)
-        );
-        this.darknessSprite.zpos = Level.FRONT_POS;
-        this.stage.addChild(this.darknessSprite);
+        this.darkness = new LevelDarkness();
+        this.addThing(this.darkness);
         
         this.smoothTracking = true;
         this.exitDoor = null;
@@ -183,11 +233,11 @@ export class Level
      * y-position of that free space. */
     findClearSpace(x, y)
     {
-        var offset = 0;
+        let offset = 0;
         while(true)
         {
-            var north = this.compound.getTileAt(x, y + offset);
-            var south = this.compound.getTileAt(x, y - offset);
+            let north = this.compound.getTileAt(x, y + offset);
+            let south = this.compound.getTileAt(x, y - offset);
             if (!north.solid) {
                 return y + offset;
             }
@@ -228,7 +278,7 @@ export class Level
             xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
 
             if (this.smoothTracking) {
-                var dirx = Math.sign(xpos-this.camera.x);
+                let dirx = Math.sign(xpos-this.camera.x);
                 this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
                 if (dirx != Math.sign(xpos-this.camera.x)) {
                     // Overshot the target, stop smoothly tracking
@@ -246,7 +296,6 @@ export class Level
         // Position the camera
         this.stage.x = -this.camera.x;
         this.stage.y = -this.camera.y;
-        this.darknessSprite.x = this.camera.x;
     }
 
     /* Check if the given hitbox, at the given position, overlaps with any thing 
@@ -254,10 +303,10 @@ export class Level
      * This function is used to determine if a projectile strikes a target. */
     checkHit(x, y, hitbox, ignore)
     {
-        var xp = x + hitbox.x, yp = y + hitbox.y;
-        var w = hitbox.w, h = hitbox.h;
-        //var thing = null;
-        //for (var n = 0; n < this.things.length; n++) 
+        let xp = x + hitbox.x, yp = y + hitbox.y;
+        let w = hitbox.w, h = hitbox.h;
+        //let thing = null;
+        //for (let n = 0; n < this.things.length; n++) 
         for (let thing of this.things)
         {
             //thing = this.things[n];
@@ -295,25 +344,27 @@ export class Level
 
     checkSolidAt(x, y, width)
     {
-        var left = this.compound.getTileAt(x-width/2, y);
-        var right = this.compound.getTileAt(x+width/2, y);
+        let left = this.compound.getTileAt(x-width/2, y);
+        let right = this.compound.getTileAt(x+width/2, y);
         return left.solid || right.solid;
     }
 
     // Add a 'thing' to the level and it's sprite to the render stage
-    addThing(thing)
+    addThing(thing, x, y)
     {
         thing.level = this;
         this.things.push(thing);
         if (thing.sprite) {
             this.stage.addChild(thing.sprite);
         }
+        if (x !== undefined) thing.fx = x;
+        if (y !== undefined) thing.fy = y;
     }
 
     // Remove a 'thing' remove the level and it's sprite from the stage
     removeThing(thing)
     {
-        var i = this.things.indexOf(thing);
+        let i = this.things.indexOf(thing);
         if (i >= 0) {
             this.things[i] = this.things[this.things.length-1];
             this.things.pop();
@@ -330,14 +381,14 @@ export class Level
         // Pick an item entry from the table, using a weighted probability pick
         // Entries look like: [item_number, weight]. First sum all the weights
         // and pick a random number up to that total.
-        var total = 0;
+        let total = 0;
         for (let entry of table) {
             total += entry[1];
         }
         // Pick a random number, then iterate over the items and find what 
         // item it corresponds to.
-        var pick = null;
-        var num = Utils.randint(0, total);
+        let pick = null;
+        let num = Utils.randint(0, total);
         for (let entry of table) {
             num -= entry[1];
             if (num <= 0) {
@@ -347,23 +398,11 @@ export class Level
         }
         // Drop the item
         if (pick !== null) {
-            var gnd = new GroundItem(pick, x, y);
+            let gnd = new GroundItem(pick, x, y);
             gnd.velx = 10*(x > this.camera.x ? -1 : 1);
             gnd.velh = -40;
             this.addThing(gnd);
         }
-    }
-
-    createBloodSpatter(x, y, imgs)
-    {
-        var txt = Utils.randomChoice(imgs || ["blood1", "blood2", "blood3"]);
-        var sprite = new PIXI.Sprite(Utils.getFrame(RES.MAP_OBJS, txt));
-        sprite.zpos = Level.FLOOR_POS;
-        sprite.anchor.set(0.5, 0.5);
-        sprite.x = x;
-        sprite.y = y;
-        this.stage.addChild(sprite);
-        return sprite;
     }
 
     getTileAt(x, y) {

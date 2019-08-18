@@ -17,35 +17,50 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-export class Scenery
+import { Thing } from './thing';
+import { Level } from './level';
+import { Utils } from './utils';
+import { RES } from './res';
+
+export class Blood extends Thing
 {
-    constructor(frames)
+    constructor(type)
     {
-        if (!(frames instanceof Array)) frames = [frames];
-        this.frames = frames;
-        this.sprite = new PIXI.Sprite(frames[0]);
-        this.sprite.anchor.set(0.5, 1);
+        super();
+        let frames = null;
+
+        if (type === Blood.DUST) {
+            frames = ['dust1', 'dust2', 'dust3', 'dust4'];
+        } else {
+            frames = ['blood1', 'blood2', 'blood3'];
+        }
+        
+        this.sprite = new PIXI.Sprite(
+            Utils.getFrame(RES.MAP_OBJS, Utils.randomChoice(frames))
+        );
+        this.sprite.zpos = Level.FLOOR_POS;
+        this.sprite.anchor.set(0.5, 0.5);
         this.timer = 0;
-        this.velx = 0;
-        this.vely = 0;
-        this.fps = 5;
-        this.frame = 0;
     }
 
     update(dt)
     {
-        this.sprite.x += this.velx*dt;
-        this.sprite.y += this.vely*dt;
-        if (this.timer > 0) {
-            this.timer -= dt;
-            if (this.timer <= 0) {
+        if (!this.isOnCamera)
+        {
+            this.level.removeThing(this);
+            return;
+        }
+
+        this.timer += dt;
+        if (this.timer > 0.1)
+        {
+            let tile = this.level.getTileAt(this.fx, this.fy);
+            if (tile.isWater) {
                 this.level.removeThing(this);
             }
         }
-        if (this.frames.length > 1) {
-            this.frame += this.fps*dt;
-            let img = this.frames[(this.frame|0) % this.frames.length];
-            this.sprite.texture = img;
-        }
     }
 }
+
+Blood.RED = 0;
+Blood.DUST = 1;

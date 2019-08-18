@@ -37,7 +37,7 @@ Utils.randUniform = function(a, b)
 // Returns a random element selected uniformly from the given list
 Utils.randomChoice = function(lst)
 {
-    var n = (Math.random() * lst.length)|0;
+    let n = (Math.random() * lst.length)|0;
     return lst[n];
 }
 
@@ -45,12 +45,12 @@ Utils.randomChoice = function(lst)
 // rows and columns (rows, cols) are available as attributes.
 Utils.createGrid = function(rows, cols, value)
 {
-    var grid = [];
+    let grid = [];
     grid.rows = rows;
     grid.cols = cols;
-    for (var row = 0; row < rows; row++) {
+    for (let row = 0; row < rows; row++) {
         grid[row] = [];
-        for (var col = 0; col < cols; col++) {
+        for (let col = 0; col < cols; col++) {
             grid[row][col] = value;
         }
     }
@@ -60,17 +60,17 @@ Utils.createGrid = function(rows, cols, value)
 // Returns a sprite used for monsters/player treading water
 Utils.createSplashSprite = function()
 {
-    var waterSprite = new PIXI.Sprite();
+    let waterSprite = new PIXI.Sprite();
     waterSprite.anchor.set(0.5, 0.5);
     waterSprite.visible = false;
-    waterSprite.texture = Utils.getFrame(RES.MAP_OBJS, "treading_water");
+    waterSprite.texture = Utils.getFrame(RES.MAP_OBJS, 'treading_water');
     return waterSprite;
 }
 
 // Helper function for returning a texture set given the resource string
 Utils.getTextures = function(res)
 {
-    if (!res) throw Error("must specify a resource");
+    if (!res) throw Error('must specify a resource');
     return PIXI.loader.resources[res].textures;
 }
 
@@ -95,10 +95,10 @@ Utils.getFrame = function(res, name)
 
 Utils.getFrames = function(res, names)
 {
-    var frames = [];
-    for (var n = 0; n < names.length; n++) {
-        var frame = Utils.getTextures(res)[names[n]];
-        if (!frame) console.log("ERROR: missing frame " + names[n]);
+    let frames = [];
+    for (let n = 0; n < names.length; n++) {
+        let frame = Utils.getTextures(res)[names[n]];
+        if (!frame) console.log('ERROR: missing frame ' + names[n]);
         frames.push(frame);
     }
     return frames;
@@ -107,46 +107,9 @@ Utils.getFrames = function(res, names)
 // Updates a dictionary with the contents of another dictionary
 Utils.updateDict = function(dict, other)
 {
-    for (var key in other) {
+    for (let key in other) {
         dict[key] = other[key];
     }
-}
-
-Utils.renderDarkness = function(w, h, xrad, yrad)
-{
-    let texture = PIXI.RenderTexture.create(w, h);
-    let cnt = new PIXI.Container();
-    let dark_shadow = Utils.getFrame(RES.MAP_OBJS, 'dark_shadow_square');
-    let light_shadow = Utils.getFrame(RES.MAP_OBJS, 'light_shadow_square');
-
-    for (let y = 0; y < h; y++)
-    {
-        for (let x = 0; x < w; x++)
-        {
-            let dist = ((x-w/2)/xrad)**2 + ((y-h/2)/yrad)**2;
-            let shadow = null;
-
-            if (dist > 1)
-            {
-                shadow = dark_shadow;
-            }
-            else if (dist > 0.85)
-            {
-                shadow = light_shadow;
-            }
-            if (shadow)
-            {
-                let sprite = new PIXI.Sprite(shadow);
-                sprite.x = x;
-                sprite.y = y;
-                sprite.scale.set(1, 1);
-                cnt.addChild(sprite);
-            }
-        }
-    }
-
-    Render.getRenderer().render(cnt, texture);
-    return texture;
 }
 
 /************/
@@ -155,14 +118,14 @@ Utils.renderDarkness = function(w, h, xrad, yrad)
 
 export function Sequence()
 {
-    var args = arguments[0];
-    for (var key in args) {
+    let args = arguments[0];
+    for (let key in args) {
         this[key] = args[key];
     }
     this.done = false;
     this.numSteps = arguments.length-1;
     this.labels = {};
-    for (var n = 1; n < arguments.length; n++) {
+    for (let n = 1; n < arguments.length; n++) {
         // The sequence contains functions to call, and embedded strings to
         // use as labels. (for looping, branching, etc)
         if (arguments[n].constructor === String) {
@@ -170,7 +133,7 @@ export function Sequence()
         } else {
             // Note functions are assigned to this object, so that calling
             // them this way gives us access to 'this' inside.
-            var name = "func_" + (n-1);
+            let name = 'func_' + (n-1);
             this[name] = arguments[n];
         }
     }
@@ -190,9 +153,9 @@ Sequence.prototype.update = function(dt)
         return;
     }
     // Check if the current state is a function (or a label)
-    var fname = "func_" + this.state;
+    let fname = 'func_' + this.state;
     if (this[fname]) {
-        var ret = this[fname](dt);
+        let ret = this[fname](dt);
         if (ret === this.NEXT) {
             // Advance to the next state
             this.state++;

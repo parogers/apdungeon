@@ -19,12 +19,12 @@
 
 import { RES } from './res';
 import { Utils } from './utils';
-import { Shadow, Thing, Hitbox } from './thing';
+import { Thing, Hitbox } from './thing';
 import { Audio } from './audio';
 
-var ARROW_FLIGHT = 0;
-var ARROW_FALLING = 1;
-var ARROW_DISAPPEAR = 2;
+const ARROW_FLIGHT = 0;
+const ARROW_FALLING = 1;
+const ARROW_DISAPPEAR = 2;
 
 /*********/
 /* Sword */
@@ -49,7 +49,7 @@ export class SwordWeaponSlot
         this.hitbox = new Hitbox(0, -4, 10, 6);
         // Which weapon texture is currently displayed
         this.textureName = null;
-        this.setTexture("sword2");
+        this.setTexture('sword2');
 
         this.handleHitCallback = (function(hit) {
             if (hit.handleHit) {
@@ -121,7 +121,7 @@ export class BowWeaponSlot
         this.player = player;
         this.attackCooldown = 0;
         this.textureName = null;
-        this.setTexture("bow1");
+        this.setTexture('bow1');
         // Vertical offset from the player position where the arrow
         // is fired.
         this.arrowFireHeight = 2.5;
@@ -167,7 +167,7 @@ export class BowWeaponSlot
 
         this.player.numArrows--;
 
-        var arrow = new Arrow(
+        let arrow = new Arrow(
             this.player,
             this.player.fx,
             this.player.fy,
@@ -192,7 +192,7 @@ export class Arrow extends Thing
         super();
         this.owner = owner;
         this.arrowSprite = new PIXI.Sprite(
-            Utils.getFrame(RES.WEAPONS, "arrow")
+            Utils.getFrame(RES.WEAPONS, 'arrow')
         );
         this.arrowSprite.anchor.set(0.5, 0.5);
         this.arrowSprite.scale.x = Math.sign(velx);
@@ -207,12 +207,11 @@ export class Arrow extends Thing
         this.state = ARROW_FLIGHT;
         this.timer = 0;
         this.hitbox = new Hitbox(0, 0, 8, 4);
-        //this.shadow = new Shadow(this, Shadow.ARROW);
     }
 
     update(dt)
     {
-        var level = this.owner.level;
+        let level = this.owner.level;
         if (this.state === ARROW_FLIGHT)
         {
             this.fx += this.velx*dt;
@@ -224,7 +223,7 @@ export class Arrow extends Thing
                 this.removeSelf();
             }
             // Check if the arrow hits a wall
-            var tile = level.getTileAt(
+            let tile = level.getTileAt(
                 this.sprite.x + Math.sign(this.velx)*4,
                 this.sprite.y + this.fh
             );
@@ -239,7 +238,7 @@ export class Arrow extends Thing
                 return;
             }
             // Now check if we've hit an enemy
-            var other = level.checkHit(
+            let other = level.checkHit(
                 this.sprite.x,
                 this.sprite.y, 
                 this.hitbox,
@@ -247,7 +246,7 @@ export class Arrow extends Thing
             );
             if (other && other.handleHit)
             {
-                var ret = other.handleHit(
+                let ret = other.handleHit(
                     this.sprite.x,
                     this.sprite.y,
                     1
@@ -269,6 +268,5 @@ export class Arrow extends Thing
             this.timer -= dt;
             if (this.timer <= 0) this.removeSelf();
         }
-        //this.shadow.update(dt);
     }
 }

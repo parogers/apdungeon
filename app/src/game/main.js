@@ -59,8 +59,8 @@ export class Game
 
     gameloop()
     {
-        var now = (new Date()).getTime()/1000.0;
-        var dt = 0;
+        let now = (new Date()).getTime()/1000.0;
+        let dt = 0;
         if (this.lastTime !== null) {
             dt = Math.min(1.0/30, now - this.lastTime);
             //dt /= 4;
@@ -84,8 +84,8 @@ export class Game
 
     progressCallback(loader, resource)
     {
-        console.log("loading: " + resource.url + 
-                    " (" + (loader.progress|0) + "%)"); 
+        console.log('loading: ' + resource.url + 
+                    ' (' + (loader.progress|0) + '%)'); 
         this.progress.update(loader.progress/100.0);
         this.requestAnimationFrame(() => {
             Render.getRenderer().render(this.stage);
@@ -107,7 +107,7 @@ export class Game
         };
 
         this.stage = new PIXI.Container();
-        /*this.progress = new ProgressBar(200, 20, "LOADING IMAGES...");
+        /*this.progress = new ProgressBar(200, 20, 'LOADING IMAGES...');
         this.progress.sprite.x = 100;
         this.progress.sprite.y = 100;
         this.stage.addChild(this.progress.sprite);*/
@@ -135,9 +135,9 @@ export class Game
 
             for (name in PIXI.loader.resources) 
             {
-                var err = PIXI.loader.resources[name].error;
+                let err = PIXI.loader.resources[name].error;
                 if (err) {
-                    console.log("Failed to load image: " + name + " (" + err + ")");
+                    console.log('Failed to load image: ' + name + ' (' + err + ')');
                 }
             }
             this.stage.children = [];
@@ -157,8 +157,8 @@ function loadGraphics(progressCB)
         // Add a random query string when loading the JSON files below. This avoids
         // persistent caching problems, where the browser (eg FF) uses the cached
         // without checking in with the server first.
-        var now = (new Date()).getTime();
-        PIXI.loader.defaultQueryString = "nocache=" + now;
+        let now = (new Date()).getTime();
+        PIXI.loader.defaultQueryString = 'nocache=' + now;
         PIXI.loader
             .add(RES.MALE_MELEE)
             .add(RES.FEMALE_MELEE)
@@ -172,8 +172,8 @@ function loadGraphics(progressCB)
             .add(RES.TILESET)
             .add(RES.MAP_OBJS)
             //.add(RES.DRAGON)
-            //.add({name: "hit", url: "media/hit.wav"})
-            .on("progress", progressCB)
+            //.add({name: 'hit', url: 'media/hit.wav'})
+            .on('progress', progressCB)
             .load(resolve);
     });
 }
@@ -185,11 +185,11 @@ function loadAudio(progressCB)
             resolve();
         };
         sounds.onFailed = function(source) {
-            console.log("Failed to load audio file: " + source);
+            console.log('Failed to load audio file: ' + source);
             reject();
         };
         // Show and update the new progress bar for loading audio
-        //this.progress.setText("LOADING AUDIO...");
+        //this.progress.setText('LOADING AUDIO...');
         /*sounds.onProgress = (percent) => {
             this.progress.update(percent/100.0);
             requestAnimationFrame(() => {
