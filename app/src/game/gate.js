@@ -17,8 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { ANIM, RES } from "./res";
-import { Utils } from "./utils";
+import { ANIM, RES } from './res';
+import { Utils } from './utils';
 import { Animation, Thing, Hitbox } from './thing';
 import { GameControls } from './controls';
 import { Audio } from './audio';

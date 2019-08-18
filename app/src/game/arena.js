@@ -181,7 +181,7 @@ Spawn.prototype.activate = function()
     // Find some clear space to spawn the monster (ie don't spawn in a wall)
     let y = this.level.findClearSpace(this.monster.sprite.x, this.ypos);
     if (y === null) {
-        console.log("WARNING: can't spawn monster near " + this.ypos);
+        console.log('WARNING: can't spawn monster near ' + this.ypos);
         this.monster.dead = true;
     } else {
         this.monster.sprite.y = y;
@@ -246,7 +246,7 @@ export function DropSpawn(level, monster, x, y)
     this.ypos = y;
     this.done = false;
     // Shadow to display on the floor, as the monster is falling
-    this.shadow = new Scenery(Utils.getFrame(RES.MAPTILES, "shadow"));
+    this.shadow = new Scenery(Utils.getFrame(RES.MAPTILES, 'shadow'));
     this.shadow.sprite.zpos = Level.FLOOR_POS;
     this.shadow.sprite.anchor.set(0.5, 0.5);
     this.shadow.sprite.x = x;
@@ -262,7 +262,7 @@ DropSpawn.prototype.activate = function()
 {
     let y = this.level.findClearSpace(this.xpos, this.ypos);
     if (y === null) {
-        console.log("WARNING: can't spawn monster near " + this.ypos);
+        console.log('WARNING: can't spawn monster near ' + this.ypos);
         this.monster.dead = true;
         return;
     }
@@ -312,7 +312,7 @@ export function WaterSpawn(level, monster, x, y)
     this.monster = monster;
     this.xpos = x;
     this.ypos = y;
-    let img = Utils.getFrame(RES.MAPTILES, "rippling_water");
+    let img = Utils.getFrame(RES.MAPTILES, 'rippling_water');
     this.water = new Scenery(img);
     this.water.sprite.anchor.set(0.5, 0.7);
     this.water.sprite.x = x;
