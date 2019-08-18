@@ -24,6 +24,7 @@ import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
+import { Blood } from './blood';
 
 const STATE_IDLE = 0;
 const STATE_CHARGING = 1;
@@ -205,13 +206,11 @@ export class SkelWarrior extends Thing
             Audio.playSound(RES.SNAKE_HURT_SND);
         }
 
-        // Add some random dust, but only if we're not currently in water
-        let tile = this.level.getTileAt(this.x, this.y);
-        if (!tile.water) {
-            this.level.createBloodSpatter(
-                this.x, this.y-1,
-                ['dust1', 'dust2', 'dust3', 'dust4']);
-        }
+        this.level.addThing(
+            new Blood(Blood.DUST),
+            this.sprite.x,
+            this.sprite.y-1
+        );
         return true;
     }
 

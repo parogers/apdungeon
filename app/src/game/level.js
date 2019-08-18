@@ -350,13 +350,15 @@ export class Level
     }
 
     // Add a 'thing' to the level and it's sprite to the render stage
-    addThing(thing)
+    addThing(thing, x, y)
     {
         thing.level = this;
         this.things.push(thing);
         if (thing.sprite) {
             this.stage.addChild(thing.sprite);
         }
+        if (x !== undefined) thing.fx = x;
+        if (y !== undefined) thing.fy = y;
     }
 
     // Remove a 'thing' remove the level and it's sprite from the stage
@@ -401,18 +403,6 @@ export class Level
             gnd.velh = -40;
             this.addThing(gnd);
         }
-    }
-
-    createBloodSpatter(x, y, imgs)
-    {
-        let txt = Utils.randomChoice(imgs || ['blood1', 'blood2', 'blood3']);
-        let sprite = new PIXI.Sprite(Utils.getFrame(RES.MAP_OBJS, txt));
-        sprite.zpos = Level.FLOOR_POS;
-        sprite.anchor.set(0.5, 0.5);
-        sprite.x = x;
-        sprite.y = y;
-        this.stage.addChild(sprite);
-        return sprite;
     }
 
     getTileAt(x, y) {

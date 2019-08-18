@@ -23,6 +23,7 @@ import { Animation, Thing, Hitbox } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
+import { Blood } from './blood';
 
 // Animates a monster falling off the screen as a death animation
 export class DeathAnimation extends Thing
@@ -208,11 +209,12 @@ export class Snake extends Thing
             this.state = this.STATE_HURT;
         }
 
-        // Add some random blood, but only if we're not currently in water
-        let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
-        if (!tile.water) {
-            this.level.createBloodSpatter(this.sprite.x, this.sprite.y-1);
-        }
+        // Add a blood spatter
+        this.level.addThing(
+            new Blood(),
+            this.sprite.x,
+            this.sprite.y-1
+        );
         return true;
     }
 

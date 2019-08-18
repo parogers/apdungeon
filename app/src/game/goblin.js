@@ -260,7 +260,9 @@ export class Goblin extends Thing
         );
         if (!tile.water)
         {
-            this.level.createBloodSpatter(
+            // Add a blood spatter
+            this.level.addThing(
+                new Blood(),
                 this.sprite.x,
                 this.sprite.y-1
             );

@@ -31,6 +31,10 @@ export class Tile
         this.type = type;
         this.solid = args.solid || false;
     }
+
+    get isWater() {
+        return this.type === 'water';
+    }
 };
 
 export class Tileset
