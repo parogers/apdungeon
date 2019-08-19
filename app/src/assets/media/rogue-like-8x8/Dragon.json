@@ -1,0 +1,71 @@
+{"frames": {
+
+"dragon-breath-closed.png":
+{
+	"frame": {"x":2,"y":104,"w":41,"h":29},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":29},
+	"sourceSize": {"w":41,"h":29}
+},
+"dragon-breath-open.png":
+{
+	"frame": {"x":2,"y":74,"w":41,"h":29},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":29},
+	"sourceSize": {"w":41,"h":29}
+},
+"dragon-fire.png":
+{
+	"frame": {"x":2,"y":2,"w":15,"h":11},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":11},
+	"sourceSize": {"w":15,"h":11}
+},
+"dragon-idle.png":
+{
+	"frame": {"x":2,"y":44,"w":41,"h":29},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":29},
+	"sourceSize": {"w":41,"h":29}
+},
+"dragon-shadow.png":
+{
+	"frame": {"x":18,"y":2,"w":30,"h":5},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":5},
+	"sourceSize": {"w":30,"h":5}
+},
+"dragon-walk-1.png":
+{
+	"frame": {"x":2,"y":14,"w":41,"h":29},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":29},
+	"sourceSize": {"w":41,"h":29}
+},
+"dragon-walk-2.png":
+{
+	"frame": {"x":2,"y":134,"w":41,"h":29},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":29},
+	"sourceSize": {"w":41,"h":29}
+}},
+"animations": {
+	"dragon-walk": ["dragon-walk-1.png","dragon-walk-2.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Dragon.png",
+	"format": "RGBA8888",
+	"size": {"w":50,"h":165},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8c0ffa488f753efc947b23d0a1993cd1:3ac4f2672e24cbd7452aeebfa3d23fb4:6b6d02c7c2b2ed0135d74d9560c4a2a3$"
+}
+}
