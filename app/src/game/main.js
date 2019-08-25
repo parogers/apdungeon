@@ -171,7 +171,7 @@ function loadGraphics(progressCB)
             .add(RES.CHUNKS)
             .add(RES.TILESET)
             .add(RES.MAP_OBJS)
-            //.add(RES.DRAGON)
+            .add(RES.DRAGON)
             //.add({name: 'hit', url: 'media/hit.wav'})
             .on('progress', progressCB)
             .load(resolve);

@@ -26,6 +26,7 @@ import { Gate } from './gate';
 import { Snake, Rat, Scorpion } from './snake';
 import { Goblin } from './goblin';
 import { SkelWarrior } from './skel_warrior';
+import { Dragon } from './dragon';
 import { Ghost } from './ghost';
 import { NPC } from './npc';
 import { Chest } from './chest';
@@ -152,7 +153,7 @@ export function generateLevel(levelNum)
         x += randint(40, 120);
     }
 
-    let mon = new SkelWarrior();
+    let mon = new Dragon();
     mon.fx = 90;
     mon.track = level.getMiddleTrack();
     level.addThing(mon);

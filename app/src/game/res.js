@@ -17,6 +17,32 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+export function getTextures(res)
+{
+    if (!res) throw Error('must specify a resource');
+    return PIXI.loader.resources[res].textures;
+}
+
+export function getFrame(res)
+{
+    let texture = getTextures(res.resource)[res.frames[0]];
+    if (!texture) {
+        console.log('ERROR: cannot find texture ' + name);
+    }
+    return texture;
+}
+
+export function getFrames(res, names)
+{
+    let frames = [];
+    for (let n = 0; n < names.length; n++) {
+        let frame = getTextures(res)[names[n]];
+        if (!frame) console.log('ERROR: missing frame ' + names[n]);
+        frames.push(frame);
+    }
+    return frames;
+}
+
 export var RES = {
     MALE_MELEE: 'assets/media/rogue-like-8x8/Male-Melee.json',
     FEMALE_MELEE: 'assets/media/rogue-like-8x8/Girl-Melee.json',
@@ -26,7 +52,7 @@ export var RES = {
     WEAPONS: 'assets/media/rogue-like-8x8/Weapons.json',
     GROUND_ITEMS: 'assets/media/rogue-like-8x8/GroundItems.json',
     UI: 'assets/media/rogue-like-8x8/UI.json',
-    //DRAGON: 'assets/media/rogue-like-8x8/Dragon.json',
+    DRAGON: 'assets/media/rogue-like-8x8/Dragon.json',
     MAP_OBJS: 'assets/media/rogue-like-8x8/MapObjects.json',
 
     GAME_MUSIC: 'assets/media/music/A Journey Awaits2-lowfi.ogg',
@@ -137,6 +163,34 @@ export var ANIM = {
         fps: 3,
         looping: false,
     },
-    
-};
 
+    DRAGON_WALK: {
+        resource: RES.DRAGON,
+        frames: [
+            'dragon-idle.png',
+            'dragon-walk-1.png',
+            'dragon-idle.png',
+            'dragon-walk-2.png',
+        ],
+        fps: 6,
+    },
+    
+    DRAGON_MOUTH_OPEN: {
+        resource: RES.DRAGON,
+        frames: ['dragon-breath-open.png'],
+        fps: 1,
+    },
+    
+    DRAGON_MOUTH_CLOSED: {
+        resource: RES.DRAGON,
+        frames: ['dragon-breath-closed.png'],
+        fps: 1,
+    },
+
+    DRAGON_FIRE: {
+        resource: RES.DRAGON,
+        frames: ['dragon-fire.png'],
+        fps: 1,
+    },
+
+};
