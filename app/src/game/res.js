@@ -71,6 +71,7 @@ export var RES = {
     POWERUP3_SND: 'assets/media/effects/powerup3.wav',
     POWERUP4_SND: 'assets/media/effects/powerup4.wav',
     CHEST_SND: 'assets/media/effects/chest_open.wav',
+    BREATHING_FIRE_SND: 'assets/media/effects/breathing_fire.wav',
 
     CHUNKS: 'assets/map.chunks.json',
     TILESET: 'assets/map.tileset.json',

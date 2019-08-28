@@ -20,15 +20,17 @@
 import { ANIM, RES, getFrame } from './res';
 import { TrackMover, Animation, Thing } from './thing';
 import { Utils } from './utils';
+import { Audio } from './audio';
 
 const ADVANCE_TIMEOUT = 5;
-const ADVANCE_SPEED = 50;
+const ADVANCE_SPEED = 80;
+const BACKOFF_SPEED = 50;
 const FIRE_DISTANCE = 26;
 const IDLE_DISTANCE = 70;
 
 const STATE_IDLE = 0;
 const STATE_KEEP_DIST = 1;
-const STATE_CHANGING_TRACK = 2;
+const STATE_CHANGE_TRACK = 2;
 const STATE_ATTACK = 3;
 const STATE_APPROACH = 4;
 
@@ -100,6 +102,7 @@ export class Dragon extends Thing
 
         this.trackMover = null;
         this.timer = new Timer();
+        this.moves = 0;
         this.state = STATE_IDLE;
     }
 
@@ -116,6 +119,7 @@ export class Dragon extends Thing
         if (this.state === STATE_IDLE)
         {
             // Idling in front of the player
+            this.trackMover = null;
             this.timer.restart();
             this.state = STATE_KEEP_DIST;
         }
@@ -127,15 +131,32 @@ export class Dragon extends Thing
             this.anim = this.walkAnim;
             if (this.fx < targetX)
             {
-                this.fx = Math.min(this.fx + ADVANCE_SPEED*dt, targetX);
+                this.fx = Math.min(this.fx + BACKOFF_SPEED*dt, targetX);
             }
             else if (this.fx > targetX)
             {
-                this.fx = Math.max(this.fx - ADVANCE_SPEED*dt, targetX);
+                this.fx = Math.max(this.fx - BACKOFF_SPEED*dt, targetX);
             }
-            if (this.timer.hasReached(5))
+            // Changing tracks
+            if (this.trackMover)
             {
-                this.state = STATE_APPROACH;
+                if (this.trackMover.update(dt)) {
+                    this.trackMover = null;
+                    this.state = STATE_APPROACH;
+                }
+            }
+            else if (this.timer.hasReached(5))
+            {
+                if (this.track === this.player.track) {
+                    this.state = STATE_APPROACH;
+                } else {
+                    this.trackMover = new TrackMover(
+                        this,
+                        this.player.track,
+                        30,
+                        0
+                    );
+                }
             }
         }
         else if (this.state === STATE_APPROACH)
@@ -152,28 +173,36 @@ export class Dragon extends Thing
         }
         else if (this.state === STATE_ATTACK)
         {
-            if (this.timer.hasReached(0.5))
+            if (this.timer.hasReached(0.25))
             {
                 this.anim = this.openMouthAnim;
             }
-            else if (this.timer.hasReached(0.75))
+            else if (this.timer.hasReached(0.5))
             {
                 this.fireSprite.visible = true;
+                Audio.playSound(RES.BREATHING_FIRE_SND, 0.75);
             }
-            else if (this.timer.isBetween(0.75, 3.75, 0.5))
+            else if (this.timer.hasReached(3))
+            {
+                this.fireSprite.visible = false;
+            }
+            else if (this.timer.hasReached(3.25))
+            {
+                this.state = STATE_IDLE;
+            }
+            else if (this.track === this.player.track &&
+                     this.timer.isBetween(0.75, 3))
             {
                 // Inflict fire damage on the player over time
                 this.player.takeDamage(2, this);
             }
-            else if (this.timer.hasReached(4))
-            {
-                this.fireSprite.visible = false;
-            }
-            else if (this.timer.hasReached(4.25))
-            {
-                this.state = STATE_IDLE;
-            }
         }
         this.bodySprite.texture = this.anim.update(dt);
+    }
+
+    handleHit(x, y, dmg)
+    {
+        Audio.playSound(RES.ARROW_DING_SND, 0.4);
+        return true;
     }
 }

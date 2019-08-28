@@ -212,6 +212,7 @@ function loadAudio(progressCB)
             RES.POWERUP3_SND,
             RES.POWERUP4_SND,
             RES.CHEST_SND,
+            RES.BREATHING_FIRE_SND,
             //RES.GAME_MUSIC
         ]);
     });
