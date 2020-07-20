@@ -30,7 +30,7 @@ declare var PIXI: any;
 })
 export class HomePage
 {
-    @ViewChild('playarea') playArea;
+    @ViewChild('playarea', { static: true }) playArea;
     private game: any;
     private wrappedRequestAnimationFrame: any;
 
