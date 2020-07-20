@@ -109,7 +109,7 @@ export class Player extends Thing
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
-        this.maxSpeed = 30; // pixels/second
+        this.maxSpeed = 40; // pixels/second
         // Inventory stuff
         this.numCoins = 0;
         this.numArrows = 0;

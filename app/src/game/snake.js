@@ -87,7 +87,7 @@ export class Snake extends Thing
 
         this.name = 'Snake';
         this.anim = new Animation(ANIM.SNAKE_WALK);
-        this.speed = 16;
+        this.speed = 20;
         this.health = 3;
         this.facing = 1;
         // The actual snake sprite
@@ -239,7 +239,7 @@ export class Rat extends Snake
         this.name = 'Rat';
         this.anim = new Animation(ANIM.RAT_WALK);
         this.health = -1;
-        this.speed = 20;
+        this.speed = 16;
         this.frame = 0;
         this.facing = -1;
         this.knocked = 0;
@@ -269,7 +269,7 @@ export class Scorpion extends Snake
         this.name = 'Scorpion';
         this.anim = new Animation(ANIM.SCORPION_WALK);
         this.health = 4;
-        this.speed = 10;
+        this.speed = 12;
         this.frame = 0;
         this.facing = -1;
         this.knocked = 0;
