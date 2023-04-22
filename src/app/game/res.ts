@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -58,55 +58,55 @@ export var RES = {
 export var ANIM = {
     SNAKE_WALK: {
         resource: RES.ENEMIES,
-        frames: ['snake_south_1', 'snake_south_2'],
+        frames: ['enemy_snake_south_1', 'enemy_snake_south_2'],
         fps: 2,
     },
 
     RAT_WALK: {
         resource: RES.ENEMIES,
-        frames: ['rat_south_1', 'rat_south_2'],
+        frames: ['enemy_rat_south_1', 'enemy_rat_south_2'],
         fps: 2,
     },
 
     SCORPION_WALK: {
         resource: RES.ENEMIES,
-        frames: ['scorpion_south_1', 'scorpion_south_2'],
+        frames: ['enemy_scorpion_south_1', 'enemy_scorpion_south_2'],
         fps: 2,
     },
 
     PLAYER1_WALK: {
         resource: RES.FEMALE_MELEE,
-        frames: ['melee1_south_1', 'melee1_south_2', 'melee1_south_3'],
+        frames: ['girl_melee1_south_1', 'girl_melee1_south_2', 'girl_melee1_south_3'],
         fps: 10,
     },
 
     PLAYER2_WALK: {
         resource: RES.FEMALE_MELEE,
-        frames: ['melee2_south_1', 'melee2_south_2', 'melee2_south_3'],
+        frames: ['girl_melee2_south_1', 'girl_melee2_south_2', 'girl_melee2_south_3'],
         fps: 10,
     },
 
     PLAYER3_WALK: {
         resource: RES.FEMALE_MELEE,
-        frames: ['melee3_south_1', 'melee3_south_2', 'melee3_south_3'],
+        frames: ['girl_melee3_south_1', 'girl_melee3_south_2', 'girl_melee3_south_3'],
         fps: 10,
     },
 
     SKEL_WARRIOR_WALK: {
         resource: RES.ENEMIES,
-        frames: ['skeleton_warrior_south_2', 'skeleton_warrior_south_3'],
+        frames: ['enemy_skeleton_warrior_south_2', 'enemy_skeleton_warrior_south_3'],
         fps: 4,
     },
 
     GOBLIN_WALK: {
         resource: RES.ENEMIES,
-        frames: ['goblin_south_2', 'goblin_south_3'],
+        frames: ['enemy_goblin_south_2', 'enemy_goblin_south_3'],
         fps: 6,
     },
 
     BAT_FLYING: {
         resource: RES.ENEMIES,
-        frames: ['bat_south_1', 'bat_south_2'],
+        frames: ['enemy_bat_south_1', 'enemy_bat_south_2'],
         fps: 4,
     },
 
@@ -116,7 +116,7 @@ export var ANIM = {
         fps: 2,
         looping: false,
     },
-    
+
     GATE_CLOSING: {
         resource: RES.MAP_OBJS,
         frames: ['gate_wall_3', 'gate_wall_2', 'gate_wall_1'],
@@ -130,13 +130,12 @@ export var ANIM = {
         fps: 2,
         looping: false,
     },
-    
+
     DOOR_CLOSING: {
         resource: RES.MAP_OBJS,
         frames: ['door4', 'door3', 'door2', 'door1'],
         fps: 3,
         looping: false,
     },
-    
-};
 
+};

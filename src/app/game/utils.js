@@ -77,12 +77,14 @@ Utils.getTextures = function(res)
 
 Utils.getChunk = function(name)
 {
-    return PIXI.loader.resources[RES.CHUNKS].chunks[name];
+    // return PIXI.loader.resources[RES.CHUNKS].chunks[name];
+    return window.assetsBundle.chunks[name];
 }
 
 Utils.getTileset = function()
 {
-    return PIXI.loader.resources[RES.TILESET].tileset;
+    return window.assetsBundle.tileset;
+    // return PIXI.loader.resources[RES.TILESET].tileset;
 }
 
 Utils.getFrame = function(res, name)

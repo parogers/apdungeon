@@ -24,8 +24,10 @@ import { GameControls } from './controls';
 import { LevelScreen } from './levelscreen';
 import { GameState } from './gamestate';
 import { Utils } from './utils';
-import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
+// import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
 import { GestureManager } from './gesture';
+
+import { ChunkTemplate, Tileset } from './bg';
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
@@ -96,9 +98,34 @@ export class Game
 
     start() {
         Render.configure(this.element, LevelScreen.getAspectRatio());
+        this.gestureMgr = new GestureManager();
+        this.gestureMgr.attach(Render.getRenderer().view);
+        this.gestureMgr.gestureCallback = (gesture) => {
+            this.gamestate.handleGesture(gesture);
+        };
+
         loadGraphics().then((bundle) => {
             console.log('loaded:', bundle);
             window.assetsBundle = bundle;
+
+            bundle.chunks = {};
+            for (let name in bundle[RES.CHUNKS])
+            {
+                bundle.chunks[name] = new ChunkTemplate(
+                    bundle[RES.CHUNKS][name].background,
+                    bundle[RES.CHUNKS][name].midground,
+                    bundle[RES.CHUNKS][name].things,
+                );
+            }
+
+            bundle.tileset = new Tileset(
+                bundle[RES.TILESET].tile_width,
+                bundle[RES.TILESET].tile_height,
+                bundle[RES.TILESET].tiles
+            );
+
+            console.log('chunks', bundle.chunks);
+            console.log('tileset', bundle.tileset);
 
             GameControls.configure();
 
@@ -253,6 +280,8 @@ function loadAudio(progressCB)
             RES.POWERUP3_SND,
             RES.POWERUP4_SND,
             RES.CHEST_SND,
+            RES.CHUNKS,
+            RES.TILESET,
             //RES.GAME_MUSIC
         ]);
     });

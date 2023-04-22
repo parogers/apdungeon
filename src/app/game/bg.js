@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -83,17 +83,17 @@ export class ChunkTemplate
         if (this.texture !== null) {
             return this.texture;
         }
-        
+
         let tileset = Utils.getTileset();
-        this.texture = PIXI.RenderTexture.create(
-            this.grid[0].length*tileset.tileWidth, 
-            this.grid.length*tileset.tileHeight
-        );
+        this.texture = PIXI.RenderTexture.create({
+            width: this.grid[0].length*tileset.tileWidth,
+            height: this.grid.length*tileset.tileHeight
+        });
 
         let cnt = new PIXI.Container();
-        for (let row = 0; row < this.grid.length; row++) 
+        for (let row = 0; row < this.grid.length; row++)
         {
-            for (let col = 0; col < this.grid[0].length; col++) 
+            for (let col = 0; col < this.grid[0].length; col++)
             {
                 let tileID = this.grid[row][col];
                 let sprite = new PIXI.Sprite(
@@ -107,7 +107,9 @@ export class ChunkTemplate
         }
         cnt.x = 0;
         cnt.y = 0;
-        Render.getRenderer().render(cnt, this.texture);
+        Render.getRenderer().render(cnt, {
+            renderTexture: this.texture
+        });
         return this.texture;
     }
 
