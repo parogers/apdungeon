@@ -26,7 +26,7 @@ export var RES = {
     WEAPONS: 'assets/media/rogue-like-8x8/Weapons.json',
     GROUND_ITEMS: 'assets/media/rogue-like-8x8/GroundItems.json',
     UI: 'assets/media/rogue-like-8x8/UI.json',
-    //DRAGON: 'assets/media/rogue-like-8x8/Dragon.json',
+    // DRAGON: 'assets/media/rogue-like-8x8/Dragon.json',
     MAP_OBJS: 'assets/media/rogue-like-8x8/MapObjects.json',
 
     GAME_MUSIC: 'assets/media/music/A Journey Awaits2-lowfi.ogg',

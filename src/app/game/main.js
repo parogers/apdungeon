@@ -18,6 +18,7 @@
  */
 
 import * as PIXI from 'pixi.js';
+import { sound } from '@pixi/sound';
 import { RES } from './res';
 import { Render } from './render';
 import { ProgressBar } from './progress';
@@ -104,6 +105,8 @@ export class Game
         this.gestureMgr.gestureCallback = (gesture) => {
             this.gamestate.handleGesture(gesture);
         };
+
+        console.log(sound);
 
         loadGraphics().then((bundle) => {
             console.log('loaded:', bundle);
@@ -227,6 +230,22 @@ function loadGraphics(progressCB)
                     RES.CHUNKS,
                     RES.TILESET,
                     RES.MAP_OBJS,
+                    RES.GATE_SND,
+                    RES.ARROW_DING_SND,
+                    RES.ATTACK_SWORD_SND,
+                    RES.HIT_SND,
+                    RES.SNAKE_HURT_SND,
+                    RES.DEAD_SND,
+                    RES.SPLASH_SND,
+                    RES.GO_SND,
+                    RES.COIN_SND,
+                    RES.DROP_SND,
+                    RES.POWERUP1_SND,
+                    RES.POWERUP2_SND,
+                    RES.POWERUP3_SND,
+                    RES.POWERUP4_SND,
+                    RES.CHEST_SND,
+                    RES.GAME_MUSIC,
                     // RES.DRAGON,
                 ])
             ],

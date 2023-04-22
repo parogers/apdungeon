@@ -25,10 +25,13 @@ export var Audio = {};
 
 Audio.playSound = function(res, vol)
 {
-    return;
     if (enabled) {
-        if (vol !== undefined) sounds[res].volume = vol;
-        sounds[res].play();
+        const sound = window.assetsBundle[res];
+        if (sound) {
+            sound.play({
+                volume: vol || 1,
+            });
+        }
     }
 }
 
