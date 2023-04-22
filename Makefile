@@ -5,7 +5,7 @@
 all: chunks tiles sprites
 
 chunks:
-	./tools/build_chunks.py > ./app/src/assets/map.chunks.json
+	./tools/build_chunks.py > ./src/assets/map.chunks.json
 
 tiles:
 	./tools/build_tileset.py

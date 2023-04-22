@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# A simple utility to generate a JSON sprite sheet for the rogue-like-8x8 
+# A simple utility to generate a JSON sprite sheet for the rogue-like-8x8
 # assets. (to make them more usable with pixi.js)
 
 import os
@@ -8,7 +8,7 @@ import PIL, PIL.Image
 
 # Change into the media output folder
 path = os.path.dirname(sys.argv[0])
-os.chdir(os.path.join(path, "..", 'app', 'src', 'assets', "media", "rogue-like-8x8"))
+os.chdir(os.path.join(path, "..", 'src', 'assets', "media", "rogue-like-8x8"))
 
 HEADER = """{"frames" : {
 """
@@ -43,10 +43,10 @@ def gen_grid(start_pos, tile_size, desc, padding=1):
             name = desc[row][col]
             if (name):
                 txt = FRAME_TMP % {
-                    "name" : name, 
+                    "name" : name,
                     "x" : x,
                     "y" : y,
-                    "w" : tile_size[0], 
+                    "w" : tile_size[0],
                     "h" : tile_size[1]}
                 lst.append(txt)
             x += tile_size[0]+padding
@@ -78,18 +78,18 @@ def save_json_sheet(srcpath, tile_size, get_desc, outer_pad=0, padding=1):
             name = get_desc(row, col)
             if (not name): continue
             txt = FRAME_TMP % {
-                "name" : name, 
+                "name" : name,
                 "x" : (col*(tilew+padding)+outer_pad),
                 "y" : (row*(tileh+padding)+outer_pad),
-                "w" : tilew, 
+                "w" : tilew,
                 "h" : tileh}
             frames.append(txt)
 
     out += ",".join(frames)
 
     out += FOOTER % {
-        "src" : srcpath, 
-        "w" : img.size[0], 
+        "src" : srcpath,
+        "w" : img.size[0],
         "h" : img.size[1]}
 
     base = os.path.splitext(srcpath)[0]
@@ -223,7 +223,7 @@ def get_desc(row, col):
         direction += "_"
 
     return names[row//2] + "_" + direction + extra[row][col]
-    
+
 save_json_sheet("Enemies.png", (8, 8), get_desc)
 
 def get_desc(row, col):
@@ -287,8 +287,8 @@ save_json_sheet("Weapons.png", (8, 8), get_desc, outer_pad=1)
 # out = HEADER
 # out += ",".join(frames)
 # out += FOOTER % {
-#     "src" : srcpath, 
-#     "w" : img.size[0], 
+#     "src" : srcpath,
+#     "w" : img.size[0],
 #     "h" : img.size[1]}
 # open("Tileset.json", "w").write(out)
 
@@ -314,8 +314,8 @@ frames += gen_grid((37, 10), (8, 8), [['chest_closed', 'chest_open']])
 out = HEADER
 out += ",".join(frames)
 out += FOOTER % {
-    "src" : srcpath, 
-    "w" : img.size[0], 
+    "src" : srcpath,
+    "w" : img.size[0],
     "h" : img.size[1]}
 open("MapObjects.json", "w").write(out)
 
@@ -397,8 +397,8 @@ img = PIL.Image.open(srcpath)
 out = HEADER
 out += ",".join(frames)
 out += FOOTER % {
-    "src" : srcpath, 
-    "w" : img.size[0], 
+    "src" : srcpath,
+    "w" : img.size[0],
     "h" : img.size[1]}
 open("UI.json", "w").write(out)
 
@@ -419,8 +419,7 @@ open("UI.json", "w").write(out)
 # out = HEADER
 # out += ",".join(frames)
 # out += FOOTER % {
-#     "src" : srcpath, 
-#     "w" : img.size[0], 
+#     "src" : srcpath,
+#     "w" : img.size[0],
 #     "h" : img.size[1]}
 # open("Dragon.json", "w").write(out)
-
