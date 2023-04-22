@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 export function ProgressBar(width, height, text)
 {
@@ -26,8 +28,8 @@ export function ProgressBar(width, height, text)
     this.sprite = new PIXI.Container();
     this.barSprite = new PIXI.Sprite();
     this.textSprite = new PIXI.Text(
-        text, {fontFamily: 'Courier New', 
-               fontSize: 20, 
+        text, {fontFamily: 'Courier New',
+               fontSize: 20,
                fill: 0xffffff,
                fontWeight: 'bold',
                align: 'center'});
