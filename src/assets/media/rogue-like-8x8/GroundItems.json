@@ -1,299 +1,299 @@
 {"frames" : {
-"helmet1" : {
+"ground_item_helmet1" : {
     "frame" : {"x":1, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"helmet2" : {
+},"ground_item_helmet2" : {
     "frame" : {"x":10, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"helmet3" : {
+},"ground_item_helmet3" : {
     "frame" : {"x":19, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"chest1" : {
+},"ground_item_chest1" : {
     "frame" : {"x":28, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"chest2" : {
+},"ground_item_chest2" : {
     "frame" : {"x":37, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"chest3" : {
+},"ground_item_chest3" : {
     "frame" : {"x":46, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"pants1" : {
+},"ground_item_pants1" : {
     "frame" : {"x":1, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"pants2" : {
+},"ground_item_pants2" : {
     "frame" : {"x":10, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"pants3" : {
+},"ground_item_pants3" : {
     "frame" : {"x":19, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sword1" : {
+},"ground_item_sword1" : {
     "frame" : {"x":28, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sword2" : {
+},"ground_item_sword2" : {
     "frame" : {"x":37, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sword3" : {
+},"ground_item_sword3" : {
     "frame" : {"x":46, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"shield1" : {
+},"ground_item_shield1" : {
     "frame" : {"x":1, "y":19, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"shield2" : {
+},"ground_item_shield2" : {
     "frame" : {"x":10, "y":19, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"shield3" : {
+},"ground_item_shield3" : {
     "frame" : {"x":19, "y":19, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sword4" : {
+},"ground_item_sword4" : {
     "frame" : {"x":46, "y":19, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bow1" : {
+},"ground_item_bow1" : {
     "frame" : {"x":28, "y":37, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bow2" : {
+},"ground_item_bow2" : {
     "frame" : {"x":37, "y":37, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bow3" : {
+},"ground_item_bow3" : {
     "frame" : {"x":46, "y":37, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"arrow1" : {
+},"ground_item_arrow1" : {
     "frame" : {"x":1, "y":46, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"arrow2" : {
+},"ground_item_arrow2" : {
     "frame" : {"x":10, "y":46, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"arrow2" : {
+},"ground_item_arrow2" : {
     "frame" : {"x":19, "y":46, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mhat1" : {
+},"ground_item_mhat1" : {
     "frame" : {"x":1, "y":55, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mhat2" : {
+},"ground_item_mhat2" : {
     "frame" : {"x":10, "y":55, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mhat3" : {
+},"ground_item_mhat3" : {
     "frame" : {"x":19, "y":55, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"robe1" : {
+},"ground_item_robe1" : {
     "frame" : {"x":28, "y":55, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"robe2" : {
+},"ground_item_robe2" : {
     "frame" : {"x":37, "y":55, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"robe3" : {
+},"ground_item_robe3" : {
     "frame" : {"x":46, "y":55, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"staff1" : {
+},"ground_item_staff1" : {
     "frame" : {"x":28, "y":64, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"staff2" : {
+},"ground_item_staff2" : {
     "frame" : {"x":37, "y":64, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"staff3" : {
+},"ground_item_staff3" : {
     "frame" : {"x":46, "y":64, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"disc1" : {
+},"ground_item_disc1" : {
     "frame" : {"x":1, "y":73, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"disc2" : {
+},"ground_item_disc2" : {
     "frame" : {"x":10, "y":73, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"disc3" : {
+},"ground_item_disc3" : {
     "frame" : {"x":19, "y":73, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boots1" : {
+},"ground_item_boots1" : {
     "frame" : {"x":1, "y":82, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boots2" : {
+},"ground_item_boots2" : {
     "frame" : {"x":10, "y":82, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boots3" : {
+},"ground_item_boots3" : {
     "frame" : {"x":19, "y":82, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"amulet1" : {
+},"ground_item_amulet1" : {
     "frame" : {"x":1, "y":91, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"amulet2" : {
+},"ground_item_amulet2" : {
     "frame" : {"x":10, "y":91, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"amulet3" : {
+},"ground_item_amulet3" : {
     "frame" : {"x":19, "y":91, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ring1" : {
+},"ground_item_ring1" : {
     "frame" : {"x":28, "y":91, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ring2" : {
+},"ground_item_ring2" : {
     "frame" : {"x":37, "y":91, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ring3" : {
+},"ground_item_ring3" : {
     "frame" : {"x":46, "y":91, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"small_magic" : {
+},"ground_item_small_magic" : {
     "frame" : {"x":1, "y":109, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"small_health" : {
+},"ground_item_small_health" : {
     "frame" : {"x":10, "y":109, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"large_magic" : {
+},"ground_item_large_magic" : {
     "frame" : {"x":19, "y":109, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"large_health" : {
+},"ground_item_large_health" : {
     "frame" : {"x":28, "y":109, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"coin" : {
+},"ground_item_coin" : {
     "frame" : {"x":1, "y":118, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom" : {
+},"ground_item_mushroom" : {
     "frame" : {"x":10, "y":118, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"heart" : {
+},"ground_item_heart" : {
     "frame" : {"x":19, "y":118, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,

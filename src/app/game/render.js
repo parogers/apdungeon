@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -27,14 +27,14 @@ var aspectRatio = 1;
 export var Render = {};
 
 /* Configures the renderer (via PIXI) and adds the view to the given HTML
- * element. The renderer width/height will conform to the given aspect 
+ * element. The renderer width/height will conform to the given aspect
  * ratio. */
 Render.configure = function(div, aspect)
 {
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+    PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
     // Disable the ticker sinc we don't use it (rendering happens as needed)
-    PIXI.ticker.shared.autoStart = false;
-    PIXI.ticker.shared.stop();
+    PIXI.Ticker.shared.autoStart = false;
+    PIXI.Ticker.shared.stop();
 
     let rect = div.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) {

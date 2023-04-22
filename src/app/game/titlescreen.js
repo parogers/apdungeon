@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -136,7 +136,7 @@ export class TitleScreen
             'start',
             function(dt) {
                 this.level = generateEmptyLevel(
-                    2, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
+                    2, Math.round(this.screenWidth/RES.TILE_WIDTH)+4,
                     '1'); // floor tile
                 this.level.stage.x = -RES.TILE_WIDTH*2;
                 this.level.stage.y = 44;
@@ -228,7 +228,7 @@ export class TitleScreen
             this.sequence.update(dt);
         }
 
-        if (GameControls.getControls().space.released || 
+        if (GameControls.getControls().space.released ||
             this.mouseClicked || this.touchClicked) {
             this.state = this.NEW_GAME;
         }

@@ -1,215 +1,215 @@
 {"frames" : {
-"melee1_south_1" : {
+"girl_melee1_south_1" : {
     "frame" : {"x":0, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_south_2" : {
+},"girl_melee1_south_2" : {
     "frame" : {"x":9, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_south_3" : {
+},"girl_melee1_south_3" : {
     "frame" : {"x":18, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_lunge_1" : {
+},"girl_melee1_lunge_1" : {
     "frame" : {"x":0, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_lunge_2" : {
+},"girl_melee1_lunge_2" : {
     "frame" : {"x":9, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_lunge_3" : {
+},"girl_melee1_lunge_3" : {
     "frame" : {"x":18, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_dying_1" : {
+},"girl_melee1_dying_1" : {
     "frame" : {"x":0, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_dying_2" : {
+},"girl_melee1_dying_2" : {
     "frame" : {"x":9, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee1_dying_3" : {
+},"girl_melee1_dying_3" : {
     "frame" : {"x":18, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_south_1" : {
+},"girl_melee2_south_1" : {
     "frame" : {"x":0, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_south_2" : {
+},"girl_melee2_south_2" : {
     "frame" : {"x":9, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_south_3" : {
+},"girl_melee2_south_3" : {
     "frame" : {"x":18, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_lunge_1" : {
+},"girl_melee2_lunge_1" : {
     "frame" : {"x":0, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_lunge_2" : {
+},"girl_melee2_lunge_2" : {
     "frame" : {"x":9, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_lunge_3" : {
+},"girl_melee2_lunge_3" : {
     "frame" : {"x":18, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_dying_1" : {
+},"girl_melee2_dying_1" : {
     "frame" : {"x":0, "y":45, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_dying_2" : {
+},"girl_melee2_dying_2" : {
     "frame" : {"x":9, "y":45, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee2_dying_3" : {
+},"girl_melee2_dying_3" : {
     "frame" : {"x":18, "y":45, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_south_1" : {
+},"girl_melee3_south_1" : {
     "frame" : {"x":0, "y":54, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_south_2" : {
+},"girl_melee3_south_2" : {
     "frame" : {"x":9, "y":54, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_south_3" : {
+},"girl_melee3_south_3" : {
     "frame" : {"x":18, "y":54, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_lunge_1" : {
+},"girl_melee3_lunge_1" : {
     "frame" : {"x":0, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_lunge_2" : {
+},"girl_melee3_lunge_2" : {
     "frame" : {"x":9, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_lunge_3" : {
+},"girl_melee3_lunge_3" : {
     "frame" : {"x":18, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_dying_1" : {
+},"girl_melee3_dying_1" : {
     "frame" : {"x":0, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_dying_2" : {
+},"girl_melee3_dying_2" : {
     "frame" : {"x":9, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee3_dying_3" : {
+},"girl_melee3_dying_3" : {
     "frame" : {"x":18, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_south_1" : {
+},"girl_melee4_south_1" : {
     "frame" : {"x":0, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_south_2" : {
+},"girl_melee4_south_2" : {
     "frame" : {"x":9, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_south_3" : {
+},"girl_melee4_south_3" : {
     "frame" : {"x":18, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_lunge_1" : {
+},"girl_melee4_lunge_1" : {
     "frame" : {"x":0, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_lunge_2" : {
+},"girl_melee4_lunge_2" : {
     "frame" : {"x":9, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_lunge_3" : {
+},"girl_melee4_lunge_3" : {
     "frame" : {"x":18, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_dying_1" : {
+},"girl_melee4_dying_1" : {
     "frame" : {"x":0, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_dying_2" : {
+},"girl_melee4_dying_2" : {
     "frame" : {"x":9, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"melee4_dying_3" : {
+},"girl_melee4_dying_3" : {
     "frame" : {"x":18, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,

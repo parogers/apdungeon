@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.2" tiledversion="1.2.4" name="Tileset2" tilewidth="8" tileheight="8" spacing="1" margin="1" tilecount="256" columns="16">
- <image source="../../app/src/assets/media/rogue-like-8x8/Tileset2.png" width="145" height="145"/>
+ <image source="../../src/assets/media/rogue-like-8x8/Tileset2.png" width="145" height="145"/>
  <tile id="0" type="floor">
   <properties>
    <property name="solid" type="bool" value="false"/>

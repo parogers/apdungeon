@@ -53,8 +53,9 @@ def gen_grid(start_pos, tile_size, desc, padding=1):
         y += tile_size[1]+padding
     return lst
 
-def save_json_sheet(srcpath, tile_size, get_desc, outer_pad=0, padding=1):
+def save_json_sheet(base_name, srcpath, tile_size, get_desc, outer_pad=0, padding=1):
     img = PIL.Image.open(srcpath)
+    print(srcpath)
 
     # 2*outer_pad + tilew*n + padding*(n-1) = img.size[0]
     # 2*outer_pad + tilew*n + padding*n - padding = img.size[0]
@@ -76,9 +77,10 @@ def save_json_sheet(srcpath, tile_size, get_desc, outer_pad=0, padding=1):
     for row in range(rows):
         for col in range(cols):
             name = get_desc(row, col)
-            if (not name): continue
+            if (not name):
+                continue
             txt = FRAME_TMP % {
-                "name" : name,
+                "name" : base_name + '_' + name,
                 "x" : (col*(tilew+padding)+outer_pad),
                 "y" : (row*(tileh+padding)+outer_pad),
                 "w" : tilew,
@@ -111,8 +113,8 @@ def get_desc(row, col):
         ["melee4", "dying"],
     ]
     return "_".join(meta[row]) + "_" + str(col+1)
-save_json_sheet("Male-Melee.png", (8, 8), get_desc)
-save_json_sheet("Girl-Melee.png", (8, 8), get_desc)
+save_json_sheet('male', "Male-Melee.png", (8, 8), get_desc)
+save_json_sheet('girl', "Girl-Melee.png", (8, 8), get_desc)
 
 def get_desc(row, col):
     meta = [
@@ -130,8 +132,8 @@ def get_desc(row, col):
         ["range4", "dying"],
     ]
     return "_".join(meta[row]) + "_" + str(col+1)
-save_json_sheet("Male-Range.png", (8, 8), get_desc)
-save_json_sheet("Girl-Range.png", (8, 8), get_desc)
+save_json_sheet('male', "Male-Range.png", (8, 8), get_desc)
+save_json_sheet('girl', "Girl-Range.png", (8, 8), get_desc)
 
 def get_desc(row, col):
     meta = [
@@ -149,13 +151,13 @@ def get_desc(row, col):
         ["mage4", "dying"],
     ]
     return "_".join(meta[row]) + "_" + str(col+1)
-save_json_sheet("Male-Mage.png", (8, 11), get_desc)
-save_json_sheet("Girl-Mage.png", (8, 11), get_desc)
+save_json_sheet('male', "Male-Mage.png", (8, 11), get_desc)
+save_json_sheet('girl', "Girl-Mage.png", (8, 11), get_desc)
 
 def get_desc(row, col):
     desc = ["south", "north"][col//3]
     return "npc%d_%s_%d" % (row+1, desc, (col%3)+1)
-save_json_sheet("NPC.png", (8, 8), get_desc)
+save_json_sheet('npc', "NPC.png", (8, 8), get_desc)
 
 def get_desc(row, col):
     direction = ["", "south"][row%2]
@@ -224,7 +226,7 @@ def get_desc(row, col):
 
     return names[row//2] + "_" + direction + extra[row][col]
 
-save_json_sheet("Enemies.png", (8, 8), get_desc)
+save_json_sheet('enemy', "Enemies.png", (8, 8), get_desc)
 
 def get_desc(row, col):
     meta = [
@@ -236,7 +238,7 @@ def get_desc(row, col):
     ]
     return meta[row][col]
 
-save_json_sheet("Weapons.png", (8, 8), get_desc, outer_pad=1)
+save_json_sheet('weapon', "Weapons.png", (8, 8), get_desc, outer_pad=1)
 
 # ###
 
@@ -341,7 +343,7 @@ def get_desc(row, col):
     ]
     return meta[row][col]
 
-save_json_sheet("GroundItems.png", (8, 8), get_desc, outer_pad=1)
+save_json_sheet('ground_item', "GroundItems.png", (8, 8), get_desc, outer_pad=1)
 
 ###
 
@@ -372,9 +374,15 @@ frames += gen_grid((1,34), (3, 3), desc)
 
 desc = [
     ["0","1","2","3","4","5","6","7","8","9","-","*", "(", ")", ".", "\\\"", "@"],
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!-+",
+    list("ABCDEFGHIJKLMNOPQRSTUVWXYZ ?!-+"),
 ]
-frames += gen_grid((1,38), (3, 4), desc)
+frames += gen_grid((1,38), (3, 4), [
+    [
+        'text_' + char
+        for char in desc_line
+    ]
+    for desc_line in desc
+])
 
 frames += gen_grid((63, 1), (10, 9), "audio-on")
 frames += gen_grid((74, 1), (10, 9), "audio-off")

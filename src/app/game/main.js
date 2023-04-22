@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -49,12 +49,14 @@ export class Game
         this.stage = null;
         this.progress = null;
 
-        PIXI.Loader.registerPlugin(new ChunkLoaderPlugin());
-        PIXI.Loader.registerPlugin(new TilesetLoaderPlugin());
+        // PIXI.Assets.loader.registerPlugin(new ChunkLoaderPlugin());
+        // PIXI.Assets.loader.registerPlugin(new TilesetLoaderPlugin());
     }
 
     resize() {
-        this.gamestate.handleResize();
+        if (this.gamestate) {
+            this.gamestate.handleResize();
+        }
     }
 
     gameloop()
@@ -84,15 +86,32 @@ export class Game
 
     progressCallback(loader, resource)
     {
-        console.log('loading: ' + resource.url + 
-                    ' (' + (loader.progress|0) + '%)'); 
+        console.log('loading: ' + resource.url +
+                    ' (' + (loader.progress|0) + '%)');
         this.progress.update(loader.progress/100.0);
         this.requestAnimationFrame(() => {
             Render.getRenderer().render(this.stage);
         });
     }
 
-    start()
+    start() {
+        Render.configure(this.element, LevelScreen.getAspectRatio());
+        loadGraphics().then((bundle) => {
+            console.log('loaded:', bundle);
+            window.assetsBundle = bundle;
+
+            GameControls.configure();
+
+            this.gamestate = new GameState();
+            this.stage = new PIXI.Container();
+            this.stage.children = [];
+            this.requestAnimationFrame(() => {
+                this.gameloop()
+            });
+        });
+    }
+
+    startOLD()
     {
         this.element.focus();
 
@@ -123,28 +142,28 @@ export class Game
             loadGraphics(progress),
             loadAudio(progress)
 
-        ]).then(() => {
-            // Render the chunks (now that the map tiles are loaded)
-            let chunks = PIXI.loader.resources[RES.CHUNKS].chunks;
-            for (let name in chunks) {
-                chunks[name].renderTexture();
-            }
+        ]).then((bundle) => {
+            // // Render the chunks (now that the map tiles are loaded)
+            // let chunks = PIXI.loader.resources[RES.CHUNKS].chunks;
+            // for (let name in chunks) {
+            //     chunks[name].renderTexture();
+            // }
+            console.log('loaded', bundle);
 
         }).then(() => {
-            console.log('done loading audio');
-
-            for (name in PIXI.loader.resources) 
-            {
-                let err = PIXI.loader.resources[name].error;
-                if (err) {
-                    console.log('Failed to load image: ' + name + ' (' + err + ')');
-                }
-            }
+            // console.log('done loading audio');
+            //
+            // for (name in PIXI.loader.resources)
+            // {
+            //     let err = PIXI.loader.resources[name].error;
+            //     if (err) {
+            //         console.log('Failed to load image: ' + name + ' (' + err + ')');
+            //     }
+            // }
             this.stage.children = [];
             this.requestAnimationFrame(() => {
                 this.gameloop()
             });
-
         });
         /* TODO - error handling here */
     }
@@ -153,29 +172,51 @@ export class Game
 // Returns a promise that resolves when all graphics resources are loaded
 function loadGraphics(progressCB)
 {
-    return new Promise((resolve, reject) => {
-        // Add a random query string when loading the JSON files below. This avoids
-        // persistent caching problems, where the browser (eg FF) uses the cached
-        // without checking in with the server first.
-        let now = (new Date()).getTime();
-        PIXI.loader.defaultQueryString = 'nocache=' + now;
-        PIXI.loader
-            .add(RES.MALE_MELEE)
-            .add(RES.FEMALE_MELEE)
-            .add(RES.NPC_TILESET)
-            .add(RES.MAPTILES)
-            .add(RES.ENEMIES)
-            .add(RES.WEAPONS)
-            .add(RES.GROUND_ITEMS)
-            .add(RES.UI)
-            .add(RES.CHUNKS)
-            .add(RES.TILESET)
-            .add(RES.MAP_OBJS)
-            //.add(RES.DRAGON)
-            //.add({name: 'hit', url: 'media/hit.wav'})
-            .on('progress', progressCB)
-            .load(resolve);
+    function makeBundle(paths) {
+        return {
+            name: 'apdungeon',
+            assets: paths.map(path => {
+                return {
+                    name: path,
+                    srcs: path,
+                }
+            })
+        }
+    }
+
+    PIXI.Assets.init({
+        manifest: {
+            bundles: [
+                makeBundle([
+                    RES.MALE_MELEE,
+                    RES.FEMALE_MELEE,
+                    RES.NPC_TILESET,
+                    RES.MAPTILES,
+                    RES.ENEMIES,
+                    RES.WEAPONS,
+                    RES.GROUND_ITEMS,
+                    RES.UI,
+                    RES.CHUNKS,
+                    RES.TILESET,
+                    RES.MAP_OBJS,
+                    // RES.DRAGON,
+                ])
+            ],
+        }
     });
+    return PIXI.Assets.loadBundle('apdungeon');
+    //
+    // return new Promise((resolve, reject) => {
+    //     // Add a random query string when loading the JSON files below. This avoids
+    //     // persistent caching problems, where the browser (eg FF) uses the cached
+    //     // without checking in with the server first.
+    //     let now = (new Date()).getTime();
+    //     // PIXI.loader.defaultQueryString = 'nocache=' + now;
+    //     // PIXI.Assets
+    //     //     //.add({name: 'hit', url: 'media/hit.wav'})
+    //     //     .on('progress', progressCB)
+    //     //     .load(resolve);
+    // });
 }
 
 function loadAudio(progressCB)
