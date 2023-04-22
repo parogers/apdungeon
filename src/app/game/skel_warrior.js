@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
@@ -32,7 +34,7 @@ const STATE_RETREAT = 2;
 const STATE_DEAD = 3;
 const STATE_CHANGE_TRACK = 4;
 
-/* The goblin keeps their distance while the player is facing them, and 
+/* The goblin keeps their distance while the player is facing them, and
  * quickly approaches to attack when the player's back is turned */
 export class SkelWarrior extends Thing
 {
@@ -68,7 +70,7 @@ export class SkelWarrior extends Thing
         this.hitbox = new Hitbox(0, -1, 6, 8);
     }
 
-    getDropTable() 
+    getDropTable()
     {
         return [[Item.Table.LARGE_HEALTH, 5],
                 [Item.Table.LEATHER_ARMOUR, 1],
@@ -105,7 +107,7 @@ export class SkelWarrior extends Thing
         if (!this.level.player.running) {
             return;
         }
-        
+
         // Facing the player, but slowly moving towards them
         this.velx = this.level.baseSpeed*0.9;
         this.x += this.velx*dt;

@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
@@ -60,9 +62,9 @@ export class GroundItem
 
         this.sprite.x += this.velx*dt;
         this.sprite.y += this.vely*dt;
-        
+
         /*
-          if (this.velh !== 0) 
+          if (this.velh !== 0)
           {
           // First move the item into/out of the scene (Z-axis) and make sure
           // we don't bump into anything.

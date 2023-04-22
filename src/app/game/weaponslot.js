@@ -17,6 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import * as PIXI from 'pixi.js';
+
 import { RES } from './res';
 import { Utils } from './utils';
 import { Thing, Hitbox } from './thing';

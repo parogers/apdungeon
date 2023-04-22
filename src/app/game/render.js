@@ -17,6 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import * as PIXI from 'pixi.js';
+
 // The PIXI renderer
 var renderer = null;
 // The containing element

@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
@@ -30,7 +32,7 @@ export function GoMarker(screen)
 {
     this.screen = screen;
     this.frames = [
-        Utils.getFrame(RES.UI, 'go1'), 
+        Utils.getFrame(RES.UI, 'go1'),
         Utils.getFrame(RES.UI, 'go2')
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
@@ -97,4 +99,3 @@ GoMarker.prototype.handleHit = function(x, y, dmg)
 GoMarker.prototype.handlePlayerCollision = function(player)
 {
 }
-

@@ -17,6 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import * as PIXI from 'pixi.js';
 import { RES } from './res';
 import { Render } from './render';
 import { ProgressBar } from './progress';

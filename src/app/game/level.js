@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
@@ -140,7 +142,7 @@ export class Level
 
         this.darkness = new LevelDarkness();
         this.addThing(this.darkness);
-        
+
         this.smoothTracking = true;
         this.exitDoor = null;
 
@@ -298,20 +300,20 @@ export class Level
         this.stage.y = -this.camera.y;
     }
 
-    /* Check if the given hitbox, at the given position, overlaps with any thing 
-     * in the level. Can also supply a thing to ignore when making the check. 
+    /* Check if the given hitbox, at the given position, overlaps with any thing
+     * in the level. Can also supply a thing to ignore when making the check.
      * This function is used to determine if a projectile strikes a target. */
     checkHit(x, y, hitbox, ignore)
     {
         let xp = x + hitbox.x, yp = y + hitbox.y;
         let w = hitbox.w, h = hitbox.h;
         //let thing = null;
-        //for (let n = 0; n < this.things.length; n++) 
+        //for (let n = 0; n < this.things.length; n++)
         for (let thing of this.things)
         {
             //thing = this.things[n];
-            if (thing !== ignore && thing.sprite && 
-                thing.hitbox && thing.hitbox !== hitbox && 
+            if (thing !== ignore && thing.sprite &&
+                thing.hitbox && thing.hitbox !== hitbox &&
                 Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
                 Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
             {
@@ -332,8 +334,8 @@ export class Level
 
         for (let thing of this.things)
         {
-            if (thing !== ignore && thing.sprite && 
-                thing.hitbox && thing.hitbox !== hitbox && 
+            if (thing !== ignore && thing.sprite &&
+                thing.hitbox && thing.hitbox !== hitbox &&
                 Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
                 Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
             {
@@ -385,7 +387,7 @@ export class Level
         for (let entry of table) {
             total += entry[1];
         }
-        // Pick a random number, then iterate over the items and find what 
+        // Pick a random number, then iterate over the items and find what
         // item it corresponds to.
         let pick = null;
         let num = Utils.randint(0, total);

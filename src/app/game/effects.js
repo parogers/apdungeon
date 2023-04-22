@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { Utils } from './utils';
 import { RES } from './res';
@@ -48,7 +50,7 @@ export class Shadow
     {
         // Make sure the shadow stays on the floor when we jump
         this.shadowSprite.y = this.thing.fh;
-        // Have the shadow increase size slightly when the player is 
+        // Have the shadow increase size slightly when the player is
         // further away from the floor.
         this.shadowSprite.scale.set(
             1 + this.thing.fh / 50.0,
@@ -171,4 +173,3 @@ export class Flame
 Flame.SMALL = 'flame_small';
 Flame.MEDIUM = 'flame_medium';
 Flame.LARGE = 'flame_large';
-

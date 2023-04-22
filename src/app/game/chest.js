@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
@@ -25,9 +27,9 @@ import { Audio } from './audio';
 
 /* A container for holding items. The chest is opened when the player touches
  * it, and the chests contents are ejected randomly.
- * 
+ *
  * items - array of Item types
- * options.ejectX - a particular X direction to eject the items 
+ * options.ejectX - a particular X direction to eject the items
  * */
 export class Chest {
 
@@ -55,8 +57,8 @@ export class Chest {
                 // Eject the contents from the chest
                 for (let item of this.items) {
                     let gnd = new GroundItem(
-                        item, 
-                        this.sprite.x+1*Utils.randUniform(0, 1), 
+                        item,
+                        this.sprite.x+1*Utils.randUniform(0, 1),
                         this.sprite.y+2*Utils.randUniform(0.1, 1));
                     this.level.addThing(gnd);
                     let spd = Utils.randUniform(6, 12);
@@ -79,7 +81,7 @@ export class Chest {
     handlePlayerCollision(player)
     {
         if (!this.isOpen) {
-            // Open the chest now and start a countdown timer before ejecting 
+            // Open the chest now and start a countdown timer before ejecting
             // the contents.
             this.sprite.texture = this.openTexture;
             this.isOpen = true;
