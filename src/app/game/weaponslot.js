@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
@@ -53,7 +55,7 @@ export class SwordWeaponSlot
 
         this.handleHitCallback = (function(hit) {
             if (hit.handleHit) {
-                hit.handleHit(this.player.fx, 
+                hit.handleHit(this.player.fx,
                               this.player.fy, 1);
             }
         }).bind(this);
@@ -79,7 +81,7 @@ export class SwordWeaponSlot
     setTexture(name)
     {
         if (this.textureName !== name) {
-            this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
+            this.sprite.texture = Utils.getFrame(RES.WEAPONS, 'weapon_' + name);
             this.textureName = name;
         }
     }
@@ -94,7 +96,7 @@ export class SwordWeaponSlot
         this.attackCooldown = 0.15;
 
         this.player.level.forEachThingHit(
-            this.player.fx + this.player.facing*this.weaponReach, 
+            this.player.fx + this.player.facing*this.weaponReach,
             this.player.fy,
             this.hitbox, this.player,
             this.handleHitCallback);
@@ -131,7 +133,7 @@ export class BowWeaponSlot
     {
         if (this.attackCooldown <= 0) {
             /* Have the bow rock back and forth as the player moves. */
-            //this.sprite.rotation = Math.PI/5 + 
+            //this.sprite.rotation = Math.PI/5 +
             //(Math.PI/40)*Math.cos(10*this.player.frame);
             this.sprite.rotation = Math.PI/5;
             this.sprite.x = 3.0;
@@ -152,7 +154,7 @@ export class BowWeaponSlot
     setTexture(name)
     {
         if (this.textureName !== name) {
-            this.sprite.texture = Utils.getFrame(RES.WEAPONS, name);
+            this.sprite.texture = Utils.getFrame(RES.WEAPONS, 'weapon_' + name);
             this.textureName = name;
         }
     }
@@ -192,7 +194,7 @@ export class Arrow extends Thing
         super();
         this.owner = owner;
         this.arrowSprite = new PIXI.Sprite(
-            Utils.getFrame(RES.WEAPONS, 'arrow')
+            Utils.getFrame(RES.WEAPONS, 'weapon_arrow')
         );
         this.arrowSprite.anchor.set(0.5, 0.5);
         this.arrowSprite.scale.x = Math.sign(velx);
@@ -217,8 +219,8 @@ export class Arrow extends Thing
             this.fx += this.velx*dt;
             this.fy += this.vely*dt;
             // The arrow disappears when it's no longer visible
-            if (this.sprite.x < level.camera.x || 
-                this.sprite.x > level.camera.x + level.camera.width) 
+            if (this.sprite.x < level.camera.x ||
+                this.sprite.x > level.camera.x + level.camera.width)
             {
                 this.removeSelf();
             }
@@ -240,7 +242,7 @@ export class Arrow extends Thing
             // Now check if we've hit an enemy
             let other = level.checkHit(
                 this.sprite.x,
-                this.sprite.y, 
+                this.sprite.y,
                 this.hitbox,
                 this.owner
             );

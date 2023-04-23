@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -26,8 +26,12 @@ export var Audio = {};
 Audio.playSound = function(res, vol)
 {
     if (enabled) {
-        if (vol !== undefined) sounds[res].volume = vol;
-        sounds[res].play();
+        const sound = window.assetsBundle[res];
+        if (sound) {
+            sound.play({
+                volume: vol || 1,
+            });
+        }
     }
 }
 

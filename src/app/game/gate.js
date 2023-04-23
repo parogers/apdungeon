@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
@@ -25,7 +27,7 @@ import { Audio } from './audio';
 
 export class Gate extends Thing
 {
-    constructor() 
+    constructor()
     {
         super();
         this.openingAnim = new Animation(ANIM.GATE_OPENING);
@@ -74,10 +76,10 @@ export class Gate extends Thing
 
     handlePlayerCollision(player)
     {
-        if (this.isOpen() && 
-            this === this.level.exitDoor && 
-            GameControls.getControls().up && 
-            Math.abs(player.sprite.y-this.sprite.y) < 5) 
+        if (this.isOpen() &&
+            this === this.level.exitDoor &&
+            GameControls.getControls().up &&
+            Math.abs(player.sprite.y-this.sprite.y) < 5)
         {
             // Next level
             this.level.state = this.level.FINISHED;

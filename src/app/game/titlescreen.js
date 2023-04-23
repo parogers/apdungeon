@@ -13,11 +13,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import * as PIXI from 'pixi.js';
+
+import { RES, TILE_WIDTH } from './res';
 import { Utils, Sequence } from './utils';
 import { Render } from './render';
 import { renderText } from './ui';
@@ -136,11 +138,11 @@ export class TitleScreen
             'start',
             function(dt) {
                 this.level = generateEmptyLevel(
-                    2, Math.round(this.screenWidth/RES.TILE_WIDTH)+4, 
+                    2, Math.round(this.screenWidth/TILE_WIDTH)+4,
                     '1'); // floor tile
-                this.level.stage.x = -RES.TILE_WIDTH*2;
+                this.level.stage.x = -TILE_WIDTH*2;
                 this.level.stage.y = 44;
-                //this.level.camera.x = RES.TILE_WIDTH*2;
+                //this.level.camera.x = TILE_WIDTH*2;
                 this.level.camera.width = this.level.getWidth();
                 this.stage.addChild(this.level.stage);
                 // Note the screen position within the level (so we can know when
@@ -228,7 +230,7 @@ export class TitleScreen
             this.sequence.update(dt);
         }
 
-        if (GameControls.getControls().space.released || 
+        if (GameControls.getControls().space.released ||
             this.mouseClicked || this.touchClicked) {
             this.state = this.NEW_GAME;
         }

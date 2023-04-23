@@ -13,10 +13,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
+import * as PIXI from 'pixi.js';
+import { sound } from '@pixi/sound';
 import { RES } from './res';
 import { Render } from './render';
 import { ProgressBar } from './progress';
@@ -24,8 +26,10 @@ import { GameControls } from './controls';
 import { LevelScreen } from './levelscreen';
 import { GameState } from './gamestate';
 import { Utils } from './utils';
-import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
+// import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
 import { GestureManager } from './gesture';
+
+import { ChunkTemplate, Tileset } from './bg';
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
@@ -49,12 +53,14 @@ export class Game
         this.stage = null;
         this.progress = null;
 
-        PIXI.Loader.registerPlugin(new ChunkLoaderPlugin());
-        PIXI.Loader.registerPlugin(new TilesetLoaderPlugin());
+        // PIXI.Assets.loader.registerPlugin(new ChunkLoaderPlugin());
+        // PIXI.Assets.loader.registerPlugin(new TilesetLoaderPlugin());
     }
 
     resize() {
-        this.gamestate.handleResize();
+        if (this.gamestate) {
+            this.gamestate.handleResize();
+        }
     }
 
     gameloop()
@@ -82,137 +88,80 @@ export class Game
         });
     }
 
-    progressCallback(loader, resource)
+    progressCallback(progress)
     {
-        console.log('loading: ' + resource.url + 
-                    ' (' + (loader.progress|0) + '%)'); 
-        this.progress.update(loader.progress/100.0);
-        this.requestAnimationFrame(() => {
-            Render.getRenderer().render(this.stage);
-        });
+        // console.log('loading: ' + resource.url +
+        //             ' (' + (loader.progress|0) + '%)');
+        this.progress.update(progress/100.0);
+        // this.requestAnimationFrame(() => {
+        //     Render.getRenderer().render(this.stage);
+        // });
     }
 
-    start()
-    {
-        this.element.focus();
-
-        // Use the level screen to determine what the render view aspect
-        // ratio should be.
+    start() {
         Render.configure(this.element, LevelScreen.getAspectRatio());
-
         this.gestureMgr = new GestureManager();
         this.gestureMgr.attach(Render.getRenderer().view);
         this.gestureMgr.gestureCallback = (gesture) => {
             this.gamestate.handleGesture(gesture);
         };
 
-        this.stage = new PIXI.Container();
-        /*this.progress = new ProgressBar(200, 20, 'LOADING IMAGES...');
-        this.progress.sprite.x = 100;
-        this.progress.sprite.y = 100;
-        this.stage.addChild(this.progress.sprite);*/
+        // this.stage = new PIXI.Container();
+        // this.progress = new ProgressBar(200, 20, 'LOADING IMAGES...');
+        // this.progress.sprite.x = 100;
+        // this.progress.sprite.y = 100;
+        // this.stage.addChild(this.progress.sprite);
 
-        function progress(loader, resource) {
-            //this.progressCallback(loader, resource);
-        }
+        loadAssets().then((bundle) => {
+            window.assetsBundle = bundle;
 
-        GameControls.configure();
-        this.gamestate = new GameState();
-
-        Promise.all([
-            loadGraphics(progress),
-            loadAudio(progress)
-
-        ]).then(() => {
-            // Render the chunks (now that the map tiles are loaded)
-            let chunks = PIXI.loader.resources[RES.CHUNKS].chunks;
-            for (let name in chunks) {
-                chunks[name].renderTexture();
-            }
-
-        }).then(() => {
-            console.log('done loading audio');
-
-            for (name in PIXI.loader.resources) 
+            bundle.chunks = {};
+            for (let name in bundle[RES.CHUNKS])
             {
-                let err = PIXI.loader.resources[name].error;
-                if (err) {
-                    console.log('Failed to load image: ' + name + ' (' + err + ')');
-                }
+                bundle.chunks[name] = new ChunkTemplate(
+                    bundle[RES.CHUNKS][name].background,
+                    bundle[RES.CHUNKS][name].midground,
+                    bundle[RES.CHUNKS][name].things,
+                );
             }
+
+            bundle.tileset = new Tileset(
+                bundle[RES.TILESET].tile_width,
+                bundle[RES.TILESET].tile_height,
+                bundle[RES.TILESET].tiles
+            );
+
+            GameControls.configure();
+
+            this.gamestate = new GameState();
+            this.stage = new PIXI.Container();
             this.stage.children = [];
             this.requestAnimationFrame(() => {
                 this.gameloop()
             });
-
         });
-        /* TODO - error handling here */
     }
 }
 
-// Returns a promise that resolves when all graphics resources are loaded
-function loadGraphics(progressCB)
+function loadAssets(progressCB)
 {
-    return new Promise((resolve, reject) => {
-        // Add a random query string when loading the JSON files below. This avoids
-        // persistent caching problems, where the browser (eg FF) uses the cached
-        // without checking in with the server first.
-        let now = (new Date()).getTime();
-        PIXI.loader.defaultQueryString = 'nocache=' + now;
-        PIXI.loader
-            .add(RES.MALE_MELEE)
-            .add(RES.FEMALE_MELEE)
-            .add(RES.NPC_TILESET)
-            .add(RES.MAPTILES)
-            .add(RES.ENEMIES)
-            .add(RES.WEAPONS)
-            .add(RES.GROUND_ITEMS)
-            .add(RES.UI)
-            .add(RES.CHUNKS)
-            .add(RES.TILESET)
-            .add(RES.MAP_OBJS)
-            //.add(RES.DRAGON)
-            //.add({name: 'hit', url: 'media/hit.wav'})
-            .on('progress', progressCB)
-            .load(resolve);
+    function makeBundle(paths) {
+        return {
+            name: 'apdungeon',
+            assets: paths.map(path => {
+                return {
+                    name: path,
+                    srcs: path,
+                }
+            })
+        }
+    }
+    PIXI.Assets.init({
+        manifest: {
+            bundles: [
+                makeBundle(Object.values(RES))
+            ],
+        }
     });
-}
-
-function loadAudio(progressCB)
-{
-    return new Promise((resolve, reject) => {
-        sounds.whenLoaded = function() {
-            resolve();
-        };
-        sounds.onFailed = function(source) {
-            console.log('Failed to load audio file: ' + source);
-            reject();
-        };
-        // Show and update the new progress bar for loading audio
-        //this.progress.setText('LOADING AUDIO...');
-        /*sounds.onProgress = (percent) => {
-            this.progress.update(percent/100.0);
-            requestAnimationFrame(() => {
-                Render.getRenderer().render(this.stage);
-            });
-        };*/
-        sounds.load([
-            RES.ATTACK_SWORD_SND,
-            RES.SNAKE_HURT_SND,
-            RES.DEAD_SND,
-            RES.ARROW_DING_SND,
-            RES.SPLASH_SND,
-            RES.GO_SND,
-            RES.HIT_SND,
-            RES.COIN_SND,
-            RES.GATE_SND,
-            RES.DROP_SND,
-            RES.POWERUP1_SND,
-            RES.POWERUP2_SND,
-            RES.POWERUP3_SND,
-            RES.POWERUP4_SND,
-            RES.CHEST_SND,
-            //RES.GAME_MUSIC
-        ]);
-    });
+    return PIXI.Assets.loadBundle('apdungeon', progressCB);
 }

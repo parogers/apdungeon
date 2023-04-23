@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { Render } from './render';
 import { GameUI } from './ui';
@@ -164,7 +166,7 @@ export class LevelScreen
         this.gameUI.setPlayer(this.player);
         this.gameUI.container.position.set(0, level.getHeight());
         this.gameUI.doLayout(
-            level.camera.width, 
+            level.camera.width,
             level.camera.height-level.getHeight());
 
         // Put the go marker in the top-right corner of the level area
@@ -199,4 +201,3 @@ LevelScreen.getAspectRatio = function()
 {
     return (Level.CAMERA_WIDTH / Level.CAMERA_HEIGHT);
 }
-

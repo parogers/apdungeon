@@ -138,7 +138,7 @@ if __name__ == '__main__':
     src = './rawdata/maps/Tileset2.tsx'
     tileset = load_tileset(src)
 
-    dump_tileset(tileset, './app/src/assets/map.tileset.json')
+    dump_tileset(tileset, './src/assets/map.tileset.json')
 
     dest = os.path.join(
         os.path.dirname(tileset.src),

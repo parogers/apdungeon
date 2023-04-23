@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
@@ -56,7 +58,7 @@ export class Ghost
         this.hitbox = new Hitbox(0, 0, 8, 4);
     }
 
-    getDropTable() 
+    getDropTable()
     {
         return [[Item.Table.SMALL_HEALTH, 1],
                 [Item.Table.LARGE_HEALTH, 5]];

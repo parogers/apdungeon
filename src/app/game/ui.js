@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
@@ -31,14 +33,15 @@ export function renderText(lines, options)
     let maxWidth = 0;
     let cnt = new PIXI.Container();
     let y = 1;
-    for (let row = 0; row < lines.length; row++) 
+    for (let row = 0; row < lines.length; row++)
     {
         let x = 1;
         let msg = lines[row];
         let height = 0;
-        for (let n = 0; n < msg.length; n++) 
+        for (let n = 0; n < msg.length; n++)
         {
-            let sprite = new PIXI.Sprite(Utils.getFrame(RES.UI, msg[n]));
+            const texture = Utils.getFrame(RES.UI, 'text_' + msg[n]);
+            const sprite = new PIXI.Sprite(texture);
             sprite.anchor.set(0,0);
             sprite.x = x;
             sprite.y = y;
@@ -51,7 +54,6 @@ export function renderText(lines, options)
         maxWidth = Math.max(maxWidth, x);
         y += height+1;
     }
-
     if (options && options.blackBG) {
         let bg = new PIXI.Sprite(Utils.getFrame(RES.UI, 'black'));
         bg.scale.set(maxWidth/bg.width, y/bg.height);
@@ -59,9 +61,11 @@ export function renderText(lines, options)
         // TODO - why doesn't this work for render textures?
         //renderer.backgroundColor = 0x000000;
     }
-
-    let renderTexture = PIXI.RenderTexture.create(maxWidth, y);
-    Render.getRenderer().render(cnt, renderTexture);
+    let renderTexture = PIXI.RenderTexture.create({
+        width: maxWidth,
+        height: y
+    });
+    Render.getRenderer().render(cnt, { renderTexture });
     return renderTexture;
 }
 
@@ -161,7 +165,7 @@ export class ItemSlotUI
         if (args && args.x) this.itemSprite.x += args.x;
         if (args && args.y) this.itemSprite.y += args.y;
 
-        if (args && args.showCount) 
+        if (args && args.showCount)
         {
             let img = renderText('--');
             this.textSprite = new PIXI.Sprite(img);
@@ -271,7 +275,7 @@ class Button
         };
     }
 
-    setState(state) 
+    setState(state)
     {
         if (state && this.states.hasOwnProperty(state)) {
             this.sprite.texture = this.states[state];
@@ -286,7 +290,7 @@ class Button
 
 export class GameUI
 {
-    constructor() 
+    constructor()
     {
         this.container = new PIXI.Container();
         this.healthUI = new HealthUI(this);
@@ -371,16 +375,16 @@ export class GameUI
     }
 
     /* Layout the on-screen GUI (inventory, sprites, etc) given the overall
-     * screen size (width, height) and the y-position of the horizontal 
+     * screen size (width, height) and the y-position of the horizontal
      * dividing line between the level and controls. (hsplit) */
-    doLayout(width, height) 
+    doLayout(width, height)
     {
         this.inventoryUI.sprite.position.set(5.5, 1);
         this.audioButton.sprite.position.set(
             width-this.audioButton.sprite.width-1, 1);
         this.healthUI.sprite.position.set(86, 2);
         this.bg.scale.set(
-            width/this.bg.texture.width, 
+            width/this.bg.texture.width,
             height/this.bg.texture.height);
     }
 }

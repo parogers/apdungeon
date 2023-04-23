@@ -1,827 +1,827 @@
 {"frames" : {
-"crab_1" : {
+"enemy_crab_1" : {
     "frame" : {"x":0, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_2" : {
+},"enemy_crab_2" : {
     "frame" : {"x":18, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_3" : {
+},"enemy_crab_3" : {
     "frame" : {"x":27, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_dead" : {
+},"enemy_crab_dead" : {
     "frame" : {"x":36, "y":0, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_south_1" : {
+},"enemy_crab_south_1" : {
     "frame" : {"x":0, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_south_idle" : {
+},"enemy_crab_south_idle" : {
     "frame" : {"x":9, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_south_2" : {
+},"enemy_crab_south_2" : {
     "frame" : {"x":18, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_south_3" : {
+},"enemy_crab_south_3" : {
     "frame" : {"x":27, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"crab_south_dead" : {
+},"enemy_crab_south_dead" : {
     "frame" : {"x":36, "y":9, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_1" : {
+},"enemy_scorpion_1" : {
     "frame" : {"x":0, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_2" : {
+},"enemy_scorpion_2" : {
     "frame" : {"x":18, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_3" : {
+},"enemy_scorpion_3" : {
     "frame" : {"x":27, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_dead" : {
+},"enemy_scorpion_dead" : {
     "frame" : {"x":36, "y":18, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_south_1" : {
+},"enemy_scorpion_south_1" : {
     "frame" : {"x":0, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_south_2" : {
+},"enemy_scorpion_south_2" : {
     "frame" : {"x":9, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_south_3" : {
+},"enemy_scorpion_south_3" : {
     "frame" : {"x":18, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_south_4" : {
+},"enemy_scorpion_south_4" : {
     "frame" : {"x":27, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"scorpion_south_dead" : {
+},"enemy_scorpion_south_dead" : {
     "frame" : {"x":36, "y":27, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"rat_1" : {
+},"enemy_rat_1" : {
     "frame" : {"x":0, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"rat_dead" : {
+},"enemy_rat_dead" : {
     "frame" : {"x":36, "y":36, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"rat_south_1" : {
+},"enemy_rat_south_1" : {
     "frame" : {"x":0, "y":45, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"rat_south_2" : {
+},"enemy_rat_south_2" : {
     "frame" : {"x":9, "y":45, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"rat_south_dead" : {
+},"enemy_rat_south_dead" : {
     "frame" : {"x":36, "y":45, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"snake_1" : {
+},"enemy_snake_1" : {
     "frame" : {"x":0, "y":54, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"snake_dead" : {
+},"enemy_snake_dead" : {
     "frame" : {"x":36, "y":54, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"snake_south_1" : {
+},"enemy_snake_south_1" : {
     "frame" : {"x":0, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"snake_south_2" : {
+},"enemy_snake_south_2" : {
     "frame" : {"x":9, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"snake_south_dead" : {
+},"enemy_snake_south_dead" : {
     "frame" : {"x":36, "y":63, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_1" : {
+},"enemy_flame_1" : {
     "frame" : {"x":0, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_idle" : {
+},"enemy_flame_idle" : {
     "frame" : {"x":9, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_2" : {
+},"enemy_flame_2" : {
     "frame" : {"x":18, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_3" : {
+},"enemy_flame_3" : {
     "frame" : {"x":27, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_dead" : {
+},"enemy_flame_dead" : {
     "frame" : {"x":36, "y":72, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_south_1" : {
+},"enemy_flame_south_1" : {
     "frame" : {"x":0, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_south_idle" : {
+},"enemy_flame_south_idle" : {
     "frame" : {"x":9, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_south_2" : {
+},"enemy_flame_south_2" : {
     "frame" : {"x":18, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_south_3" : {
+},"enemy_flame_south_3" : {
     "frame" : {"x":27, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"flame_south_dead" : {
+},"enemy_flame_south_dead" : {
     "frame" : {"x":36, "y":81, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_1" : {
+},"enemy_goblin_1" : {
     "frame" : {"x":0, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_idle" : {
+},"enemy_goblin_idle" : {
     "frame" : {"x":9, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_2" : {
+},"enemy_goblin_2" : {
     "frame" : {"x":18, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_3" : {
+},"enemy_goblin_3" : {
     "frame" : {"x":27, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_dead" : {
+},"enemy_goblin_dead" : {
     "frame" : {"x":36, "y":90, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_south_1" : {
+},"enemy_goblin_south_1" : {
     "frame" : {"x":0, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_south_idle" : {
+},"enemy_goblin_south_idle" : {
     "frame" : {"x":9, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_south_2" : {
+},"enemy_goblin_south_2" : {
     "frame" : {"x":18, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_south_3" : {
+},"enemy_goblin_south_3" : {
     "frame" : {"x":27, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"goblin_south_dead" : {
+},"enemy_goblin_south_dead" : {
     "frame" : {"x":36, "y":99, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_1" : {
+},"enemy_mushroom_1" : {
     "frame" : {"x":0, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_idle" : {
+},"enemy_mushroom_idle" : {
     "frame" : {"x":9, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_2" : {
+},"enemy_mushroom_2" : {
     "frame" : {"x":18, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_3" : {
+},"enemy_mushroom_3" : {
     "frame" : {"x":27, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_dead" : {
+},"enemy_mushroom_dead" : {
     "frame" : {"x":36, "y":108, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_south_1" : {
+},"enemy_mushroom_south_1" : {
     "frame" : {"x":0, "y":117, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_south_idle" : {
+},"enemy_mushroom_south_idle" : {
     "frame" : {"x":9, "y":117, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_south_2" : {
+},"enemy_mushroom_south_2" : {
     "frame" : {"x":18, "y":117, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_south_3" : {
+},"enemy_mushroom_south_3" : {
     "frame" : {"x":27, "y":117, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mushroom_south_dead" : {
+},"enemy_mushroom_south_dead" : {
     "frame" : {"x":36, "y":117, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_1" : {
+},"enemy_ghost_1" : {
     "frame" : {"x":0, "y":126, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_2" : {
+},"enemy_ghost_2" : {
     "frame" : {"x":9, "y":126, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_dead" : {
+},"enemy_ghost_dead" : {
     "frame" : {"x":36, "y":126, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_south_1" : {
+},"enemy_ghost_south_1" : {
     "frame" : {"x":0, "y":135, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_south_2" : {
+},"enemy_ghost_south_2" : {
     "frame" : {"x":9, "y":135, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"ghost_south_dead" : {
+},"enemy_ghost_south_dead" : {
     "frame" : {"x":36, "y":135, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_1" : {
+},"enemy_eye_1" : {
     "frame" : {"x":0, "y":144, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_2" : {
+},"enemy_eye_2" : {
     "frame" : {"x":9, "y":144, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_dead" : {
+},"enemy_eye_dead" : {
     "frame" : {"x":36, "y":144, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_south_1" : {
+},"enemy_eye_south_1" : {
     "frame" : {"x":0, "y":153, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_south_2" : {
+},"enemy_eye_south_2" : {
     "frame" : {"x":9, "y":153, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"eye_south_dead" : {
+},"enemy_eye_south_dead" : {
     "frame" : {"x":36, "y":153, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_1" : {
+},"enemy_slime_1" : {
     "frame" : {"x":0, "y":162, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_2" : {
+},"enemy_slime_2" : {
     "frame" : {"x":9, "y":162, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_dead" : {
+},"enemy_slime_dead" : {
     "frame" : {"x":36, "y":162, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_south_1" : {
+},"enemy_slime_south_1" : {
     "frame" : {"x":0, "y":171, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_south_2" : {
+},"enemy_slime_south_2" : {
     "frame" : {"x":9, "y":171, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"slime_south_dead" : {
+},"enemy_slime_south_dead" : {
     "frame" : {"x":36, "y":171, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_1" : {
+},"enemy_bat_1" : {
     "frame" : {"x":0, "y":180, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_2" : {
+},"enemy_bat_2" : {
     "frame" : {"x":9, "y":180, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_dead" : {
+},"enemy_bat_dead" : {
     "frame" : {"x":36, "y":180, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_south_1" : {
+},"enemy_bat_south_1" : {
     "frame" : {"x":0, "y":189, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_south_2" : {
+},"enemy_bat_south_2" : {
     "frame" : {"x":9, "y":189, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bat_south_dead" : {
+},"enemy_bat_south_dead" : {
     "frame" : {"x":36, "y":189, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_1" : {
+},"enemy_plant_1" : {
     "frame" : {"x":0, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_idle" : {
+},"enemy_plant_idle" : {
     "frame" : {"x":9, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_2" : {
+},"enemy_plant_2" : {
     "frame" : {"x":18, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_3" : {
+},"enemy_plant_3" : {
     "frame" : {"x":27, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_dead" : {
+},"enemy_plant_dead" : {
     "frame" : {"x":36, "y":198, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_south_1" : {
+},"enemy_plant_south_1" : {
     "frame" : {"x":0, "y":207, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_south_idle" : {
+},"enemy_plant_south_idle" : {
     "frame" : {"x":9, "y":207, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_south_2" : {
+},"enemy_plant_south_2" : {
     "frame" : {"x":18, "y":207, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_south_3" : {
+},"enemy_plant_south_3" : {
     "frame" : {"x":27, "y":207, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"plant_south_dead" : {
+},"enemy_plant_south_dead" : {
     "frame" : {"x":36, "y":207, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_1" : {
+},"enemy_boar_1" : {
     "frame" : {"x":0, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_idle" : {
+},"enemy_boar_idle" : {
     "frame" : {"x":9, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_2" : {
+},"enemy_boar_2" : {
     "frame" : {"x":18, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_3" : {
+},"enemy_boar_3" : {
     "frame" : {"x":27, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_dead" : {
+},"enemy_boar_dead" : {
     "frame" : {"x":36, "y":216, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_south_1" : {
+},"enemy_boar_south_1" : {
     "frame" : {"x":0, "y":225, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_south_idle" : {
+},"enemy_boar_south_idle" : {
     "frame" : {"x":9, "y":225, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_south_2" : {
+},"enemy_boar_south_2" : {
     "frame" : {"x":18, "y":225, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_south_3" : {
+},"enemy_boar_south_3" : {
     "frame" : {"x":27, "y":225, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"boar_south_dead" : {
+},"enemy_boar_south_dead" : {
     "frame" : {"x":36, "y":225, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_1" : {
+},"enemy_mould_1" : {
     "frame" : {"x":0, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_idle" : {
+},"enemy_mould_idle" : {
     "frame" : {"x":9, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_2" : {
+},"enemy_mould_2" : {
     "frame" : {"x":18, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_3" : {
+},"enemy_mould_3" : {
     "frame" : {"x":27, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_dead" : {
+},"enemy_mould_dead" : {
     "frame" : {"x":36, "y":234, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_south_1" : {
+},"enemy_mould_south_1" : {
     "frame" : {"x":0, "y":243, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_south_idle" : {
+},"enemy_mould_south_idle" : {
     "frame" : {"x":9, "y":243, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_south_2" : {
+},"enemy_mould_south_2" : {
     "frame" : {"x":18, "y":243, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_south_3" : {
+},"enemy_mould_south_3" : {
     "frame" : {"x":27, "y":243, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"mould_south_dead" : {
+},"enemy_mould_south_dead" : {
     "frame" : {"x":36, "y":243, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_attack_1" : {
+},"enemy_skeleton_warrior_attack_1" : {
     "frame" : {"x":0, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_attack_2" : {
+},"enemy_skeleton_warrior_attack_2" : {
     "frame" : {"x":9, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_dead" : {
+},"enemy_skeleton_warrior_dead" : {
     "frame" : {"x":27, "y":252, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_south_1" : {
+},"enemy_skeleton_warrior_south_1" : {
     "frame" : {"x":0, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_south_2" : {
+},"enemy_skeleton_warrior_south_2" : {
     "frame" : {"x":9, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_south_3" : {
+},"enemy_skeleton_warrior_south_3" : {
     "frame" : {"x":18, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_south_dead" : {
+},"enemy_skeleton_warrior_south_dead" : {
     "frame" : {"x":27, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_warrior_south_attack" : {
+},"enemy_skeleton_warrior_south_attack" : {
     "frame" : {"x":36, "y":261, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_1" : {
+},"enemy_skeleton_ranger_1" : {
     "frame" : {"x":0, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_2" : {
+},"enemy_skeleton_ranger_2" : {
     "frame" : {"x":9, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_3" : {
+},"enemy_skeleton_ranger_3" : {
     "frame" : {"x":18, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_dead" : {
+},"enemy_skeleton_ranger_dead" : {
     "frame" : {"x":27, "y":270, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_south_1" : {
+},"enemy_skeleton_ranger_south_1" : {
     "frame" : {"x":0, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_south_2" : {
+},"enemy_skeleton_ranger_south_2" : {
     "frame" : {"x":9, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_south_3" : {
+},"enemy_skeleton_ranger_south_3" : {
     "frame" : {"x":18, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_south_dead" : {
+},"enemy_skeleton_ranger_south_dead" : {
     "frame" : {"x":27, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_ranger_south_attack" : {
+},"enemy_skeleton_ranger_south_attack" : {
     "frame" : {"x":36, "y":279, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_1" : {
+},"enemy_skeleton_mage_1" : {
     "frame" : {"x":0, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_2" : {
+},"enemy_skeleton_mage_2" : {
     "frame" : {"x":9, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_3" : {
+},"enemy_skeleton_mage_3" : {
     "frame" : {"x":18, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_dead" : {
+},"enemy_skeleton_mage_dead" : {
     "frame" : {"x":27, "y":288, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_south_1" : {
+},"enemy_skeleton_mage_south_1" : {
     "frame" : {"x":0, "y":297, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_south_2" : {
+},"enemy_skeleton_mage_south_2" : {
     "frame" : {"x":9, "y":297, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_south_3" : {
+},"enemy_skeleton_mage_south_3" : {
     "frame" : {"x":18, "y":297, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_south_dead" : {
+},"enemy_skeleton_mage_south_dead" : {
     "frame" : {"x":27, "y":297, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"skeleton_mage_south_attack" : {
+},"enemy_skeleton_mage_south_attack" : {
     "frame" : {"x":36, "y":297, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,

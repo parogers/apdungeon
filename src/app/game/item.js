@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -27,7 +27,7 @@ import { Utils } from './utils';
 export class Item
 {
     constructor(image, type, quality) {
-        this.image = image;
+        this.image = 'ground_item_' + image;
         this.type = type;
         this.quality = quality;
     };

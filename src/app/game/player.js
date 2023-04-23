@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { renderText } from './ui';
 import { ANIM, RES } from './res';
@@ -39,7 +41,7 @@ const STATE_IDLE = 1;
 const STATE_CHANGING_TRACK = 2;
 const STATE_KNOCKED_BACK = 3;
 
-/* Tracks something taking damage. It tracks how long to flash the sprite 
+/* Tracks something taking damage. It tracks how long to flash the sprite
  * red and the damage cooldown time. */
 class DamageTimer
 {
@@ -119,7 +121,7 @@ export class Player extends Thing
         this.running = false;
         // Process of dying (showing animation)
         this.dead = false;
-        // The number of kills (stored by monster name). Also stores the 
+        // The number of kills (stored by monster name). Also stores the
         // image of the monster (for displaying stats later)
         //     {count: ZZZ, img: ZZZ}
         this.kills = {};
@@ -236,7 +238,7 @@ export class Player extends Thing
       this.weaponSlot = null;
       this.updatePlayerAppearance();
       this.spriteChar.tint = NO_TINT;
-      // Bring the player corpse to the front (so it's rendered very 
+      // Bring the player corpse to the front (so it's rendered very
       // clearly overtop any other junk in the scene)
       this.level.stage.removeChild(this.sprite);
       this.level.stage.addChild(this.sprite);
@@ -266,7 +268,7 @@ export class Player extends Thing
       this.faceDirection(dirx);
       this.velx = dirx * this.maxSpeed;
 
-      //if (this.controls.left.doublePressed || 
+      //if (this.controls.left.doublePressed ||
       //    this.controls.right.doublePressed)
       //{
       //    console.log('LUNGE!');
@@ -302,7 +304,7 @@ export class Player extends Thing
       let x = this.sprite.x + this.velx*dt;
       // Keep the player visible to the camera
       if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
-      x-w/2 >= this.level.camera.x && 
+      x-w/2 >= this.level.camera.x &&
       x+w/2 <= this.level.camera.x + this.level.camera.width) {
       this.sprite.x = x;
       } else {
@@ -327,7 +329,7 @@ export class Player extends Thing
       // Make a splashy sound when we enter water
       let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
       if (tile.water) {
-      if (!this.waterSprite.visible) 
+      if (!this.waterSprite.visible)
       Audio.playSound(RES.SPLASH_SND);
       this.waterSprite.visible = true;
       } else {
@@ -338,8 +340,8 @@ export class Player extends Thing
 
       // Check for collisions with other things
       this.level.forEachThingHit(
-      this.sprite.x, this.sprite.y, 
-      this.hitbox, this, 
+      this.sprite.x, this.sprite.y,
+      this.hitbox, this,
       this.handleCollisionCallback);
 
       // Update animation
@@ -419,7 +421,7 @@ export class Player extends Thing
             // Check for collisions with other things
             this.level.forEachThingHit(
                 this.sprite.x,
-                this.sprite.y, 
+                this.sprite.y,
                 this.hitbox,
                 this,
                 this.handleCollisionCallback
@@ -594,14 +596,14 @@ export class Player extends Thing
 
     swapWeapons()
     {
-        if (this.weaponSlot === this.swordWeaponSlot && 
-            this.bow !== Item.Table.NONE) 
+        if (this.weaponSlot === this.swordWeaponSlot &&
+            this.bow !== Item.Table.NONE)
         {
             this.weaponSlot = this.bowWeaponSlot;
             this.updatePlayerAppearance();
-        } 
-        else if (this.weaponSlot === this.bowWeaponSlot && 
-                 this.sword !== Item.Table.NONE) 
+        }
+        else if (this.weaponSlot === this.bowWeaponSlot &&
+                 this.sword !== Item.Table.NONE)
         {
             this.weaponSlot = this.swordWeaponSlot;
             this.updatePlayerAppearance();
@@ -616,7 +618,7 @@ export class Player extends Thing
 
     stopAttack()
     {
-        if (this.weaponSlot) 
+        if (this.weaponSlot)
             this.weaponSlot.stopAttack();
     }
 
@@ -697,7 +699,7 @@ export class Player extends Thing
         }
     }
 
-    /* Start the player moving onto the given track. Returns true if the player 
+    /* Start the player moving onto the given track. Returns true if the player
      * can move onto the track, and false otherwise. */
     startMoveToTrack(track)
     {

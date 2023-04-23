@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -54,7 +54,7 @@ function randomTreasures(levelNum)
     case 1:
         return [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
     case 2:
-        return [Item.Table.COIN, Item.Table.COIN, 
+        return [Item.Table.COIN, Item.Table.COIN,
                 Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
     case 3:
         if (levelNum < 2) return [Item.Table.SMALL_BOW, Item.Table.ARROW];
@@ -63,7 +63,7 @@ function randomTreasures(levelNum)
         if (levelNum < 2) return [Item.Table.LEATHER_ARMOUR];
         else return [Item.Table.STEEL_ARMOUR];
     case 5:
-        return [Item.Table.SMALL_HEALTH, Item.Table.SMALL_HEALTH, 
+        return [Item.Table.SMALL_HEALTH, Item.Table.SMALL_HEALTH,
                 Item.Table.ARROW, Item.Table.ARROW];
     case 6:
     case 7:
@@ -73,7 +73,7 @@ function randomTreasures(levelNum)
     case 9:
         return [Item.Table.LARGE_SWORD];
     case 10:
-        return [Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW, 
+        return [Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW,
                 Item.Table.COIN, Item.Table.COIN];
     }
 }
@@ -162,12 +162,12 @@ export function generateLevel(levelNum)
     mon.track = level.getMiddleTrack();
     level.addThing(mon);*/
 
-    // First level in the game. Add a chest of starter items. Have the 
+    // First level in the game. Add a chest of starter items. Have the
     // chest eject items to the right away from the first NPC. (so none
     // of the items become hidden behind)
     let items = [
         Item.Table.COIN,
-        Item.Table.COIN, 
+        Item.Table.COIN,
         Item.Table.COIN,
         Item.Table.SMALL_SWORD
     ];
@@ -184,7 +184,7 @@ export function generateLevel(levelNum)
     level.addThing(npc);
 
     // Add an NPC to give the player some dialog
-    npc = new NPC('npc3_south_1');
+    npc = new NPC('npc_npc3_south_1');
     npc.setDialog('GOOD LUCK!');
     npc.sprite.x = 80;
     npc.sprite.y = 40;

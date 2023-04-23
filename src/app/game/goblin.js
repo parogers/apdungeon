@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
@@ -49,7 +51,7 @@ const SAFE_DISTANCE = 50;
 const ATTACK_SPEED = 60;
 const RETREAT_SPEED = ATTACK_SPEED*1.5;
 
-/* The goblin keeps their distance while the player is facing them, and 
+/* The goblin keeps their distance while the player is facing them, and
  * quickly approaches to attack when the player's back is turned */
 export class Goblin extends Thing
 {
@@ -86,7 +88,7 @@ export class Goblin extends Thing
         this.splash = new Splash(this, 0, false);
     }
 
-    getDropTable() 
+    getDropTable()
     {
         return [[Item.Table.COIN, 8],
                 [Item.Table.SMALL_HEALTH, 6],
@@ -151,7 +153,7 @@ export class Goblin extends Thing
             this.fh += this.velh*dt;
 
             if (this.fh <= 0)
-            { 
+            {
                 this.fh = 0;
                 this.state = STATE_APPROACH;
                 this.attackTimer = this.attackTimeout;

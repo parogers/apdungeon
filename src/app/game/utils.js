@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Render } from './render';
@@ -71,24 +73,31 @@ Utils.createSplashSprite = function()
 Utils.getTextures = function(res)
 {
     if (!res) throw Error('must specify a resource');
-    return PIXI.loader.resources[res].textures;
+    // return PIXI.loader.resources[res].textures;
+    return window.assetsBundle[res].textures;
 }
 
 Utils.getChunk = function(name)
 {
-    return PIXI.loader.resources[RES.CHUNKS].chunks[name];
+    // return PIXI.loader.resources[RES.CHUNKS].chunks[name];
+    return window.assetsBundle.chunks[name];
 }
 
 Utils.getTileset = function()
 {
-    return PIXI.loader.resources[RES.TILESET].tileset;
+    return window.assetsBundle.tileset;
+    // return PIXI.loader.resources[RES.TILESET].tileset;
 }
 
 Utils.getFrame = function(res, name)
 {
-    let texture = Utils.getTextures(res)[name];
+    const textures = Utils.getTextures(res);
+    if (!textures) {
+        console.error('cannot find textures:', res);
+    }
+    const texture = textures[name];
     if (!texture) {
-        console.log('ERROR: cannot find texture ' + name);
+        console.error(`cannot find texture: ${name} (in ${res})`);
     }
     return texture;
 }
@@ -137,7 +146,7 @@ export function Sequence()
             this[name] = arguments[n];
         }
     }
-    // The current state. This advances incrementally by default, and 
+    // The current state. This advances incrementally by default, and
     // occasionally jumping randomly to another state.
     this.state = 0;
     // Delay before advancing the state

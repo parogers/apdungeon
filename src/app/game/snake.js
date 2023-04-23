@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES, ANIM } from './res';
 import { Utils } from './utils';
@@ -120,7 +122,7 @@ export class Snake extends Thing
         return Math.abs(this.snakeSprite.height);
     }
 
-    getDropTable() 
+    getDropTable()
     {
         return [[Item.Table.COIN, 2],
                 [Item.Table.ARROW, 1],
@@ -233,7 +235,7 @@ export class Snake extends Thing
 
 export class Rat extends Snake
 {
-    constructor() 
+    constructor()
     {
         super();
         this.name = 'Rat';

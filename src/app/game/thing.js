@@ -13,15 +13,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { RES } from './res';
 import { Utils } from './utils';
 import { Audio } from './audio';
 
-/* Template code for defining a 'thing' in a level. Generally things have 
+/* Template code for defining a 'thing' in a level. Generally things have
  * sprites associated with them, and can be interacted with by the player.
  * Note there's no need to subclass because this code doesn't contain any
  * useful base functionality. Just copy+paste and change what's needed. */

@@ -13,9 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
+
+import * as PIXI from 'pixi.js';
 
 import { Thing } from './thing';
 import { Level } from './level';
@@ -34,7 +36,7 @@ export class Blood extends Thing
         } else {
             frames = ['blood1', 'blood2', 'blood3'];
         }
-        
+
         this.sprite = new PIXI.Sprite(
             Utils.getFrame(RES.MAP_OBJS, Utils.randomChoice(frames))
         );

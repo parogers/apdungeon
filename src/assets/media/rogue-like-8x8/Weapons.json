@@ -1,77 +1,77 @@
 {"frames" : {
-"shield1" : {
+"weapon_shield1" : {
     "frame" : {"x":1, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sword1" : {
+},"weapon_sword1" : {
     "frame" : {"x":19, "y":1, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"shield2" : {
+},"weapon_shield2" : {
     "frame" : {"x":1, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sword2" : {
+},"weapon_sword2" : {
     "frame" : {"x":19, "y":10, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"shield3" : {
+},"weapon_shield3" : {
     "frame" : {"x":1, "y":19, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"sword3" : {
+},"weapon_sword3" : {
     "frame" : {"x":19, "y":19, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"staff1" : {
+},"weapon_staff1" : {
     "frame" : {"x":1, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"staff2" : {
+},"weapon_staff2" : {
     "frame" : {"x":10, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"staff3" : {
+},"weapon_staff3" : {
     "frame" : {"x":19, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bow1" : {
+},"weapon_bow1" : {
     "frame" : {"x":28, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bow2" : {
+},"weapon_bow2" : {
     "frame" : {"x":37, "y":28, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"bow3" : {
+},"weapon_bow3" : {
     "frame" : {"x":1, "y":37, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
     "spriteSourceSize" : {"x":0, "y":0, "w":8, "h":8},
     "sourceSize" : {"w":8, "h":8}
-},"arrow" : {
+},"weapon_arrow" : {
     "frame" : {"x":10, "y":37, "w":8, "h":8},
     "rotated" : false,
     "trimmed" : false,
