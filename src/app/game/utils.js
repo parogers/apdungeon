@@ -43,32 +43,6 @@ Utils.randomChoice = function(lst)
     return lst[n];
 }
 
-// Returns a matrix (ie n[row][col]) of the given value. Also the number of
-// rows and columns (rows, cols) are available as attributes.
-Utils.createGrid = function(rows, cols, value)
-{
-    let grid = [];
-    grid.rows = rows;
-    grid.cols = cols;
-    for (let row = 0; row < rows; row++) {
-        grid[row] = [];
-        for (let col = 0; col < cols; col++) {
-            grid[row][col] = value;
-        }
-    }
-    return grid;
-}
-
-// Returns a sprite used for monsters/player treading water
-Utils.createSplashSprite = function()
-{
-    let waterSprite = new PIXI.Sprite();
-    waterSprite.anchor.set(0.5, 0.5);
-    waterSprite.visible = false;
-    waterSprite.texture = Utils.getFrame(RES.MAP_OBJS, 'treading_water');
-    return waterSprite;
-}
-
 // Helper function for returning a texture set given the resource string
 Utils.getTextures = function(res)
 {

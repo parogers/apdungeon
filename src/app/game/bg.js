@@ -23,7 +23,6 @@ import { Render } from './render';
 import { Utils } from './utils';
 import { RES } from './res';
 import { Door, EnterScene } from './door';
-import { Spawn } from './spawn';
 
 export class Tile
 {
@@ -132,12 +131,6 @@ export class ChunkTemplate
                 door.sprite.y = y + door.sprite.anchor.y * door.sprite.texture.height;
                 level.addThing(door);
                 level.addThing(new EnterScene(door));
-            }
-            else if (obj.type == 'spawn')
-            {
-                console.log('spawner!');
-                let spawn = new Spawn(obj.x, obj.y);
-                level.addThing(spawn);
             }
         }
     }
@@ -297,39 +290,3 @@ export class Compound
         }
     }
 };
-
-export class ChunkLoaderPlugin
-{
-    use(resource, next)
-    {
-        if (resource.name.endsWith('.chunks.json'))
-        {
-            resource.chunks = {};
-            for (let name in resource.data)
-            {
-                resource.chunks[name] = new ChunkTemplate(
-                    resource.data[name].background,
-                    resource.data[name].midground,
-                    resource.data[name].things,
-                );
-            }
-        }
-        next();
-    }
-}
-
-export class TilesetLoaderPlugin
-{
-    use(resource, next)
-    {
-        if (resource.name.endsWith('.tileset.json'))
-        {
-            resource.tileset = new Tileset(
-                resource.data.tile_width,
-                resource.data.tile_height,
-                resource.data.tiles
-            );
-        }
-        next();
-    }
-}

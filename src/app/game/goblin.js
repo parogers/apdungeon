@@ -76,10 +76,6 @@ export class Goblin extends Thing
         this.goblinSprite = new PIXI.Sprite(this.anim.texture);
         this.goblinSprite.anchor.set(0.5, 7/8);
         this.sprite.addChild(this.goblinSprite);
-        // Make the splash/water sprite
-        this.waterSprite = Utils.createSplashSprite();
-        this.waterSprite.y = -0.75;
-        this.sprite.addChild(this.waterSprite);
         this.sprite.scale.set(-1, 1);
         this.state = STATE_IDLE;
         this.hitbox = new Hitbox(0, -1, 6, 6);

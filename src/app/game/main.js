@@ -21,12 +21,10 @@ import * as PIXI from 'pixi.js';
 import { sound } from '@pixi/sound';
 import { RES } from './res';
 import { Render } from './render';
-import { ProgressBar } from './progress';
 import { GameControls } from './controls';
 import { LevelScreen } from './levelscreen';
 import { GameState } from './gamestate';
 import { Utils } from './utils';
-// import { ChunkLoaderPlugin, TilesetLoaderPlugin } from './bg';
 import { GestureManager } from './gesture';
 
 import { ChunkTemplate, Tileset } from './bg';
@@ -45,16 +43,19 @@ export class Game
     {
         this.requestAnimationFrame = requestAnimationFrame;
         this.element = element;
-        this.lastCheck = 0;
-        this.fps = 0;
         this.lastTime = null;
 
         this.gamestate = null;
         this.stage = null;
-        this.progress = null;
 
-        // PIXI.Assets.loader.registerPlugin(new ChunkLoaderPlugin());
-        // PIXI.Assets.loader.registerPlugin(new TilesetLoaderPlugin());
+        Render.configure(this.element, LevelScreen.getAspectRatio());
+        GameControls.configure();
+
+        this.gestureMgr = new GestureManager();
+        this.gestureMgr.attach(Render.getRenderer().view);
+        this.gestureMgr.gestureCallback = (gesture) => {
+            this.gamestate.handleGesture(gesture);
+        };
     }
 
     resize() {
@@ -65,20 +66,12 @@ export class Game
 
     gameloop()
     {
-        let now = (new Date()).getTime()/1000.0;
+        const now = Date.now()/1000.0;
         let dt = 0;
         if (this.lastTime !== null) {
             dt = Math.min(1.0/30, now - this.lastTime);
-            //dt /= 4;
         }
         this.lastTime = now;
-
-        this.fps++;
-        if (now-this.lastCheck >= 2) {
-            //console.log(fps/(now-lastCheck));
-            this.lastCheck = now;
-            this.fps = 0;
-        }
 
         this.gamestate.update(dt);
         GameControls.update(dt);
@@ -88,62 +81,37 @@ export class Game
         });
     }
 
-    progressCallback(progress)
+    async start()
     {
-        // console.log('loading: ' + resource.url +
-        //             ' (' + (loader.progress|0) + '%)');
-        this.progress.update(progress/100.0);
-        // this.requestAnimationFrame(() => {
-        //     Render.getRenderer().render(this.stage);
-        // });
-    }
+        const bundle = await loadAssets();
+        window.assetsBundle = bundle;
 
-    start() {
-        Render.configure(this.element, LevelScreen.getAspectRatio());
-        this.gestureMgr = new GestureManager();
-        this.gestureMgr.attach(Render.getRenderer().view);
-        this.gestureMgr.gestureCallback = (gesture) => {
-            this.gamestate.handleGesture(gesture);
-        };
-
-        // this.stage = new PIXI.Container();
-        // this.progress = new ProgressBar(200, 20, 'LOADING IMAGES...');
-        // this.progress.sprite.x = 100;
-        // this.progress.sprite.y = 100;
-        // this.stage.addChild(this.progress.sprite);
-
-        loadAssets().then((bundle) => {
-            window.assetsBundle = bundle;
-
-            bundle.chunks = {};
-            for (let name in bundle[RES.CHUNKS])
-            {
-                bundle.chunks[name] = new ChunkTemplate(
-                    bundle[RES.CHUNKS][name].background,
-                    bundle[RES.CHUNKS][name].midground,
-                    bundle[RES.CHUNKS][name].things,
-                );
-            }
-
-            bundle.tileset = new Tileset(
-                bundle[RES.TILESET].tile_width,
-                bundle[RES.TILESET].tile_height,
-                bundle[RES.TILESET].tiles
+        bundle.chunks = {};
+        for (let name in bundle[RES.CHUNKS])
+        {
+            bundle.chunks[name] = new ChunkTemplate(
+                bundle[RES.CHUNKS][name].background,
+                bundle[RES.CHUNKS][name].midground,
+                bundle[RES.CHUNKS][name].things,
             );
+        }
 
-            GameControls.configure();
+        bundle.tileset = new Tileset(
+            bundle[RES.TILESET].tile_width,
+            bundle[RES.TILESET].tile_height,
+            bundle[RES.TILESET].tiles
+        );
 
-            this.gamestate = new GameState();
-            this.stage = new PIXI.Container();
-            this.stage.children = [];
-            this.requestAnimationFrame(() => {
-                this.gameloop()
-            });
+        this.gamestate = new GameState();
+        this.stage = new PIXI.Container();
+        this.stage.children = [];
+        this.requestAnimationFrame(() => {
+            this.gameloop()
         });
     }
 }
 
-function loadAssets(progressCB)
+function loadAssets()
 {
     function makeBundle(paths) {
         return {
@@ -163,5 +131,5 @@ function loadAssets(progressCB)
             ],
         }
     });
-    return PIXI.Assets.loadBundle('apdungeon', progressCB);
+    return PIXI.Assets.loadBundle('apdungeon');
 }
