@@ -65,7 +65,7 @@ export function generateLevel(levelNum)
     }
 
     let x = 140;
-    while (x < level.getWidth())
+    while (x < level.width)
     {
         let thing = new GroundItem(
             Item.Table.COIN,
@@ -77,7 +77,7 @@ export function generateLevel(levelNum)
     }
 
     x = 120;
-    while (x < level.getWidth())
+    while (x < level.width)
     {
         let monster = null;
         let n = randint(0, 2);

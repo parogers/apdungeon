@@ -153,8 +153,6 @@ export class Chunk
         this.tileset = getTileset();
         this.template = template;
         this.grid = template.grid;
-        this.tileWidth = this.tileset.tileWidth;
-        this.tileHeight = this.tileset.tileHeight;
         this.sprite = new PIXI.Sprite();
         this.sprite.texture = template.renderTexture();
         this.sprite.x = 0;
@@ -176,7 +174,7 @@ export class Chunk
         return x >= this.sprite.x && x < this.sprite.x + this.sprite.width;
     }
 
-    getWallTile() {
+    get wallTile() {
         return this.tileset.wall;
     }
 
@@ -195,27 +193,27 @@ export class Chunk
         return this.tileset.wall;
     }
 
-    getX() {
+    get x() {
         return this.sprite.x;
     }
 
-    getY() {
+    get y() {
         return this.sprite.y;
     }
 
-    getWidth() {
+    get width() {
         return this.sprite.width;
     }
 
-    getHeight() {
+    get height() {
         return this.sprite.height;
     }
 
-    getTileWidth() {
+    get tileWidth() {
         return this.tileset.tileWidth;
     }
 
-    getTileHeight() {
+    get tileHeight() {
         return this.tileset.tileHeight;
     }
 
@@ -235,12 +233,12 @@ export class Compound
         this.level = null;
     }
 
-    getTileWidth() {
-        return this.chunks[0].getTileWidth();
+    get tileWidth() {
+        return this.chunks[0].tileWidth;
     }
 
-    getTileHeight() {
-        return this.chunks[0].getTileHeight();
+    get tileHeight() {
+        return this.chunks[0].tileHeight;
     }
 
     addChunk(chunk)
@@ -252,17 +250,9 @@ export class Compound
         this.height = 0;
         for (let chunk of this.chunks) {
             chunk.sprite.x = this.width;
-            this.width += chunk.getWidth();
-            this.height = Math.max(this.height, chunk.getHeight());
+            this.width += chunk.width;
+            this.height = Math.max(this.height, chunk.height);
         }
-    }
-
-    getWidth() {
-        return this.width;
-    }
-
-    getHeight() {
-        return this.height;
     }
 
     getTileAt(x, y)
@@ -280,16 +270,15 @@ export class Compound
             let chunk = this.chunks[mid];
 
             if (chunk.containsX(x)) {
-                // Found it
                 return chunk.getTileAt(x, y);
             }
-            if (x >= chunk.getX()) {
+            if (x >= chunk.x) {
                 start = mid+1;
             } else {
                 end = mid-1;
             }
         }
-        return this.chunks[0].getWallTile();
+        return this.chunks[0].wallTile;
     }
 
     addToLevel(level)

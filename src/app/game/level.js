@@ -146,8 +146,8 @@ export class Level
         this.smoothTracking = true;
         this.exitDoor = null;
 
-        let tileHeight = this.compound.getTileHeight();
-        let y = this.compound.getHeight() - 2;
+        let tileHeight = this.compound.tileHeight;
+        let y = this.compound.height - 2;
         this.tracks = [
             new Track(this, 0, y-tileHeight*2),
             new Track(this, 1, y-tileHeight),
@@ -156,11 +156,11 @@ export class Level
     }
 
     get tileWidth() {
-        return this.compound.getTileWidth();
+        return this.compound.tileWidth;
     }
 
     get tileHeight() {
-        return this.compound.getTileHeight();
+        return this.compound.tileHeight;
     }
 
     get basePos() {
@@ -219,15 +219,15 @@ export class Level
     }
 
     // Returns the width of the level in pixels (ie render size)
-    getWidth()
+    get width()
     {
-        return this.compound.getWidth();
+        return this.compound.width;
     }
 
     // Returns the height of the level in pixels (ie render size)
-    getHeight()
+    get height()
     {
-        return this.compound.getHeight();
+        return this.compound.height;
     }
 
     /* Find some clear space to spawn a thing at the given location. This code
@@ -246,7 +246,7 @@ export class Level
             if (!south.solid) {
                 return y - offset;
             }
-            if (y + offset > this.compound.getHeight() && y - offset < 0) {
+            if (y + offset > this.compound.height && y - offset < 0) {
                 // We've gone completely outside the level - no space found
                 return null;
             }
@@ -277,7 +277,7 @@ export class Level
 
             // Make sure the camera stays within the level (compound)
             xpos = Math.max(xpos, 0);
-            xpos = Math.min(xpos, this.compound.getWidth()-this.camera.width);
+            xpos = Math.min(xpos, this.compound.width-this.camera.width);
 
             if (this.smoothTracking) {
                 let dirx = Math.sign(xpos-this.camera.x);
@@ -291,7 +291,7 @@ export class Level
             }
         }
 
-        if (this.player.fx > this.getWidth()) {
+        if (this.player.fx > this.width) {
             this.state = this.FINISHED;
         }
 

@@ -164,10 +164,10 @@ export class LevelScreen
         this.level = level;
 
         this.gameUI.setPlayer(this.player);
-        this.gameUI.container.position.set(0, level.getHeight());
+        this.gameUI.container.position.set(0, level.height);
         this.gameUI.doLayout(
             level.camera.width,
-            level.camera.height-level.getHeight());
+            level.camera.height-level.height);
 
         // Put the go marker in the top-right corner of the level area
         this.goMarker.sprite.position.set(level.camera.width-1, 2);

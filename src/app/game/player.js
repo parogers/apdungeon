@@ -406,7 +406,7 @@ export class Player extends Thing
                 let checkPos = this.fx + this.level.tileWidth/2;
                 let tile = this.level.getTileAt(checkPos, this.fy);
 
-                if (tile && tile.solid && checkPos < this.level.getWidth())
+                if (tile && tile.solid && checkPos < this.level.width)
                 {
                     // The player collided with a wall
                     this.state = STATE_KNOCKED_BACK;
