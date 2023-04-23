@@ -156,40 +156,10 @@ function loadAssets(progressCB)
             })
         }
     }
-
     PIXI.Assets.init({
         manifest: {
             bundles: [
-                makeBundle([
-                    RES.MALE_MELEE,
-                    RES.FEMALE_MELEE,
-                    RES.NPC_TILESET,
-                    RES.MAPTILES,
-                    RES.ENEMIES,
-                    RES.WEAPONS,
-                    RES.GROUND_ITEMS,
-                    RES.UI,
-                    RES.CHUNKS,
-                    RES.TILESET,
-                    RES.MAP_OBJS,
-                    RES.GATE_SND,
-                    RES.ARROW_DING_SND,
-                    RES.ATTACK_SWORD_SND,
-                    RES.HIT_SND,
-                    RES.SNAKE_HURT_SND,
-                    RES.DEAD_SND,
-                    RES.SPLASH_SND,
-                    RES.GO_SND,
-                    RES.COIN_SND,
-                    RES.DROP_SND,
-                    RES.POWERUP1_SND,
-                    RES.POWERUP2_SND,
-                    RES.POWERUP3_SND,
-                    RES.POWERUP4_SND,
-                    RES.CHEST_SND,
-                    RES.GAME_MUSIC,
-                    // RES.DRAGON,
-                ])
+                makeBundle(Object.values(RES))
             ],
         }
     });

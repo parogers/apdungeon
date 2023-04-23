@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES } from './res';
+import { RES, TILE_HEIGHT } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
 import { GroundItem } from './grounditem';
@@ -250,7 +250,7 @@ export class Level
                 // We've gone completely outside the level - no space found
                 return null;
             }
-            offset += RES.TILE_HEIGHT;
+            offset += TILE_HEIGHT;
         }
     }
 
