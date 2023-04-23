@@ -26,7 +26,12 @@ import { Door, EnterScene } from './door';
 
 function getTileset()
 {
-    return window.assetsBundle.tileset;
+    const data = Resources.shared.find(RES.TILESET);
+    return new Tileset(
+        data.tile_width,
+        data.tile_height,
+        data.tiles
+    );
 }
 
 export class Tile

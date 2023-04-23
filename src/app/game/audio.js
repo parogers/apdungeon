@@ -17,7 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 
 var enabled = true;
 
@@ -26,7 +26,7 @@ export var Audio = {};
 Audio.playSound = function(res, vol)
 {
     if (enabled) {
-        const sound = window.assetsBundle[res];
+        const sound = Resources.shared.find(res);
         if (sound) {
             sound.play({
                 volume: vol || 1,

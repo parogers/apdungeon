@@ -175,6 +175,14 @@ export class Resources {
         return this.bundle[res].textures;
     }
 
+    find(res: string) {
+        const obj = this.bundle[res];
+        if (!obj) {
+            throw Error(`cannot find resource: ${res}`);
+        }
+        return obj;
+    }
+
     static async load(): Promise<Resources> {
         function makeBundle(paths) {
             return {

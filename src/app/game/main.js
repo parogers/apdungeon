@@ -84,26 +84,7 @@ export class Game
 
     async start()
     {
-        const resources = await Resources.load();
-        const bundle = resources.bundle;
-        window.assetsBundle = bundle;
-
-        bundle.chunks = {};
-        for (let name in bundle[RES.CHUNKS])
-        {
-            bundle.chunks[name] = new ChunkTemplate(
-                bundle[RES.CHUNKS][name].background,
-                bundle[RES.CHUNKS][name].midground,
-                bundle[RES.CHUNKS][name].things,
-            );
-        }
-
-        bundle.tileset = new Tileset(
-            bundle[RES.TILESET].tile_width,
-            bundle[RES.TILESET].tile_height,
-            bundle[RES.TILESET].tiles
-        );
-
+        await Resources.load();
         this.gamestate = new GameState();
         this.stage = new PIXI.Container();
         this.stage.children = [];

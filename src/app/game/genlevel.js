@@ -17,7 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { ChunkTemplate, Compound, Chunk } from './bg';
 import { Level } from './level';
@@ -41,7 +41,12 @@ const randUniform = Utils.randUniform;
 
 function getChunk(name)
 {
-    return window.assetsBundle.chunks[name];
+    const chunksData = Resources.shared.find(RES.CHUNKS);
+    return new ChunkTemplate(
+        chunksData[name].background,
+        chunksData[name].midground,
+        chunksData[name].things,
+    );
 }
 
 export function generateLevel(levelNum)
