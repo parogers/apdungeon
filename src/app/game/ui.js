@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
 import { Item } from './item';
@@ -40,7 +40,7 @@ export function renderText(lines, options)
         let height = 0;
         for (let n = 0; n < msg.length; n++)
         {
-            const texture = Utils.getFrame(RES.UI, 'text_' + msg[n]);
+            const texture = Resources.shared.getFrame(RES.UI, 'text_' + msg[n]);
             const sprite = new PIXI.Sprite(texture);
             sprite.anchor.set(0,0);
             sprite.x = x;
@@ -55,7 +55,7 @@ export function renderText(lines, options)
         y += height+1;
     }
     if (options && options.blackBG) {
-        let bg = new PIXI.Sprite(Utils.getFrame(RES.UI, 'black'));
+        let bg = new PIXI.Sprite(Resources.shared.getFrame(RES.UI, 'black'));
         bg.scale.set(maxWidth/bg.width, y/bg.height);
         cnt.addChildAt(bg, 0);
         // TODO - why doesn't this work for render textures?
@@ -80,9 +80,9 @@ export class HealthUI
         this.player = null;
         this.sprite = new PIXI.Container();
         this.hearts = [];
-        this.fullHeart = Utils.getFrame(RES.UI, 'full_bigheart');
-        this.halfHeart = Utils.getFrame(RES.UI, 'half_bigheart');
-        this.emptyHeart = Utils.getFrame(RES.UI, 'empty_bigheart');
+        this.fullHeart = Resources.shared.getFrame(RES.UI, 'full_bigheart');
+        this.halfHeart = Resources.shared.getFrame(RES.UI, 'half_bigheart');
+        this.emptyHeart = Resources.shared.getFrame(RES.UI, 'empty_bigheart');
 
         for (let n = 0; n < 3; n++) {
             this.addHeart();
@@ -153,11 +153,11 @@ export class ItemSlotUI
         this.item = item;
         this.count = 0;
         this.itemSprite = new PIXI.Sprite(
-            Utils.getFrame(RES.GROUND_ITEMS, item.image));
+            Resources.shared.getFrame(RES.GROUND_ITEMS, item.image));
         this.itemSprite.anchor.set(0.5, 0);
         this.itemSprite.x = 0.5;
         this.itemSprite.y = 0;
-        this.slotSprite = new PIXI.Sprite(Utils.getFrame(RES.UI, 'small_slot'));
+        this.slotSprite = new PIXI.Sprite(Resources.shared.getFrame(RES.UI, 'small_slot'));
         this.slotSprite.anchor.set(0.5, 0);
         this.sprite.addChild(this.slotSprite);
         this.sprite.addChild(this.itemSprite);
@@ -194,7 +194,7 @@ export class ItemSlotUI
         if (item === Item.Table.NONE) item = this.baseItem;
         if (this.item !== item) {
             this.item = item;
-            this.itemSprite.texture = Utils.getFrame(RES.GROUND_ITEMS, item.image);
+            this.itemSprite.texture = Resources.shared.getFrame(RES.GROUND_ITEMS, item.image);
         }
     }
 }
@@ -265,7 +265,7 @@ class Button
         stateList.forEach(arg => {
             let name = arg[0];
             let img = arg[1];
-            this.states[name] = Utils.getFrame(RES.UI, img);
+            this.states[name] = Resources.shared.getFrame(RES.UI, img);
             if (!this.state) this.state = name;
         });
         this.setState(this.state);
@@ -295,7 +295,7 @@ export class GameUI
         this.container = new PIXI.Container();
         this.healthUI = new HealthUI(this);
         this.inventoryUI = new InventoryUI(this);
-        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, 'black'));
+        this.bg = new PIXI.Sprite(Resources.shared.getFrame(RES.UI, 'black'));
         this.audioButton = new Button([
             ['on', 'audio-on'],
             ['off', 'audio-off']

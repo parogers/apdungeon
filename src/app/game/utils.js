@@ -43,58 +43,6 @@ Utils.randomChoice = function(lst)
     return lst[n];
 }
 
-// Helper function for returning a texture set given the resource string
-Utils.getTextures = function(res)
-{
-    if (!res) throw Error('must specify a resource');
-    // return PIXI.loader.resources[res].textures;
-    return window.assetsBundle[res].textures;
-}
-
-Utils.getChunk = function(name)
-{
-    // return PIXI.loader.resources[RES.CHUNKS].chunks[name];
-    return window.assetsBundle.chunks[name];
-}
-
-Utils.getTileset = function()
-{
-    return window.assetsBundle.tileset;
-    // return PIXI.loader.resources[RES.TILESET].tileset;
-}
-
-Utils.getFrame = function(res, name)
-{
-    const textures = Utils.getTextures(res);
-    if (!textures) {
-        console.error('cannot find textures:', res);
-    }
-    const texture = textures[name];
-    if (!texture) {
-        console.error(`cannot find texture: ${name} (in ${res})`);
-    }
-    return texture;
-}
-
-Utils.getFrames = function(res, names)
-{
-    let frames = [];
-    for (let n = 0; n < names.length; n++) {
-        let frame = Utils.getTextures(res)[names[n]];
-        if (!frame) console.log('ERROR: missing frame ' + names[n]);
-        frames.push(frame);
-    }
-    return frames;
-}
-
-// Updates a dictionary with the contents of another dictionary
-Utils.updateDict = function(dict, other)
-{
-    for (let key in other) {
-        dict[key] = other[key];
-    }
-}
-
 /************/
 /* Sequence */
 /************/

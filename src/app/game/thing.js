@@ -23,14 +23,17 @@ import { RES } from './res';
 import { Utils } from './utils';
 import { Audio } from './audio';
 
+import { Resources } from './res';
+
 /* Template code for defining a 'thing' in a level. Generally things have
  * sprites associated with them, and can be interacted with by the player.
  * Note there's no need to subclass because this code doesn't contain any
  * useful base functionality. Just copy+paste and change what's needed. */
 export class Thing
 {
-    constructor()
+    constructor(resources)
     {
+        this.resources = resources;
         // The top-level container that holds all pieces of the sprite
         this.sprite = new PIXI.Container();
         // Position of the hit box relative to the sprite position
@@ -240,7 +243,7 @@ export class Animation
 {
     constructor(animResource)
     {
-        this.frames = Utils.getFrames(
+        this.frames = Resources.shared.getFrames(
             animResource.resource,
             animResource.frames,
         );

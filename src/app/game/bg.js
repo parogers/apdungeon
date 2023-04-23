@@ -21,8 +21,13 @@ import * as PIXI from 'pixi.js';
 
 import { Render } from './render';
 import { Utils } from './utils';
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Door, EnterScene } from './door';
+
+function getTileset()
+{
+    return window.assetsBundle.tileset;
+}
 
 export class Tile
 {
@@ -59,7 +64,7 @@ export class Tileset
 
     getTexture(name)
     {
-        let textures = Utils.getTextures(RES.MAPTILES);
+        let textures = Resources.shared.getTextures(RES.MAPTILES);
         let texture = textures['' + name];
 
         if (!texture) {
@@ -85,7 +90,7 @@ export class ChunkTemplate
             return this.texture;
         }
 
-        let tileset = Utils.getTileset();
+        let tileset = getTileset();
         this.texture = PIXI.RenderTexture.create({
             width: this.grid[0].length*tileset.tileWidth,
             height: this.grid.length*tileset.tileHeight
@@ -140,7 +145,7 @@ export class Chunk
 {
     constructor(template)
     {
-        this.tileset = Utils.getTileset();
+        this.tileset = getTileset();
         this.template = template;
         this.grid = template.grid;
         this.tileWidth = this.tileset.tileWidth;

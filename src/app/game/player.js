@@ -20,7 +20,7 @@
 import * as PIXI from 'pixi.js';
 
 import { renderText } from './ui';
-import { ANIM, RES } from './res';
+import { Resources, ANIM, RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
 import { Animation, TrackMover, Thing, Hitbox } from './thing';

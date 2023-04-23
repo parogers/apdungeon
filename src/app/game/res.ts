@@ -17,6 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import * as PIXI from 'pixi.js';
+
 export var RES = {
     MALE_MELEE: 'assets/media/rogue-like-8x8/Male-Melee.json',
     FEMALE_MELEE: 'assets/media/rogue-like-8x8/Girl-Melee.json',
@@ -137,3 +139,63 @@ export var ANIM = {
 
 export const TILE_WIDTH = 8;
 export const TILE_HEIGHT = 8;
+
+
+export class Resources {
+    static shared: Resources;
+
+    constructor(private bundle: any) {}
+
+    getFrame(res: string, name: string) {
+        const textures = this.getTextures(res);
+        if (!textures) {
+            console.error('cannot find textures:', res);
+        }
+        const texture = textures[name];
+        if (!texture) {
+            console.error(`cannot find texture: ${name} (in ${res})`);
+        }
+        return texture;
+    }
+
+    getFrames(res: string, names: string) {
+        let frames: any = [];
+        for (let n = 0; n < names.length; n++) {
+            let frame = this.getTextures(res)[names[n]];
+            if (!frame) console.log('ERROR: missing frame ' + names[n]);
+            frames.push(frame);
+        }
+        return frames;
+    }
+
+    getTextures(res: string) {
+        if (!res) {
+            throw Error('must specify a resource');
+        }
+        return this.bundle[res].textures;
+    }
+
+    static async load(): Promise<Resources> {
+        function makeBundle(paths) {
+            return {
+                name: 'apdungeon',
+                assets: paths.map(path => {
+                    return {
+                        name: path,
+                        srcs: path,
+                    }
+                })
+            }
+        }
+        PIXI.Assets.init({
+            manifest: {
+                bundles: [
+                    makeBundle(Object.values(RES))
+                ],
+            }
+        });
+        const bundle = await PIXI.Assets.loadBundle('apdungeon');
+        Resources.shared = new Resources(bundle);
+        return Resources.shared;
+    }
+}

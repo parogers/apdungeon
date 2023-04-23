@@ -26,6 +26,7 @@ import { LevelScreen } from './levelscreen';
 import { GameState } from './gamestate';
 import { Utils } from './utils';
 import { GestureManager } from './gesture';
+import { Resources } from './res';
 
 import { ChunkTemplate, Tileset } from './bg';
 
@@ -83,7 +84,8 @@ export class Game
 
     async start()
     {
-        const bundle = await loadAssets();
+        const resources = await Resources.load();
+        const bundle = resources.bundle;
         window.assetsBundle = bundle;
 
         bundle.chunks = {};
@@ -109,27 +111,4 @@ export class Game
             this.gameloop()
         });
     }
-}
-
-function loadAssets()
-{
-    function makeBundle(paths) {
-        return {
-            name: 'apdungeon',
-            assets: paths.map(path => {
-                return {
-                    name: path,
-                    srcs: path,
-                }
-            })
-        }
-    }
-    PIXI.Assets.init({
-        manifest: {
-            bundles: [
-                makeBundle(Object.values(RES))
-            ],
-        }
-    });
-    return PIXI.Assets.loadBundle('apdungeon');
 }

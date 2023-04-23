@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { Audio } from './audio';
 
@@ -32,8 +32,8 @@ export function GoMarker(screen)
 {
     this.screen = screen;
     this.frames = [
-        Utils.getFrame(RES.UI, 'go1'),
-        Utils.getFrame(RES.UI, 'go2')
+        Resources.shared.getFrame(RES.UI, 'go1'),
+        Resources.shared.getFrame(RES.UI, 'go2')
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.anchor.set(1,0);

@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES, TILE_HEIGHT } from './res';
+import { Resources, RES, TILE_HEIGHT } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
 import { GroundItem } from './grounditem';
@@ -65,8 +65,8 @@ export class LevelDarkness
         {
             let texture = PIXI.RenderTexture.create(w, h);
             let cnt = new PIXI.Container();
-            let dark_shadow = Utils.getFrame(RES.MAP_OBJS, 'dark_shadow_square');
-            let light_shadow = Utils.getFrame(RES.MAP_OBJS, 'light_shadow_square');
+            let dark_shadow = Resources.shared.getFrame(RES.MAP_OBJS, 'dark_shadow_square');
+            let light_shadow = Resources.shared.getFrame(RES.MAP_OBJS, 'light_shadow_square');
 
             for (let y = 0; y < h; y++)
             {

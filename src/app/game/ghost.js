@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { Thing, Hitbox } from './thing';
 import { Item } from './item';
@@ -35,7 +35,7 @@ export class Ghost
     constructor(state)
     {
         this.name = 'Spectre';
-        this.frames = Utils.getFrames(RES.ENEMIES, Ghost.FRAMES);
+        this.frames = Resources.shared.getFrames(RES.ENEMIES, Ghost.FRAMES);
         this.health = 3;
         this.frame = 0;
         this.facing = 1;

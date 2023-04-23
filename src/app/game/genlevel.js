@@ -39,13 +39,18 @@ const randUniform = Utils.randUniform;
 
 /* Functions */
 
+function getChunk(name)
+{
+    return window.assetsBundle.chunks[name];
+}
+
 export function generateLevel(levelNum)
 {
     let bg = new Compound();
-    bg.addChunk(new Chunk(Utils.getChunk('start')));
-    bg.addChunk(new Chunk(Utils.getChunk('lavatest')));
+    bg.addChunk(new Chunk(getChunk('start')));
+    bg.addChunk(new Chunk(getChunk('lavatest')));
     for (let n = 0; n < 10; n++) {
-        bg.addChunk(new Chunk(Utils.getChunk('straight2')));
+        bg.addChunk(new Chunk(getChunk('straight2')));
     }
 
     let level = new Level(bg);

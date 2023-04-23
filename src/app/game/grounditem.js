@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { Thing, Hitbox } from './thing';
 
@@ -33,7 +33,7 @@ export class GroundItem
 {
     constructor(item, x, y)
     {
-        let img = Utils.getFrame(RES.GROUND_ITEMS, item.image);
+        let img = Resources.shared.getFrame(RES.GROUND_ITEMS, item.image);
         this.sprite = new PIXI.Sprite(img);
         this.sprite.anchor.set(0.5, 0.6);
         this.height = 0;
