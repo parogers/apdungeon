@@ -47,9 +47,6 @@ export class Render {
     static configure(div, aspect)
     {
         PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
-        // Disable the ticker sinc we don't use it (rendering happens as needed)
-        PIXI.Ticker.shared.autoStart = false;
-        PIXI.Ticker.shared.stop();
 
         const { width, height } = getMaxFit(div, aspect);
 

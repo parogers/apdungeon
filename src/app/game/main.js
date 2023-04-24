@@ -42,13 +42,10 @@ export class Game
 {
     constructor(element)
     {
-        this.element = element;
-        this.lastTime = null;
-
         this.gamestate = null;
         this.stage = null;
 
-        Render.configure(this.element, LevelScreen.getAspectRatio());
+        Render.configure(element, LevelScreen.getAspectRatio());
         GameControls.configure();
 
         this.gestureMgr = new GestureManager();
@@ -66,19 +63,14 @@ export class Game
 
     gameloop()
     {
-        const now = Date.now()/1000.0;
-        let dt = 0;
-        if (this.lastTime !== null) {
-            dt = Math.min(1.0/30, now - this.lastTime);
+        if (!this.gamestate) {
+            return;
         }
-        this.lastTime = now;
+        const dt = PIXI.Ticker.shared.elapsedMS/1000;
 
         this.gamestate.update(dt);
         GameControls.update(dt);
         this.gamestate.render();
-        requestAnimationFrame(() => {
-            this.gameloop()
-        });
     }
 
     async start()
@@ -87,7 +79,8 @@ export class Game
         this.gamestate = new GameState();
         this.stage = new PIXI.Container();
         this.stage.children = [];
-        requestAnimationFrame(() => {
+
+        PIXI.Ticker.shared.add(() => {
             this.gameloop()
         });
     }
