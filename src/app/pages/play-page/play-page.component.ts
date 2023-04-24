@@ -1,5 +1,5 @@
 
-import { Component, ViewChild, NgZone } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import { Game } from '../../game/main';
 
@@ -16,15 +16,7 @@ export class PlayPageComponent {
 
     game: Game;
 
-    constructor(private ngZone: NgZone) {}
-
-    // A wrapper around requestAnimationFrame that prevents the
-    // angular digest cycle from being triggered unnecessary
-    requestAnimationFrame(func: any) {
-        return this.ngZone.runOutsideAngular(() => {
-            return requestAnimationFrame(func);
-        });
-    }
+    constructor() {}
 
     ngOnInit() {
         const div = this.playArea.nativeElement;
@@ -33,7 +25,7 @@ export class PlayPageComponent {
         div.style.width = width + "px";
         div.style.height = height + "px";
 
-        this.game = new Game(div, (func) => this.requestAnimationFrame(func));
+        this.game = new Game(div);
         this.game.start();
 
         window.addEventListener("resize", () => this.resizeCallback());

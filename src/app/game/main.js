@@ -40,9 +40,8 @@ import { ChunkTemplate, Tileset } from './bg';
 
 export class Game
 {
-    constructor(element, requestAnimationFrame)
+    constructor(element)
     {
-        this.requestAnimationFrame = requestAnimationFrame;
         this.element = element;
         this.lastTime = null;
 
@@ -77,7 +76,7 @@ export class Game
         this.gamestate.update(dt);
         GameControls.update(dt);
         this.gamestate.render();
-        this.requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
             this.gameloop()
         });
     }
@@ -88,7 +87,7 @@ export class Game
         this.gamestate = new GameState();
         this.stage = new PIXI.Container();
         this.stage.children = [];
-        this.requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
             this.gameloop()
         });
     }

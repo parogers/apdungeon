@@ -60,7 +60,6 @@ Render.configure = function(div, aspect)
         preserveDrawingBuffer: true,
         //clearBeforeRender: true
     });
-    renderer.plugins.interaction.destroy();
 
     div.innerHTML = '';
     div.appendChild(renderer.view);

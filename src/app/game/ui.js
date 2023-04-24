@@ -269,7 +269,7 @@ class Button
             if (!this.state) this.state = name;
         });
         this.setState(this.state);
-        this.sprite.interactive = true;
+        this.sprite.eventMode = 'static'; // interactive
         this.sprite.click = () => {
             if (this.onclick) this.onclick();
         };
