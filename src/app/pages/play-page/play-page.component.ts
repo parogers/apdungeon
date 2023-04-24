@@ -20,11 +20,6 @@ export class PlayPageComponent {
 
     ngOnInit() {
         const div = this.playArea.nativeElement;
-        const width = window.innerWidth-5;
-        const height = window.innerHeight-5;
-        div.style.width = width + "px";
-        div.style.height = height + "px";
-
         this.game = new Game(div);
         this.game.start();
 
@@ -32,6 +27,7 @@ export class PlayPageComponent {
         setTimeout(() => this.resizeCallback(), 500);
     }
 
+    /* Resize the play area to fit the current window size */
     resizeCallback()
     {
         const width = window.innerWidth;

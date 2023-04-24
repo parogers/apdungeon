@@ -19,75 +19,69 @@
 
 import * as PIXI from 'pixi.js';
 
-// The PIXI renderer
-var renderer = null;
-// The containing element
-var container = null;
-// The preferred aspect ratio for sizing the render view
-var aspectRatio = 1;
-
-export var Render = {};
-
-/* Configures the renderer (via PIXI) and adds the view to the given HTML
- * element. The renderer width/height will conform to the given aspect
- * ratio. */
-Render.configure = function(div, aspect)
-{
-    PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
-    // Disable the ticker sinc we don't use it (rendering happens as needed)
-    PIXI.Ticker.shared.autoStart = false;
-    PIXI.Ticker.shared.stop();
-
-    let rect = div.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
-        throw Error('Invalid size for renderer');
-    }
-
-    // Maintain the aspect ratio when sizing the render view
-    let width = Math.round(rect.height*aspect);
-    let height = rect.height;
-
-    if (width > rect.width) {
-        width = rect.width;
-        height = Math.round(rect.height/aspect);
-    }
-
-    renderer = PIXI.autoDetectRenderer({
-        width: width,
-        height: height,
-        //antialias: true,
-        // Required to prevent flickering in Chrome on Android (others too?)
-        preserveDrawingBuffer: true,
-        //clearBeforeRender: true
-    });
-
-    div.innerHTML = '';
-    div.appendChild(renderer.view);
-    container = div;
-    aspectRatio = aspect;
-}
-
-Render.getContainer = function() {
-    return container;
-}
-
-Render.getRenderer = function() {
-    return renderer;
-}
-
-/* Resize the renderer to fit the parent container */
-Render.resize = function() {
-    let rect = container.getBoundingClientRect();
-    // Maintain the aspect ratio when resizing the render view
+function getMaxFit(element, aspectRatio) {
+    const rect = element.getBoundingClientRect();
     let width = Math.round(rect.height*aspectRatio);
     let height = rect.height;
-
     if (width > rect.width) {
         width = rect.width;
         height = Math.round(rect.width/aspectRatio);
     }
+    return {
+        width,
+        height,
+    };
+}
 
-    renderer.resize(width, height);
-    //container.innerHTML = '';
-    //container.appendChild(renderer.view);
+export class Render {
+    // The PIXI renderer
+    static renderer = null;
+    // The containing element
+    static container = null;
+    // The preferred aspect ratio for sizing the render view
+    static aspectRatio = 1;
+
+    /* Configures the renderer (via PIXI) and adds the view to the given HTML
+     * element. The renderer width/height will conform to the given aspect
+     * ratio. */
+    static configure(div, aspect)
+    {
+        PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        // Disable the ticker sinc we don't use it (rendering happens as needed)
+        PIXI.Ticker.shared.autoStart = false;
+        PIXI.Ticker.shared.stop();
+
+        const { width, height } = getMaxFit(div, aspect);
+
+        Render.renderer = PIXI.autoDetectRenderer({
+            width: width || 1,
+            height: height || 1,
+            //antialias: true,
+            // Required to prevent flickering in Chrome on Android (others too?)
+            preserveDrawingBuffer: true,
+            //clearBeforeRender: true
+        });
+
+        div.innerHTML = '';
+        div.appendChild(Render.renderer.view);
+        Render.container = div;
+        Render.aspectRatio = aspect;
+    }
+
+    static getContainer() {
+        return Render.container;
+    }
+
+    static getRenderer() {
+        return Render.renderer;
+    }
+
+    /* Resize the renderer to fit the parent container */
+    static resize() {
+        const { width, height } = getMaxFit(
+            Render.container,
+            Render.aspectRatio
+        );
+        Render.renderer.resize(width, height);
+    }
 }
