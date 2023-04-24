@@ -140,28 +140,43 @@ export var ANIM = {
 export const TILE_WIDTH = 8;
 export const TILE_HEIGHT = 8;
 
+export type TextureMap = { [name: string]: PIXI.Texture };
+
+
+/* Extracts the textures from the given PIXI bundle and returns them as a map
+ * keyed by texture name. */
+function getTexturesByName(bundle: any): TextureMap {
+    const results = Object.values(bundle)
+        .filter((asset: any) => !!asset['textures'])
+        .map((asset: any) => {
+            return Object.keys(asset.textures).map((name) => {
+                return [name, asset.textures[name]];
+            });
+        });
+    return Object.fromEntries(results.flat());
+}
+
 
 export class Resources {
     static shared: Resources;
+    texturesByName: TextureMap;
 
-    constructor(private bundle: any) {}
+    constructor(private bundle: any) {
+        this.texturesByName = getTexturesByName(bundle);
+    }
 
-    getFrame(res: string, name: string) {
-        const textures = this.getTextures(res);
-        if (!textures) {
-            console.error('cannot find textures:', res);
-        }
-        const texture = textures[name];
+    getFrame(name: string) {
+        const texture = this.texturesByName[name];
         if (!texture) {
-            console.error(`cannot find texture: ${name} (in ${res})`);
+            console.error(`cannot find texture: ${name}`);
         }
         return texture;
     }
 
-    getFrames(res: string, names: string) {
-        let frames: any = [];
+    getFrames(names: string) {
+        const frames: any = [];
         for (let n = 0; n < names.length; n++) {
-            let frame = this.getTextures(res)[names[n]];
+            const frame = this.texturesByName[names[n]];
             if (!frame) console.log('ERROR: missing frame ' + names[n]);
             frames.push(frame);
         }

@@ -64,7 +64,7 @@ export class TitleScreen
         this.stage.scale.set(scale);
         this.state = this.PLAYING_INTRO;
 
-        this.bg = new PIXI.Sprite(Resources.shared.getFrame(RES.UI, 'brown3'));
+        this.bg = new PIXI.Sprite(Resources.shared.getFrame('brown3'));
         this.bg.anchor.set(0, 0);
         this.bg.scale.set(
             this.screenWidth/this.bg.texture.width+1,
@@ -72,14 +72,14 @@ export class TitleScreen
         this.stage.addChild(this.bg);
         this.delay = 0;
 
-        let txt = new PIXI.Sprite(Resources.shared.getFrame(RES.UI, 'title-text'));
+        let txt = new PIXI.Sprite(Resources.shared.getFrame('title-text'));
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
         txt.x = this.screenWidth/2;
         txt.y = 15;
         this.stage.addChild(txt);
 
-        txt = new PIXI.Sprite(Resources.shared.getFrame(RES.UI, 'demo-text'));
+        txt = new PIXI.Sprite(Resources.shared.getFrame('demo-text'));
         txt.anchor.set(0.5, 0.5);
         txt.tint = 0xFF0000;
         txt.x = this.screenWidth/2;

@@ -81,7 +81,7 @@ export class SwordWeaponSlot
     setTexture(name)
     {
         if (this.textureName !== name) {
-            this.sprite.texture = Resources.shared.getFrame(RES.WEAPONS, 'weapon_' + name);
+            this.sprite.texture = Resources.shared.getFrame('weapon_' + name);
             this.textureName = name;
         }
     }
@@ -154,7 +154,7 @@ export class BowWeaponSlot
     setTexture(name)
     {
         if (this.textureName !== name) {
-            this.sprite.texture = Resources.shared.getFrame(RES.WEAPONS, 'weapon_' + name);
+            this.sprite.texture = Resources.shared.getFrame('weapon_' + name);
             this.textureName = name;
         }
     }
@@ -194,7 +194,7 @@ export class Arrow extends Thing
         super();
         this.owner = owner;
         this.arrowSprite = new PIXI.Sprite(
-            Resources.shared.getFrame(RES.WEAPONS, 'weapon_arrow')
+            Resources.shared.getFrame('weapon_arrow')
         );
         this.arrowSprite.anchor.set(0.5, 0.5);
         this.arrowSprite.scale.x = Math.sign(velx);

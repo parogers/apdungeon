@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -24,7 +24,7 @@ import { renderText } from './ui';
 import { GameControls } from './controls';
 
 /* Displays a game over screen. The LevelScreen that caused the game over
- * should be passed in. This screen will make a gradual transition from 
+ * should be passed in. This screen will make a gradual transition from
  * the level scene to a general game over screen, showing stats etc */
 export class GameOverScreen
 {
@@ -56,7 +56,7 @@ export class GameOverScreen
         levelScreen.stage.scale.set(levelScreen.stage.scale.x/scale);
 
         // Create a black sprite that covers the screen
-        this.bg = new PIXI.Sprite(Utils.getFrame(RES.UI, 'black'));
+        this.bg = new PIXI.Sprite(Utils.getFrame('black'));
         this.bg.anchor.set(0, 0);
         this.bg.scale.set(this.screenWidth/this.bg.texture.width,
                           this.screenHeight/this.bg.texture.height);
@@ -111,11 +111,11 @@ export class GameOverScreen
             // approaches full black.
             this.timer += dt;
             this.bg.alpha = Math.pow(this.timer/1.25, 0.5);
-            if (this.bg.alpha > 1) 
+            if (this.bg.alpha > 1)
             {
                 // Background is now fully black. Show the game over text
                 this.bg.alpha = 1;
-                let txt = new PIXI.Sprite(Utils.getFrame(RES.UI, 'game-over-text'));
+                let txt = new PIXI.Sprite(Utils.getFrame('game-over-text'));
                 txt.anchor.set(0.5, 0.5);
                 txt.x = this.screenWidth/2;
                 txt.y = this.screenHeight/8;

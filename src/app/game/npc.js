@@ -30,9 +30,7 @@ export class NPC
     {
         // Position of the hit box, relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 5, 5);
-        let texture = Resources.shared.getFrame(
-            RES.NPC_TILESET, img || 'npc_npc1_south_1'
-        );
+        const texture = Resources.shared.getFrame(img || 'npc_npc1_south_1');
         this.sprite = new PIXI.Container();
         this.npcSprite = new PIXI.Sprite(texture);
         this.npcSprite.anchor.set(0.5, 1);

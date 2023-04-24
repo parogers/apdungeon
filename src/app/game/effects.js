@@ -32,7 +32,7 @@ export class Shadow
     {
         this.thing = thing;
         this.shadowSprite = new PIXI.Sprite(
-            Resources.shared.getFrame(RES.MAP_OBJS, size)
+            Resources.shared.getFrame(size)
         );
         this.shadowSprite.anchor.set(0.5, 0.5);
         this.thing.sprite.addChildAt(this.shadowSprite, 0);
@@ -82,10 +82,7 @@ export class Splash
         this.waterSprite = new PIXI.Sprite();
         this.waterSprite.anchor.set(0.5, 0.5);
         this.waterSprite.visible = false;
-        this.waterSprite.texture = Resources.shared.getFrame(
-            RES.MAP_OBJS,
-            'treading_water'
-        );
+        this.waterSprite.texture = Resources.shared.getFrame('treading_water');
         this.waterSprite.y = ypos;
         this.thing.sprite.addChild(this.waterSprite);
     }
@@ -138,7 +135,7 @@ export class Flame
     {
         this.thing = thing;
         this.flameSprite = new PIXI.Sprite(
-            Resources.shared.getFrame(RES.MAP_OBJS, size || 'flame_small')
+            Resources.shared.getFrame(size || 'flame_small')
         );
         this.flameSprite.anchor.set(0.5, 1);
         this.thing.sprite.addChild(this.flameSprite);

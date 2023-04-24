@@ -65,8 +65,8 @@ export class LevelDarkness
         {
             let texture = PIXI.RenderTexture.create(w, h);
             let cnt = new PIXI.Container();
-            let dark_shadow = Resources.shared.getFrame(RES.MAP_OBJS, 'dark_shadow_square');
-            let light_shadow = Resources.shared.getFrame(RES.MAP_OBJS, 'light_shadow_square');
+            let dark_shadow = Resources.shared.getFrame('dark_shadow_square');
+            let light_shadow = Resources.shared.getFrame('light_shadow_square');
 
             for (let y = 0; y < h; y++)
             {

@@ -35,7 +35,7 @@ export class Ghost
     constructor(state)
     {
         this.name = 'Spectre';
-        this.frames = Resources.shared.getFrames(RES.ENEMIES, Ghost.FRAMES);
+        this.frames = Resources.shared.getFrames(Ghost.FRAMES);
         this.health = 3;
         this.frame = 0;
         this.facing = 1;

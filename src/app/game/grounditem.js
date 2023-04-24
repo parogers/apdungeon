@@ -33,7 +33,7 @@ export class GroundItem
 {
     constructor(item, x, y)
     {
-        let img = Resources.shared.getFrame(RES.GROUND_ITEMS, item.image);
+        let img = Resources.shared.getFrame(item.image);
         this.sprite = new PIXI.Sprite(img);
         this.sprite.anchor.set(0.5, 0.6);
         this.height = 0;

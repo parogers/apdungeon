@@ -32,8 +32,8 @@ export function GoMarker(screen)
 {
     this.screen = screen;
     this.frames = [
-        Resources.shared.getFrame(RES.UI, 'go1'),
-        Resources.shared.getFrame(RES.UI, 'go2')
+        Resources.shared.getFrame('go1'),
+        Resources.shared.getFrame('go2')
     ];
     this.sprite = new PIXI.Sprite(this.frames[0]);
     this.sprite.anchor.set(1,0);

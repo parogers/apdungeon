@@ -243,10 +243,7 @@ export class Animation
 {
     constructor(animResource)
     {
-        this.frames = Resources.shared.getFrames(
-            animResource.resource,
-            animResource.frames,
-        );
+        this.frames = Resources.shared.getFrames(animResource.frames);
         this.fps = animResource.fps;
         this.looping = (
             animResource.looping !== undefined ? animResource.looping : true
