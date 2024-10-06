@@ -3,6 +3,8 @@ APDungeon
 
 A dungeon crawler demo written in javascript + pixi.js
 
+ARCHIVED: This was fun to hack and fiddle with things, and while I would love to turn it into a fun, playable game it's just not worth the effort. I'm keeping it for historic reference and also to crib from in future.
+
 Source
 ------
 
@@ -18,7 +20,7 @@ Design
 ------
 
 The demo is a side scrolling action game with fantasy elements. The art
-style is "stripped down 8-bit" mostly because it was easy to knock something 
+style is "stripped down 8-bit" mostly because it was easy to knock something
 together without worrying too much about design.
 
 Features:
@@ -60,5 +62,5 @@ License
 
 Main source code is licensed under GPLv3 (see LICENSE.md for details)
 
-Source code and media files found under "contrib" and "media" are covered 
+Source code and media files found under "contrib" and "media" are covered
 under their respective licenses. Check in those folders for details.
