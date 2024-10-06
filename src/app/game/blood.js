@@ -22,7 +22,7 @@ import * as PIXI from 'pixi.js';
 import { Thing } from './thing';
 import { Level } from './level';
 import { Utils } from './utils';
-import { RES } from './res';
+import { Resources, RES } from './res';
 
 export class Blood extends Thing
 {
@@ -38,7 +38,7 @@ export class Blood extends Thing
         }
 
         this.sprite = new PIXI.Sprite(
-            Utils.getFrame(RES.MAP_OBJS, Utils.randomChoice(frames))
+            Resources.shared.getFrame(Utils.randomChoice(frames))
         );
         this.sprite.zpos = Level.FLOOR_POS;
         this.sprite.anchor.set(0.5, 0.5);

@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { Thing, Hitbox } from './thing';
 import { Audio } from './audio';
@@ -81,7 +81,7 @@ export class SwordWeaponSlot
     setTexture(name)
     {
         if (this.textureName !== name) {
-            this.sprite.texture = Utils.getFrame(RES.WEAPONS, 'weapon_' + name);
+            this.sprite.texture = Resources.shared.getFrame('weapon_' + name);
             this.textureName = name;
         }
     }
@@ -154,7 +154,7 @@ export class BowWeaponSlot
     setTexture(name)
     {
         if (this.textureName !== name) {
-            this.sprite.texture = Utils.getFrame(RES.WEAPONS, 'weapon_' + name);
+            this.sprite.texture = Resources.shared.getFrame('weapon_' + name);
             this.textureName = name;
         }
     }
@@ -194,7 +194,7 @@ export class Arrow extends Thing
         super();
         this.owner = owner;
         this.arrowSprite = new PIXI.Sprite(
-            Utils.getFrame(RES.WEAPONS, 'weapon_arrow')
+            Resources.shared.getFrame('weapon_arrow')
         );
         this.arrowSprite.anchor.set(0.5, 0.5);
         this.arrowSprite.scale.x = Math.sign(velx);

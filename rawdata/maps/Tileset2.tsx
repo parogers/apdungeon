@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.4" name="Tileset2" tilewidth="8" tileheight="8" spacing="1" margin="1" tilecount="256" columns="16">
+<tileset version="1.8" tiledversion="1.8.0" name="Tileset2" tilewidth="8" tileheight="8" spacing="1" margin="1" tilecount="256" columns="16">
  <image source="../../src/assets/media/rogue-like-8x8/Tileset2.png" width="145" height="145"/>
  <tile id="0" type="floor">
   <properties>
@@ -26,12 +26,12 @@
    <property name="solid" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="5" type="wall">
+ <tile id="5" type="floor">
   <properties>
    <property name="solid" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="6" type="wall">
+ <tile id="6" type="floor">
   <properties>
    <property name="solid" type="bool" value="true"/>
   </properties>
@@ -41,12 +41,12 @@
    <property name="solid" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="8" type="floor">
+ <tile id="8" type="wall">
   <properties>
    <property name="solid" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="9" type="floor">
+ <tile id="9" type="wall">
   <properties>
    <property name="solid" type="bool" value="false"/>
   </properties>
@@ -106,12 +106,12 @@
    <property name="solid" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="21" type="wall">
+ <tile id="21" type="floor">
   <properties>
    <property name="solid" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="22" type="wall">
+ <tile id="22" type="floor">
   <properties>
    <property name="solid" type="bool" value="true"/>
   </properties>
@@ -121,12 +121,12 @@
    <property name="solid" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="24" type="floor">
+ <tile id="24" type="wall">
   <properties>
    <property name="solid" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="25" type="floor">
+ <tile id="25" type="wall">
   <properties>
    <property name="solid" type="bool" value="false"/>
   </properties>
@@ -403,6 +403,9 @@
  </tile>
  <tile id="80" type="spawn"/>
  <tile id="81" type="lava"/>
+ <tile id="82" type="sky"/>
+ <tile id="83" type="wall"/>
+ <tile id="84" type="wall"/>
  <tile id="93" type="floor">
   <properties>
    <property name="solid" type="bool" value="false"/>

@@ -17,7 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { ChunkTemplate, Compound, Chunk } from './bg';
 import { Level } from './level';
@@ -31,91 +31,31 @@ import { NPC } from './npc';
 import { Chest } from './chest';
 import { Item } from './item';
 import { GroundItem } from './grounditem';
-import { Spawn } from './spawn';
 import { Bat } from './bat';
 
 const randint = Utils.randint;
 const randomChoice = Utils.randomChoice;
 const randUniform = Utils.randUniform;
 
-function monsterEntry(klass, score, addScore)
-{
-    return {
-        klass: klass,
-        score: score,
-        addScore: addScore
-    };
-}
-
-/* Returns some random treasures for a chest */
-function randomTreasures(levelNum)
-{
-    switch(randint(1, 10)) {
-    case 1:
-        return [Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
-    case 2:
-        return [Item.Table.COIN, Item.Table.COIN,
-                Item.Table.COIN, Item.Table.COIN, Item.Table.COIN];
-    case 3:
-        if (levelNum < 2) return [Item.Table.SMALL_BOW, Item.Table.ARROW];
-        else return [Item.Table.LARGE_BOW];
-    case 4:
-        if (levelNum < 2) return [Item.Table.LEATHER_ARMOUR];
-        else return [Item.Table.STEEL_ARMOUR];
-    case 5:
-        return [Item.Table.SMALL_HEALTH, Item.Table.SMALL_HEALTH,
-                Item.Table.ARROW, Item.Table.ARROW];
-    case 6:
-    case 7:
-        return [Item.Table.COIN, Item.Table.COIN, Item.Table.SMALL_HEALTH];
-    case 8:
-        return [Item.Table.COIN, Item.Table.COIN, Item.Table.LARGE_HEALTH];
-    case 9:
-        return [Item.Table.LARGE_SWORD];
-    case 10:
-        return [Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW,
-                Item.Table.COIN, Item.Table.COIN];
-    }
-}
-
-// Returns a list of randomly chosen monsters that fall within the budget
-function chooseMonsters(budget)
-{
-    let monsterTable = [
-        monsterEntry(Snake,       1, 1),
-        monsterEntry(Rat,         1, 1),
-        monsterEntry(Scorpion,    2, 1),
-        monsterEntry(Goblin,      3, 2),
-        monsterEntry(SkelWarrior, 4, 3),
-        monsterEntry(Ghost,       5, 4)
-    ];
-
-    let picks = [];
-    while (true)
-    {
-        // Compile a list of monster options to choose from
-        let options = [];
-        for (let entry of monsterTable) {
-            if (entry.score <= budget) options.push(entry);
-        }
-        if (options.length === 0) break;
-        // Pick a monster at random
-        let opt = randomChoice(options)
-        picks.push(opt.klass);
-        budget -= opt.score;
-    }
-    return picks;
-}
-
 /* Functions */
+
+function getChunk(name)
+{
+    const chunksData = Resources.shared.find(RES.CHUNKS);
+    return new ChunkTemplate(
+        chunksData[name].background,
+        chunksData[name].midground,
+        chunksData[name].things,
+    );
+}
 
 export function generateLevel(levelNum)
 {
     let bg = new Compound();
-    bg.addChunk(new Chunk(Utils.getChunk('start')));
-    bg.addChunk(new Chunk(Utils.getChunk('lavatest')));
+    bg.addChunk(new Chunk(getChunk('start')));
+    bg.addChunk(new Chunk(getChunk('lavatest')));
     for (let n = 0; n < 10; n++) {
-        bg.addChunk(new Chunk(Utils.getChunk('straight2')));
+        bg.addChunk(new Chunk(getChunk('straight2')));
     }
 
     let level = new Level(bg);
@@ -125,7 +65,7 @@ export function generateLevel(levelNum)
     }
 
     let x = 140;
-    while (x < level.getWidth())
+    while (x < level.width)
     {
         let thing = new GroundItem(
             Item.Table.COIN,
@@ -137,7 +77,7 @@ export function generateLevel(levelNum)
     }
 
     x = 120;
-    while (x < level.getWidth())
+    while (x < level.width)
     {
         let monster = null;
         let n = randint(0, 2);
@@ -162,40 +102,57 @@ export function generateLevel(levelNum)
     mon.track = level.getMiddleTrack();
     level.addThing(mon);*/
 
-    // First level in the game. Add a chest of starter items. Have the
-    // chest eject items to the right away from the first NPC. (so none
-    // of the items become hidden behind)
-    let items = [
-        Item.Table.COIN,
-        Item.Table.COIN,
-        Item.Table.COIN,
-        Item.Table.SMALL_SWORD
-    ];
-    let chest = new Chest(items, {ejectX: 1});
-    chest.sprite.x = 60;
-    chest.sprite.y = 24;
-    level.addThing(chest);
+    // // First level in the game. Add a chest of starter items. Have the
+    // // chest eject items to the right away from the first NPC. (so none
+    // // of the items become hidden behind)
+    // let items = [
+    //     Item.Table.COIN,
+    //     Item.Table.COIN,
+    //     Item.Table.COIN,
+    //     Item.Table.SMALL_SWORD
+    // ];
+    // let chest = new Chest(items, {ejectX: 1});
+    // chest.sprite.x = 60;
+    // chest.sprite.y = 24;
+    // level.addThing(chest);
 
-    // Add an NPC to give the player some dialog
-    let npc = new NPC();
-    npc.setDialog(['TAKE THIS AND', 'GO FORTH!!!']);
-    npc.sprite.x = 46;
-    npc.sprite.y = 25;
-    level.addThing(npc);
-
-    // Add an NPC to give the player some dialog
-    npc = new NPC('npc_npc3_south_1');
-    npc.setDialog('GOOD LUCK!');
-    npc.sprite.x = 80;
-    npc.sprite.y = 40;
-    level.addThing(npc);
+    // // Add an NPC to give the player some dialog
+    // let npc = new NPC();
+    // npc.setDialog(['TAKE THIS AND', 'GO FORTH!!!']);
+    // npc.sprite.x = 46;
+    // npc.sprite.y = 25;
+    // level.addThing(npc);
+    //
+    // // Add an NPC to give the player some dialog
+    // npc = new NPC('npc_npc3_south_1');
+    // npc.setDialog('GOOD LUCK!');
+    // npc.sprite.x = 80;
+    // npc.sprite.y = 40;
+    // level.addThing(npc);
 
     return level;
 }
 
+
+// Returns a matrix (ie n[row][col]) of the given value. Also the number of
+// rows and columns (rows, cols) are available as attributes.
+function createGrid(rows, cols, value)
+{
+    let grid = [];
+    grid.rows = rows;
+    grid.cols = cols;
+    for (let row = 0; row < rows; row++) {
+        grid[row] = [];
+        for (let col = 0; col < cols; col++) {
+            grid[row][col] = value;
+        }
+    }
+    return grid;
+}
+
 export function generateEmptyLevel(rows, cols, value)
 {
-    let grid = Utils.createGrid(rows, cols, value);
+    let grid = createGrid(rows, cols, value);
     let chunk = new ChunkTemplate(grid);
     chunk.renderTexture();
     return new Level(new Chunk(chunk));

@@ -12,6 +12,7 @@
     "noImplicitAny": false,
     "noImplicitThis" : false,
     "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports" : true,
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,

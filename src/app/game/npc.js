@@ -20,7 +20,7 @@
 import * as PIXI from 'pixi.js';
 
 import { renderText } from './ui';
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Thing, Hitbox } from './thing';
 import { Utils } from './utils';
 
@@ -30,7 +30,7 @@ export class NPC
     {
         // Position of the hit box, relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 5, 5);
-        let texture = Utils.getFrame(RES.NPC_TILESET, img || 'npc_npc1_south_1');
+        const texture = Resources.shared.getFrame(img || 'npc_npc1_south_1');
         this.sprite = new PIXI.Container();
         this.npcSprite = new PIXI.Sprite(texture);
         this.npcSprite.anchor.set(0.5, 1);

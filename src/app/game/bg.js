@@ -21,9 +21,18 @@ import * as PIXI from 'pixi.js';
 
 import { Render } from './render';
 import { Utils } from './utils';
-import { RES } from './res';
+import { Resources, RES } from './res';
 import { Door, EnterScene } from './door';
-import { Spawn } from './spawn';
+
+function getTileset()
+{
+    const data = Resources.shared.find(RES.TILESET);
+    return new Tileset(
+        data.tile_width,
+        data.tile_height,
+        data.tiles
+    );
+}
 
 export class Tile
 {
@@ -60,7 +69,7 @@ export class Tileset
 
     getTexture(name)
     {
-        let textures = Utils.getTextures(RES.MAPTILES);
+        let textures = Resources.shared.getTextures(RES.MAPTILES);
         let texture = textures['' + name];
 
         if (!texture) {
@@ -86,7 +95,7 @@ export class ChunkTemplate
             return this.texture;
         }
 
-        let tileset = Utils.getTileset();
+        let tileset = getTileset();
         this.texture = PIXI.RenderTexture.create({
             width: this.grid[0].length*tileset.tileWidth,
             height: this.grid.length*tileset.tileHeight
@@ -133,12 +142,6 @@ export class ChunkTemplate
                 level.addThing(door);
                 level.addThing(new EnterScene(door));
             }
-            else if (obj.type == 'spawn')
-            {
-                console.log('spawner!');
-                let spawn = new Spawn(obj.x, obj.y);
-                level.addThing(spawn);
-            }
         }
     }
 };
@@ -147,11 +150,9 @@ export class Chunk
 {
     constructor(template)
     {
-        this.tileset = Utils.getTileset();
+        this.tileset = getTileset();
         this.template = template;
         this.grid = template.grid;
-        this.tileWidth = this.tileset.tileWidth;
-        this.tileHeight = this.tileset.tileHeight;
         this.sprite = new PIXI.Sprite();
         this.sprite.texture = template.renderTexture();
         this.sprite.x = 0;
@@ -173,7 +174,7 @@ export class Chunk
         return x >= this.sprite.x && x < this.sprite.x + this.sprite.width;
     }
 
-    getWallTile() {
+    get wallTile() {
         return this.tileset.wall;
     }
 
@@ -192,27 +193,27 @@ export class Chunk
         return this.tileset.wall;
     }
 
-    getX() {
+    get x() {
         return this.sprite.x;
     }
 
-    getY() {
+    get y() {
         return this.sprite.y;
     }
 
-    getWidth() {
+    get width() {
         return this.sprite.width;
     }
 
-    getHeight() {
+    get height() {
         return this.sprite.height;
     }
 
-    getTileWidth() {
+    get tileWidth() {
         return this.tileset.tileWidth;
     }
 
-    getTileHeight() {
+    get tileHeight() {
         return this.tileset.tileHeight;
     }
 
@@ -232,12 +233,12 @@ export class Compound
         this.level = null;
     }
 
-    getTileWidth() {
-        return this.chunks[0].getTileWidth();
+    get tileWidth() {
+        return this.chunks[0].tileWidth;
     }
 
-    getTileHeight() {
-        return this.chunks[0].getTileHeight();
+    get tileHeight() {
+        return this.chunks[0].tileHeight;
     }
 
     addChunk(chunk)
@@ -249,17 +250,9 @@ export class Compound
         this.height = 0;
         for (let chunk of this.chunks) {
             chunk.sprite.x = this.width;
-            this.width += chunk.getWidth();
-            this.height = Math.max(this.height, chunk.getHeight());
+            this.width += chunk.width;
+            this.height = Math.max(this.height, chunk.height);
         }
-    }
-
-    getWidth() {
-        return this.width;
-    }
-
-    getHeight() {
-        return this.height;
     }
 
     getTileAt(x, y)
@@ -277,16 +270,15 @@ export class Compound
             let chunk = this.chunks[mid];
 
             if (chunk.containsX(x)) {
-                // Found it
                 return chunk.getTileAt(x, y);
             }
-            if (x >= chunk.getX()) {
+            if (x >= chunk.x) {
                 start = mid+1;
             } else {
                 end = mid-1;
             }
         }
-        return this.chunks[0].getWallTile();
+        return this.chunks[0].wallTile;
     }
 
     addToLevel(level)
@@ -297,39 +289,3 @@ export class Compound
         }
     }
 };
-
-export class ChunkLoaderPlugin
-{
-    use(resource, next)
-    {
-        if (resource.name.endsWith('.chunks.json'))
-        {
-            resource.chunks = {};
-            for (let name in resource.data)
-            {
-                resource.chunks[name] = new ChunkTemplate(
-                    resource.data[name].background,
-                    resource.data[name].midground,
-                    resource.data[name].things,
-                );
-            }
-        }
-        next();
-    }
-}
-
-export class TilesetLoaderPlugin
-{
-    use(resource, next)
-    {
-        if (resource.name.endsWith('.tileset.json'))
-        {
-            resource.tileset = new Tileset(
-                resource.data.tile_width,
-                resource.data.tile_height,
-                resource.data.tiles
-            );
-        }
-        next();
-    }
-}

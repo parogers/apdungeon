@@ -17,6 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import * as PIXI from 'pixi.js';
+
 export var RES = {
     MALE_MELEE: 'assets/media/rogue-like-8x8/Male-Melee.json',
     FEMALE_MELEE: 'assets/media/rogue-like-8x8/Girl-Melee.json',
@@ -137,3 +139,86 @@ export var ANIM = {
 
 export const TILE_WIDTH = 8;
 export const TILE_HEIGHT = 8;
+
+export type TextureMap = { [name: string]: PIXI.Texture };
+
+
+/* Extracts the textures from the given PIXI bundle and returns them as a map
+ * keyed by texture name. */
+function getTexturesByName(bundle: any): TextureMap {
+    const results = Object.values(bundle)
+        .filter((asset: any) => !!asset['textures'])
+        .map((asset: any) => {
+            return Object.keys(asset.textures).map((name) => {
+                return [name, asset.textures[name]];
+            });
+        });
+    return Object.fromEntries(results.flat());
+}
+
+
+export class Resources {
+    static shared: Resources;
+    texturesByName: TextureMap;
+
+    constructor(private bundle: any) {
+        this.texturesByName = getTexturesByName(bundle);
+    }
+
+    getFrame(name: string) {
+        const texture = this.texturesByName[name];
+        if (!texture) {
+            console.error(`cannot find texture: ${name}`);
+        }
+        return texture;
+    }
+
+    getFrames(names: string) {
+        const frames: any = [];
+        for (let n = 0; n < names.length; n++) {
+            const frame = this.texturesByName[names[n]];
+            if (!frame) console.log('ERROR: missing frame ' + names[n]);
+            frames.push(frame);
+        }
+        return frames;
+    }
+
+    getTextures(res: string) {
+        if (!res) {
+            throw Error('must specify a resource');
+        }
+        return this.bundle[res].textures;
+    }
+
+    find(res: string) {
+        const obj = this.bundle[res];
+        if (!obj) {
+            throw Error(`cannot find resource: ${res}`);
+        }
+        return obj;
+    }
+
+    static async load(): Promise<Resources> {
+        function makeBundle(paths) {
+            return {
+                name: 'apdungeon',
+                assets: paths.map(path => {
+                    return {
+                        name: path,
+                        srcs: path,
+                    }
+                })
+            }
+        }
+        PIXI.Assets.init({
+            manifest: {
+                bundles: [
+                    makeBundle(Object.values(RES))
+                ],
+            }
+        });
+        const bundle = await PIXI.Assets.loadBundle('apdungeon');
+        Resources.shared = new Resources(bundle);
+        return Resources.shared;
+    }
+}
