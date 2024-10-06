@@ -64,7 +64,7 @@ export class TitleScreen
         this.stage.scale.set(scale);
         this.state = this.PLAYING_INTRO;
 
-        this.bg = new PIXI.Sprite(Resources.shared.getFrame('brown3'));
+        this.bg = new PIXI.Sprite(Resources.shared.getFrame('black'));
         this.bg.anchor.set(0, 0);
         this.bg.scale.set(
             this.screenWidth/this.bg.texture.width+1,

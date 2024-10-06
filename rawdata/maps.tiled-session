@@ -1,0 +1,71 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "maps/start.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "maps/Tileset2.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 5.5
+        },
+        "maps/lavatest.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 57.45454545454546,
+                "y": 6.63636363636364
+            }
+        },
+        "maps/level1.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 44.63636363636363,
+                "y": 51.36363636363637
+            }
+        },
+        "maps/start.tmx": {
+            "scale": 16,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 33.03125,
+                "y": 22.21875
+            }
+        },
+        "maps/straight.tmx": {
+            "scale": 8,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 40.75,
+                "y": 24.1875
+            }
+        },
+        "maps/straight2.tmx": {
+            "scale": 8,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 25.6875,
+                "y": 10.3125
+            }
+        }
+    },
+    "map.height": 5,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 50,
+    "openFiles": [
+        "maps/start.tmx"
+    ],
+    "project": "maps.tiled-project",
+    "recentFiles": [
+        "maps/Tileset2.tsx",
+        "maps/straight.tmx",
+        "maps/start.tmx",
+        "maps/lavatest.tmx"
+    ]
+}
