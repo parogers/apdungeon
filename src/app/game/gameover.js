@@ -17,7 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-import { RES } from './res';
+import * as PIXI from 'pixi.js';
+import { Resources } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
 import { renderText } from './ui';
@@ -56,7 +57,7 @@ export class GameOverScreen
         levelScreen.stage.scale.set(levelScreen.stage.scale.x/scale);
 
         // Create a black sprite that covers the screen
-        this.bg = new PIXI.Sprite(Utils.getFrame('black'));
+        this.bg = new PIXI.Sprite(Resources.shared.getFrame('black'));
         this.bg.anchor.set(0, 0);
         this.bg.scale.set(this.screenWidth/this.bg.texture.width,
                           this.screenHeight/this.bg.texture.height);
@@ -115,7 +116,7 @@ export class GameOverScreen
             {
                 // Background is now fully black. Show the game over text
                 this.bg.alpha = 1;
-                let txt = new PIXI.Sprite(Utils.getFrame('game-over-text'));
+                let txt = new PIXI.Sprite(Resources.shared.getFrame('game-over-text'));
                 txt.anchor.set(0.5, 0.5);
                 txt.x = this.screenWidth/2;
                 txt.y = this.screenHeight/8;

@@ -163,7 +163,7 @@ export class Thing
     }
 
     getTileUnder() {
-        return this.level.getTileAt(this.fx, this.fy)
+        return this.level?.getTileAt(this.fx, this.fy)
     }
 }
 

@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -74,7 +74,7 @@ function GameControlsCls()
     this.lastInputPressedTime = 0;
     // Whether the player is driving these controls with a touchscreen
     this.hasTouch = false;
-    for (let arg of DEFAULTS) 
+    for (let arg of DEFAULTS)
     {
         let name = arg[0];
         let keys = arg[1];
@@ -116,11 +116,11 @@ GameControlsCls.prototype.attachKeyboardEvents = function()
 {
     window.addEventListener('keydown', (event) => {
         let input = this.inputByKey[event.keyCode];
-        if (input && !input.held) 
+        if (input && !input.held)
         {
             // Handle double-pressing the input
-            if (this.lastInputPressed === input && 
-                this.time - this.lastInputPressedTime < DOUBLE_PRESS_TIME) 
+            if (this.lastInputPressed === input &&
+                this.time - this.lastInputPressedTime < DOUBLE_PRESS_TIME)
             {
                 input.doublePressed = true;
             }
@@ -162,7 +162,7 @@ export class ManualControls
         this.dirx = 0;
         this.diry = 0;
 
-        for (let arg of DEFAULTS) 
+        for (let arg of DEFAULTS)
         {
             let name = arg[0];
             this[name] = new Input(name);

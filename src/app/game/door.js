@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * See LICENSE.txt for the full text of the license.
  */
 
@@ -115,6 +115,10 @@ export class EnterScene
 
         case this.PLAYER_ENTERING:
             // Wait for the player to hit the track
+            if (!player.usingTrackMovement) {
+                this.state = this.PLAYER_DONE;
+                break;
+            }
             if (!player.isMovingToTrack()) {
                 this.state = this.PLAYER_LOOK_LEFT;
             }

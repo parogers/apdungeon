@@ -269,11 +269,12 @@ export class Level
             if (thing.update) thing.update(dt);
         }
 
-        if (this.player.baseSpeed != 0)
+        if (this.player.velx != 0)
         {
             // Update the camera to track the player. Have the camera move
             // smoothly towards the player to avoid jumping around.
-            let xpos = this.basePos - this.camera.width/8;
+            // let xpos = this.basePos - this.camera.width/8;
+            let xpos = this.player.x - this.camera.width/2;
 
             // Make sure the camera stays within the level (compound)
             xpos = Math.max(xpos, 0);
@@ -401,8 +402,8 @@ export class Level
         // Drop the item
         if (pick !== null) {
             let gnd = new GroundItem(pick, x, y);
-            gnd.velx = 10*(x > this.camera.x ? -1 : 1);
-            gnd.velh = -40;
+            // gnd.velx = 10*(x > this.camera.x ? -1 : 1);
+            // gnd.velh = -40;
             this.addThing(gnd);
         }
     }

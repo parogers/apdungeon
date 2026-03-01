@@ -173,7 +173,7 @@ export class BowWeaponSlot
             this.player,
             this.player.fx,
             this.player.fy,
-            this.player.baseSpeed + this.player.facing*50, 0,
+            this.player.baseSpeed + this.player.facing*100, 0,
             this.arrowFireHeight);
         this.player.level.addThing(arrow);
     }

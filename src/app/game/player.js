@@ -98,6 +98,9 @@ export class Player extends Thing
         this.controls = controls;
         this.state = STATE_IDLE;
         this.trackMover = null;
+        this.waterSprite = null;
+        this.knockedTimer = 0;
+        this.usingTrackMovement = false;
         // The "nominal" X-pos of the player within the level. The player
         // may stray from this position (eg when jumping) but generally
         // will tend back to it. This is also the position that is tracked
@@ -172,8 +175,8 @@ export class Player extends Thing
                 thing.handlePlayerCollision(this);
             }
         };
-        //this.upgradeSword(Item.Table.SMALL_SWORD);
-        this.upgradeBow(Item.Table.SMALL_BOW);
+        this.upgradeSword(Item.Table.SMALL_SWORD);
+        // this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
     }
 
@@ -205,151 +208,178 @@ export class Player extends Thing
         this.splash.visible = value;
     }
 
-    /*update(dt)
-      {
-      let dirx = 0;
-      let diry = 0;
+    update(dt) {
+        this.updateFree(dt);
+        this.damageTimer.update(dt);
 
-      if (this.dead) return;
+        // Update shadow and splash components
+        this.shadow.update(dt);
+        this.flame.update(dt);
+        this.splash.update(dt);
+        this.shadow.visible = !this.splash.visible && !this.flame.visible;
 
-      if (this.textTimeout > 0) {
-      this.textTimeout -= dt;
-      if (this.textTimeout <= 0) {
-      this.showMessage();
-      }
-      }
+        if (this.flame.visible)
+        {
+            // We're currently on fire
+            this.takeDamage(1, 'fire');
+        }
+        this.fireDamageTimer.update(dt);
+    }
 
-      // Handle dying state animation
-      if (this.dying) {
-      this.frame += 2.5*dt;
-      if (this.frame > this.dyingFrames.length-1) {
-      this.frame = this.dyingFrames.length-1;
-      this.dead = true;
-      }
-      let frame = this.dyingFrames[(this.frame)|0];
-      this.spriteChar.texture = frame;
-      return;
-      }
+    updateFree(dt)
+    {
+        let dirx = 0;
+        let diry = 0;
 
-      // Check if the player has just died
-      if (this.health <= 0) {
-      this.dying = true;
-      this.frame = 0;
-      this.weaponSlot = null;
-      this.updatePlayerAppearance();
-      this.spriteChar.tint = NO_TINT;
-      // Bring the player corpse to the front (so it's rendered very
-      // clearly overtop any other junk in the scene)
-      this.level.stage.removeChild(this.sprite);
-      this.level.stage.addChild(this.sprite);
-      return;
-      }
+        if (this.dead) return;
 
-      // Handle attacking
-      if (this.controls.primary.pressed) this.startAttack();
-      if (!this.controls.primary.released) this.stopAttack();
+        if (this.textTimeout > 0) {
+            this.textTimeout -= dt;
+            if (this.textTimeout <= 0) {
+                this.showMessage();
+            }
+        }
 
-      if (this.controls.swap.pressed) {
-      this.swapWeapons();
-      }
+        // Handle dying state animation
+        // if (this.dying) {
+        //     this.frame += 2.5*dt;
+        //     if (this.frame > this.dyingFrames.length-1) {
+        //         this.frame = this.dyingFrames.length-1;
+        //         this.dead = true;
+        //     }
+        //     let frame = this.dyingFrames[(this.frame)|0];
+        //     this.spriteChar.texture = frame;
+        //     return;
+        // }
 
-      if (this.knockedTimer <= 0) {
-      dirx = this.controls.getX();
-      diry = this.controls.getY();
-      } else {
-      this.velx = this.knocked;
-      this.knockedTimer -= dt;
-      }
+        // Check if the player has just died
+        if (this.health <= 0) {
+            this.dying = true;
+            this.frame = 0;
+            this.weaponSlot = null;
+            this.updatePlayerAppearance();
+            this.spriteChar.tint = NO_TINT;
+            // Bring the player corpse to the front (so it's rendered very
+            // clearly overtop any other junk in the scene)
+            this.level.stage.removeChild(this.sprite);
+            this.level.stage.addChild(this.sprite);
+            this.dead = true;
+            return;
+        }
 
-      if (this.lungeTimer > 0) {
-      this.lungeTimer -= dt;
-      } else {
-      if (dirx) {
-      this.faceDirection(dirx);
-      this.velx = dirx * this.maxSpeed;
+        // Handle attacking
+        if (this.controls.primary.pressed) this.startAttack();
+        if (!this.controls.primary.released) this.stopAttack();
 
-      //if (this.controls.left.doublePressed ||
-      //    this.controls.right.doublePressed)
-      //{
-      //    console.log('LUNGE!');
-      //    this.velx *= 2;
-      //    this.lungeTimer = 1;
-      //}
-      } else {
-      this.velx *= 0.75;
-      }
-      }
+        if (this.controls.swap.pressed) {
+            this.swapWeapons();
+        }
 
-      if (diry) {
-      this.vely = diry * this.maxSpeed;
-      } else {
-      this.vely *= 0.75;
-      }
+        if (this.knockedTimer <= 0) {
+            dirx = this.controls.getX();
+            diry = this.controls.getY();
+        } else {
+            this.velx = this.knocked;
+            this.knockedTimer -= dt;
+        }
 
-      if (dirx || diry) {
-      this.frame += dt;
-      } else {
-      this.frame = 0;
-      }
+        if (this.lungeTimer > 0) {
+            this.lungeTimer -= dt;
+        } else {
+            if (dirx) {
+                this.facing = dirx;
+                this.velx = dirx * this.maxSpeed;
 
-      //let speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
-      //if (speed > this.maxSpeed) {
-      //this.velx *= this.maxSpeed/speed;
-      //this.vely *= this.maxSpeed/speed;
-      //}
+                if (this.controls.left.doublePressed ||
+                   this.controls.right.doublePressed)
+                {
+                   console.log('LUNGE!');
+                   this.velx *= 3;
+                   this.lungeTimer = 0.25;
+                }
+            } else {
+                this.velx *= 0.75;
+            }
+        }
 
-      // Handle left/right movement
-      let w = this.spriteChar.texture.width*0.75;
-      if (this.velx) {
-      let x = this.sprite.x + this.velx*dt;
-      // Keep the player visible to the camera
-      if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
-      x-w/2 >= this.level.camera.x &&
-      x+w/2 <= this.level.camera.x + this.level.camera.width) {
-      this.sprite.x = x;
-      } else {
-      this.velx = 0;
-      }
-      }
-      // Handle up/down movement
-      if (this.vely) {
-      let y = this.sprite.y + this.vely*dt;
-      if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
-      this.sprite.y = y;
-      } else {
-      this.vely = 0;
-      }
-      }
+        if (diry) {
+            this.vely = diry * this.maxSpeed;
+        } else {
+            this.vely *= 0.75;
+        }
 
-      // Update the equipped weapon
-      if (this.weaponSlot && this.weaponSlot.update) {
-      this.weaponSlot.update(dt);
-      }
+        if (dirx || diry) {
+            this.frame += dt;
+        } else {
+            this.frame = 0;
+        }
 
-      // Make a splashy sound when we enter water
-      let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
-      if (tile.water) {
-      if (!this.waterSprite.visible)
-      Audio.playSound(RES.SPLASH_SND);
-      this.waterSprite.visible = true;
-      } else {
-      this.waterSprite.visible = false;
-      }
+        //let speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
+        //if (speed > this.maxSpeed) {
+        //this.velx *= this.maxSpeed/speed;
+        //this.vely *= this.maxSpeed/speed;
+        //}
 
-      //if (controls.testKey && !controls.lastTestKey) this.health = 0;
+        // Handle left/right movement
+        let w = this.spriteChar.texture.width*0.75;
+        if (this.velx) {
+            let x = this.sprite.x + this.velx*dt;
+            // Keep the player visible to the camera
+            if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
+                x-w/2 >= this.level.camera.x &&
+                x+w/2 <= this.level.camera.x + this.level.camera.width) {
+                this.sprite.x = x;
+                } else {
+                    this.velx = 0;
+                }
+        }
+        // Handle up/down movement
+        if (this.vely) {
+            let y = this.sprite.y + this.vely*dt;
+            if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
+                this.sprite.y = y;
+            } else {
+                this.vely = 0;
+            }
+        }
 
-      // Check for collisions with other things
-      this.level.forEachThingHit(
-      this.sprite.x, this.sprite.y,
-      this.hitbox, this,
-      this.handleCollisionCallback);
+        // Update the equipped weapon
+        if (this.weaponSlot && this.weaponSlot.update) {
+            this.weaponSlot.update(dt);
+        }
 
-      // Update animation
-      let frame = this.frames[((this.frame*10)|0) % this.frames.length];
-      this.spriteChar.texture = frame;
-      }*/
+        // Make a splashy sound when we enter water
+        let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
+        if (tile.water) {
+            if (!this.waterSprite?.visible)
+                Audio.playSound(RES.SPLASH_SND);
+            this.waterSprite.visible = true;
+        } else if (this.waterSprite) {
+            this.waterSprite.visible = false;
+        }
 
-    update(dt)
+        //if (controls.testKey && !controls.lastTestKey) this.health = 0;
+
+        // Check for collisions with other things
+        this.level.forEachThingHit(
+            this.sprite.x, this.sprite.y,
+            this.hitbox, this,
+            this.handleCollisionCallback
+        );
+
+        this.fx = this.sprite.x;
+        this.fy = this.sprite.y;
+        if (Math.abs(this.velx) < 0.1) this.velx = 0;
+        if (Math.abs(this.vely) < 0.1) this.vely = 0;
+        if (this.velx || this.vely) {
+            this.walkAnim.update(dt);
+            this.spriteChar.texture = this.walkAnim.texture;
+        } else {
+            this.spriteChar.texture = this.walkAnim.frames[0];
+        }
+    }
+
+    updateRails(dt)
     {
         if (this.running)
         {
@@ -444,21 +474,6 @@ export class Player extends Thing
         {
             this.updateKnockedBack(dt);
         }
-
-        this.damageTimer.update(dt);
-
-        // Update shadow and splash components
-        this.shadow.update(dt);
-        this.flame.update(dt);
-        this.splash.update(dt);
-        this.shadow.visible = !this.splash.visible && !this.flame.visible;
-
-        if (this.flame.visible)
-        {
-            // We're currently on fire
-            this.takeDamage(1, 'fire');
-        }
-        this.fireDamageTimer.update(dt);
         this.spriteChar.texture = this.walkAnim.texture;
     }
 
