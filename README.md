@@ -1,66 +1,48 @@
-APDungeon
----------
+# apdungeon
 
-A dungeon crawler demo written in javascript + pixi.js
+This template should help get you started developing with Vue 3 in Vite.
 
-ARCHIVED: This was fun to hack and fiddle with things, and while I would love to turn it into a fun, playable game it's just not worth the effort. I'm keeping it for historic reference and also to crib from in future.
+## Recommended IDE Setup
 
-Source
-------
+[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-Source files can be found on the github project page:
+## Recommended Browser Setup
 
-<https://github.com/parogers/apdungeon>
+- Chromium-based browsers (Chrome, Edge, Brave, etc.):
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
+- Firefox:
+  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
+  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
 
-High-level analysis and discussion of the code is here:
+## Type Support for `.vue` Imports in TS
 
-<http://writtenwordinteractive.com/ap-dungeon>
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
 
-Design
-------
+## Customize configuration
 
-The demo is a side scrolling action game with fantasy elements. The art
-style is "stripped down 8-bit" mostly because it was easy to knock something
-together without worrying too much about design.
+See [Vite Configuration Reference](https://vite.dev/config/).
 
-Features:
+## Project Setup
 
-* Randomly generated levels
-* Area by area level progression
-* Difficulty progression
-* Music (single track)
-* Sound effects
-* Two weapon types: sword, bow
-* Enemies: snake, scorpion, rate, goblin, skeleton warrior, ghost
-* Sword upgrades
-* Armour upgrades
-* Basic inventory
-* Keyboard controls
-* Touch controls (on-screen controller for mobile)
+```sh
+npm install
+```
 
-Screens:
+### Compile and Hot-Reload for Development
 
-* Title (showing credits etc)
-* Gameplay (level-by-level play)
-* Gameover (summary of kills)
+```sh
+npm run dev
+```
 
-Credits
--------
+### Type-Check, Compile and Minify for Production
 
-* 2D graphics (items, monsters, map tilesets, etc):
-  Author: Min/Kyle
-  License: Public Domain
-  URL: <http://opengameart.org/content/8x8-rogue-like-charenemiestiles>
+```sh
+npm run build
+```
 
-* Music: "A Journey Awaits"
-  Author: Pierre Bondoerffer (@pbondoer)
-  License: CC-BY-SA 3.0
-  URL: <https://opengameart.org/content/a-journey-awaits>
+### Lint with [ESLint](https://eslint.org/)
 
-License
--------
-
-Main source code is licensed under GPLv3 (see LICENSE.md for details)
-
-Source code and media files found under "contrib" and "media" are covered
-under their respective licenses. Check in those folders for details.
+```sh
+npm run lint
+```
