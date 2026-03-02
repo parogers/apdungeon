@@ -114,7 +114,7 @@ GameControlsCls.prototype.update = function(dt)
 
 GameControlsCls.prototype.attachKeyboardEvents = function()
 {
-    window.addEventListener('keydown', (event) => {
+    this.onKeydown = (event) => {
         let input = this.inputByKey[event.keyCode];
         if (input && !input.held)
         {
@@ -131,16 +131,17 @@ GameControlsCls.prototype.attachKeyboardEvents = function()
             event.stopPropagation();
             event.preventDefault();
         }
-    });
-
-    window.addEventListener('keyup', (event) => {
+    };
+    this.onKeyup = (event) => {
         let input = this.inputByKey[event.keyCode];
         if (input) {
             input.release();
             event.stopPropagation();
             event.preventDefault();
         }
-    });
+    };
+    window.addEventListener('keydown', this.onKeydown);
+    window.addEventListener('keyup', this.onKeyup);
 }
 
 GameControlsCls.prototype.attach = function()
@@ -150,6 +151,11 @@ GameControlsCls.prototype.attach = function()
 
 GameControlsCls.prototype.configureButtons = function()
 {
+}
+
+GameControlsCls.prototype.destroy = function() {
+    window.removeEventListener('keydown', this.onKeydown);
+    window.removeEventListener('keyup', this.onKeyup);
 }
 
 /******************/
@@ -197,4 +203,8 @@ export var GameControls = {
     {
         return controls;
     },
+    destroy: function() {
+        controls.destroy();
+        controls = null;
+    }
 }
