@@ -48,11 +48,11 @@ export class Game
         Render.configure(element, LevelScreen.getAspectRatio());
         GameControls.configure();
 
-        this.gestureMgr = new GestureManager();
-        this.gestureMgr.attach(Render.getRenderer().view);
-        this.gestureMgr.gestureCallback = (gesture) => {
-            this.gamestate.handleGesture(gesture);
-        };
+        // this.gestureMgr = new GestureManager();
+        // this.gestureMgr.attach(Render.getRenderer().view);
+        // this.gestureMgr.gestureCallback = (gesture) => {
+        //     this.gamestate.handleGesture(gesture);
+        // };
     }
 
     resize() {
@@ -67,7 +67,6 @@ export class Game
             return;
         }
         const dt = PIXI.Ticker.shared.elapsedMS/1000;
-
         this.gamestate.update(dt);
         GameControls.update(dt);
         this.gamestate.render();
@@ -80,8 +79,17 @@ export class Game
         this.stage = new PIXI.Container();
         this.stage.children = [];
 
-        PIXI.Ticker.shared.add(() => {
+        this.gameloopCaller = () => {
             this.gameloop()
-        });
+        };
+        PIXI.Ticker.shared.add(this.gameloopCaller);
+    }
+
+    async destroy() {
+        if (this.gameloopCaller) {
+            PIXI.Ticker.shared.remove(this.gameloopCaller);
+            this.gameloopCaller = null;
+        }
+        GameControls.destroy();
     }
 }

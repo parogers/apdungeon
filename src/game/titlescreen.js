@@ -28,7 +28,6 @@ import { generateEmptyLevel } from './genlevel';
 import { Player } from './player';
 import { Item } from './item';
 import { Scenery } from './scenery';
-import { SnakeLike } from './snake';
 import { Goblin } from './goblin';
 import { SkelWarrior } from './skel_warrior';
 import { Ghost } from './ghost';
