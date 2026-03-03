@@ -14,7 +14,7 @@
         "lint:eslint": "eslint . --fix --cache"
     },
     "dependencies": {
-        "@pixi/sound": "^5.1.1",
+        "@pixi/sound": "^5.2.3",
         "pixi.js": "^8.16.0",
         "vue": "^3.5.29"
     },
