@@ -18,7 +18,7 @@
  */
 
 import * as PIXI from 'pixi.js';
-import { sound } from '@pixi/sound';
+import { soundAsset } from '@pixi/sound';
 import { RES } from './res';
 import { Render } from './render';
 import { GameControls } from './controls';
@@ -29,6 +29,9 @@ import { GestureManager } from './gesture';
 import { Resources } from './res';
 
 import { ChunkTemplate, Tileset } from './bg';
+
+// See: https://github.com/pixijs/sound/issues/252
+PIXI.extensions.add(soundAsset)
 
 /* TODO - the game is implemented as a big loop where 'update' is called on
  * the level every iteration before painting the screen. (in term the level
@@ -44,15 +47,17 @@ export class Game
     {
         this.gamestate = null;
         this.stage = null;
-
-        Render.configure(element, LevelScreen.getAspectRatio());
-        GameControls.configure();
-
+        this.element = element;
         // this.gestureMgr = new GestureManager();
         // this.gestureMgr.attach(Render.getRenderer().view);
         // this.gestureMgr.gestureCallback = (gesture) => {
         //     this.gamestate.handleGesture(gesture);
         // };
+    }
+
+    async configure() {
+        await Render.configure(this.element, LevelScreen.getAspectRatio());
+        GameControls.configure();
     }
 
     resize() {

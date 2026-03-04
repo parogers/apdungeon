@@ -44,13 +44,12 @@ export class Render {
     /* Configures the renderer (via PIXI) and adds the view to the given HTML
      * element. The renderer width/height will conform to the given aspect
      * ratio. */
-    static configure(div, aspect)
+    static async configure(div, aspect)
     {
-        PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
-
         const { width, height } = getMaxFit(div, aspect);
 
-        Render.renderer = PIXI.autoDetectRenderer({
+        PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
+        Render.renderer = await PIXI.autoDetectRenderer({
             width: width || 1,
             height: height || 1,
             //antialias: true,
@@ -60,7 +59,7 @@ export class Render {
         });
 
         div.innerHTML = '';
-        div.appendChild(Render.renderer.view);
+        div.appendChild(Render.renderer.canvas);
         Render.container = div;
         Render.aspectRatio = aspect;
     }

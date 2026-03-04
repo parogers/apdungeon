@@ -309,7 +309,7 @@ export class GameUI
         // Add event handlers for clicking on the various UI buttons
         this.onMouseDown = this.handleMouseDown.bind(this);
         this.onTouchStart = this.handleTouchStart.bind(this);
-        this.viewElement = Render.getRenderer().view;
+        this.viewElement = Render.getRenderer().canvas;
         this.viewElement.addEventListener('mousedown', this.onMouseDown);
         this.viewElement.addEventListener('touchstart', this.onTouchStart);
     }

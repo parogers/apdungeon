@@ -147,7 +147,7 @@ export type TextureMap = { [name: string]: PIXI.Texture };
  * keyed by texture name. */
 function getTexturesByName(bundle: any): TextureMap {
     const results = Object.values(bundle)
-        .filter((asset: any) => !!asset['textures'])
+        .filter((asset: any) => asset && !!asset['textures'])
         .map((asset: any) => {
             return Object.keys(asset.textures).map((name) => {
                 return [name, asset.textures[name]];
@@ -204,16 +204,17 @@ export class Resources {
                 name: 'apdungeon',
                 assets: paths.map(path => {
                     return {
-                        name: path,
-                        srcs: path,
+                        alias: path,
+                        src: path,
                     }
                 })
             }
         }
+        const bundleDef = makeBundle(Object.values(RES));
         PIXI.Assets.init({
             manifest: {
                 bundles: [
-                    makeBundle(Object.values(RES))
+                    bundleDef,
                 ],
             }
         });
