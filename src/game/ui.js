@@ -352,7 +352,7 @@ export class GameUI
         let xp = x - viewRect.left;
         let yp = y - viewRect.top;
         let rect = this.audioButton.sprite.getBounds();
-        if (rect.contains(xp, yp))
+        if (rect.containsPoint(xp, yp))
         {
             if (this.audioButton.state === 'on') {
                 this.audioButton.setState('off');
