@@ -100,7 +100,7 @@ export class LevelDarkness
         this.sprite = new PIXI.Sprite(
             renderDarkness(100, 60, 52, 32)
         );
-        this.sprite.zpos = Level.FRONT_POS;
+        this.sprite.zIndex = Level.FRONT_POS;
     }
 
     update(dt) {
@@ -111,14 +111,6 @@ export class LevelDarkness
 /*********/
 /* Level */
 /*********/
-
-// Helper function for sorting sprites by depth, so sprites in the backround
-// are drawn below sprites in the foreground.
-function compareDepth(s1, s2) {
-    let z1 = s1.zpos || s1.y;
-    let z2 = s2.zpos || s2.y;
-    return (z1>z2) - (z2>z1);
-}
 
 export class Level
 {
@@ -138,6 +130,7 @@ export class Level
         this.things = [];
         // The PIXI container for everything we want to draw
         this.stage = new PIXI.Container();
+        this.stage.sortableChildren = true;
         this.compound.addToLevel(this);
 
         this.darkness = new LevelDarkness();
@@ -148,11 +141,12 @@ export class Level
 
         let tileHeight = this.compound.tileHeight;
         let y = this.compound.height - 2;
-        this.tracks = [
-            new Track(this, 0, y-tileHeight*2),
-            new Track(this, 1, y-tileHeight),
-            new Track(this, 2, y),
-        ];
+        this.tracks = [];
+        // this.tracks = [
+        //     new Track(this, 0, y-tileHeight*2),
+        //     new Track(this, 1, y-tileHeight),
+        //     new Track(this, 2, y),
+        // ];
     }
 
     get tileWidth() {
@@ -260,9 +254,6 @@ export class Level
         // TODO - this could be better optimized by despawning things that are
         // no longer visible. (ie blood spatters etc)
 
-        // Re-sort the sprites by Z-depth so things are rendered in the correct
-        // order.
-        this.stage.children.sort(compareDepth);
         // Update everything in the level
         for (let thing of this.things) {
             // TODO - only update things within camera view (+/- bounds)

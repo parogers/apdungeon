@@ -58,8 +58,8 @@ export class Chest {
                 for (let item of this.items) {
                     let gnd = new GroundItem(
                         item,
-                        this.sprite.x+1*Utils.randUniform(0, 1),
-                        this.sprite.y+2*Utils.randUniform(0.1, 1));
+                        this.x + 1*Utils.randUniform(0, 1),
+                        this.y + 2*Utils.randUniform(0.1, 1));
                     this.level.addThing(gnd);
                     let spd = Utils.randUniform(6, 12);
                     if (this.options && this.options.ejectX) {

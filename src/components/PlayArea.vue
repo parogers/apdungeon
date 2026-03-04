@@ -16,9 +16,10 @@ function resizeCallback()
     game.resize();
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (playArea.value && !game) {
         game = new Game(playArea.value);
+        await game.configure();
         game.start();
         window.addEventListener("resize", () => resizeCallback());
         setTimeout(() => resizeCallback(), 500);

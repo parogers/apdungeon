@@ -64,19 +64,7 @@ export function generateLevel(levelNum)
         chunk.spawnThings();
     }
 
-    let x = 140;
-    while (x < level.width)
-    {
-        let thing = new GroundItem(
-            Item.Table.COIN,
-            x,
-            level.getTrack(randint(0, 2)).y-2,
-        );
-        level.addThing(thing);
-        x += randint(40, 60);
-    }
-
-    x = 120;
+    let x = 120;
     while (x < level.width)
     {
         let monster = null;
@@ -87,13 +75,14 @@ export function generateLevel(levelNum)
         else if (n === 2) monster = new Scorpion();
 
         monster.fx = x;
-        monster.track = level.getTrack(randint(0, 2));
+        monster.fy = 25;
         level.addThing(monster);
         x += randint(40, 120);
     }
 
     let mon = new SkelWarrior();
     mon.fx = 90;
+    mon.fy = 35;
     mon.track = level.getMiddleTrack();
     level.addThing(mon);
 

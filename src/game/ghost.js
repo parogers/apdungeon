@@ -76,8 +76,8 @@ export class Ghost
     updateAttacking(dt)
     {
         let player = this.level.player;
-        let accelx = player.sprite.x - this.sprite.x;
-        let accely = player.sprite.y - this.sprite.y;
+        let accelx = player.x - this.x;
+        let accely = player.y - this.y;
         let mag = Math.sqrt(accelx*accelx + accely*accely);
 
         accelx = this.accel*accelx/mag;
@@ -92,8 +92,8 @@ export class Ghost
             this.vely = this.maxSpeed*this.vely/speed;
         }
 
-        this.sprite.x += this.velx*dt;//+Math.cos(this.frame);
-        this.sprite.y += this.vely*dt;//+Math.sin(this.frame);
+        this.x += this.velx*dt;//+Math.cos(this.frame);
+        this.y += this.vely*dt;//+Math.sin(this.frame);
 
         this.frame += 4*dt;
         this.ghostSprite.texture = this.frames[(this.frame%this.frames.length)|0];
@@ -104,9 +104,9 @@ export class Ghost
         // Slide backwards from the hit
         if (this.knockedTimer > 0) {
             let dx = this.knocked*dt;
-            let tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
+            let tile = this.level.getTileAt(this.x+dx, this.y);
             if (!tile.solid) {
-                this.sprite.x += dx;
+                this.x += dx;
             }
             this.knockedTimer -= dt;
         } else {
@@ -126,13 +126,13 @@ export class Ghost
             this.state = GHOST_DEAD;
             // Drop a reward
             this.level.handleTreasureDrop(
-                this.getDropTable(), this.sprite.x, this.sprite.y);
+                this.getDropTable(), this.x, this.y);
             player.handleMonsterKilled(this);
             this.dead = true;
 
         } else {
             Audio.playSound(RES.SNAKE_HURT_SND);
-            this.knocked = Math.sign(this.sprite.x-srcx)*100;
+            this.knocked = Math.sign(this.x-srcx)*100;
             this.knockedTimer = 0.1;
             this.state = GHOST_HURT;
         }

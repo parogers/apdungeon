@@ -28,6 +28,8 @@ import { GameControls, ManualControls } from './controls';
  * behind it so when the door opens, it shows darkness behind it. */
 export class Door extends Gate
 {
+    name = 'Door';
+
     constructor()
     {
         super();
@@ -84,8 +86,8 @@ export class EnterScene
         case this.IDLE:
             // Position the player behind the level so they're hidden, and
             // centered on the door so the camera renders in the right place.
-            player.fx = this.door.sprite.x;
-            player.fy = this.door.sprite.y+1;
+            player.fx = this.door.x;
+            player.fy = this.door.y+1;
             player.zpos = Level.BEHIND_BACKGROUND_POS;
             player.basePos = player.fx;
             player.controls = new ManualControls();
@@ -107,9 +109,10 @@ export class EnterScene
                 // sprites, and let the players z-pos vary again.
                 player.zpos = undefined;
                 this.door.zpos = Level.FLOOR_POS;
-                this.state = this.PLAYER_ENTERING;
+                // this.state = this.PLAYER_ENTERING;
+                this.state = this.PLAYER_DONE;
                 this.timer = 0.4;
-                player.startMoveToTrack(this.level.getMiddleTrack());
+                // player.startMoveToTrack(this.level.getMiddleTrack());
             }
             break;
 

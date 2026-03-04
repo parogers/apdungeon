@@ -37,8 +37,8 @@ export class GroundItem
         this.sprite = new PIXI.Sprite(img);
         this.sprite.anchor.set(0.5, 0.6);
         this.height = 0;
-        this.sprite.x = x;
-        this.sprite.y = y;
+        this.x = x;
+        this.y = y;
         this.ypos = y;
         this.item = item;
         // Make the render depth fixed here, otherwise as the item bounces it
@@ -60,8 +60,8 @@ export class GroundItem
         this.velx += this.accelx*dt;
         this.vely += this.accely*dt;
 
-        this.sprite.x += this.velx*dt;
-        this.sprite.y += this.vely*dt;
+        this.x += this.velx*dt;
+        this.y += this.vely*dt;
 
         /*
           if (this.velh !== 0)

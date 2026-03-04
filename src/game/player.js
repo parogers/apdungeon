@@ -273,6 +273,11 @@ export class Player extends Thing
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
+            console.log('Things:')
+            for (let thing of this.level.things) {
+                console.log(thing.name, thing.sprite?.zIndex);
+            }
+            console.log();
         }
 
         if (this.knockedTimer <= 0) {
@@ -323,21 +328,21 @@ export class Player extends Thing
         // Handle left/right movement
         let w = this.spriteChar.texture.width*0.75;
         if (this.velx) {
-            let x = this.sprite.x + this.velx*dt;
+            let x = this.x + this.velx*dt;
             // Keep the player visible to the camera
             if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
                 x-w/2 >= this.level.camera.x &&
                 x+w/2 <= this.level.camera.x + this.level.camera.width) {
-                this.sprite.x = x;
+                this.x = x;
                 } else {
                     this.velx = 0;
                 }
         }
         // Handle up/down movement
         if (this.vely) {
-            let y = this.sprite.y + this.vely*dt;
+            let y = this.y + this.vely*dt;
             if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
-                this.sprite.y = y;
+                this.y = y;
             } else {
                 this.vely = 0;
             }
@@ -367,8 +372,8 @@ export class Player extends Thing
             this.handleCollisionCallback
         );
 
-        this.fx = this.sprite.x;
-        this.fy = this.sprite.y;
+        this.fx = this.x;
+        this.fy = this.y;
         if (Math.abs(this.velx) < 0.1) this.velx = 0;
         if (Math.abs(this.vely) < 0.1) this.vely = 0;
         if (this.velx || this.vely) {
