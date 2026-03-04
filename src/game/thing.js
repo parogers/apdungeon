@@ -41,6 +41,7 @@ export class Thing
         this.level = null;
         this._y = 0;
         this._h = 0;
+        this._zpos = null;
         this._track = null;
         this.level = null;
         this.frame = 0;
@@ -82,6 +83,16 @@ export class Thing
         this._h = 0;
         this._y = value;
         this.sprite.y = value;
+        this.sprite.zIndex = this._zpos ?? value;
+    }
+
+    get zpos() {
+        return this.sprite.zIndex;
+    }
+
+    set zpos(value) {
+        this._zpos = value;
+        this.sprite.zIndex = value ?? this.fy;
     }
 
     // The horizontal position of the thing (equal to the sprite position)
@@ -101,11 +112,6 @@ export class Thing
         return this._h;
     }
 
-    // The z-depth of the sprite for sorting/rendering purposes
-    get zpos() {
-        return this.sprite.zpos;
-    }
-
     set fx(value) {
         this.sprite.x = value;
     }
@@ -114,6 +120,7 @@ export class Thing
     set fy(value)
     {
         this._y = value;
+        this.sprite.zIndex = this._zpos ?? value;
         // This is confusing - the sprite y-pos increases going down
         // the screen while the height off the floor decreases
         this.sprite.y = this._y - this._h;
@@ -124,10 +131,6 @@ export class Thing
     {
         this._h = value;
         this.sprite.y = this._y - this._h;
-    }
-
-    set zpos(value) {
-        this.sprite.zpos = value;
     }
 
     set facing(dir)

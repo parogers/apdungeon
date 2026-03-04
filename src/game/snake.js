@@ -60,8 +60,8 @@ export class DeathAnimation extends Thing
         {
             // Have the monster 'fall off' the screen and disappear
             this.vely += this.accely*dt;
-            this.monster.sprite.x += this.level.player.baseSpeed*1.5*dt;
-            this.monster.sprite.y += this.vely*dt;
+            this.monster.x += this.level.player.baseSpeed*1.5*dt;
+            this.monster.y += this.vely*dt;
 
             if (!this.level.isThingVisible(this.monster))
             {
@@ -159,9 +159,9 @@ export class Snake extends Thing
             // Slide backwards from the hit
             if (this.knockedTimer > 0) {
                 let dx = this.knocked*dt;
-                let tile = this.level.getTileAt(this.sprite.x+dx, this.sprite.y);
+                let tile = this.level.getTileAt(this.x+dx, this.y);
                 if (!tile.solid) {
-                    this.sprite.x += dx;
+                    this.x += dx;
                 }
                 this.knockedTimer -= dt;
             } else {
@@ -180,7 +180,7 @@ export class Snake extends Thing
 
         if (this.velx != 0)
         {
-            this.sprite.x += this.velx*dt;
+            this.x += this.velx*dt;
             this.snakeSprite.texture = this.anim.update(dt);
         }
         this.sprite.scale.x = this.facing*Math.abs(this.sprite.scale.x);
@@ -197,7 +197,7 @@ export class Snake extends Thing
             this.state = this.STATE_DEAD;
             // Drop a reward
             this.level.handleTreasureDrop(
-                this.getDropTable(), this.sprite.x, this.sprite.y);
+                this.getDropTable(), this.x, this.y);
             player.handleMonsterKilled(this);
 
             // Show the death animation
@@ -206,7 +206,7 @@ export class Snake extends Thing
         } else {
             // Damaged and knocked back
             Audio.playSound(RES.SNAKE_HURT_SND);
-            this.knocked = Math.sign(this.sprite.x-srcx)*60;
+            this.knocked = Math.sign(this.x-srcx)*60;
             this.knockedTimer = 0.1;
             this.state = this.STATE_HURT;
         }
@@ -214,8 +214,8 @@ export class Snake extends Thing
         // Add a blood spatter
         this.level.addThing(
             new Blood(),
-            this.sprite.x,
-            this.sprite.y-1
+            this.x,
+            this.y-1
         );
         return true;
     }

@@ -36,8 +36,8 @@ export class Scenery
 
     update(dt)
     {
-        this.sprite.x += this.velx*dt;
-        this.sprite.y += this.vely*dt;
+        this.x += this.velx*dt;
+        this.y += this.vely*dt;
         if (this.timer > 0) {
             this.timer -= dt;
             if (this.timer <= 0) {
