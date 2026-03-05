@@ -51,21 +51,8 @@ function getChunk(name)
 
 export function generateLevel(levelNum)
 {
-    let bg = new Compound();
-    bg.addChunk(new Chunk(getChunk('start')));
-    bg.addChunk(new Chunk(getChunk('lavatest')));
-    for (let n = 0; n < 10; n++) {
-        bg.addChunk(new Chunk(getChunk('straight2')));
-    }
-
-    let level = new Level(bg);
-    for (let chunk of level.compound.chunks)
-    {
-        chunk.spawnThings();
-    }
-
-    let x = 120;
-    while (x < level.width)
+    const level = new Level();
+    for (let n = 0; n < 1000; n++)
     {
         let monster = null;
         let n = randint(0, 2);
@@ -73,18 +60,12 @@ export function generateLevel(levelNum)
         if (n === 0) monster = new Snake();
         else if (n === 1) monster = new Rat();
         else if (n === 2) monster = new Scorpion();
+        else if (n === 3) monster = new SkelWarrior();
 
-        monster.fx = x;
-        monster.fy = 25;
+        monster.fx = randint(0, level.width);
+        monster.fy = randint(0, level.height);
         level.addThing(monster);
-        x += randint(40, 120);
     }
-
-    let mon = new SkelWarrior();
-    mon.fx = 90;
-    mon.fy = 35;
-    mon.track = level.getMiddleTrack();
-    level.addThing(mon);
 
     /*let mon = new Bat();
     mon.fx = 90;

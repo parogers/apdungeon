@@ -23,6 +23,7 @@ import { Resources, RES, TILE_HEIGHT } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
 import { GroundItem } from './grounditem';
+import { StackedGrid } from '@parogers/pixijs-easygrid';
 
 /**********/
 /* Camera */
@@ -114,7 +115,7 @@ export class LevelDarkness
 
 export class Level
 {
-    constructor(compound)
+    constructor()
     {
         // The various level states
         this.PLAYING = 0;
@@ -124,14 +125,14 @@ export class Level
         this.player = null;
         this.state = this.PLAYING;
         // The background sprite (TiledBackground)
-        this.compound = compound;
-        this.compound.zpos = Level.BACKGROUND_POS;
+        // this.compound = compound;
+        // this.compound.zpos = Level.BACKGROUND_POS;
         // List of enemies, interactable objects etc and the player
         this.things = [];
         // The PIXI container for everything we want to draw
         this.stage = new PIXI.Container();
         this.stage.sortableChildren = true;
-        this.compound.addToLevel(this);
+        // this.compound.addToLevel(this);
 
         this.darkness = new LevelDarkness();
         this.addThing(this.darkness);
@@ -139,22 +140,54 @@ export class Level
         this.smoothTracking = true;
         this.exitDoor = null;
 
-        let tileHeight = this.compound.tileHeight;
-        let y = this.compound.height - 2;
+        // let tileHeight = this.compound.tileHeight;
+        // let y = this.compound.height - 2;
         this.tracks = [];
         // this.tracks = [
         //     new Track(this, 0, y-tileHeight*2),
         //     new Track(this, 1, y-tileHeight),
         //     new Track(this, 2, y),
         // ];
+
+        const sheet = Resources.shared.find(RES.TILES_DIRT);
+        const terrain = new Array(50).fill(0).map(() => {
+            return new Array(100).fill(0).map(() => Utils.randomChoice([true, false]));
+        });
+        const stacked = new StackedGrid({
+            bottomTileInfo: 'water',
+            layers: [
+                {
+                    tileInfo: 'dirt',
+                    spritesheet: sheet,
+                    terrain: terrain,
+                },
+                // {
+                //     tileInfo: 'grass',
+                //     spritesheet: grassSheet,
+                //     terrain: grassTerrain,
+                // },
+                // {
+                //     tileInfo: 'mountain',
+                //     spritesheet: mountainSheet,
+                //     terrain: mountainTerrain,
+                // },
+                // {
+                //     tileInfo: 'tree',
+                //     spritesheet: treeSheet,
+                //     terrain: treesTerrain,
+                // },
+            ],
+        });
+        this.stage.addChild(stacked);
+        this.grid = stacked;
     }
 
     get tileWidth() {
-        return this.compound.tileWidth;
+        return this.grid.tileSize.width;
     }
 
     get tileHeight() {
-        return this.compound.tileHeight;
+        return this.grid.tileSize.height;
     }
 
     get basePos() {
@@ -215,13 +248,13 @@ export class Level
     // Returns the width of the level in pixels (ie render size)
     get width()
     {
-        return this.compound.width;
+        return this.tileWidth * this.grid.cols;
     }
 
     // Returns the height of the level in pixels (ie render size)
     get height()
     {
-        return this.compound.height;
+        return this.tileHeight * this.grid.rows;
     }
 
     /* Find some clear space to spawn a thing at the given location. This code
@@ -229,6 +262,7 @@ export class Level
      * y-position of that free space. */
     findClearSpace(x, y)
     {
+        return null;
         let offset = 0;
         while(true)
         {
@@ -260,32 +294,30 @@ export class Level
             if (thing.update) thing.update(dt);
         }
 
-        if (this.player.velx != 0)
-        {
-            // Update the camera to track the player. Have the camera move
-            // smoothly towards the player to avoid jumping around.
-            // let xpos = this.basePos - this.camera.width/8;
-            let xpos = this.player.x - this.camera.width/2;
+        // Update the camera to track the player. Have the camera move
+        // smoothly towards the player to avoid jumping around.
+        // let xpos = this.basePos - this.camera.width/8;
+        const xpos = this.player.x - this.camera.width/2;
+        const ypos = this.player.y - this.camera.height/2;
 
-            // Make sure the camera stays within the level (compound)
-            xpos = Math.max(xpos, 0);
-            xpos = Math.min(xpos, this.compound.width-this.camera.width);
+        // Make sure the camera stays within the level (compound)
+        // xpos = Math.max(xpos, 0);
+        // xpos = Math.min(xpos, this.compound.width-this.camera.width);
 
-            if (this.smoothTracking) {
-                let dirx = Math.sign(xpos-this.camera.x);
-                this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
-                if (dirx != Math.sign(xpos-this.camera.x)) {
-                    // Overshot the target, stop smoothly tracking
-                    this.smoothTracking = false;
-                }
-            } else {
-                this.camera.x = xpos;
-            }
+        const dirx = Math.sign(xpos-this.camera.x);
+        const diry = Math.sign(ypos-this.camera.y);
+        this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
+        this.camera.y += dt*1.25*this.player.maxSpeed*diry;
+        if (dirx != Math.sign(xpos - this.camera.x)) {
+            this.camera.x = xpos;
+        }
+        if (diry != Math.sign(ypos - this.camera.y)) {
+            this.camera.y = ypos;
         }
 
-        if (this.player.fx > this.width) {
-            this.state = this.FINISHED;
-        }
+        // if (this.player.fx > this.width) {
+        //     this.state = this.FINISHED;
+        // }
 
         // Position the camera
         this.stage.x = -this.camera.x;
@@ -338,9 +370,10 @@ export class Level
 
     checkSolidAt(x, y, width)
     {
-        let left = this.compound.getTileAt(x-width/2, y);
-        let right = this.compound.getTileAt(x+width/2, y);
-        return left.solid || right.solid;
+        return x <= 0 || y <= 0 || x >= this.width || y >= this.height;
+        // let left = this.compound.getTileAt(x-width/2, y);
+        // let right = this.compound.getTileAt(x+width/2, y);
+        // return left.solid || right.solid;
     }
 
     // Add a 'thing' to the level and it's sprite to the render stage
@@ -358,6 +391,9 @@ export class Level
     // Remove a 'thing' remove the level and it's sprite from the stage
     removeThing(thing)
     {
+        if (!thing) {
+            return;
+        }
         let i = this.things.indexOf(thing);
         if (i >= 0) {
             this.things[i] = this.things[this.things.length-1];
@@ -400,7 +436,8 @@ export class Level
     }
 
     getTileAt(x, y) {
-        return this.compound.getTileAt(x, y);
+        // return this.compound.getTileAt(x, y);
+        return {};
     }
 
     isThingVisible(thing) {

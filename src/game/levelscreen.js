@@ -103,6 +103,8 @@ export class LevelScreen
             // Generate a new level and player character
             this.controls = GameControls.getControls();
             this.player = new Player(this.controls);
+            this.player.x = 50;
+            this.player.y = 50;
             this.levelNum = 0;
             // Auto-generate the first level
             let level = generateLevel(this.levelNum);

@@ -58,16 +58,17 @@ export class DeathAnimation extends Thing
         }
         else if (this.state === this.STATE_FALLING)
         {
-            // Have the monster 'fall off' the screen and disappear
-            this.vely += this.accely*dt;
-            this.monster.x += this.level.player.baseSpeed*1.5*dt;
-            this.monster.y += this.vely*dt;
-
-            if (!this.level.isThingVisible(this.monster))
-            {
-                this.monster.removeSelf();
-                this.removeSelf();
-            }
+            this.removeSelf();
+            // // Have the monster 'fall off' the screen and disappear
+            // this.vely += this.accely*dt;
+            // this.monster.x += this.level.player.baseSpeed*1.5*dt;
+            // this.monster.y += this.vely*dt;
+            //
+            // if (!this.level.isThingVisible(this.monster))
+            // {
+            //     this.monster.removeSelf();
+            //     this.removeSelf();
+            // }
         }
     }
 }

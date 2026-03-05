@@ -47,6 +47,7 @@ export var RES = {
     POWERUP3_SND: 'media/effects/powerup3.wav',
     POWERUP4_SND: 'media/effects/powerup4.wav',
     CHEST_SND: 'media/effects/chest_open.wav',
+    TILES_DIRT: 'tiles-dirt.json',
 
     CHUNKS: 'map.chunks.json',
     TILESET: 'map.tileset.json',

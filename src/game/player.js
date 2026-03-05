@@ -355,7 +355,7 @@ export class Player extends Thing
 
         // Make a splashy sound when we enter water
         let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
-        if (tile.water) {
+        if (tile?.water) {
             if (!this.waterSprite?.visible)
                 Audio.playSound(RES.SPLASH_SND);
             this.waterSprite.visible = true;
