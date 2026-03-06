@@ -40,7 +40,7 @@ export class Blood extends Thing
         this.sprite = new PIXI.Sprite(
             Resources.shared.getFrame(Utils.randomChoice(frames))
         );
-        this.sprite.zpos = Level.FLOOR_POS;
+        this.zpos = Level.FLOOR_POS;
         this.sprite.anchor.set(0.5, 0.5);
         this.timer = 0;
     }

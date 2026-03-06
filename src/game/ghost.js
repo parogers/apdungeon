@@ -21,7 +21,7 @@ import * as PIXI from 'pixi.js';
 
 import { Resources, RES } from './res';
 import { Utils } from './utils';
-import { Thing, Hitbox } from './thing';
+import { Thing, Hitbox, Creature } from './thing';
 import { Item } from './item';
 import { Audio } from './audio';
 
@@ -30,7 +30,7 @@ const GHOST_ATTACKING = 1;
 const GHOST_HURT = 2;
 const GHOST_DEAD = 3;
 
-export class Ghost
+export class Ghost extends Creature
 {
     constructor(state)
     {
@@ -141,6 +141,8 @@ export class Ghost
 
     handlePlayerCollision(player)
     {
-        player.takeDamage(4, this);
+        if (!this.dead) {
+            player.takeDamage(4, this);
+        }
     }
 }

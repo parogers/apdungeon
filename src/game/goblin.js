@@ -21,7 +21,7 @@ import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { Animation, TrackMover, Thing, Hitbox } from './thing';
+import { Animation, TrackMover, Thing, Hitbox, Creature } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -53,7 +53,7 @@ const RETREAT_SPEED = ATTACK_SPEED*1.5;
 
 /* The goblin keeps their distance while the player is facing them, and
  * quickly approaches to attack when the player's back is turned */
-export class Goblin extends Thing
+export class Goblin extends Creature
 {
     constructor()
     {
@@ -270,6 +270,8 @@ export class Goblin extends Thing
 
     handlePlayerCollision(player)
     {
-        player.takeDamage(2, this);
+        if (!this.dead) {
+            player.takeDamage(2, this);
+        }
     }
 }

@@ -273,11 +273,6 @@ export class Player extends Thing
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
-            console.log('Things:')
-            for (let thing of this.level.things) {
-                console.log(thing.name, thing.sprite?.zIndex);
-            }
-            console.log();
         }
 
         if (this.knockedTimer <= 0) {

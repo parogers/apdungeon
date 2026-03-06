@@ -294,26 +294,29 @@ export class Level
             if (thing.update) thing.update(dt);
         }
 
-        // Update the camera to track the player. Have the camera move
-        // smoothly towards the player to avoid jumping around.
-        // let xpos = this.basePos - this.camera.width/8;
+        // // Update the camera to track the player. Have the camera move
+        // // smoothly towards the player to avoid jumping around.
+        // // let xpos = this.basePos - this.camera.width/8;
         const xpos = this.player.x - this.camera.width/2;
         const ypos = this.player.y - this.camera.height/2;
+        //
+        // // Make sure the camera stays within the level (compound)
+        // // xpos = Math.max(xpos, 0);
+        // // xpos = Math.min(xpos, this.compound.width-this.camera.width);
+        //
+        // const dirx = Math.sign(xpos-this.camera.x);
+        // const diry = Math.sign(ypos-this.camera.y);
+        // this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
+        // this.camera.y += dt*1.25*this.player.maxSpeed*diry;
+        // if (dirx != Math.sign(xpos - this.camera.x)) {
+        //     this.camera.x = xpos;
+        // }
+        // if (diry != Math.sign(ypos - this.camera.y)) {
+        //     this.camera.y = ypos;
+        // }
 
-        // Make sure the camera stays within the level (compound)
-        // xpos = Math.max(xpos, 0);
-        // xpos = Math.min(xpos, this.compound.width-this.camera.width);
-
-        const dirx = Math.sign(xpos-this.camera.x);
-        const diry = Math.sign(ypos-this.camera.y);
-        this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
-        this.camera.y += dt*1.25*this.player.maxSpeed*diry;
-        if (dirx != Math.sign(xpos - this.camera.x)) {
-            this.camera.x = xpos;
-        }
-        if (diry != Math.sign(ypos - this.camera.y)) {
-            this.camera.y = ypos;
-        }
+        this.camera.x = xpos;
+        this.camera.y = ypos;
 
         // if (this.player.fx > this.width) {
         //     this.state = this.FINISHED;

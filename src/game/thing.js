@@ -170,6 +170,23 @@ export class Thing
     }
 }
 
+/************/
+/* Creature */
+/************/
+
+export class Creature extends Thing {
+    constructor() {
+        super();
+        this.health = 0;
+        this.facing = 1;
+    }
+
+    get dead() {
+        return this.health <= 0;
+    }
+}
+
+
 /**********/
 /* Hitbox */
 /**********/

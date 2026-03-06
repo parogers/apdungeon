@@ -21,7 +21,7 @@ import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { Animation, Thing, Hitbox } from './thing';
+import { Animation, Thing, Hitbox, Creature } from './thing';
 import { Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -30,7 +30,7 @@ import { DeathAnimation } from './snake';
 const STATE_FLYING = 0;
 const STATE_DEAD = 1;
 
-export class Bat extends Thing
+export class Bat extends Creature
 {
     constructor()
     {
@@ -92,6 +92,8 @@ export class Bat extends Thing
 
     handlePlayerCollision(player)
     {
-        player.takeDamage(1, this);
+        if (!this.dead) {
+            player.takeDamage(1, this);
+        }
     }
 };

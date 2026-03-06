@@ -21,11 +21,12 @@ import * as PIXI from 'pixi.js';
 
 import { RES, ANIM } from './res';
 import { Utils } from './utils';
-import { Animation, Thing, Hitbox } from './thing';
+import { Animation, Thing, Creature, Hitbox } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
 import { Blood } from './blood';
+import { Level } from './level';
 
 // Animates a monster falling off the screen as a death animation
 export class DeathAnimation extends Thing
@@ -36,6 +37,7 @@ export class DeathAnimation extends Thing
         this.STATE_FLIP = 0;
         this.STATE_FALLING = 1;
 
+        monster.zpos = Level.FLOOR_POS;
         this.monster = monster;
         this.accely = 100;
         this.vely = 0;
@@ -77,7 +79,7 @@ export class DeathAnimation extends Thing
 /* Snake */
 /*********/
 
-export class Snake extends Thing
+export class Snake extends Creature
 {
     constructor()
     {
@@ -223,7 +225,9 @@ export class Snake extends Thing
 
     handlePlayerCollision(player)
     {
-        player.takeDamage(1, this);
+        if (!this.dead) {
+            player.takeDamage(1, this);
+        }
     }
 }
 
@@ -241,14 +245,29 @@ export class Rat extends Snake
         super();
         this.name = 'Rat';
         this.anim = new Animation(ANIM.RAT_WALK);
-        this.health = -1;
+        this.health = 1;
         this.speed = 20;
         this.frame = 0;
         this.facing = -1;
+        this.timer = 0;
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
         this.snakeSprite.texture = this.anim.texture;
+    }
+
+    update(dt)
+    {
+        if (this.dead) {
+            return;
+        }
+        if (this.timer <= 0) {
+            this.timer = 5;
+            this.facing *= -1;
+        }
+        this.timer -= dt;
+        this.velx = this.facing*10;
+        this.x += this.velx*dt;
     }
 
     get shadowType() {
@@ -275,10 +294,24 @@ export class Scorpion extends Snake
         this.speed = 10;
         this.frame = 0;
         this.facing = -1;
+        this.timer = 0;
         this.knocked = 0;
         this.knockedTimer = 0;
         this.state = this.STATE_FORWARD;
         this.snakeSprite.texture = this.anim.texture;
         this.snakeSprite.anchor.set(0.5, 1);
+    }
+
+    update(dt) {
+        if (this.dead) {
+            return;
+        }
+        if (this.timer <= 0) {
+            this.timer = 10;
+            this.facing *= -1;
+        }
+        this.timer -= dt;
+        this.velx = this.facing*10;
+        this.x += this.velx*dt;
     }
 }

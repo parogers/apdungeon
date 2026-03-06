@@ -21,7 +21,7 @@ import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { Animation, TrackMover, Thing, Hitbox } from './thing';
+import { Animation, TrackMover, Thing, Hitbox, Creature } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -36,7 +36,7 @@ const STATE_CHANGE_TRACK = 4;
 
 /* The goblin keeps their distance while the player is facing them, and
  * quickly approaches to attack when the player's back is turned */
-export class SkelWarrior extends Thing
+export class SkelWarrior extends Creature
 {
     constructor()
     {
@@ -47,7 +47,7 @@ export class SkelWarrior extends Thing
         this.vely = 0;
         this.speed = 60;
         this.health = 4;
-        this.alwaysChargeDist = 24;
+        this.alwaysChargeDist = 15;
         this.facing = 1;
         this.chargeTimeout = 1;
         this.trackMover = null;
@@ -79,6 +79,9 @@ export class SkelWarrior extends Thing
 
     update(dt)
     {
+        if (this.dead) {
+            return;
+        }
         if (this.state === STATE_IDLE)
         {
             this.updateIdle(dt);
@@ -101,44 +104,37 @@ export class SkelWarrior extends Thing
         this.shadow.visible = !this.splash.visible;
     }
 
-    // Keep distance from the player
     updateIdle(dt)
     {
-        if (!this.level.player.running) {
+        const distx = this.level.player.fx - this.x;
+        const disty = this.level.player.fy - this.y;
+        if (Math.abs(distx) > 25 || Math.abs(disty) > 25) {
             return;
         }
-
-        // Facing the player, but slowly moving towards them
-        this.velx = this.level.baseSpeed*0.9;
+        if (Math.abs(distx) > 5) {
+            this.velx = Math.sign(distx)*10;
+        } else {
+            this.velx = 0;
+        }
+        if (Math.abs(disty) > 5) {
+            this.vely = Math.sign(disty)*15;
+        } else {
+            this.vely = 0;
+        }
         this.x += this.velx*dt;
+        this.y += this.vely*dt;
+        this.facing = Math.sign(distx);
 
         // Occasionally either charge the player, or change tracks to find them
         this.timer -= dt;
         if (this.timer <= 0)
         {
-            if (this.level.player.track === this.track ||
-                this.x < this.level.player.fx + this.alwaysChargeDist)
-            {
+            if (
+                Math.abs(this.x - this.level.player.fx) < this.alwaysChargeDist &&
+                Math.abs(this.y - this.level.player.fy) < 10
+            ) {
                 this.chargeOffset = this.x - this.level.player.fx;
                 this.state = STATE_CHARGING;
-            }
-            else if (this.level.player.track)
-            {
-                // Move towards the player
-                let track = null;
-                if (this.level.player.track.number < this.track.number) {
-                    track = this.level.getTrackAbove(this.track);
-                } else {
-                    track = this.level.getTrackBelow(this.track);
-                }
-                this.trackMover = new TrackMover(
-                    this,
-                    track,
-                    1.25*this.speed,
-                    0
-                );
-                this.state = STATE_CHANGE_TRACK;
-                this.timer = this.chargeTimeout;
             }
             else
             {
@@ -150,20 +146,18 @@ export class SkelWarrior extends Thing
     // Charging at the player
     updateCharging(dt)
     {
-        this.velx = this.level.baseSpeed - this.speed;
+        this.velx = 50*this.facing;
         this.x += this.velx*dt;
-
-        if (this.chargeOffset > this.alwaysChargeDist) {
-            if (this.x <= this.level.player.fx) {
-                this.state = STATE_RETREAT;
-            }
+        const dist = this.level.player.x - this.x;
+        if (Math.sign(dist) !== this.facing && Math.abs(dist) > 20) {
+            this.state = STATE_IDLE;
         }
-        else
-        {
-            if (this.x + this.monsterSprite.texture.width < 0) {
-                this.level.removeThing(this);
-            }
-        }
+        //
+        // if (this.chargeOffset > this.alwaysChargeDist) {
+        //     if (this.x <= this.level.player.fx) {
+        //         this.state = STATE_RETREAT;
+        //     }
+        // }
     }
 
     // Retreating back to a safe distance
@@ -218,6 +212,8 @@ export class SkelWarrior extends Thing
 
     handlePlayerCollision(player)
     {
-        player.takeDamage(2, this);
+        if (!this.dead) {
+            player.takeDamage(2, this);
+        }
     }
 }
