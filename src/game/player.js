@@ -98,7 +98,6 @@ export class Player extends Thing
         this.controls = controls;
         this.state = STATE_IDLE;
         this.trackMover = null;
-        this.waterSprite = null;
         this.knockedTimer = 0;
         this.usingTrackMovement = false;
         // The "nominal" X-pos of the player within the level. The player
@@ -176,16 +175,27 @@ export class Player extends Thing
             }
         };
         this.upgradeSword(Item.Table.SMALL_SWORD);
-        // this.upgradeBow(Item.Table.SMALL_BOW);
+        this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
+
+        // const mask = new PIXI.Graphics().rect(
+        //     -this.width/2,
+        //     -this.height,
+        //     this.width,
+        //     this.height*0.75
+        // ).fill();
+        // this.spriteChar.mask = mask;
+        // this.spriteChar.addChild(mask);
     }
 
     get width() {
-        return Math.abs(this.spriteChar.width);
+        // return Math.abs(this.spriteChar.width);
+        return this.walkAnim.texture.width;
     }
 
     get height() {
-        return Math.abs(this.spriteChar.height);
+        // return Math.abs(this.spriteChar.height);
+        return this.walkAnim.texture.height;
     }
 
     get facing()
@@ -198,14 +208,6 @@ export class Player extends Thing
         let dirx = Math.sign(value);
         this.sprite.scale.x = Math.abs(this.sprite.scale.x)*dirx;
         this.textSprite.scale.x = Math.abs(this.textSprite.scale.x)*dirx;
-    }
-
-    get inWater() {
-        return this.splash.visible;
-    }
-
-    set inWater(value) {
-        this.splash.visible = value;
     }
 
     update(dt) {
@@ -273,6 +275,7 @@ export class Player extends Thing
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
+            console.log(PIXI.Ticker.shared.FPS);
         }
 
         if (this.knockedTimer <= 0) {
@@ -347,18 +350,6 @@ export class Player extends Thing
         if (this.weaponSlot && this.weaponSlot.update) {
             this.weaponSlot.update(dt);
         }
-
-        // Make a splashy sound when we enter water
-        let tile = this.level.getTileAt(this.sprite.x, this.sprite.y);
-        if (tile?.water) {
-            if (!this.waterSprite?.visible)
-                Audio.playSound(RES.SPLASH_SND);
-            this.waterSprite.visible = true;
-        } else if (this.waterSprite) {
-            this.waterSprite.visible = false;
-        }
-
-        //if (controls.testKey && !controls.lastTestKey) this.health = 0;
 
         // Check for collisions with other things
         this.level.forEachThingHit(

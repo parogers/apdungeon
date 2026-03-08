@@ -149,23 +149,26 @@ export class Level
         //     new Track(this, 2, y),
         // ];
 
-        const sheet = Resources.shared.find(RES.TILES_DIRT);
+        const dirtSheet = Resources.shared.find(RES.TILES_DIRT);
+        const grassSheet = Resources.shared.find(RES.TILES_GRASS);
         const terrain = new Array(50).fill(0).map(() => {
             return new Array(100).fill(0).map(() => Utils.randomChoice([true, false]));
         });
         const stacked = new StackedGrid({
             bottomTileInfo: 'water',
+            // debugGridColor: 0x505050,
+            // debugDualGridColor: 0,
             layers: [
                 {
                     tileInfo: 'dirt',
-                    spritesheet: sheet,
+                    spritesheet: dirtSheet,
                     terrain: terrain,
                 },
-                // {
-                //     tileInfo: 'grass',
-                //     spritesheet: grassSheet,
-                //     terrain: grassTerrain,
-                // },
+                {
+                    tileInfo: 'grass',
+                    spritesheet: grassSheet,
+                    terrain: terrain,
+                },
                 // {
                 //     tileInfo: 'mountain',
                 //     spritesheet: mountainSheet,
@@ -439,8 +442,10 @@ export class Level
     }
 
     getTileAt(x, y) {
-        // return this.compound.getTileAt(x, y);
-        return {};
+        const cell = this.grid.getCellAt(x, y);
+        return {
+            type: cell?.tileInfo,
+        };
     }
 
     isThingVisible(thing) {

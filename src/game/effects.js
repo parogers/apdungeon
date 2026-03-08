@@ -101,12 +101,12 @@ export class Splash
 
     update(dt)
     {
-        let tile = this.thing.getTileUnder();
+        const tile = this.thing.level.grid.getSubTileInfoAt(this.thing.x, this.thing.y);
 
-        if (tile && tile.type === 'water' && this.thing.fh === 0)
+        if (tile && tile === 'water' && this.thing.fh === 0)
         {
             if (!this.visible && this.thing.isOnCamera && this.playSound) {
-                Audio.playSound(RES.SPLASH_SND);
+                Audio.playSound(RES.SPLASH_SND, 0.5);
             }
             this.visible = true;
         }
@@ -121,7 +121,7 @@ export class Splash
         if (this.visible)
         {
             this.waterSprite.scale.set(
-                1 + 0.08*Math.sin(this.timer*5)**2, 1
+                1 + 0.1*Math.sin(this.timer*5)**2, 1
             );
         }
     }
