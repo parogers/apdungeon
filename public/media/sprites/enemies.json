@@ -1,0 +1,160 @@
+{"frames": { 
+"enemy-scorpion-walk1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 27,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"enemy-scorpion-walk2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 9,
+    "y": 27,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"enemy-scorpion-walk3":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 18,
+    "y": 27,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"enemy-scorpion-walk4":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 27,
+    "y": 27,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"enemy-snake-walk1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 63,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"enemy-snake-walk2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 9,
+    "y": 63,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+}
+},
+"meta": {
+  "app": "https://github.com/houmain/spright",
+  "format": "RGBA8888",
+  "image": "enemies.png",
+  "size": { "w": 28, "h": 19 },
+  "scale": 1.0
+}
+}

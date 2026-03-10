@@ -29,29 +29,23 @@ const ITEM_GRAVITY = 120;
 /* GroundItem */
 /**************/
 
-export class GroundItem
+export class GroundItem extends Thing
 {
     constructor(item, x, y)
     {
+        super();
         let img = Resources.shared.getFrame(item.image);
         this.sprite = new PIXI.Sprite(img);
         this.sprite.anchor.set(0.5, 0.6);
-        this.height = 0;
         this.x = x;
         this.y = y;
-        this.ypos = y;
         this.item = item;
-        // Make the render depth fixed here, otherwise as the item bounces it
-        // will seem like it's moving back into the scene. (ie disappears behind
-        // other sprites)
-        this.sprite.zpos = y;
         this.velx = 0;
         this.vely = 0;
         this.accely = 0;
         this.accelx = 0;
         this.bouncy = 0.5;
         this.hitbox = new Hitbox(0, 0, 5, 5);
-
         this.taking = false;
     }
 

@@ -37,7 +37,8 @@ export class DeathAnimation extends Thing
         this.STATE_FLIP = 0;
         this.STATE_FALLING = 1;
 
-        monster.zpos = Level.FLOOR_POS;
+        monster.zpos = Level.ON_FLOOR_POS;
+        monster.sprite.tint = 0x808080;
         this.monster = monster;
         this.accely = 100;
         this.vely = 0;
@@ -147,14 +148,6 @@ export class Snake extends Creature
         else if (this.state === this.STATE_IDLE)
         {
         }
-        else if (this.state === this.STATE_FORWARD)
-        {
-            // Marching forward if the player is close enough
-            if (this.level.isThingVisible(this)) {
-                this.velx = -this.speed;
-                this.facing = -1;
-            }
-        }
         else if (this.state === this.STATE_HURT)
         {
             // The snake keeps its eyes closed while hurt
@@ -168,8 +161,7 @@ export class Snake extends Creature
                 }
                 this.knockedTimer -= dt;
             } else {
-                // Resume/start attacking
-                this.state = this.STATE_FORWARD;
+                this.state = this.STATE_PACING;
             }
         }
         else if (this.state === this.STATE_DEAD)

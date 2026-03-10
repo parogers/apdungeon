@@ -20,16 +20,14 @@
 import * as PIXI from 'pixi.js';
 
 export var RES = {
-    MALE_MELEE: 'media/rogue-like-8x8/Male-Melee.json',
-    FEMALE_MELEE: 'media/rogue-like-8x8/Girl-Melee.json',
     NPC_TILESET: 'media/rogue-like-8x8/NPC.json',
-    MAPTILES: 'media/rogue-like-8x8/Tileset2.json',
-    ENEMIES: 'media/rogue-like-8x8/Enemies.json',
     WEAPONS: 'media/rogue-like-8x8/Weapons.json',
-    GROUND_ITEMS: 'media/rogue-like-8x8/GroundItems.json',
+    GROUND_ITEMS: 'media/sprites/ground-items.json',
     UI: 'media/rogue-like-8x8/UI.json',
     // DRAGON: 'media/rogue-like-8x8/Dragon.json',
     MAP_OBJS: 'media/rogue-like-8x8/MapObjects.json',
+    PLAYER: 'media/sprites/player.json',
+    ENEMIES: 'media/sprites/enemies.json',
 
     GAME_MUSIC: 'media/music/A Journey Awaits2-lowfi.ogg',
     ATTACK_SWORD_SND: 'media/effects/attack_sword2.wav',
@@ -49,16 +47,13 @@ export var RES = {
     CHEST_SND: 'media/effects/chest_open.wav',
     TILES_DIRT: 'tiles-dirt.json',
     TILES_GRASS: 'tiles-grass.json',
-
-    CHUNKS: 'map.chunks.json',
-    TILESET: 'map.tileset.json',
 };
 
 
 export var ANIM = {
     SNAKE_WALK: {
         resource: RES.ENEMIES,
-        frames: ['enemy_snake_south_1', 'enemy_snake_south_2'],
+        frames: ['enemy-snake-walk1', 'enemy-snake-walk2'],
         fps: 2,
     },
 
@@ -69,26 +64,12 @@ export var ANIM = {
     },
 
     SCORPION_WALK: {
-        resource: RES.ENEMIES,
-        frames: ['enemy_scorpion_south_1', 'enemy_scorpion_south_2'],
+        frames: ['enemy-scorpion-walk1', 'enemy-scorpion-walk2'],
         fps: 2,
     },
 
     PLAYER1_WALK: {
-        resource: RES.FEMALE_MELEE,
-        frames: ['girl_melee1_south_1', 'girl_melee1_south_2', 'girl_melee1_south_3'],
-        fps: 10,
-    },
-
-    PLAYER2_WALK: {
-        resource: RES.FEMALE_MELEE,
-        frames: ['girl_melee2_south_1', 'girl_melee2_south_2', 'girl_melee2_south_3'],
-        fps: 10,
-    },
-
-    PLAYER3_WALK: {
-        resource: RES.FEMALE_MELEE,
-        frames: ['girl_melee3_south_1', 'girl_melee3_south_2', 'girl_melee3_south_3'],
+        frames: ['girl-melee1-idle', 'girl-melee1-walk1', 'girl-melee1-walk2'],
         fps: 10,
     },
 

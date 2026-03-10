@@ -1,0 +1,185 @@
+{"frames": { 
+"girl-melee1-idle":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"girl-melee1-walk1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 9,
+    "y": 0,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"girl-melee1-walk2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 18,
+    "y": 0,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"girl-melee1-lunge":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 9,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"girl-melee1-north-walk1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 9,
+    "y": 9,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"girl-melee1-north-walk2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 18,
+    "y": 9,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"girl-melee1-north-idle":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 9,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+}
+},
+"meta": {
+  "app": "https://github.com/houmain/spright",
+  "format": "RGBA8888",
+  "image": "player.png",
+  "size": { "w": 28, "h": 28 },
+  "scale": 1.0
+}
+}

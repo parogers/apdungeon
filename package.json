@@ -11,7 +11,8 @@
         "type-check": "vue-tsc --build",
         "lint": "run-s lint:*",
         "lint:oxlint": "oxlint . --fix",
-        "lint:eslint": "eslint . --fix --cache"
+        "lint:eslint": "eslint . --fix --cache",
+        "build-sprites": "./tools/make_sprites.sh"
     },
     "dependencies": {
         "@pixi/sound": "^5.2.3",

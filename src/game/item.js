@@ -27,7 +27,7 @@ import { Utils } from './utils';
 export class Item
 {
     constructor(image, type, quality) {
-        this.image = 'ground_item_' + image;
+        this.image = 'ground-item-' + image;
         this.type = type;
         this.quality = quality;
     };

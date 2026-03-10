@@ -152,7 +152,7 @@ export class Level
         const dirtSheet = Resources.shared.find(RES.TILES_DIRT);
         const grassSheet = Resources.shared.find(RES.TILES_GRASS);
         const terrain = new Array(50).fill(0).map(() => {
-            return new Array(100).fill(0).map(() => Utils.randomChoice([true, false]));
+            return new Array(100).fill(0).map(() => Utils.randomChoice([true, true, false]));
         });
         const stacked = new StackedGrid({
             bottomTileInfo: 'water',
@@ -459,6 +459,7 @@ export class Level
 Level.BEHIND_BACKGROUND_POS = -1;
 Level.BACKGROUND_POS = 0;
 Level.FLOOR_POS = 1;
+Level.ON_FLOOR_POS = 2;
 Level.FRONT_POS = 10000;
 Level.ROW_DEPTH = 5;
 
