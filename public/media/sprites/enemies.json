@@ -1,5 +1,5 @@
 {"frames": { 
-"enemy-scorpion-walk1":
+"enemy-scorpion-idle1":
 {
   "rotated": false,
   "trimmed": false,
@@ -24,7 +24,7 @@
     "y": 0.5
   }
 },
-"enemy-scorpion-walk2":
+"enemy-scorpion-idle2":
 {
   "rotated": false,
   "trimmed": false,
@@ -49,7 +49,7 @@
     "y": 0.5
   }
 },
-"enemy-scorpion-walk3":
+"enemy-scorpion-walk1":
 {
   "rotated": false,
   "trimmed": false,
@@ -74,7 +74,7 @@
     "y": 0.5
   }
 },
-"enemy-scorpion-walk4":
+"enemy-scorpion-walk2":
 {
   "rotated": false,
   "trimmed": false,

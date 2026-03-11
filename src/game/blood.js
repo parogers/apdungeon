@@ -29,6 +29,7 @@ export class Blood extends Thing
     constructor(type)
     {
         super();
+        this.name = 'Blood';
         let frames = null;
 
         if (type === Blood.DUST) {
@@ -37,31 +38,32 @@ export class Blood extends Thing
             frames = ['blood1', 'blood2', 'blood3'];
         }
 
-        this.sprite = new PIXI.Sprite(
+        this.bloodSprite = new PIXI.Sprite(
             Resources.shared.getFrame(Utils.randomChoice(frames))
         );
-        this.zpos = Level.FLOOR_POS;
-        this.sprite.anchor.set(0.5, 0.5);
+        this.bloodSprite.anchor.set(0.5, 0.5);
+        this.sprite.addChild(this.bloodSprite);
         this.timer = 0;
+        this.zpos = Level.FLOOR_POS;
     }
 
-    update(dt)
-    {
-        if (!this.isOnCamera)
-        {
-            this.level.removeThing(this);
-            return;
-        }
-
-        this.timer += dt;
-        if (this.timer > 0.1)
-        {
-            let tile = this.level.getTileAt(this.fx, this.fy);
-            if (tile.isWater) {
-                this.level.removeThing(this);
-            }
-        }
-    }
+    // update(dt)
+    // {
+    //     if (!this.isOnCamera)
+    //     {
+    //         this.level.removeThing(this);
+    //         return;
+    //     }
+    //
+    //     this.timer += dt;
+    //     if (this.timer > 0.1)
+    //     {
+    //         let tile = this.level.getTileAt(this.fx, this.fy);
+    //         if (tile.isWater) {
+    //             this.level.removeThing(this);
+    //         }
+    //     }
+    // }
 }
 
 Blood.RED = 0;

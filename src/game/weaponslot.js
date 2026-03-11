@@ -55,8 +55,7 @@ export class SwordWeaponSlot
 
         this.handleHitCallback = (function(hit) {
             if (hit.handleHit) {
-                hit.handleHit(this.player.fx,
-                              this.player.fy, 1);
+                hit.handleHit(this.player, 1);
             }
         }).bind(this);
     }
@@ -248,11 +247,7 @@ export class Arrow extends Thing
             );
             if (other && other.handleHit)
             {
-                let ret = other.handleHit(
-                    this.sprite.x,
-                    this.sprite.y,
-                    1
-                );
+                let ret = other.handleHit(this.owner, 1);
                 if (ret === true) {
                     this.removeSelf();
                 }

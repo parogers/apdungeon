@@ -22,59 +22,14 @@ import * as PIXI from 'pixi.js';
 import { RES, ANIM } from './res';
 import { Utils } from './utils';
 import { Animation, Thing, Creature, Hitbox } from './thing';
+import { Monster, DeathAnimation } from './monster';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
 import { Blood } from './blood';
 import { Level } from './level';
 
-// Animates a monster falling off the screen as a death animation
-export class DeathAnimation extends Thing
-{
-    constructor(monster)
-    {
-        super();
-        this.STATE_FLIP = 0;
-        this.STATE_FALLING = 1;
-
-        monster.zpos = Level.ON_FLOOR_POS;
-        monster.sprite.tint = 0x808080;
-        this.monster = monster;
-        this.accely = 100;
-        this.vely = 0;
-        this.state = this.STATE_FLIP;
-    }
-
-    update(dt)
-    {
-        if (this.state === this.STATE_FLIP)
-        {
-            if (this.monster.shadow) {
-                this.monster.shadow.remove();
-            }
-            if (this.monster.splash) {
-                this.monster.splash.remove();
-            }
-            this.monster.sprite.y -= 3; // TODO - magic number
-            this.monster.sprite.scale.y = -1;
-            this.state = this.STATE_FALLING;
-        }
-        else if (this.state === this.STATE_FALLING)
-        {
-            this.removeSelf();
-            // // Have the monster 'fall off' the screen and disappear
-            // this.vely += this.accely*dt;
-            // this.monster.x += this.level.player.baseSpeed*1.5*dt;
-            // this.monster.y += this.vely*dt;
-            //
-            // if (!this.level.isThingVisible(this.monster))
-            // {
-            //     this.monster.removeSelf();
-            //     this.removeSelf();
-            // }
-        }
-    }
-}
+export { DeathAnimation }
 
 /*********/
 /* Snake */
@@ -275,35 +230,46 @@ export class Rat extends Snake
 /* Scorpion */
 /************/
 
-export class Scorpion extends Snake
+export class Scorpion extends Monster
 {
     constructor()
     {
-        super();
+        super(ANIM.SCORPION_WALK);
         this.name = 'Scorpion';
-        this.anim = new Animation(ANIM.SCORPION_WALK);
         this.health = 4;
         this.speed = 10;
-        this.frame = 0;
         this.facing = -1;
-        this.timer = 0;
-        this.knocked = 0;
-        this.knockedTimer = 0;
-        this.state = this.STATE_FORWARD;
-        this.snakeSprite.texture = this.anim.texture;
-        this.snakeSprite.anchor.set(0.5, 1);
     }
 
     update(dt) {
         if (this.dead) {
             return;
         }
-        if (this.timer <= 0) {
-            this.timer = 10;
-            this.facing *= -1;
+        if (!this.stunned) {
+            if (this.timer <= 0) {
+                this.timer = 5;
+                this.facing *= -1;
+            }
+            this.timer -= dt;
+            this.velx = this.facing*this.speed;
         }
-        this.timer -= dt;
-        this.velx = this.facing*10;
-        this.x += this.velx*dt;
+        super.update(dt);
+    }
+
+    getDropTable()
+    {
+        return [
+            [[Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.COIN], 2],
+            [[Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW], 1],
+            [Item.Table.SMALL_HEALTH, 1]
+        ];
+    }
+
+    handleHit(sourceThing, dmg) {
+        if (this.dead) {
+            return;
+        }
+        super.handleHit(sourceThing, dmg);
+        this.facing = Math.sign(sourceThing.x - this.x);
     }
 }

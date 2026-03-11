@@ -412,35 +412,6 @@ export class Level
         }
     }
 
-    handleTreasureDrop(table, x, y)
-    {
-        // Pick an item entry from the table, using a weighted probability pick
-        // Entries look like: [item_number, weight]. First sum all the weights
-        // and pick a random number up to that total.
-        let total = 0;
-        for (let entry of table) {
-            total += entry[1];
-        }
-        // Pick a random number, then iterate over the items and find what
-        // item it corresponds to.
-        let pick = null;
-        let num = Utils.randint(0, total);
-        for (let entry of table) {
-            num -= entry[1];
-            if (num <= 0) {
-                pick = entry[0];
-                break;
-            }
-        }
-        // Drop the item
-        if (pick !== null) {
-            let gnd = new GroundItem(pick, x, y);
-            // gnd.velx = 10*(x > this.camera.x ? -1 : 1);
-            // gnd.velh = -40;
-            this.addThing(gnd);
-        }
-    }
-
     getTileAt(x, y) {
         const cell = this.grid.getCellAt(x, y);
         return {

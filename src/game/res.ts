@@ -65,7 +65,7 @@ export var ANIM = {
 
     SCORPION_WALK: {
         frames: ['enemy-scorpion-walk1', 'enemy-scorpion-walk2'],
-        fps: 2,
+        fps: 5,
     },
 
     PLAYER1_WALK: {

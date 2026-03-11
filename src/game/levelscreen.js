@@ -166,7 +166,8 @@ export class LevelScreen
         this.level = level;
 
         this.gameUI.setPlayer(this.player);
-        this.gameUI.container.position.set(0, level.height);
+        this.gameUI.container.position.set(0, 0);
+        this.gameUI.container.scale.set(0.5);
         this.gameUI.doLayout(
             level.camera.width,
             level.camera.height-level.height);

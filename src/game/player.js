@@ -275,7 +275,9 @@ export class Player extends Thing
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
-            console.log(PIXI.Ticker.shared.FPS);
+            for (let thing of this.level.things) {
+                console.log(thing.name, thing.sprite.zIndex, thing);
+            }
         }
 
         if (this.knockedTimer <= 0) {

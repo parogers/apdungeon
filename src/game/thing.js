@@ -84,6 +84,9 @@ export class Thing
         this._y = value;
         this.sprite.y = value;
         this.sprite.zIndex = this._zpos ?? value;
+        if (isNaN(this.sprite.zIndex)) {
+            throw Error(`sprite has NaN zIndex, value=${value}`);
+        }
     }
 
     get zpos() {
@@ -93,6 +96,9 @@ export class Thing
     set zpos(value) {
         this._zpos = value;
         this.sprite.zIndex = value ?? this.fy;
+        if (isNaN(this.sprite.zIndex)) {
+            throw Error(`sprite has NaN zIndex, value=${value}`);
+        }
     }
 
     // The horizontal position of the thing (equal to the sprite position)

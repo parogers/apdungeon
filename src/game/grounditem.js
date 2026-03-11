@@ -23,7 +23,7 @@ import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { Thing, Hitbox } from './thing';
 
-const ITEM_GRAVITY = 120;
+const ITEM_GRAVITY = 300;
 
 /**************/
 /* GroundItem */
@@ -37,65 +37,73 @@ export class GroundItem extends Thing
         let img = Resources.shared.getFrame(item.image);
         this.sprite = new PIXI.Sprite(img);
         this.sprite.anchor.set(0.5, 0.6);
-        this.x = x;
-        this.y = y;
+        this.x = x ?? 0;
+        this.y = y ?? 0;
         this.item = item;
         this.velx = 0;
         this.vely = 0;
-        this.accely = 0;
-        this.accelx = 0;
+        this.velh = 0;
         this.bouncy = 0.5;
         this.hitbox = new Hitbox(0, 0, 5, 5);
         this.taking = false;
     }
 
+    get falling() {
+        return this.fh > 0 || this.velh !== 0;
+    }
+
     update(dt)
     {
-        this.velx += this.accelx*dt;
-        this.vely += this.accely*dt;
+        if (this.falling)
+        {
+            // // First move the item into/out of the scene (Z-axis) and make sure
+            // // we don't bump into anything.
+            // if (this.velz !== 0) {
+            //     let dz = this.velz*dt;
+            //     let tile = this.level.getTileAt(this.sprite.x, this.ypos+dz);
+            //     // If we connect with a wall, don't bother bouncing off
+            //     if (tile.solid) this.velz = 0;
+            //     else {
+            //         this.ypos += dz;
+            //         this.sprite.zpos += dz;
+            //     }
+            // }
+            //
+            // // Move the item left/right having it bounce off walls too. Note we
+            // // check the "floor" position of the item instead of the sprite pos.
+            // let dx = this.velx*dt;
+            // let tile = this.level.getTileAt(this.sprite.x+dx, this.ypos);
+            // if (tile.solid) {
+            //     this.velx *= -1;
+            // } else {
+            //     this.sprite.x += dx;
+            // }
 
-        this.x += this.velx*dt;
-        this.y += this.vely*dt;
-
-        /*
-          if (this.velh !== 0)
-          {
-          // First move the item into/out of the scene (Z-axis) and make sure
-          // we don't bump into anything.
-          if (this.velz !== 0) {
-          let dz = this.velz*dt;
-          let tile = this.level.getTileAt(this.sprite.x, this.ypos+dz);
-          // If we connect with a wall, don't bother bouncing off
-          if (tile.solid) this.velz = 0;
-          else {
-          this.ypos += dz;
-          this.sprite.zpos += dz;
-          }
-          }
-
-          // Move the item left/right having it bounce off walls too. Note we
-          // check the "floor" position of the item instead of the sprite pos.
-          let dx = this.velx*dt;
-          let tile = this.level.getTileAt(this.sprite.x+dx, this.ypos);
-          if (tile.solid) {
-          this.velx *= -1;
-          } else {
-          this.sprite.x += dx;
-          }
-          this.velh += ITEM_GRAVITY*dt;
-          this.height -= this.velh*dt;
-
-          // Have the item bounce up/down until it comes to rest
-          if (this.height <= 0) {
-          if (this.velh < 10) {
-          this.velh = 0;
-          } else {
-          this.velh *= -this.bouncy;
-          this.height = 0;
-          }
-          }
-          this.sprite.y = this.ypos - this.height;
-          }*/
+            // Have the item bounce up/down until it comes to rest
+            this.fh += this.velh*dt;
+            if (this.fh <= 0 && Math.abs(this.velh) < 10) {
+                this.velh = 0;
+                this.fh = 0;
+            } else if (this.fh <= 0 && this.velh < 0) {
+                this.velh *= -this.bouncy;
+                this.fh = 0;
+            } else {
+                this.velh -= ITEM_GRAVITY*dt;
+            }
+        }
+        this.fx += this.velx*dt;
+        this.fy += this.vely*dt;
+        if (this.fh === 0) {
+            const friction = 30;
+            this.velx -= Math.sign(this.velx)*friction*dt;
+            this.vely -= Math.sign(this.vely)*friction*dt;
+            if (Math.abs(this.velx) < 1) {
+                this.velx = 0;
+            }
+            if (Math.abs(this.vely) < 1) {
+                this.vely = 0;
+            }
+        }
     }
 
     handlePlayerCollision(player)

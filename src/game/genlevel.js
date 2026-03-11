@@ -32,6 +32,7 @@ import { Chest } from './chest';
 import { Item } from './item';
 import { GroundItem } from './grounditem';
 import { Bat } from './bat';
+import { Blood } from './blood';
 
 const randint = Utils.randint;
 const randomChoice = Utils.randomChoice;
@@ -66,26 +67,31 @@ export function generateLevel(levelNum)
     //     level.addThing(monster);
     // }
 
-    for (let n = 0; n < 50; n++) {
-        const x = Utils.randint(0, level.width);
-        const y = Utils.randint(0, level.height);
-        const items = [
-            Item.Table.COIN,
-            Item.Table.NO_ARMOUR,
-            Item.Table.LEATHER_ARMOUR,
-            Item.Table.STEEL_ARMOUR,
-            Item.Table.SMALL_SWORD,
-        ];
-        const item = new GroundItem(Utils.randomChoice(items));
-        item.x = x;
-        item.y = y;
-        level.addThing(item);
-    }
+    // for (let n = 0; n < 50; n++) {
+    //     const x = Utils.randint(0, level.width);
+    //     const y = Utils.randint(0, level.height);
+    //     const items = [
+    //         Item.Table.COIN,
+    //         Item.Table.NO_ARMOUR,
+    //         Item.Table.LEATHER_ARMOUR,
+    //         Item.Table.STEEL_ARMOUR,
+    //         Item.Table.SMALL_SWORD,
+    //     ];
+    //     const item = new GroundItem(Utils.randomChoice(items));
+    //     item.x = x;
+    //     item.y = y;
+    //     level.addThing(item);
+    // }
 
     const mon = new Scorpion();
     mon.x = 60;
     mon.y = 60;
     level.addThing(mon);
+
+    const blood = new Blood();
+    blood.x = 40;
+    blood.y = 40;
+    level.addThing(blood);
 
     // // First level in the game. Add a chest of starter items. Have the
     // // chest eject items to the right away from the first NPC. (so none
