@@ -21,7 +21,7 @@ import * as PIXI from 'pixi.js';
 
 export var RES = {
     NPC_TILESET: 'media/rogue-like-8x8/NPC.json',
-    WEAPONS: 'media/rogue-like-8x8/Weapons.json',
+    WEAPONS: 'media/sprites/weapons.json',
     GROUND_ITEMS: 'media/sprites/ground-items.json',
     UI: 'media/rogue-like-8x8/UI.json',
     // DRAGON: 'media/rogue-like-8x8/Dragon.json',
@@ -68,7 +68,11 @@ export var ANIM = {
         fps: 5,
     },
 
-    PLAYER1_WALK: {
+    PLAYER1_NORTH_WALK: {
+        frames: ['girl-melee1-north-idle', 'girl-melee1-north-walk1', 'girl-melee1-north-walk2'],
+        fps: 10,
+    },
+    PLAYER1_SOUTH_WALK: {
         frames: ['girl-melee1-idle', 'girl-melee1-walk1', 'girl-melee1-walk2'],
         fps: 10,
     },

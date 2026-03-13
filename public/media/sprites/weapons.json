@@ -1,0 +1,385 @@
+{"frames": { 
+"weapon-axe1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 1,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-hatchet1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 10,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-sword1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 19,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.4375,
+    "y": 0.5625
+  }
+},
+"weapon-axe2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 1,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 28,
+    "y": 1,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-hatchet2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 10,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-sword2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 19,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.4375,
+    "y": 0.5625
+  }
+},
+"weapon-axe3":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 1,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-hatchet3":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 10,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 28,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-sword3":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 19,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.4375,
+    "y": 0.5625
+  }
+},
+"weapon-staff1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 1,
+    "y": 28,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-staff2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 10,
+    "y": 28,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-staff3":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 19,
+    "y": 28,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 28,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-bow1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 28,
+    "y": 28,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 1,
+    "y": 28,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5625,
+    "y": 0.4375
+  }
+},
+"weapon-bow2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 1,
+    "y": 37,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 28,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"weapon-arrow":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 10,
+    "y": 37,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 28,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.3125,
+    "y": 0.4375
+  }
+}
+},
+"meta": {
+  "app": "https://github.com/houmain/spright",
+  "format": "RGBA8888",
+  "image": "weapons.png",
+  "size": { "w": 37, "h": 37 },
+  "scale": 1.0
+}
+}

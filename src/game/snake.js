@@ -267,9 +267,10 @@ export class Scorpion extends Monster
 
     handleHit(sourceThing, dmg) {
         if (this.dead) {
-            return;
+            return false;
         }
         super.handleHit(sourceThing, dmg);
         this.facing = Math.sign(sourceThing.x - this.x);
+        return true;
     }
 }

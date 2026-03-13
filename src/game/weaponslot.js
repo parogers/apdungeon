@@ -28,46 +28,78 @@ const ARROW_FLIGHT = 0;
 const ARROW_FALLING = 1;
 const ARROW_DISAPPEAR = 2;
 
+
+export class WeaponSlot {
+    constructor(player) {
+        // Setup the weapon sprite (texture will come later)
+        this.sprite = new PIXI.Sprite();
+        this.facingSouth = true;
+        this.player = player;
+        // Which weapon texture is currently displayed
+        this.textureName = null;
+    }
+
+    get facingSouth() {
+        return this._facingSouth;
+    }
+
+    set facingSouth(value) {
+        this._facingSouth = value;
+        this.sprite.zIndex = value ? 1 : -1;
+    }
+
+    setTexture(name)
+    {
+        if (this.textureName !== name) {
+            this.sprite.texture = Resources.shared.getFrame('weapon-' + name);
+            this.textureName = name;
+            this.sprite.anchor.set(
+                this.sprite.texture.defaultAnchor.x,
+                this.sprite.texture.defaultAnchor.y
+            );
+        }
+    }
+
+}
+
 /*********/
 /* Sword */
 /*********/
 
-export class SwordWeaponSlot
+export class SwordWeaponSlot extends WeaponSlot
 {
     constructor(player)
     {
-        // Setup the weapon sprite (texture will come later)
-        this.sprite = new PIXI.Sprite();
-        //this.weaponSprite.anchor.set(6.5/8, 4/8.); // bow
-        this.sprite.anchor.set(4./8, 3.9/8); // sword
-        //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
+        super(player);
         // Sprite position (relative to the player) and rotation
-        this.sprite.x = 2.5;
-        this.sprite.y = -4;
-        this.sprite.rotation = -Math.PI/3;
+        // this.sprite.anchor.set(4.0/8, 4.2/8);
+        this.sprite.x = 2.75;
+        this.sprite.y = -3.75;
+        this.baseRotation = -Math.PI/2.2;
+        this.attackAngle = 0;
         this.attackCooldown = 0;
         this.weaponReach = 3.25;
-        this.player = player;
+        this.damage = 1;
         this.hitbox = new Hitbox(0, -4, 10, 6);
-        // Which weapon texture is currently displayed
-        this.textureName = null;
         this.setTexture('sword2');
+    }
 
-        this.handleHitCallback = (function(hit) {
-            if (hit.handleHit) {
-                hit.handleHit(this.player, 1);
-            }
-        }).bind(this);
+    handleHitCallback(hit) {
+        if (hit.handleHit) {
+            hit.handleHit(this.player, this.damage);
+        }
     }
 
     update(dt)
     {
         if (this.attackCooldown > 0) {
             this.attackCooldown -= dt;
+            this.sprite.rotation = this.attackAngle;
             if (this.attackCooldown <= 0) {
-                this.sprite.x = 2.5;
-                this.sprite.rotation = -Math.PI/3;
+                this.attackCooldown = 0;
             }
+        } else {
+            this.sprite.rotation = this.baseRotation;
         }
 
         /* Staff placement */
@@ -76,29 +108,20 @@ export class SwordWeaponSlot
           this.weaponSprite.rotation = 0;*/
     }
 
-    // Set which sword to display. The sprite is taken from the WEAPONS sheet
-    setTexture(name)
-    {
-        if (this.textureName !== name) {
-            this.sprite.texture = Resources.shared.getFrame('weapon_' + name);
-            this.textureName = name;
-        }
-    }
-
     startAttack()
     {
         if (this.attackCooldown > 0) return;
 
         Audio.playSound(RES.ATTACK_SWORD_SND);
-        this.sprite.rotation = 0;
-        this.sprite.x = 3.5;
+        // this.sprite.rotation = 0;
         this.attackCooldown = 0.15;
 
         this.player.level.forEachThingHit(
             this.player.fx + this.player.facing*this.weaponReach,
             this.player.fy,
             this.hitbox, this.player,
-            this.handleHitCallback);
+            hit => this.handleHitCallback(hit)
+        );
     }
 
     stopAttack()
@@ -110,22 +133,18 @@ export class SwordWeaponSlot
 /* Bow */
 /*******/
 
-export class BowWeaponSlot
+export class BowWeaponSlot extends WeaponSlot
 {
     constructor(player)
     {
-        // Setup the weapon sprite (texture will come later)
-        this.sprite = new PIXI.Sprite();
-        this.sprite.anchor.set(6.5/8, 4/8.); // bow
+        super(player);
         //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
         // Sprite position (relative to the player) and rotation
-        this.player = player;
         this.attackCooldown = 0;
         this.textureName = null;
         this.setTexture('bow1');
-        // Vertical offset from the player position where the arrow
-        // is fired.
-        this.arrowFireHeight = 2.5;
+        this.sprite.x = 2.75;
+        this.sprite.y = -3.5;
     }
 
     update(dt)
@@ -135,12 +154,8 @@ export class BowWeaponSlot
             //this.sprite.rotation = Math.PI/5 +
             //(Math.PI/40)*Math.cos(10*this.player.frame);
             this.sprite.rotation = Math.PI/5;
-            this.sprite.x = 3.0;
-            this.sprite.y = -2.5;
         } else {
             this.sprite.rotation = 0;
-            this.sprite.x = 3;
-            this.sprite.y = -3.25;
             this.attackCooldown -= dt;
         }
         /* Staff placement */
@@ -149,31 +164,21 @@ export class BowWeaponSlot
           this.weaponSprite.rotation = 0;*/
     }
 
-    // Set which bow to display. The sprite is taken from the WEAPONS sheet
-    setTexture(name)
-    {
-        if (this.textureName !== name) {
-            this.sprite.texture = Resources.shared.getFrame('weapon_' + name);
-            this.textureName = name;
-        }
-    }
-
     startAttack()
     {
-        // Make sure we have an arrow to fire
         if (this.player.numArrows <= 0) return;
         if (this.attackCooldown > 0) return;
         Audio.playSound(RES.ATTACK_SWORD_SND);
         this.attackCooldown = 0.15;
-
         this.player.numArrows--;
 
-        let arrow = new Arrow(
+        const arrow = new Arrow(
             this.player,
-            this.player.fx,
-            this.player.fy,
+            this.player.x + this.sprite.x*this.player.facing,
+            this.player.y,
             this.player.baseSpeed + this.player.facing*100, 0,
-            this.arrowFireHeight);
+            Math.abs(this.sprite.y)
+        );
         this.player.level.addThing(arrow);
     }
 
@@ -193,9 +198,8 @@ export class Arrow extends Thing
         super();
         this.owner = owner;
         this.arrowSprite = new PIXI.Sprite(
-            Resources.shared.getFrame('weapon_arrow')
+            Resources.shared.getFrame('weapon-arrow')
         );
-        this.arrowSprite.anchor.set(0.5, 0.5);
         this.arrowSprite.scale.x = Math.sign(velx);
         this.arrowSprite.scale.y = 1;
         this.sprite.addChild(this.arrowSprite);
@@ -212,7 +216,7 @@ export class Arrow extends Thing
 
     update(dt)
     {
-        let level = this.owner.level;
+        const level = this.owner.level;
         if (this.state === ARROW_FLIGHT)
         {
             this.fx += this.velx*dt;
@@ -224,7 +228,7 @@ export class Arrow extends Thing
                 this.removeSelf();
             }
             // Check if the arrow hits a wall
-            let tile = level.getTileAt(
+            const tile = level.getTileAt(
                 this.sprite.x + Math.sign(this.velx)*4,
                 this.sprite.y + this.fh
             );
@@ -239,7 +243,7 @@ export class Arrow extends Thing
                 return;
             }
             // Now check if we've hit an enemy
-            let other = level.checkHit(
+            const other = level.checkHit(
                 this.sprite.x,
                 this.sprite.y,
                 this.hitbox,
@@ -247,7 +251,7 @@ export class Arrow extends Thing
             );
             if (other && other.handleHit)
             {
-                let ret = other.handleHit(this.owner, 1);
+                const ret = other.handleHit(this.owner, 1);
                 if (ret === true) {
                     this.removeSelf();
                 }

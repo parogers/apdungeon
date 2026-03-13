@@ -61,7 +61,8 @@ export class TitleScreen
         // The PIXI container for rendering the scene
         this.stage = new PIXI.Container();
         this.stage.scale.set(scale);
-        this.state = this.PLAYING_INTRO;
+        // this.state = this.PLAYING_INTRO;
+        this.state = this.NEW_GAME;
 
         this.bg = new PIXI.Sprite(Resources.shared.getFrame('black'));
         this.bg.anchor.set(0, 0);

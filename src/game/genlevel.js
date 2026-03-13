@@ -88,11 +88,6 @@ export function generateLevel(levelNum)
     mon.y = 60;
     level.addThing(mon);
 
-    const blood = new Blood();
-    blood.x = 40;
-    blood.y = 40;
-    level.addThing(blood);
-
     // // First level in the game. Add a chest of starter items. Have the
     // // chest eject items to the right away from the first NPC. (so none
     // // of the items become hidden behind)

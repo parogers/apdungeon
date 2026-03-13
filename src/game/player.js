@@ -127,6 +127,7 @@ export class Player extends Thing
         // image of the monster (for displaying stats later)
         //     {count: ZZZ, img: ZZZ}
         this.kills = {};
+        this.facingSouth = true;
 
         // Define the hitbox
         this.hitbox = new Hitbox(0, -2, 2, 2);
@@ -134,6 +135,7 @@ export class Player extends Thing
         this.setCharFrames('player1');
         // Setup the player sprite (texture comes later)
         this.spriteChar = new PIXI.Sprite();
+        this.spriteChar.zIndex = 0;
         this.spriteChar.anchor.set(0.5, 1);
         this.sprite.addChild(this.spriteChar);
 
@@ -275,9 +277,6 @@ export class Player extends Thing
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
-            for (let thing of this.level.things) {
-                console.log(thing.name, thing.sprite.zIndex, thing);
-            }
         }
 
         if (this.knockedTimer <= 0) {
@@ -329,6 +328,7 @@ export class Player extends Thing
         let w = this.spriteChar.texture.width*0.75;
         if (this.velx) {
             let x = this.x + this.velx*dt;
+            this.facingSouth = true;
             // Keep the player visible to the camera
             if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
                 x-w/2 >= this.level.camera.x &&
@@ -340,6 +340,7 @@ export class Player extends Thing
         }
         // Handle up/down movement
         if (this.vely) {
+            this.facingSouth = this.vely >= 0;
             let y = this.y + this.vely*dt;
             if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
                 this.y = y;
@@ -347,6 +348,7 @@ export class Player extends Thing
                 this.vely = 0;
             }
         }
+        this.weaponSlot.facingSouth = this.facingSouth;
 
         // Update the equipped weapon
         if (this.weaponSlot && this.weaponSlot.update) {
@@ -499,9 +501,17 @@ export class Player extends Thing
         }
     }
 
+    get walkAnim() {
+        if (this.facingSouth) {
+            return this.walkSouthAnim;
+        }
+        return this.walkNorthAnim;
+    }
+
     setCharFrames(base)
     {
-        this.walkAnim = new Animation(ANIM[base.toUpperCase() + '_WALK']);
+        this.walkNorthAnim = new Animation(ANIM.PLAYER1_NORTH_WALK);
+        this.walkSouthAnim = new Animation(ANIM.PLAYER1_SOUTH_WALK);
     }
 
     setArmour(item)

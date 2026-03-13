@@ -49,14 +49,14 @@ export class Monster extends Creature {
 
     handleHit(souceThing, dmg) {
         if (this.dead) {
-            return;
+            return false;
         }
         this.health -= dmg;
         if (this.dead) {
             Audio.playSound(RES.DEAD_SND);
             this.level.addThing(new DeathAnimation(this));
             this.handleTreasureDrop();
-            return;
+            return true;
         }
         Audio.playSound(RES.SNAKE_HURT_SND);
         this.knocked = Math.sign(this.x - souceThing.x)*60;
