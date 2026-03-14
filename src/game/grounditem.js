@@ -93,7 +93,7 @@ export class GroundItem extends Thing
         }
         this.fx += this.velx*dt;
         this.fy += this.vely*dt;
-        if (this.fh === 0) {
+        if (!this.taking && this.fh === 0) {
             const friction = 30;
             this.velx -= Math.sign(this.velx)*friction*dt;
             this.vely -= Math.sign(this.vely)*friction*dt;
@@ -110,8 +110,8 @@ export class GroundItem extends Thing
     {
         if (!this.taking && this.item && player.handleTakeItem(this.item))
         {
-            this.velx = 2*player.velx;
-            this.vely = -40;
+            this.velx = 1.5*player.velx*Utils.randUniform(1, 1.1);
+            this.vely = -40*Utils.randUniform(1, 1.2);
             this.accelx = 0;
             this.accely = 0;
             this.taking = true;
