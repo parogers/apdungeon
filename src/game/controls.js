@@ -62,102 +62,98 @@ class Input
     }
 }
 
-function GameControlsCls()
+class PlayerGameControls
 {
-    // Map of Input instances stored by key code
-    this.inputByKey = {};
-    this.inputs = [];
-    this.time = 0;
-    // Keep track of the last input pressed, so we can detect double-pressing
-    this.lastInputPressed = null;
-    this.lastInputPressedTime = 0;
-    // Whether the player is driving these controls with a touchscreen
-    this.hasTouch = false;
-    for (let arg of DEFAULTS)
-    {
-        let name = arg[0];
-        let keys = arg[1];
-
-        if (typeof(keys.push) !== 'function') {
-            keys = [keys];
-        }
-
-        this[name] = new Input(name);
-        this.inputs.push(this[name]);
-        for (let key of keys) {
-            this.inputByKey[key] = this[name];
-        }
-    }
-}
-
-GameControlsCls.prototype.getX = function()
-{
-    return (this.right.held - this.left.held);
-}
-
-GameControlsCls.prototype.getY = function()
-{
-    return (this.down.held - this.up.held);
-}
-
-/* This should be called after the game state is updated */
-GameControlsCls.prototype.update = function(dt)
-{
-    this.time += dt;
-    for (let input of this.inputs) {
-        input.pressed = false;
-        input.released = false;
-        input.doublePressed = false;
-    }
-}
-
-GameControlsCls.prototype.attachKeyboardEvents = function()
-{
-    this.onKeydown = (event) => {
-        if (event.repeat) {
-            return;
-        }
-        let input = this.inputByKey[event.key];
-        if (input && !input.held)
+    constructor() {
+        // Map of Input instances stored by key code
+        this.inputByKey = {};
+        this.inputs = [];
+        this.time = 0;
+        // Keep track of the last input pressed, so we can detect double-pressing
+        this.lastInputPressed = null;
+        this.lastInputPressedTime = 0;
+        // Whether the player is driving these controls with a touchscreen
+        this.hasTouch = false;
+        for (let arg of DEFAULTS)
         {
-            // Handle double-pressing the input
-            if (this.lastInputPressed === input &&
-                this.time - this.lastInputPressedTime < DOUBLE_PRESS_TIME)
-            {
-                input.doublePressed = true;
+            let name = arg[0];
+            let keys = arg[1];
+
+            if (typeof(keys.push) !== 'function') {
+                keys = [keys];
             }
-            this.lastInputPressedTime = this.time;
-            this.lastInputPressed = input;
 
-            input.press();
-            event.stopPropagation();
-            event.preventDefault();
+            this[name] = new Input(name);
+            this.inputs.push(this[name]);
+            for (let key of keys) {
+                this.inputByKey[key] = this[name];
+            }
         }
-    };
-    this.onKeyup = (event) => {
-        let input = this.inputByKey[event.key];
-        if (input) {
-            input.release();
-            event.stopPropagation();
-            event.preventDefault();
+    }
+
+    getX() {
+        return (this.right.held - this.left.held);
+    }
+
+    getY() {
+        return (this.down.held - this.up.held);
+    }
+
+    /* This should be called after the game state is updated */
+    update(dt)
+    {
+        this.time += dt;
+        for (let input of this.inputs) {
+            input.pressed = false;
+            input.released = false;
+            input.doublePressed = false;
         }
-    };
-    window.addEventListener('keydown', this.onKeydown);
-    window.addEventListener('keyup', this.onKeyup);
-}
+    }
 
-GameControlsCls.prototype.attach = function()
-{
-    this.attachKeyboardEvents();
-}
+    attachKeyboardEvents()
+    {
+        this.onKeydown = (event) => {
+            if (event.repeat) {
+                return;
+            }
+            let input = this.inputByKey[event.key];
+            if (input && !input.held)
+            {
+                // Handle double-pressing the input
+                if (this.lastInputPressed === input &&
+                    this.time - this.lastInputPressedTime < DOUBLE_PRESS_TIME)
+                {
+                    input.doublePressed = true;
+                }
+                this.lastInputPressedTime = this.time;
+                this.lastInputPressed = input;
 
-GameControlsCls.prototype.configureButtons = function()
-{
-}
+                input.press();
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        };
+        this.onKeyup = (event) => {
+            let input = this.inputByKey[event.key];
+            if (input) {
+                input.release();
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        };
+        window.addEventListener('keydown', this.onKeydown);
+        window.addEventListener('keyup', this.onKeyup);
+    }
 
-GameControlsCls.prototype.destroy = function() {
-    window.removeEventListener('keydown', this.onKeydown);
-    window.removeEventListener('keyup', this.onKeyup);
+    attach()
+    {
+        this.attachKeyboardEvents();
+    }
+
+    destroy() {
+        window.removeEventListener('keydown', this.onKeydown);
+        window.removeEventListener('keyup', this.onKeyup);
+    }
 }
 
 /******************/
@@ -193,7 +189,7 @@ export class ManualControls
 export var GameControls = {
     configure: function(view)
     {
-        controls = new GameControlsCls(view);
+        controls = new PlayerGameControls(view);
         controls.attach();
     },
 
