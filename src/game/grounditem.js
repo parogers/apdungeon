@@ -49,7 +49,7 @@ export class GroundItem extends Thing
     }
 
     get falling() {
-        return this.fh > 0 || this.velh !== 0;
+        return !this.taking && (this.fh > 0 || this.velh !== 0);
     }
 
     update(dt)
