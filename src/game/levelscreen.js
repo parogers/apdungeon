@@ -169,11 +169,12 @@ export class LevelScreen
         this.gameUI.container.position.set(0, 0);
         this.gameUI.container.scale.set(0.5);
         this.gameUI.doLayout(
-            level.camera.width,
-            level.camera.height-level.height);
+            level.viewport.width,
+            level.viewport.height - level.height
+        );
 
         // Put the go marker in the top-right corner of the level area
-        this.goMarker.sprite.position.set(level.camera.width-1, 2);
+        this.goMarker.sprite.position.set(level.viewport.width - 1, 2);
         this.level.player = this.player;
         this.level.addThing(this.player);
         this.level.update(0);
@@ -193,8 +194,9 @@ export class LevelScreen
     {
         if (this.level) {
             let scale = Math.min(
-                Render.getRenderer().width / this.level.camera.width,
-                Render.getRenderer().height / this.level.camera.height);
+                Render.getRenderer().width / this.level.viewport.width,
+                Render.getRenderer().height / this.level.viewport.height
+            );
             this.stage.scale.set(scale);
         }
     }

@@ -25,18 +25,6 @@ import { Render } from './render';
 import { GroundItem } from './grounditem';
 import { StackedGrid } from '@parogers/pixijs-easygrid';
 
-/**********/
-/* Camera */
-/**********/
-
-function Camera(w, h)
-{
-    this.x = 0;
-    this.y = 0;
-    this.width = w;
-    this.height = h;
-}
-
 /*********/
 /* Track */
 /*********/
@@ -105,7 +93,6 @@ export class LevelDarkness
     }
 
     update(dt) {
-        this.sprite.x = this.level.camera.x;
     }
 }
 
@@ -121,7 +108,6 @@ export class Level
         this.PLAYING = 0;
         this.FINISHED = 1;
 
-        this.camera = new Camera(Level.CAMERA_WIDTH, Level.CAMERA_HEIGHT);
         this.player = null;
         this.state = this.PLAYING;
         // The background sprite (TiledBackground)
@@ -132,22 +118,12 @@ export class Level
         // The PIXI container for everything we want to draw
         this.stage = new PIXI.Container();
         this.stage.sortableChildren = true;
-        // this.compound.addToLevel(this);
 
-        this.darkness = new LevelDarkness();
-        this.addThing(this.darkness);
+        // this.darkness = new LevelDarkness();
+        // this.addThing(this.darkness);
 
         this.smoothTracking = true;
         this.exitDoor = null;
-
-        // let tileHeight = this.compound.tileHeight;
-        // let y = this.compound.height - 2;
-        this.tracks = [];
-        // this.tracks = [
-        //     new Track(this, 0, y-tileHeight*2),
-        //     new Track(this, 1, y-tileHeight),
-        //     new Track(this, 2, y),
-        // ];
 
         const dirtSheet = Resources.shared.find(RES.TILES_DIRT);
         const grassSheet = Resources.shared.find(RES.TILES_GRASS);
@@ -156,6 +132,7 @@ export class Level
         });
         const stacked = new StackedGrid({
             bottomTileInfo: 'water',
+            autoUpdate: false, // we'll use our own ticker
             // debugGridColor: 0x505050,
             // debugDualGridColor: 0,
             layers: [
@@ -183,6 +160,14 @@ export class Level
         });
         this.stage.addChild(stacked);
         this.grid = stacked;
+        this.grid.viewport.width = Level.CAMERA_WIDTH;
+        this.grid.viewport.height = Level.CAMERA_HEIGHT;
+
+        this.groundStage.sortableChildren = true;
+    }
+
+    get groundStage() {
+        return this.grid.getLayer('grass').foreground;
     }
 
     get tileWidth() {
@@ -199,6 +184,10 @@ export class Level
 
     get baseSpeed() {
         return this.player.baseSpeed;
+    }
+
+    get viewport() {
+        return this.grid.viewport;
     }
 
     isFinished() {
@@ -297,37 +286,11 @@ export class Level
             if (thing.update) thing.update(dt);
         }
 
-        // // Update the camera to track the player. Have the camera move
-        // // smoothly towards the player to avoid jumping around.
-        // // let xpos = this.basePos - this.camera.width/8;
-        const xpos = this.player.x - this.camera.width/2;
-        const ypos = this.player.y - this.camera.height/2;
-        //
-        // // Make sure the camera stays within the level (compound)
-        // // xpos = Math.max(xpos, 0);
-        // // xpos = Math.min(xpos, this.compound.width-this.camera.width);
-        //
-        // const dirx = Math.sign(xpos-this.camera.x);
-        // const diry = Math.sign(ypos-this.camera.y);
-        // this.camera.x += dt*1.25*this.player.maxSpeed*dirx;
-        // this.camera.y += dt*1.25*this.player.maxSpeed*diry;
-        // if (dirx != Math.sign(xpos - this.camera.x)) {
-        //     this.camera.x = xpos;
-        // }
-        // if (diry != Math.sign(ypos - this.camera.y)) {
-        //     this.camera.y = ypos;
-        // }
-
-        this.camera.x = xpos;
-        this.camera.y = ypos;
-
-        // if (this.player.fx > this.width) {
-        //     this.state = this.FINISHED;
-        // }
-
-        // Position the camera
-        this.stage.x = -this.camera.x;
-        this.stage.y = -this.camera.y;
+        const xpos = this.player.x - this.grid.viewport.width/2;
+        const ypos = this.player.y - this.grid.viewport.height/2;
+        this.grid.viewport.x = xpos;
+        this.grid.viewport.y = ypos;
+        this.grid.update(dt);
     }
 
     /* Check if the given hitbox, at the given position, overlaps with any thing
@@ -388,7 +351,7 @@ export class Level
         thing.level = this;
         this.things.push(thing);
         if (thing.sprite) {
-            this.stage.addChild(thing.sprite);
+            this.groundStage.addChild(thing.sprite);
         }
         if (x !== undefined) thing.fx = x;
         if (y !== undefined) thing.fy = y;
@@ -420,10 +383,7 @@ export class Level
     }
 
     isThingVisible(thing) {
-        return (
-            thing.x < this.camera.x + this.camera.width &&
-                thing.x + thing.width > this.camera.x
-        );
+        return this.grid.viewport.contains(thing.x, thing.y);
     }
 }
 

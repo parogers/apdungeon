@@ -222,10 +222,9 @@ export class Arrow extends Thing
             this.fx += this.velx*dt;
             this.fy += this.vely*dt;
             // The arrow disappears when it's no longer visible
-            if (this.sprite.x < level.camera.x ||
-                this.sprite.x > level.camera.x + level.camera.width)
-            {
+            if (!level.isThingVisible(this)) {
                 this.removeSelf();
+                return;
             }
             // Check if the arrow hits a wall
             const tile = level.getTileAt(

@@ -112,12 +112,9 @@ export class GroundItem extends Thing
         {
             this.velx = 2*player.velx;
             this.vely = -40;
-            this.accelx = -20;
-            this.accely = -20;
+            this.accelx = 0;
+            this.accely = 0;
             this.taking = true;
-        }
-        if (this.sprite.y < -this.sprite.height) {
-            this.removeSelf();
         }
     }
 }

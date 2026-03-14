@@ -277,6 +277,7 @@ export class Player extends Thing
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
+            console.log(this.level.grid.viewport);
         }
 
         if (this.knockedTimer <= 0) {
@@ -325,24 +326,21 @@ export class Player extends Thing
         //}
 
         // Handle left/right movement
-        let w = this.spriteChar.texture.width*0.75;
+        const w = this.spriteChar.texture.width*0.75;
         if (this.velx) {
-            let x = this.x + this.velx*dt;
             this.facingSouth = true;
-            // Keep the player visible to the camera
-            if (!this.level.checkSolidAt(x, this.sprite.y, w) &&
-                x-w/2 >= this.level.camera.x &&
-                x+w/2 <= this.level.camera.x + this.level.camera.width) {
+            const x = this.x + this.velx*dt;
+            if (!this.level.checkSolidAt(this.x, this.y, w)) {
                 this.x = x;
-                } else {
-                    this.velx = 0;
-                }
+            } else {
+                this.vely = 0;
+            }
         }
         // Handle up/down movement
         if (this.vely) {
             this.facingSouth = this.vely >= 0;
             let y = this.y + this.vely*dt;
-            if (!this.level.checkSolidAt(this.sprite.x, y, w)) {
+            if (!this.level.checkSolidAt(this.x, y, w)) {
                 this.y = y;
             } else {
                 this.vely = 0;
