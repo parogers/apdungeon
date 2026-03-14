@@ -339,7 +339,7 @@ export class Level
 
     checkSolidAt(x, y, width)
     {
-        return x <= 0 || y <= 0 || x >= this.width || y >= this.height;
+        return x < 0 || y < 0 || x >= this.width || y >= this.height;
         // let left = this.compound.getTileAt(x-width/2, y);
         // let right = this.compound.getTileAt(x+width/2, y);
         // return left.solid || right.solid;

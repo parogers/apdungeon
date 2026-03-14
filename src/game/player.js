@@ -330,7 +330,7 @@ export class Player extends Thing
         if (this.velx) {
             this.facingSouth = true;
             const x = this.x + this.velx*dt;
-            if (!this.level.checkSolidAt(this.x, this.y, w)) {
+            if (!this.level.checkSolidAt(x, this.y, w)) {
                 this.x = x;
             } else {
                 this.vely = 0;
