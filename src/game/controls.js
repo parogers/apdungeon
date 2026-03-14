@@ -76,10 +76,10 @@ class PlayerGameControls
         this.hasTouch = false;
         for (let arg of DEFAULTS)
         {
-            let name = arg[0];
+            const name = arg[0];
             let keys = arg[1];
 
-            if (typeof(keys.push) !== 'function') {
+            if (!Array.isArray(keys)) {
                 keys = [keys];
             }
 
@@ -116,7 +116,7 @@ class PlayerGameControls
             if (event.repeat) {
                 return;
             }
-            let input = this.inputByKey[event.key];
+            const input = this.inputByKey[event.key];
             if (input && !input.held)
             {
                 // Handle double-pressing the input
@@ -134,7 +134,7 @@ class PlayerGameControls
             }
         };
         this.onKeyup = (event) => {
-            let input = this.inputByKey[event.key];
+            const input = this.inputByKey[event.key];
             if (input) {
                 input.release();
                 event.stopPropagation();
@@ -168,7 +168,7 @@ export class ManualControls
 
         for (let arg of DEFAULTS)
         {
-            let name = arg[0];
+            const name = arg[0];
             this[name] = new Input(name);
         }
     }
