@@ -17,15 +17,14 @@
  * See LICENSE.txt for the full text of the license.
  */
 
-const PRIMARY = 90;
-const PRIMARY_ALT = 65;
-const SWAP = 88;
-const SPACE = 32;
-const ARROW_UP = 38;
-const ARROW_LEFT = 37;
-const ARROW_RIGHT = 39;
-const ARROW_DOWN = 40;
-const TEST_KEY = 75;
+const PRIMARY = 'Enter';
+const PRIMARY_ALT = 'z';
+const SWAP = 'x';
+const SPACE = ' ';
+const ARROW_UP = ['w', 'ArrowUp'];
+const ARROW_LEFT = ['a', 'ArrowLeft'];
+const ARROW_RIGHT = ['d', 'ArrowRight'];
+const ARROW_DOWN = ['s', 'ArrowDown'];
 
 const DOUBLE_PRESS_TIME = 0.3;
 
@@ -115,7 +114,10 @@ GameControlsCls.prototype.update = function(dt)
 GameControlsCls.prototype.attachKeyboardEvents = function()
 {
     this.onKeydown = (event) => {
-        let input = this.inputByKey[event.keyCode];
+        if (event.repeat) {
+            return;
+        }
+        let input = this.inputByKey[event.key];
         if (input && !input.held)
         {
             // Handle double-pressing the input
@@ -133,7 +135,7 @@ GameControlsCls.prototype.attachKeyboardEvents = function()
         }
     };
     this.onKeyup = (event) => {
-        let input = this.inputByKey[event.keyCode];
+        let input = this.inputByKey[event.key];
         if (input) {
             input.release();
             event.stopPropagation();
