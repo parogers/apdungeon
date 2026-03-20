@@ -110,10 +110,12 @@ export class Player extends Thing
         this.vely = 0;
         this.accelx = 0;
         this.accely = 0;
+        this.moveTo = new PIXI.Point(0, 0);
+        this.movingTo = false;
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
-        this.maxSpeed = 30; // pixels/second
+        this.maxSpeed = 50; // pixels/second
         // Inventory stuff
         this.numCoins = 0;
         this.numArrows = 0;
@@ -212,6 +214,11 @@ export class Player extends Thing
         this.textSprite.scale.x = Math.abs(this.textSprite.scale.x)*dirx;
     }
 
+    faceDirection(x, y) {
+        this.facing = Math.sign(x) || this.facing;
+        this.facingSouth = y >= 0;
+    }
+
     update(dt) {
         this.updateFree(dt);
         this.damageTimer.update(dt);
@@ -272,80 +279,101 @@ export class Player extends Thing
         }
 
         // Handle attacking
-        if (this.controls.primary.pressed) this.startAttack();
-        if (!this.controls.primary.released) this.stopAttack();
+        // if (this.controls.primary.pressed) this.startAttack();
+        // if (!this.controls.primary.released) this.stopAttack();
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
-            console.log(this.level.grid.viewport);
         }
 
-        if (this.knockedTimer <= 0) {
-            dirx = this.controls.getX();
-            diry = this.controls.getY();
-        } else {
-            this.velx = this.knocked;
+        if (this.knockedTimer > 0) {
             this.knockedTimer -= dt;
         }
 
-        if (this.lungeTimer > 0) {
-            this.lungeTimer -= dt;
-        } else {
-            if (dirx) {
-                this.facing = dirx;
-                this.velx = dirx * this.maxSpeed;
+        // if (this.lungeTimer > 0) {
+        //     this.lungeTimer -= dt;
+        // } else {
+        //     if (dirx) {
+        //         this.facing = dirx;
+        //         this.velx = dirx * this.maxSpeed;
+        //
+        //         if (this.controls.left.doublePressed ||
+        //            this.controls.right.doublePressed)
+        //         {
+        //            console.log('LUNGE!');
+        //            this.velx *= 3;
+        //            this.lungeTimer = 0.25;
+        //         }
+        //     } else {
+        //         this.velx *= 0.75;
+        //     }
+        // }
 
-                if (this.controls.left.doublePressed ||
-                   this.controls.right.doublePressed)
-                {
-                   console.log('LUNGE!');
-                   this.velx *= 3;
-                   this.lungeTimer = 0.25;
-                }
+        // if (diry) {
+        //     this.vely = diry * this.maxSpeed;
+        // } else {
+        //     this.vely *= 0.75;
+        // }
+
+        if (this.movingTo) {
+            const dist = this.moveTo.subtract(this.sprite.position);
+            if (dist.magnitude() > 1) {
+                const vel = dist.normalize().multiplyScalar(this.maxSpeed);
+                this.velx = vel.x;
+                this.vely = vel.y;
             } else {
-                this.velx *= 0.75;
+                // this.velx = 0;
+                // this.vely = 0;
+                this.movingTo = false;
             }
-        }
-
-        if (diry) {
-            this.vely = diry * this.maxSpeed;
         } else {
-            this.vely *= 0.75;
+            this.velx *= 0.9;
+            this.vely *= 0.9;
         }
 
-        if (dirx || diry) {
-            this.frame += dt;
-        } else {
-            this.frame = 0;
-        }
-
-        //let speed = Math.sqrt(this.velx*this.velx + this.vely*this.vely);
-        //if (speed > this.maxSpeed) {
-        //this.velx *= this.maxSpeed/speed;
-        //this.vely *= this.maxSpeed/speed;
-        //}
-
-        // Handle left/right movement
-        const w = this.spriteChar.texture.width*0.75;
-        if (this.velx) {
-            this.facingSouth = true;
+        if (this.velx || this.vely) {
+            const w = this.spriteChar.texture.width*0.75;
             const x = this.x + this.velx*dt;
+            const y = this.y + this.vely*dt;
             if (!this.level.checkSolidAt(x, this.y, w)) {
                 this.x = x;
             } else {
-                this.vely = 0;
+                this.velx = 0;
             }
-        }
-        // Handle up/down movement
-        if (this.vely) {
-            this.facingSouth = this.vely >= 0;
-            let y = this.y + this.vely*dt;
             if (!this.level.checkSolidAt(this.x, y, w)) {
                 this.y = y;
             } else {
                 this.vely = 0;
             }
+            if (!this.controls.shift.held) {
+                this.faceDirection(this.velx || this.facing, this.vely || (
+                    this.facingSouth ? 1 : -1
+                ));
+            }
         }
+
+        if (this.controls.mouse.pressed || this.controls.mouse.held)
+        {
+            const mapx = this.controls.mouse.x + this.level.grid.viewport.x;
+            const mapy = this.controls.mouse.y + this.level.grid.viewport.y;
+            if (this.controls.shift.held) {
+                if (this.controls.mouse.held) {
+                    this.faceDirection(mapx - this.x, mapy - this.y);
+                    this.weaponSlot.startAttack(mapx, mapy);
+                    this.movingTo = false;
+                }
+            } else if (this.controls.mouse.held && this.controls.mouse.released) {
+                this.movingTo = false;
+            } else if (this.controls.mouse.held) {
+                this.moveTo.set(mapx, mapy);
+                this.movingTo = true;
+            }
+        }
+
+        // this.facing = Math.sign(this.velx) || this.facing;
+        // this.facingSouth = this.vely === 0 ? this.facingSouth : this.vely >= (
+        //     this.movingTo ? -10 : 0
+        // );
         this.weaponSlot.facingSouth = this.facingSouth;
 
         // Update the equipped weapon
@@ -365,8 +393,7 @@ export class Player extends Thing
         if (Math.abs(this.velx) < 0.1) this.velx = 0;
         if (Math.abs(this.vely) < 0.1) this.vely = 0;
         if (this.velx || this.vely) {
-            this.walkAnim.update(dt);
-            this.spriteChar.texture = this.walkAnim.texture;
+            this.spriteChar.texture = this.walkAnim.update(dt);
         } else {
             this.spriteChar.texture = this.walkAnim.frames[0];
         }

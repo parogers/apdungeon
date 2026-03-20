@@ -200,6 +200,13 @@ export class LevelScreen
             this.stage.scale.set(scale);
         }
     }
+
+    static getViewSize() {
+        return {
+            width: Level.CAMERA_WIDTH,
+            height: Level.CAMERA_HEIGHT,
+        };
+    }
 }
 
 LevelScreen.getAspectRatio = function()

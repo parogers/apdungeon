@@ -17,6 +17,8 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import { Render } from './render.js';
+
 const PRIMARY = 'Enter';
 const PRIMARY_ALT = 'z';
 const SWAP = 'x';
@@ -25,7 +27,9 @@ const ARROW_UP = ['w', 'ArrowUp'];
 const ARROW_LEFT = ['a', 'ArrowLeft'];
 const ARROW_RIGHT = ['d', 'ArrowRight'];
 const ARROW_DOWN = ['s', 'ArrowDown'];
+const SHIFT = 'Shift';
 
+const DEFAULT_MOUSE_BUTTON = 1;
 const DOUBLE_PRESS_TIME = 0.3;
 
 const DEFAULTS = [
@@ -35,7 +39,8 @@ const DEFAULTS = [
     ['right', ARROW_RIGHT],
     ['primary', [PRIMARY, PRIMARY_ALT]],
     ['swap', SWAP],
-    ['space', SPACE]
+    ['space', SPACE],
+    ['shift', SHIFT],
 ];
 
 var controls = null;
@@ -62,6 +67,21 @@ class Input
     }
 }
 
+class Mouse {
+    constructor() {
+        this.x = null;
+        this.y = null;
+        this.dragging = false;
+        this.pressed = false;
+        this.released = false;
+        this.held = false;
+    }
+
+    get hasClicked() {
+        return this.x !== null && this.y !== null;
+    }
+}
+
 class PlayerGameControls
 {
     constructor() {
@@ -72,6 +92,7 @@ class PlayerGameControls
         // Keep track of the last input pressed, so we can detect double-pressing
         this.lastInputPressed = null;
         this.lastInputPressedTime = 0;
+        this.mouse = new Mouse();
         // Whether the player is driving these controls with a touchscreen
         this.hasTouch = false;
         for (let arg of DEFAULTS)
@@ -108,6 +129,47 @@ class PlayerGameControls
             input.released = false;
             input.doublePressed = false;
         }
+        if (this.mouse.pressed) {
+            this.mouse.held = true;
+        }
+        if (this.mouse.released) {
+            this.mouse.held = false;
+            this.mouse.dragging = false;
+            this.mouse.x = null;
+            this.mouse.y = null;
+        }
+        this.mouse.pressed = false;
+        this.mouse.released = false;
+    }
+
+    attachMouseEvents() {
+        this.onMouseDown = event => {
+            if (event.which !== DEFAULT_MOUSE_BUTTON) {
+                return;
+            }
+            this.mouse.pressed = true;
+            this.mouse.held = false;
+            const pos = Render.mouseToViewPos(event.x, event.y);
+            this.mouse.x = pos.x;
+            this.mouse.y = pos.y;
+        }
+        this.onMouseUp = event => {
+            if (event.which !== DEFAULT_MOUSE_BUTTON) {
+                return;
+            }
+            this.mouse.released = true;
+        }
+        this.onMouseMove = event => {
+            if (this.mouse.held) {
+                const pos = Render.mouseToViewPos(event.x, event.y);
+                this.mouse.x = pos.x;
+                this.mouse.y = pos.y;
+                this.mouse.dragging = true;
+            }
+        }
+        Render.container.addEventListener('mousedown', this.onMouseDown);
+        Render.container.addEventListener('mouseup', this.onMouseUp);
+        Render.container.addEventListener('mousemove', this.onMouseMove);
     }
 
     attachKeyboardEvents()
@@ -148,11 +210,15 @@ class PlayerGameControls
     attach()
     {
         this.attachKeyboardEvents();
+        this.attachMouseEvents();
     }
 
     destroy() {
         window.removeEventListener('keydown', this.onKeydown);
         window.removeEventListener('keyup', this.onKeyup);
+        window.removeEventListener('mousedown', this.onMouseDown);
+        window.removeEventListener('mouseup', this.onMouseUp);
+        window.removeEventListener('mousemove', this.onMouseMove);
     }
 }
 

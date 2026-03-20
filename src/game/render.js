@@ -40,12 +40,15 @@ export class Render {
     static container = null;
     // The preferred aspect ratio for sizing the render view
     static aspectRatio = 1;
+    static viewWidth = 0;
+    static viewHeight = 0;
 
     /* Configures the renderer (via PIXI) and adds the view to the given HTML
      * element. The renderer width/height will conform to the given aspect
      * ratio. */
-    static async configure(div, aspect)
+    static async configure(div, viewWidth, viewHeight)
     {
+        const aspect = viewWidth/viewHeight;
         const { width, height } = getMaxFit(div, aspect);
 
         PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -57,6 +60,8 @@ export class Render {
             preserveDrawingBuffer: true,
             //clearBeforeRender: true
         });
+        Render.viewWidth = viewWidth;
+        Render.viewHeight = viewHeight;
 
         div.innerHTML = '';
         div.appendChild(Render.renderer.canvas);
@@ -79,5 +84,12 @@ export class Render {
             Render.aspectRatio
         );
         Render.renderer.resize(width, height);
+    }
+
+    static mouseToViewPos(x, y) {
+        return {
+            x: Render.viewWidth * x / Render.renderer.width,
+            y: Render.viewHeight * y / Render.renderer.height
+        };
     }
 }

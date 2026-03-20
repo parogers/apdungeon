@@ -18,6 +18,8 @@
  */
 
 import * as PIXI from 'pixi.js';
+import 'pixi.js/math-extras';
+
 import { soundAsset } from '@pixi/sound';
 import { RES } from './res';
 import { Render } from './render';
@@ -56,7 +58,8 @@ export class Game
     }
 
     async configure() {
-        await Render.configure(this.element, LevelScreen.getAspectRatio());
+        const { width, height } = LevelScreen.getViewSize();
+        await Render.configure(this.element, width, height);
         GameControls.configure();
     }
 

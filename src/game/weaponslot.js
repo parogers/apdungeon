@@ -31,11 +31,9 @@ const ARROW_DISAPPEAR = 2;
 
 export class WeaponSlot {
     constructor(player) {
-        // Setup the weapon sprite (texture will come later)
         this.sprite = new PIXI.Sprite();
         this.facingSouth = true;
         this.player = player;
-        // Which weapon texture is currently displayed
         this.textureName = null;
     }
 
@@ -71,13 +69,12 @@ export class SwordWeaponSlot extends WeaponSlot
     constructor(player)
     {
         super(player);
-        // Sprite position (relative to the player) and rotation
-        // this.sprite.anchor.set(4.0/8, 4.2/8);
         this.sprite.x = 2.75;
         this.sprite.y = -3.75;
         this.baseRotation = -Math.PI/2.2;
         this.attackAngle = 0;
-        this.attackCooldown = 0;
+        this.attackCooldownTimer = 0;
+        this.attackCooldown = 0.35;
         this.weaponReach = 3.25;
         this.damage = 1;
         this.hitbox = new Hitbox(0, -4, 10, 6);
@@ -92,29 +89,22 @@ export class SwordWeaponSlot extends WeaponSlot
 
     update(dt)
     {
-        if (this.attackCooldown > 0) {
-            this.attackCooldown -= dt;
+        if (this.attackCooldownTimer > 0) {
+            this.attackCooldownTimer -= dt;
+        }
+        if (this.attackCooldownTimer > this.attackCooldown/2) {
             this.sprite.rotation = this.attackAngle;
-            if (this.attackCooldown <= 0) {
-                this.attackCooldown = 0;
-            }
         } else {
             this.sprite.rotation = this.baseRotation;
         }
-
-        /* Staff placement */
-        /*this.weaponSprite.x = 3.4*SCALE;
-          this.weaponSprite.y = -4*SCALE;
-          this.weaponSprite.rotation = 0;*/
     }
 
     startAttack()
     {
-        if (this.attackCooldown > 0) return;
+        if (this.attackCooldownTimer > 0) return;
 
         Audio.playSound(RES.ATTACK_SWORD_SND);
-        // this.sprite.rotation = 0;
-        this.attackCooldown = 0.15;
+        this.attackCooldownTimer = this.attackCooldown;
 
         this.player.level.forEachThingHit(
             this.player.fx + this.player.facing*this.weaponReach,
@@ -138,9 +128,8 @@ export class BowWeaponSlot extends WeaponSlot
     constructor(player)
     {
         super(player);
-        //this.weaponSprite.anchor.set(5.5/8, 4./8); // staff
-        // Sprite position (relative to the player) and rotation
-        this.attackCooldown = 0;
+        this.attackCooldown = 0.35;
+        this.attackCooldownTimer = 0;
         this.textureName = null;
         this.setTexture('bow1');
         this.sprite.x = 2.75;
@@ -149,35 +138,36 @@ export class BowWeaponSlot extends WeaponSlot
 
     update(dt)
     {
-        if (this.attackCooldown <= 0) {
-            /* Have the bow rock back and forth as the player moves. */
-            //this.sprite.rotation = Math.PI/5 +
-            //(Math.PI/40)*Math.cos(10*this.player.frame);
+        if (this.attackCooldownTimer <= 0) {
             this.sprite.rotation = Math.PI/5;
         } else {
             this.sprite.rotation = 0;
-            this.attackCooldown -= dt;
+            this.attackCooldownTimer -= dt;
         }
-        /* Staff placement */
-        /*this.weaponSprite.x = 3.4*SCALE;
-          this.weaponSprite.y = -4*SCALE;
-          this.weaponSprite.rotation = 0;*/
     }
 
-    startAttack()
+    startAttack(targetX, targetY)
     {
         if (this.player.numArrows <= 0) return;
-        if (this.attackCooldown > 0) return;
+        if (this.attackCooldownTimer > 0) return;
         Audio.playSound(RES.ATTACK_SWORD_SND);
-        this.attackCooldown = 0.15;
+        this.attackCooldownTimer = this.attackCooldown;
         this.player.numArrows--;
+
+        const sourceX = this.player.x + this.sprite.x*this.player.facing;
+        const sourceY = this.player.y + this.sprite.y;
+        const dx = targetX - sourceX;
+        const dy = targetY - sourceY;
+        const mag = Math.sqrt(dx*dx + dy*dy);
 
         const arrow = new Arrow(
             this.player,
-            this.player.x + this.sprite.x*this.player.facing,
-            this.player.y,
-            this.player.baseSpeed + this.player.facing*100, 0,
-            Math.abs(this.sprite.y)
+            sourceX,
+            sourceY,
+            // this.player.baseSpeed + this.player.facing*100, 0,
+            150*dx/mag,
+            150*dy/mag,
+            0, // Math.abs(this.sprite.y)
         );
         this.player.level.addThing(arrow);
     }
@@ -200,9 +190,10 @@ export class Arrow extends Thing
         this.arrowSprite = new PIXI.Sprite(
             Resources.shared.getFrame('weapon-arrow')
         );
-        this.arrowSprite.scale.x = Math.sign(velx);
-        this.arrowSprite.scale.y = 1;
+        // this.arrowSprite.scale.x = Math.sign(velx);
+        // this.arrowSprite.scale.y = 1;
         this.sprite.addChild(this.arrowSprite);
+        this.sprite.rotation = Math.atan2(vely, velx);
         this.fx = x;
         this.fy = y;
         this.fh = h;
