@@ -201,16 +201,7 @@ export class Creature extends Thing {
 /* Hitbox */
 /**********/
 
-// A hitbox that defines an area of a thing to test collisions against. Note
-// the (x, y) point is relative to the thing's sprite position, and (w, h)
-// defines a rectangle that is centered on that position.
-export function Hitbox(x, y, w, h)
-{
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-}
+export const Hitbox = PIXI.Rectangle;
 
 /**************/
 /* TrackMover */

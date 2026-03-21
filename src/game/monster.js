@@ -27,6 +27,7 @@ export class Monster extends Creature {
         this.knockedTimer = 0;
         this.knocked = 0;
         this.attackFrame = null;
+        this.hitbox = new PIXI.Rectangle(0, 0, 4, 4);
     }
 
     get stunned() {

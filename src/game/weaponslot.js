@@ -35,6 +35,7 @@ export class WeaponSlot {
         this.facingSouth = true;
         this.player = player;
         this.textureName = null;
+        this.weaponReach = 4;
     }
 
     get facingSouth() {
@@ -75,7 +76,7 @@ export class SwordWeaponSlot extends WeaponSlot
         this.attackAngle = 0;
         this.attackCooldownTimer = 0;
         this.attackCooldown = 0.35;
-        this.weaponReach = 3.25;
+        this.weaponReach = 8;
         this.damage = 1;
         this.hitbox = new Hitbox(0, -4, 10, 6);
         this.setTexture('sword2');
@@ -134,6 +135,7 @@ export class BowWeaponSlot extends WeaponSlot
         this.setTexture('bow1');
         this.sprite.x = 2.75;
         this.sprite.y = -3.5;
+        this.weaponReach = 100;
     }
 
     update(dt)
@@ -239,7 +241,7 @@ export class Arrow extends Thing
                 this.hitbox,
                 this.owner
             );
-            if (other && other.handleHit)
+            if (other?.handleHit && !other?.dead)
             {
                 const ret = other.handleHit(this.owner, 1);
                 if (ret === true) {

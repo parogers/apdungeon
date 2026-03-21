@@ -38,8 +38,9 @@ const JUMP_ACCEL = -1000;
 const RUNNING_ACCEL = 500;
 
 const STATE_IDLE = 1;
-const STATE_CHANGING_TRACK = 2;
-const STATE_KNOCKED_BACK = 3;
+const STATE_MOVING_TO = 2;
+const STATE_ATTACKING = 3;
+const STATE_MOVE_TO_ATTACK = 4;
 
 /* Tracks something taking damage. It tracks how long to flash the sprite
  * red and the damage cooldown time. */
@@ -88,6 +89,7 @@ class DamageTimer
         return this.expired;
     }
 }
+
 
 export class Player extends Thing
 {
@@ -290,45 +292,96 @@ export class Player extends Thing
             this.knockedTimer -= dt;
         }
 
-        // if (this.lungeTimer > 0) {
-        //     this.lungeTimer -= dt;
-        // } else {
-        //     if (dirx) {
-        //         this.facing = dirx;
-        //         this.velx = dirx * this.maxSpeed;
-        //
-        //         if (this.controls.left.doublePressed ||
-        //            this.controls.right.doublePressed)
-        //         {
-        //            console.log('LUNGE!');
-        //            this.velx *= 3;
-        //            this.lungeTimer = 0.25;
-        //         }
+        // if (this.movingTo) {
+        //     const dist = this.moveTo.subtract(this.sprite.position);
+        //     if (dist.magnitude() > 1) {
+        //         const vel = dist.normalize().multiplyScalar(this.maxSpeed);
+        //         this.velx = vel.x;
+        //         this.vely = vel.y;
         //     } else {
-        //         this.velx *= 0.75;
+        //         this.movingTo = false;
+        //     }
+        // } else {
+        //     this.velx *= 0.9;
+        //     this.vely *= 0.9;
+        // }
+        //
+
+        // if (this.controls.mouse.pressed || this.controls.mouse.held)
+        // {
+        //     const mapx = this.controls.mouse.x + this.level.grid.viewport.x;
+        //     const mapy = this.controls.mouse.y + this.level.grid.viewport.y;
+        //     if (this.controls.shift.held) {
+        //         if (this.controls.mouse.held) {
+        //             this.faceDirection(mapx - this.x, mapy - this.y);
+        //             this.weaponSlot.startAttack(mapx, mapy);
+        //             this.movingTo = false;
+        //         }
+        //     } else if (this.controls.mouse.held && this.controls.mouse.released) {
+        //         this.movingTo = false;
+        //     } else if (this.controls.mouse.held) {
+        //         this.moveTo.set(mapx, mapy);
+        //         this.movingTo = true;
         //     }
         // }
-
-        // if (diry) {
-        //     this.vely = diry * this.maxSpeed;
-        // } else {
-        //     this.vely *= 0.75;
-        // }
-
-        if (this.movingTo) {
+        if (this.state === STATE_IDLE) {
+            if (this.controls.mouse.pressed) {
+                const { x, y } = this.level.getMousePos();
+                const hit = this.level.getThingAt(x, y);
+                if (hit && !hit.dead) {
+                    this.target = hit;
+                    this.state = STATE_ATTACKING;
+                } else {
+                    this.moveTo = new PIXI.Point(x, y);
+                    this.state = STATE_MOVING_TO;
+                }
+            }
+        } else if (this.state === STATE_MOVING_TO) {
+            if (this.controls.mouse.held) {
+                const { x, y } = this.level.getMousePos();
+                this.moveTo = new PIXI.Point(x, y);
+            }
             const dist = this.moveTo.subtract(this.sprite.position);
             if (dist.magnitude() > 1) {
                 const vel = dist.normalize().multiplyScalar(this.maxSpeed);
                 this.velx = vel.x;
                 this.vely = vel.y;
             } else {
-                // this.velx = 0;
-                // this.vely = 0;
-                this.movingTo = false;
+                this.state = STATE_IDLE;
+                this.velx = 0;
+                this.vely = 0;
             }
-        } else {
-            this.velx *= 0.9;
-            this.vely *= 0.9;
+        } else if (this.state === STATE_ATTACKING) {
+            if (this.target.dead) {
+                this.state = STATE_IDLE;
+                this.target = null;
+                this.velx = 0;
+                this.vely = 0;
+            } else if (this.controls.mouse.pressed) {
+                const { x, y } = this.level.getMousePos();
+                this.moveTo = new PIXI.Point(x, y);
+                this.state = STATE_MOVING_TO;
+            } else {
+                this.moveTo = new PIXI.Point(this.target.x, this.target.y);
+                const dist = this.moveTo.subtract(this.sprite.position);
+                if (dist.magnitude() >= this.weaponSlot.weaponReach) {
+                    const speed = Math.min(
+                        100*(dist.magnitude() - this.weaponSlot.weaponReach),
+                        this.maxSpeed
+                    );
+                    const vel = dist.normalize().multiplyScalar(speed);
+                    this.velx = vel.x;
+                    this.vely = vel.y;
+                } else {
+                    this.velx *= 0.9;
+                    this.vely *= 0.9;
+                    this.faceDirection(
+                        this.target.x - this.x,
+                        this.target.y - this.y
+                    );
+                    this.weaponSlot.startAttack(this.target.x, this.target.y);
+                }
+            }
         }
 
         if (this.velx || this.vely) {
@@ -345,35 +398,10 @@ export class Player extends Thing
             } else {
                 this.vely = 0;
             }
-            if (!this.controls.shift.held) {
-                this.faceDirection(this.velx || this.facing, this.vely || (
-                    this.facingSouth ? 1 : -1
-                ));
-            }
+            this.faceDirection(this.velx || this.facing, this.vely || (
+                this.facingSouth ? 1 : -1
+            ));
         }
-
-        if (this.controls.mouse.pressed || this.controls.mouse.held)
-        {
-            const mapx = this.controls.mouse.x + this.level.grid.viewport.x;
-            const mapy = this.controls.mouse.y + this.level.grid.viewport.y;
-            if (this.controls.shift.held) {
-                if (this.controls.mouse.held) {
-                    this.faceDirection(mapx - this.x, mapy - this.y);
-                    this.weaponSlot.startAttack(mapx, mapy);
-                    this.movingTo = false;
-                }
-            } else if (this.controls.mouse.held && this.controls.mouse.released) {
-                this.movingTo = false;
-            } else if (this.controls.mouse.held) {
-                this.moveTo.set(mapx, mapy);
-                this.movingTo = true;
-            }
-        }
-
-        // this.facing = Math.sign(this.velx) || this.facing;
-        // this.facingSouth = this.vely === 0 ? this.facingSouth : this.vely >= (
-        //     this.movingTo ? -10 : 0
-        // );
         this.weaponSlot.facingSouth = this.facingSouth;
 
         // Update the equipped weapon
@@ -381,7 +409,6 @@ export class Player extends Thing
             this.weaponSlot.update(dt);
         }
 
-        // Check for collisions with other things
         this.level.forEachThingHit(
             this.sprite.x, this.sprite.y,
             this.hitbox, this,

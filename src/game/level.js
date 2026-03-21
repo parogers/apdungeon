@@ -237,6 +237,15 @@ export class Level
         }
     }
 
+    getMousePos() {
+        const mapx = this.player.controls.mouse.x + this.grid.viewport.x;
+        const mapy = this.player.controls.mouse.y + this.grid.viewport.y;
+        return {
+            x: mapx,
+            y: mapy,
+        };
+    }
+
     // Returns the width of the level in pixels (ie render size)
     get width()
     {
@@ -298,17 +307,16 @@ export class Level
      * This function is used to determine if a projectile strikes a target. */
     checkHit(x, y, hitbox, ignore)
     {
-        let xp = x + hitbox.x, yp = y + hitbox.y;
-        let w = hitbox.w, h = hitbox.h;
-        //let thing = null;
-        //for (let n = 0; n < this.things.length; n++)
+        const xp = x + hitbox.x
+        const yp = y + hitbox.y;
+        const w = hitbox.width;
+        const h = hitbox.height;
         for (let thing of this.things)
         {
-            //thing = this.things[n];
             if (thing !== ignore && thing.sprite &&
                 thing.hitbox && thing.hitbox !== hitbox &&
-                Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
-                Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
+                Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.width)/2 &&
+                Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.height)/2)
             {
                 return thing;
             }
@@ -320,21 +328,33 @@ export class Level
      * for each thing that overlaps with the given hitbox. */
     forEachThingHit(x, y, hitbox, ignore, callback)
     {
-        let xp = x + hitbox.x;
-        let yp = y + hitbox.y;
-        let w = hitbox.w;
-        let h = hitbox.h;
-
+        const xp = x + hitbox.x;
+        const yp = y + hitbox.y;
+        const w = hitbox.width;
+        const h = hitbox.height;
         for (let thing of this.things)
         {
             if (thing !== ignore && thing.sprite &&
                 thing.hitbox && thing.hitbox !== hitbox &&
-                Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.w)/2 &&
-                Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.h)/2)
+                Math.abs(xp-thing.sprite.x-thing.hitbox.x) < (w+thing.hitbox.width)/2 &&
+                Math.abs(yp-thing.sprite.y-thing.hitbox.y) < (h+thing.hitbox.height)/2)
             {
                 callback(thing);
             }
         }
+    }
+
+    getThingAt(x, y) {
+        const thing = this.things.find(thing => {
+            // return thing.hitbox && thing.hitbox.contains(x - thing.x, y - thing.y)
+            return (
+                x >= thing.x - thing.width/2 &&
+                x <= thing.x + thing.width/2 &&
+                y >= thing.y - thing.height/2 &&
+                y <= thing.y + thing.height/2
+            );
+        });
+        return thing ?? null;
     }
 
     checkSolidAt(x, y, width)
