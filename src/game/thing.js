@@ -75,6 +75,10 @@ export class Thing
         return this.sprite.y;
     }
 
+    get position() {
+        return this.sprite.position;
+    }
+
     set x(value) {
         this.sprite.x = value;
     }

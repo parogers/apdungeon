@@ -91,6 +91,91 @@ class DamageTimer
 }
 
 
+class GameControlsFSM {
+    constructor(player) {
+        this.player = player;
+        this.state = STATE_IDLE;
+        this.target = null;
+        this.moveTo = null;
+    }
+
+    get weaponSlot() {
+        return this.player.weaponSlot;
+    }
+
+    get controls() {
+        return this.player.controls;
+    }
+
+    get level() {
+        return this.player.level;
+    }
+
+    update(dt)
+    {
+        if (this.state === STATE_IDLE) {
+            if (this.controls.mouse.pressed) {
+                const { x, y } = this.level.getMousePos();
+                const hit = this.level.getThingAt(x, y);
+                if (hit && !hit.dead) {
+                    this.target = hit;
+                    this.state = STATE_ATTACKING;
+                } else {
+                    this.moveTo = new PIXI.Point(x, y);
+                    this.state = STATE_MOVING_TO;
+                }
+            }
+        } else if (this.state === STATE_MOVING_TO) {
+            if (this.controls.mouse.held) {
+                const { x, y } = this.level.getMousePos();
+                this.moveTo = new PIXI.Point(x, y);
+            }
+            const dist = this.moveTo.subtract(this.player.position);
+            if (dist.magnitude() > 1) {
+                const vel = dist.normalize().multiplyScalar(this.player.maxSpeed);
+                this.player.velx = vel.x;
+                this.player.vely = vel.y;
+            } else {
+                this.state = STATE_IDLE;
+                this.player.velx = 0;
+                this.player.vely = 0;
+            }
+        } else if (this.state === STATE_ATTACKING) {
+            if (this.target.dead) {
+                this.state = STATE_IDLE;
+                this.target = null;
+                this.player.velx = 0;
+                this.player.vely = 0;
+            } else if (this.controls.mouse.pressed) {
+                const { x, y } = this.level.getMousePos();
+                this.moveTo = new PIXI.Point(x, y);
+                this.state = STATE_MOVING_TO;
+            } else {
+                this.moveTo = new PIXI.Point(this.target.x, this.target.y);
+                const dist = this.moveTo.subtract(this.player.position);
+                if (dist.magnitude() >= this.weaponSlot.weaponReach) {
+                    const speed = Math.min(
+                        100*(dist.magnitude() - this.player.weaponSlot.weaponReach),
+                        this.player.maxSpeed
+                    );
+                    const vel = dist.normalize().multiplyScalar(speed);
+                    this.player.velx = vel.x;
+                    this.player.vely = vel.y;
+                } else {
+                    this.player.velx *= 0.9;
+                    this.player.vely *= 0.9;
+                    this.player.faceDirection(
+                        this.target.x - this.player.x,
+                        this.target.y - this.player.y
+                    );
+                    this.weaponSlot.startAttack(this.target.x, this.target.y);
+                }
+            }
+        }
+    }
+}
+
+
 export class Player extends Thing
 {
     constructor(controls)
@@ -102,6 +187,7 @@ export class Player extends Thing
         this.trackMover = null;
         this.knockedTimer = 0;
         this.usingTrackMovement = false;
+        this.fsm = new GameControlsFSM(this);
         // The "nominal" X-pos of the player within the level. The player
         // may stray from this position (eg when jumping) but generally
         // will tend back to it. This is also the position that is tracked
@@ -112,8 +198,6 @@ export class Player extends Thing
         this.vely = 0;
         this.accelx = 0;
         this.accely = 0;
-        this.moveTo = new PIXI.Point(0, 0);
-        this.movingTo = false;
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
@@ -279,10 +363,7 @@ export class Player extends Thing
             this.dead = true;
             return;
         }
-
-        // Handle attacking
-        // if (this.controls.primary.pressed) this.startAttack();
-        // if (!this.controls.primary.released) this.stopAttack();
+        this.fsm.update(dt);
 
         if (this.controls.swap.pressed) {
             this.swapWeapons();
@@ -290,98 +371,6 @@ export class Player extends Thing
 
         if (this.knockedTimer > 0) {
             this.knockedTimer -= dt;
-        }
-
-        // if (this.movingTo) {
-        //     const dist = this.moveTo.subtract(this.sprite.position);
-        //     if (dist.magnitude() > 1) {
-        //         const vel = dist.normalize().multiplyScalar(this.maxSpeed);
-        //         this.velx = vel.x;
-        //         this.vely = vel.y;
-        //     } else {
-        //         this.movingTo = false;
-        //     }
-        // } else {
-        //     this.velx *= 0.9;
-        //     this.vely *= 0.9;
-        // }
-        //
-
-        // if (this.controls.mouse.pressed || this.controls.mouse.held)
-        // {
-        //     const mapx = this.controls.mouse.x + this.level.grid.viewport.x;
-        //     const mapy = this.controls.mouse.y + this.level.grid.viewport.y;
-        //     if (this.controls.shift.held) {
-        //         if (this.controls.mouse.held) {
-        //             this.faceDirection(mapx - this.x, mapy - this.y);
-        //             this.weaponSlot.startAttack(mapx, mapy);
-        //             this.movingTo = false;
-        //         }
-        //     } else if (this.controls.mouse.held && this.controls.mouse.released) {
-        //         this.movingTo = false;
-        //     } else if (this.controls.mouse.held) {
-        //         this.moveTo.set(mapx, mapy);
-        //         this.movingTo = true;
-        //     }
-        // }
-        if (this.state === STATE_IDLE) {
-            if (this.controls.mouse.pressed) {
-                const { x, y } = this.level.getMousePos();
-                const hit = this.level.getThingAt(x, y);
-                if (hit && !hit.dead) {
-                    this.target = hit;
-                    this.state = STATE_ATTACKING;
-                } else {
-                    this.moveTo = new PIXI.Point(x, y);
-                    this.state = STATE_MOVING_TO;
-                }
-            }
-        } else if (this.state === STATE_MOVING_TO) {
-            if (this.controls.mouse.held) {
-                const { x, y } = this.level.getMousePos();
-                this.moveTo = new PIXI.Point(x, y);
-            }
-            const dist = this.moveTo.subtract(this.sprite.position);
-            if (dist.magnitude() > 1) {
-                const vel = dist.normalize().multiplyScalar(this.maxSpeed);
-                this.velx = vel.x;
-                this.vely = vel.y;
-            } else {
-                this.state = STATE_IDLE;
-                this.velx = 0;
-                this.vely = 0;
-            }
-        } else if (this.state === STATE_ATTACKING) {
-            if (this.target.dead) {
-                this.state = STATE_IDLE;
-                this.target = null;
-                this.velx = 0;
-                this.vely = 0;
-            } else if (this.controls.mouse.pressed) {
-                const { x, y } = this.level.getMousePos();
-                this.moveTo = new PIXI.Point(x, y);
-                this.state = STATE_MOVING_TO;
-            } else {
-                this.moveTo = new PIXI.Point(this.target.x, this.target.y);
-                const dist = this.moveTo.subtract(this.sprite.position);
-                if (dist.magnitude() >= this.weaponSlot.weaponReach) {
-                    const speed = Math.min(
-                        100*(dist.magnitude() - this.weaponSlot.weaponReach),
-                        this.maxSpeed
-                    );
-                    const vel = dist.normalize().multiplyScalar(speed);
-                    this.velx = vel.x;
-                    this.vely = vel.y;
-                } else {
-                    this.velx *= 0.9;
-                    this.vely *= 0.9;
-                    this.faceDirection(
-                        this.target.x - this.x,
-                        this.target.y - this.y
-                    );
-                    this.weaponSlot.startAttack(this.target.x, this.target.y);
-                }
-            }
         }
 
         if (this.velx || this.vely) {
