@@ -32,7 +32,6 @@ import { Goblin } from './goblin';
 import { SkelWarrior } from './skel_warrior';
 import { Ghost } from './ghost';
 import { LevelScreen } from './levelscreen';
-import { Snake, Rat, Scorpion } from './snake';
 
 /***************/
 /* TitleScreen */

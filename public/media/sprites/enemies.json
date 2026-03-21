@@ -99,6 +99,31 @@
     "y": 0.5
   }
 },
+"enemy-scorpion-attack":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 36,
+    "y": 27,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 10,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
 "enemy-snake-walk1":
 {
   "rotated": false,
@@ -114,7 +139,7 @@
     "h": 8
   },
   "frame": {
-    "x": 10,
+    "x": 19,
     "y": 10,
     "w": 8,
     "h": 8
@@ -139,8 +164,8 @@
     "h": 8
   },
   "frame": {
-    "x": 19,
-    "y": 10,
+    "x": 1,
+    "y": 19,
     "w": 8,
     "h": 8
   },
@@ -154,7 +179,7 @@
   "app": "https://github.com/houmain/spright",
   "format": "RGBA8888",
   "image": "enemies.png",
-  "size": { "w": 28, "h": 19 },
+  "size": { "w": 28, "h": 28 },
   "scale": 1.0
 }
 }

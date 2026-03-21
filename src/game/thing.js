@@ -148,6 +148,10 @@ export class Thing
         return Math.sign(this.sprite.scale.x);
     }
 
+    faceThing(thing) {
+        this.facing = Math.sign(thing.x - this.x) ?? 1;
+    }
+
     update(dt)
     {
     }
@@ -269,11 +273,17 @@ export class Animation
 {
     constructor(animResource)
     {
-        this.frames = Resources.shared.getFrames(animResource.frames);
-        this.fps = animResource.fps;
-        this.looping = (
-            animResource.looping !== undefined ? animResource.looping : true
-        );
+        if (typeof animResource === 'object') {
+            this.frames = Resources.shared.getFrames(animResource.frames);
+            this.fps = animResource.fps;
+            this.looping = (
+                animResource.looping !== undefined ? animResource.looping : true
+            );
+        } else {
+            this.frames = animResource;
+            this.fps = 5;
+            this.looping = true;
+        }
         this.playing = true;
         this.frame = 0;
         this.startedFrame = true;

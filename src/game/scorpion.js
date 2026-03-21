@@ -1,0 +1,105 @@
+
+import * as PIXI from 'pixi.js';
+import { ANIM, RES, Resources } from './res';
+import { Animation } from './thing';
+import { Item } from './item';
+import { Monster } from './monster';
+
+
+const STATE = {
+    IDLE: 0,
+    FOLLOWING: 1,
+    ATTACKING: 2,
+};
+
+
+/************/
+/* Scorpion */
+/************/
+
+export class Scorpion extends Monster
+{
+    constructor()
+    {
+        super(ANIM.SCORPION_WALK);
+        this.name = 'Scorpion';
+        this.health = 4;
+        this.speed = 10;
+        this.facing = -1;
+        this.idleAnim = new Animation(ANIM.SCORPION_IDLE);
+        this.attackFrame = Resources.shared.getFrame('enemy-scorpion-attack');
+        this.state = STATE.IDLE;
+        this.meleeAttackRange = 8;
+    }
+
+    update(dt) {
+        if (this.dead) {
+            return;
+        }
+        if (this.stunned) {
+            this.state = STATE.FOLLOWING;
+            super.update(dt);
+            return;
+        }
+        if (this.state === STATE.IDLE) {
+            if (this.timer <= 0) {
+                this.timer = 2;
+                this.facing *= -1;
+            }
+            this.timer -= dt;
+            this.velx = this.facing*this.speed;
+            this.bodySprite.texture = this.moveAnim.update(dt);
+        } else if (this.state === STATE.FOLLOWING) {
+            if (this.timer > 0) {
+                this.timer -= dt;
+                this.bodySprite.texture = this.idleAnim.update(dt);
+                return;
+            }
+            const dist = this.level.player.sprite.position.subtract(this.sprite.position);
+            if (dist.magnitude() > 10*this.meleeAttackRange) {
+                this.state = STATE.IDLE;
+            } else if (dist.magnitude() > this.meleeAttackRange) {
+                const vel = dist.normalize().multiplyScalar(20);
+                this.velx = vel.x;
+                this.vely = vel.y;
+            } else {
+                this.velx = 0;
+                this.vely = 0;
+                this.state = STATE.ATTACK;
+                this.timer = 1;
+            }
+            this.faceThing(this.level.player);
+            if (this.velx || this.vely) {
+                this.bodySprite.texture = this.moveAnim.update(dt);
+            } else {
+                this.bodySprite.texture = this.idleAnim.update(dt);
+            }
+        } else if (this.state === STATE.ATTACK) {
+            this.bodySprite.texture = this.attackFrame;
+            this.timer -= dt;
+            if (this.timer <= 0) {
+                this.state = STATE.FOLLOWING;
+                this.timer = 1;
+            }
+        }
+        super.update(dt);
+    }
+
+    getDropTable()
+    {
+        return [
+            [[Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.COIN], 2],
+            [[Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW], 1],
+            [Item.Table.SMALL_HEALTH, 1]
+        ];
+    }
+
+    handleHit(sourceThing, dmg) {
+        if (this.dead) {
+            return false;
+        }
+        super.handleHit(sourceThing, dmg);
+        this.faceThing(sourceThing);
+        return true;
+    }
+}

@@ -26,6 +26,7 @@ export class Monster extends Creature {
         this.bodySprite.anchor.set(0.5, 1);
         this.knockedTimer = 0;
         this.knocked = 0;
+        this.attackFrame = null;
     }
 
     get stunned() {
@@ -42,9 +43,6 @@ export class Monster extends Creature {
         }
         this.x += this.velx*dt;
         this.y += this.vely*dt;
-        if (this.velx || this.vely) {
-            this.bodySprite.texture = this.moveAnim.update(dt);
-        }
     }
 
     handleHit(souceThing, dmg) {
@@ -72,10 +70,10 @@ export class Monster extends Creature {
     }
 
     handlePlayerCollision(player) {
-        if (this.dead) {
-            return;
-        }
-        player.takeDamage(this.touchDamage, this);
+        // if (this.dead) {
+        //     return;
+        // }
+        // player.takeDamage(this.touchDamage, this);
     }
 
     handleTreasureDrop()

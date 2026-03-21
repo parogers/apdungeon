@@ -67,6 +67,10 @@ export var ANIM = {
         frames: ['enemy-scorpion-walk1', 'enemy-scorpion-walk2'],
         fps: 5,
     },
+    SCORPION_IDLE: {
+        frames: ['enemy-scorpion-idle1', 'enemy-scorpion-idle2'],
+        fps: 5,
+    },
 
     PLAYER1_NORTH_WALK: {
         frames: ['girl-melee1-north-idle', 'girl-melee1-north-walk1', 'girl-melee1-north-walk2'],

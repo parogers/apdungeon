@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { RES, ANIM } from './res';
+import { Resources, RES, ANIM } from './res';
 import { Utils } from './utils';
 import { Animation, Thing, Creature, Hitbox } from './thing';
 import { Monster, DeathAnimation } from './monster';
@@ -223,54 +223,5 @@ export class Rat extends Snake
 
     get splashOffset() {
         return -0.5;
-    }
-}
-
-/************/
-/* Scorpion */
-/************/
-
-export class Scorpion extends Monster
-{
-    constructor()
-    {
-        super(ANIM.SCORPION_WALK);
-        this.name = 'Scorpion';
-        this.health = 4;
-        this.speed = 10;
-        this.facing = -1;
-    }
-
-    update(dt) {
-        if (this.dead) {
-            return;
-        }
-        if (!this.stunned) {
-            if (this.timer <= 0) {
-                this.timer = 5;
-                this.facing *= -1;
-            }
-            this.timer -= dt;
-            this.velx = this.facing*this.speed;
-        }
-        super.update(dt);
-    }
-
-    getDropTable()
-    {
-        return [
-            [[Item.Table.COIN, Item.Table.COIN, Item.Table.COIN, Item.Table.COIN], 2],
-            [[Item.Table.ARROW, Item.Table.ARROW, Item.Table.ARROW], 1],
-            [Item.Table.SMALL_HEALTH, 1]
-        ];
-    }
-
-    handleHit(sourceThing, dmg) {
-        if (this.dead) {
-            return false;
-        }
-        super.handleHit(sourceThing, dmg);
-        this.facing = Math.sign(sourceThing.x - this.x);
-        return true;
     }
 }
