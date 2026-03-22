@@ -344,10 +344,10 @@ export class Level
         }
     }
 
-    getThingAt(x, y) {
+    getThingAt(x, y, filterFunc) {
         const thing = this.things.find(thing => {
-            // return thing.hitbox && thing.hitbox.contains(x - thing.x, y - thing.y)
             return (
+                (!filterFunc || filterFunc(thing)) &&
                 x >= thing.x - thing.width/2 &&
                 x <= thing.x + thing.width/2 &&
                 y >= thing.y - thing.height/2 &&

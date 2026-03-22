@@ -116,8 +116,10 @@ class GameControlsFSM {
         if (this.state === STATE_IDLE) {
             if (this.controls.mouse.pressed) {
                 const { x, y } = this.level.getMousePos();
-                const hit = this.level.getThingAt(x, y);
-                if (hit && !hit.dead) {
+                const hit = this.level.getThingAt(x, y, (thing) =>
+                    thing !== this && !thing.dead && thing.handleHit
+                );
+                if (hit) {
                     this.target = hit;
                     this.state = STATE_ATTACKING;
                 } else {

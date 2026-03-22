@@ -160,14 +160,6 @@ export class Thing
     {
     }
 
-    handleHit(x, y, dmg)
-    {
-    }
-
-    handlePlayerCollision(player)
-    {
-    }
-
     get isOnCamera() {
         return this.level && this.level.isThingVisible(this);
     }
