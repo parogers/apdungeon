@@ -35,7 +35,7 @@ export class WeaponSlot {
         this.facingSouth = true;
         this.player = player;
         this.textureName = null;
-        this.weaponReach = 4;
+        this.reach = 4;
     }
 
     get facingSouth() {
@@ -76,7 +76,7 @@ export class SwordWeaponSlot extends WeaponSlot
         this.attackAngle = 0;
         this.attackCooldownTimer = 0;
         this.attackCooldown = 0.35;
-        this.weaponReach = 8;
+        this.reach = 8;
         this.damage = 1;
         this.hitbox = new Hitbox(0, -4, 10, 6);
         this.setTexture('sword2');
@@ -100,19 +100,17 @@ export class SwordWeaponSlot extends WeaponSlot
         }
     }
 
-    startAttack()
+    startAttack(target)
     {
         if (this.attackCooldownTimer > 0) return;
 
         Audio.playSound(RES.ATTACK_SWORD_SND);
         this.attackCooldownTimer = this.attackCooldown;
 
-        this.player.level.forEachThingHit(
-            this.player.fx + this.player.facing*this.weaponReach,
-            this.player.fy,
-            this.hitbox, this.player,
-            hit => this.handleHitCallback(hit)
-        );
+        const dist = target.position.subtract(this.player.position).magnitude();
+        if (dist <= this.reach) {
+            this.handleHitCallback(target);
+        }
     }
 
     stopAttack()
@@ -135,7 +133,7 @@ export class BowWeaponSlot extends WeaponSlot
         this.setTexture('bow1');
         this.sprite.x = 2.75;
         this.sprite.y = -3.5;
-        this.weaponReach = 100;
+        this.reach = 100;
     }
 
     update(dt)
@@ -148,7 +146,7 @@ export class BowWeaponSlot extends WeaponSlot
         }
     }
 
-    startAttack(targetX, targetY)
+    startAttack(target)
     {
         if (this.player.numArrows <= 0) return;
         if (this.attackCooldownTimer > 0) return;
@@ -158,12 +156,13 @@ export class BowWeaponSlot extends WeaponSlot
 
         const sourceX = this.player.x + this.sprite.x*this.player.facing;
         const sourceY = this.player.y + this.sprite.y;
-        const dx = targetX - sourceX;
-        const dy = targetY - sourceY;
+        const dx = target.x - sourceX;
+        const dy = target.y - sourceY;
         const mag = Math.sqrt(dx*dx + dy*dy);
 
         const arrow = new Arrow(
             this.player,
+            target,
             sourceX,
             sourceY,
             // this.player.baseSpeed + this.player.facing*100, 0,
@@ -185,9 +184,10 @@ export class BowWeaponSlot extends WeaponSlot
 
 export class Arrow extends Thing
 {
-    constructor(owner, x, y, velx, vely, h)
+    constructor(owner, target, x, y, velx, vely, h)
     {
         super();
+        this.target = target;
         this.owner = owner;
         this.arrowSprite = new PIXI.Sprite(
             Resources.shared.getFrame('weapon-arrow')
@@ -205,6 +205,7 @@ export class Arrow extends Thing
         this.state = ARROW_FLIGHT;
         this.timer = 0;
         this.hitbox = new Hitbox(0, 0, 8, 4);
+        this.reach = 4;
     }
 
     update(dt)
@@ -234,16 +235,10 @@ export class Arrow extends Thing
                 Audio.playSound(RES.ARROW_DING_SND, 0.4);
                 return;
             }
-            // Now check if we've hit an enemy
-            const other = level.checkHit(
-                this.sprite.x,
-                this.sprite.y,
-                this.hitbox,
-                this.owner
-            );
-            if (other?.handleHit && !other?.dead)
+            const dist = this.target.position.subtract(this.position).magnitude();
+            if (dist <= this.reach && !this.target.dead)
             {
-                const ret = other.handleHit(this.owner, 1);
+                const ret = this.target.handleHit(this.owner, 1);
                 if (ret === true) {
                     this.removeSelf();
                 }

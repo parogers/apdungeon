@@ -156,9 +156,9 @@ class GameControlsFSM {
             } else {
                 this.moveTo = new PIXI.Point(this.target.x, this.target.y);
                 const dist = this.moveTo.subtract(this.player.position);
-                if (dist.magnitude() >= this.weaponSlot.weaponReach) {
+                if (dist.magnitude() >= this.weaponSlot.reach) {
                     const speed = Math.min(
-                        100*(dist.magnitude() - this.player.weaponSlot.weaponReach),
+                        100*(dist.magnitude() - this.player.weaponSlot.reach),
                         this.player.maxSpeed
                     );
                     const vel = dist.normalize().multiplyScalar(speed);
@@ -171,7 +171,7 @@ class GameControlsFSM {
                         this.target.x - this.player.x,
                         this.target.y - this.player.y
                     );
-                    this.weaponSlot.startAttack(this.target.x, this.target.y);
+                    this.weaponSlot.startAttack(this.target);
                 }
             }
         }
