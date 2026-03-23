@@ -23,7 +23,7 @@ import { renderText } from './ui';
 import { Resources, ANIM, RES } from './res';
 import { Utils } from './utils';
 import { Item } from './item';
-import { Animation, TrackMover, Thing, Hitbox } from './thing';
+import { Animation, Thing, Hitbox } from './thing';
 import { Flame, Splash, Shadow } from './effects';
 import { BowWeaponSlot, SwordWeaponSlot } from './weaponslot';
 import { Audio } from './audio';
@@ -187,9 +187,7 @@ export class Player extends Thing
         this.name = 'player';
         this.controls = controls;
         this.state = STATE_IDLE;
-        this.trackMover = null;
         this.knockedTimer = 0;
-        this.usingTrackMovement = false;
         this.fsm = new GameControlsFSM(this);
         // The "nominal" X-pos of the player within the level. The player
         // may stray from this position (eg when jumping) but generally
@@ -418,133 +416,6 @@ export class Player extends Thing
         }
     }
 
-    updateRails(dt)
-    {
-        if (this.running)
-        {
-            // Accelerate up to the maximum running speed
-            // TODO - clean up baseSpeed/basePos stuff (what if the baseSpeed is
-            // set below but runnning is false)
-            this.baseSpeed = Math.min(
-                this.baseSpeed + RUNNING_ACCEL*dt,
-                this.maxSpeed
-            );
-            this.basePos += this.baseSpeed*dt;
-        }
-        else
-        {
-            this.baseSpeed = 0;
-        }
-
-        if (this.state === STATE_IDLE)
-        {
-            if (this.controls.primary.pressed ||
-                (this.controls.gesture && this.controls.gesture.tap))
-            {
-                this.startAttack();
-            }
-
-            // Update the equipped weapon
-            if (this.weaponSlot && this.weaponSlot.update) {
-                this.weaponSlot.update(dt);
-            }
-
-            if (this.track &&
-                this.controls.gesture &&
-                this.controls.gesture.isVerticalLine)
-            {
-                let diry = Math.sign(this.controls.gesture.dy);
-                let nextTrack = this.level.getTrack(this.track.number + diry);
-
-                this.startMoveToTrack(nextTrack);
-            }
-            else if (this.track && this.controls.getY() != 0)
-            {
-                let diry = Math.sign(this.controls.getY());
-                let nextTrack = this.level.getTrack(this.track.number + diry);
-
-                this.startMoveToTrack(nextTrack);
-            }
-
-            if (this.running)
-            {
-                this.sprite.x += this.maxSpeed*dt;
-                this.walkAnim.update(dt);
-
-                // Check for a collision with a wall
-                let checkPos = this.fx + this.level.tileWidth/2;
-                let tile = this.level.getTileAt(checkPos, this.fy);
-
-                if (tile && tile.solid && checkPos < this.level.width)
-                {
-                    // The player collided with a wall
-                    this.state = STATE_KNOCKED_BACK;
-                    this.running = false;
-                    this.velx = -1.5*this.baseSpeed;
-                    this.takeDamage(1, 'wall');
-                }
-            }
-
-            this.fx = this.basePos;
-
-            // Check for collisions with other things
-            this.level.forEachThingHit(
-                this.sprite.x,
-                this.sprite.y,
-                this.hitbox,
-                this,
-                this.handleCollisionCallback
-            );
-        }
-        else if (this.state === STATE_CHANGING_TRACK)
-        {
-            if (this.running)
-            {
-                this.fx = this.basePos;
-            }
-            if (this.trackMover.update(dt))
-            {
-                this.trackMover = null;
-                this.vely = 0;
-                this.state = STATE_IDLE;
-            }
-        }
-        else if (this.state === STATE_KNOCKED_BACK)
-        {
-            this.updateKnockedBack(dt);
-        }
-        this.spriteChar.texture = this.walkAnim.texture;
-    }
-
-    // The player is being knocked back after hitting a wall
-    updateKnockedBack(dt)
-    {
-        function findTrack(level, xpos)
-        {
-            // Find a track that's not blocked
-            // TODO - prefer tracks that are safe to land on (eg no lava)
-            let x = xpos + level.tileWidth;
-            let w = level.tileWidth;
-            for (let track of level.tracks)
-            {
-                if (!track.checkSolidAt(x, w)) {
-                    return track;
-                }
-            }
-            return null;
-        }
-        this.velx -= this.velx*dt*8;
-        this.baseSpeed = this.velx;
-        this.basePos += this.velx*dt;
-        this.fx = this.basePos;
-        if (Math.abs(this.velx) <= 5)
-        {
-            let track = findTrack(this.level, this.fx);
-            this.running = true;
-            this.startMoveToTrack(track);
-        }
-    }
-
     get walkAnim() {
         if (this.facingSouth) {
             return this.walkSouthAnim;
@@ -759,33 +630,5 @@ export class Player extends Thing
         } else {
             this.textSprite.visible = false;
         }
-    }
-
-    /* Start the player moving onto the given track. Returns true if the player
-     * can move onto the track, and false otherwise. */
-    startMoveToTrack(track)
-    {
-        if (this.state !== STATE_IDLE && this.state !== STATE_KNOCKED_BACK) {
-            return false;
-        }
-        if (!track) {
-            return false;
-        }
-        if (track.checkSolidAt(this.fx, this.width)) {
-            return false;
-        }
-        // Note: we have the player jump unless they're currently in water
-        this.state = STATE_CHANGING_TRACK;
-        this.trackMover = new TrackMover(
-            this,
-            track,
-            1.5*this.maxSpeed,
-            this.inWater ? 0 : JUMP_ACCEL,
-        );
-        return true;
-    }
-
-    isMovingToTrack() {
-        return this.trackMover !== null;
     }
 }

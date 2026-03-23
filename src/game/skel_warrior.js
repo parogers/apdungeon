@@ -21,7 +21,7 @@ import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { Animation, TrackMover, Thing, Hitbox, Creature } from './thing';
+import { Animation, Thing, Hitbox, Creature } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -32,7 +32,6 @@ const STATE_IDLE = 0;
 const STATE_CHARGING = 1;
 const STATE_RETREAT = 2;
 const STATE_DEAD = 3;
-const STATE_CHANGE_TRACK = 4;
 
 /* The goblin keeps their distance while the player is facing them, and
  * quickly approaches to attack when the player's back is turned */
@@ -50,7 +49,6 @@ export class SkelWarrior extends Creature
         this.alwaysChargeDist = 15;
         this.facing = 1;
         this.chargeTimeout = 1;
-        this.trackMover = null;
         // When approaching the player, how far to keep distance
         this.approachDist = 30;
         this.counter = 0;
@@ -94,10 +92,6 @@ export class SkelWarrior extends Creature
         {
             this.updateRetreat(dt);
         }
-        else if (this.state === STATE_CHANGE_TRACK)
-        {
-            this.updateChangeTrack(dt);
-        }
         this.monsterSprite.texture = this.anim.update(dt);
         this.splash.update(dt);
         this.shadow.update(dt);
@@ -125,7 +119,6 @@ export class SkelWarrior extends Creature
         this.y += this.vely*dt;
         this.facing = Math.sign(distx);
 
-        // Occasionally either charge the player, or change tracks to find them
         this.timer -= dt;
         if (this.timer <= 0)
         {
@@ -170,16 +163,6 @@ export class SkelWarrior extends Creature
         {
             this.x = this.level.player.fx + this.chargeOffset;
             this.timer = this.chargeTimeout;
-            this.state = STATE_IDLE;
-        }
-    }
-
-    // Switching tracks to find the player
-    updateChangeTrack(dt)
-    {
-        if (this.trackMover.update(dt))
-        {
-            this.trackMover = null;
             this.state = STATE_IDLE;
         }
     }

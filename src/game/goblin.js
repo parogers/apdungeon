@@ -21,7 +21,7 @@ import * as PIXI from 'pixi.js';
 
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
-import { Animation, TrackMover, Thing, Hitbox, Creature } from './thing';
+import { Animation, Thing, Hitbox, Creature } from './thing';
 import { Splash, Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -39,7 +39,6 @@ const STATE_START_ATTACK = 3;
 const STATE_START_RETREAT = 4;
 const STATE_RETREATING = 5;
 const STATE_DEAD = 6;
-const STATE_CHANGE_TRACK = 7;
 
 // The goblin's vertical acceleration when falling (after jumping) pixels/s/s
 const GRAVITY = 200;
@@ -65,7 +64,6 @@ export class Goblin extends Creature
         this.health = 3;
         this.maxSpeed = MAX_SPEED;
         this.safeDistance = SAFE_DISTANCE;
-        this.trackMover = null;
         // When in the approach state, used to determine when to jump at
         // the player
         this.attackTimeout = 1.5;
@@ -117,7 +115,6 @@ export class Goblin extends Creature
             this.velx = -ATTACK_SPEED + this.level.baseSpeed;
             this.velh = duration*GRAVITY/2;
             this.state = STATE_ATTACKING;
-            this.fy = this.track.y;
         }
         else if (this.state === STATE_ATTACKING)
         {
@@ -151,16 +148,6 @@ export class Goblin extends Creature
             if (this.fh <= 0)
             {
                 this.fh = 0;
-                this.state = STATE_APPROACH;
-                this.attackTimer = this.attackTimeout;
-            }
-        }
-        else if (this.state === STATE_CHANGE_TRACK)
-        {
-            this.fx += this.level.baseSpeed*dt;
-            if (this.trackMover.update(dt))
-            {
-                this.trackMover = null;
                 this.state = STATE_APPROACH;
                 this.attackTimer = this.attackTimeout;
             }
@@ -201,28 +188,10 @@ export class Goblin extends Creature
         }
         // Have the goblin bob to make it look more "skittering"
         this.fx += this.velx*dt;
-        this.fy = this.track.y + Math.sin(this.anim.frame)/2;
 
         this.anim.update(dt);
 
         this.attackTimer -= dt;
-        if (this.attackTimer <= 0)
-        {
-            if (this.level.player.track === this.track)
-            {
-                this.state = STATE_START_ATTACK;
-            }
-            else
-            {
-                this.state = STATE_CHANGE_TRACK;
-                this.trackMover = new TrackMover(
-                    this,
-                    this.level.player.track,
-                    this.maxSpeed,
-                    GRAVITY*2
-                );
-            }
-        }
     }
 
     handleHit(srcx, srcy, dmg)

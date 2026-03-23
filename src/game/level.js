@@ -25,23 +25,6 @@ import { Render } from './render';
 import { GroundItem } from './grounditem';
 import { StackedGrid } from '@parogers/pixijs-easygrid';
 
-/*********/
-/* Track */
-/*********/
-
-class Track
-{
-    constructor(level, number, y) {
-        this.level = level;
-        this.y = y;
-        this.number = number;
-    }
-
-    checkSolidAt(x, width) {
-        return this.level.checkSolidAt(x, this.y, width);
-    }
-};
-
 /*****************/
 /* LevelDarkness */
 /*****************/
@@ -192,36 +175,6 @@ export class Level
 
     isFinished() {
         return this.state === this.FINISHED;
-    }
-
-    getTopTrack(n) {
-        return this.tracks[0];
-    }
-
-    getMiddleTrack(n) {
-        return this.tracks[1];
-    }
-
-    getBottomTrack(n) {
-        return this.tracks[2];
-    }
-
-    getTrackAbove(track) {
-        if (!track) return null;
-        return this.getTrack(track.number-1);
-    }
-
-    getTrackBelow(track) {
-        if (!track) return null;
-        return this.getTrack(track.number+1);
-    }
-
-    getTrack(n)
-    {
-        if (n >= 0 && n < this.tracks.length) {
-            return this.tracks[n];
-        }
-        return null;
     }
 
     destroy()

@@ -42,21 +42,8 @@ export class Thing
         this._y = 0;
         this._h = 0;
         this._zpos = null;
-        this._track = null;
         this.level = null;
         this.frame = 0;
-    }
-
-    get track() {
-        return this._track;
-    }
-
-    // Moves this thing onto the given track maintaining the same x-pos
-    // and height off the floor.
-    set track(track)
-    {
-        this._track = track;
-        if (track) this.fy = track.y;
     }
 
     get width() {
@@ -198,58 +185,6 @@ export class Creature extends Thing {
 /**********/
 
 export const Hitbox = PIXI.Rectangle;
-
-/**************/
-/* TrackMover */
-/**************/
-
-/* Moves a thing between tracks */
-export class TrackMover
-{
-    constructor(thing, targetTrack, speed, accelh) {
-        this.accelh = -Math.abs(accelh);
-        this.thing = thing;
-        this.targetTrack = targetTrack;
-        this.speed = speed;
-        this.done = false;
-        this.duration = Math.abs(this.thing.y - this.targetTrack.y)/speed;
-        this.vely = Math.sign(this.targetTrack.y - this.thing.y)*speed;
-        this.velh = -this.accelh*this.duration/2;
-    }
-
-    // Move the thing closer to the target track. This function returns true
-    // if the movement is finished and false otherwise.
-    update(dt)
-    {
-        if (this.done) {
-            return true;
-        }
-
-        if (this.targetTrack === this.thing.track)
-        {
-            this.done = true;
-            return true;
-        }
-
-        this.velh += this.accelh*dt;
-        this.thing.fy += this.vely*dt;
-        this.thing.fh += this.velh*dt;
-
-        // Clamp the thing to the floor just in case rounding errors
-        // make the initial vertical speed estimate wrong.
-        if (this.thing.fh < 0) this.thing.fh = 0;
-
-        this.duration -= dt;
-        if (this.duration <= 0)
-        {
-            this.thing.fy = this.targetTrack.y;
-            this.thing.fh = 0;
-            this.thing.track = this.targetTrack;
-            this.done = true;
-        }
-        return false;
-    }
-}
 
 
 /*************/

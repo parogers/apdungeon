@@ -112,19 +112,11 @@ export class EnterScene
                 // this.state = this.PLAYER_ENTERING;
                 this.state = this.PLAYER_DONE;
                 this.timer = 0.4;
-                // player.startMoveToTrack(this.level.getMiddleTrack());
             }
             break;
 
         case this.PLAYER_ENTERING:
-            // Wait for the player to hit the track
-            if (!player.usingTrackMovement) {
-                this.state = this.PLAYER_DONE;
-                break;
-            }
-            if (!player.isMovingToTrack()) {
-                this.state = this.PLAYER_LOOK_LEFT;
-            }
+            this.state = this.PLAYER_DONE;
             break;
 
         case this.PLAYER_LOOK_LEFT:

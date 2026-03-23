@@ -52,13 +52,6 @@ export class Bat extends Creature
             return;
         }
 
-        if (this.state === STATE_FLYING && this.track)
-        {
-            this.fx += (this.level.baseSpeed-10)*dt;
-            this.fy = this.track.y + Math.sin(this.anim.frame/4);
-            this.fh = 6+4*Math.sin(this.anim.frame);
-        }
-
         this.shadow.update();
         this.bodySprite.texture = this.anim.update(dt);
     }
