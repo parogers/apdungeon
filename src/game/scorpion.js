@@ -26,10 +26,12 @@ export class Scorpion extends Monster
         this.health = 4;
         this.speed = 10;
         this.facing = -1;
+        this.meleeDamage = 1;
         this.idleAnim = new Animation(ANIM.SCORPION_IDLE);
         this.attackFrame = Resources.shared.getFrame('enemy-scorpion-attack');
         this.state = STATE.IDLE;
-        this.meleeAttackRange = 8;
+        this.meleeAttackRange = 4;
+        this.target = null;
     }
 
     update(dt) {
@@ -55,7 +57,7 @@ export class Scorpion extends Monster
                 this.bodySprite.texture = this.idleAnim.update(dt);
                 return;
             }
-            const dist = this.level.player.sprite.position.subtract(this.sprite.position);
+            const dist = this.target.position.subtract(this.position);
             if (dist.magnitude() > 10*this.meleeAttackRange) {
                 this.state = STATE.IDLE;
             } else if (dist.magnitude() > this.meleeAttackRange) {
@@ -67,6 +69,7 @@ export class Scorpion extends Monster
                 this.vely = 0;
                 this.state = STATE.ATTACK;
                 this.timer = 1;
+                this.target.takeDamage(this.meleeDamage, this);
             }
             this.faceThing(this.level.player);
             if (this.velx || this.vely) {
@@ -100,6 +103,7 @@ export class Scorpion extends Monster
         }
         super.handleHit(sourceThing, dmg);
         this.faceThing(sourceThing);
+        this.target = sourceThing;
         return true;
     }
 }
