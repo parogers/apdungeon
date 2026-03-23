@@ -130,7 +130,8 @@ class GameControlsFSM {
         } else if (this.state === STATE_MOVING_TO) {
             if (this.controls.mouse.held) {
                 const { x, y } = this.level.getMousePos();
-                this.moveTo = new PIXI.Point(x, y);
+                this.moveTo.x = x;
+                this.moveTo.y = y;
             }
             const dist = this.moveTo.subtract(this.player.position);
             if (dist.magnitude() > 1) {

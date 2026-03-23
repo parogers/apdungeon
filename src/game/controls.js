@@ -17,6 +17,7 @@
  * See LICENSE.txt for the full text of the license.
  */
 
+import * as PIXI from 'pixi.js';
 import { Render } from './render.js';
 
 const PRIMARY = 'Enter';
@@ -67,20 +68,33 @@ class Input
     }
 }
 
+
 class Mouse {
     constructor() {
-        this.x = null;
-        this.y = null;
+        this.position = new PIXI.Point(0, 0);
         this.dragging = false;
         this.pressed = false;
         this.released = false;
         this.held = false;
     }
 
-    get hasClicked() {
-        return this.x !== null && this.y !== null;
+    get x() {
+        return this.position.x;
+    }
+
+    get y() {
+        return this.position.y;
+    }
+
+    set x(value) {
+        this.position.x = value;
+    }
+
+    set y(value) {
+        this.position.y = value;
     }
 }
+
 
 class PlayerGameControls
 {
@@ -135,8 +149,6 @@ class PlayerGameControls
         if (this.mouse.released) {
             this.mouse.held = false;
             this.mouse.dragging = false;
-            this.mouse.x = null;
-            this.mouse.y = null;
         }
         this.mouse.pressed = false;
         this.mouse.released = false;
