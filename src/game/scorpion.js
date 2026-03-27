@@ -21,12 +21,13 @@ export class Scorpion extends Monster
 {
     constructor()
     {
-        super(ANIM.SCORPION_WALK);
+        super();
         this.name = 'Scorpion';
         this.health = 4;
         this.speed = 10;
         this.facing = -1;
         this.meleeDamage = 1;
+        this.moveAnim = new Animation(ANIM.SCORPION_WALK);
         this.idleAnim = new Animation(ANIM.SCORPION_IDLE);
         this.attackFrame = Resources.shared.getFrame('enemy-scorpion-attack');
         this.state = STATE.IDLE;

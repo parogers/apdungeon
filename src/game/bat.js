@@ -22,6 +22,7 @@ import * as PIXI from 'pixi.js';
 import { ANIM, RES } from './res';
 import { Utils } from './utils';
 import { Animation, Thing, Hitbox, Creature } from './thing';
+import { Monster } from './monster';
 import { Shadow } from './effects';
 import { Item } from './item';
 import { Audio } from './audio';
@@ -30,15 +31,15 @@ import { DeathAnimation } from './snake';
 const STATE_FLYING = 0;
 const STATE_DEAD = 1;
 
-export class Bat extends Creature
+export class Bat extends Monster
 {
     constructor()
     {
         super();
         this.state = STATE_FLYING;
         this.health = 1;
-        this.anim = new Animation(ANIM.BAT_FLYING);
-        this.bodySprite = new PIXI.Sprite(this.anim.texture);
+        this.moveAnim = new Animation(ANIM.BAT_FLYING);
+        this.bodySprite = new PIXI.Sprite();
         this.bodySprite.anchor.set(0.5, 0.5);
         this.sprite.addChild(this.bodySprite);
         this.sprite.scale.set(-1, 1);
@@ -48,12 +49,15 @@ export class Bat extends Creature
 
     update(dt)
     {
+        this.velx = 0;
+        this.vely = 0;
+        this.fh = 8;
+        super.update(dt);
         if (this.state === STATE_DEAD) {
             return;
         }
-
         this.shadow.update();
-        this.bodySprite.texture = this.anim.update(dt);
+        this.bodySprite.texture = this.moveAnim.update(dt);
     }
 
     handleHit(srcx, srcy, dmg)

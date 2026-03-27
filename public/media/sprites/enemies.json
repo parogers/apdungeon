@@ -173,6 +173,56 @@
     "x": 0.5,
     "y": 0.5
   }
+},
+"enemy-bat-fly1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 189,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 10,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"enemy-bat-fly2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 8,
+    "h": 8
+  },
+  "spriteSourceSize": {
+    "x": 9,
+    "y": 189,
+    "w": 8,
+    "h": 8
+  },
+  "frame": {
+    "x": 19,
+    "y": 19,
+    "w": 8,
+    "h": 8
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
 }
 },
 "meta": {

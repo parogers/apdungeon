@@ -14,13 +14,12 @@ import { Utils } from './utils';
 /***********/
 
 export class Monster extends Creature {
-    constructor(moveRes) {
+    constructor() {
         super();
         this.timer = 0;
         this.velx = 0;
         this.vely = 0;
         this.touchDamage = 1;
-        this.moveAnim = new Animation(moveRes);
         this.bodySprite = new PIXI.Sprite()
         this.sprite.addChild(this.bodySprite);
         this.bodySprite.anchor.set(0.5, 1);
@@ -42,8 +41,8 @@ export class Monster extends Creature {
             this.velx = this.knocked;
             this.knockedTimer -= dt;
         }
-        this.x += this.velx*dt;
-        this.y += this.vely*dt;
+        this.fx += this.velx*dt;
+        this.fy += this.vely*dt;
     }
 
     handleHit(souceThing, dmg) {

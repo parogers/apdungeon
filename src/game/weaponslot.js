@@ -133,7 +133,7 @@ export class BowWeaponSlot extends WeaponSlot
         this.setTexture('bow1');
         this.sprite.x = 2.75;
         this.sprite.y = -3.5;
-        this.reach = 100;
+        this.reach = 50;
     }
 
     update(dt)
@@ -203,7 +203,7 @@ export class Arrow extends Thing
         this.vely = vely;
         this.velh = 0;
         this.state = ARROW_FLIGHT;
-        this.timer = 0;
+        this.timer = 4;
         this.hitbox = new Hitbox(0, 0, 8, 4);
         this.reach = 4;
     }
@@ -215,16 +215,16 @@ export class Arrow extends Thing
         {
             this.fx += this.velx*dt;
             this.fy += this.vely*dt;
-            // The arrow disappears when it's no longer visible
-            if (!level.isThingVisible(this)) {
-                this.removeSelf();
-                return;
-            }
             // Check if the arrow hits a wall
             const tile = level.getTileAt(
                 this.sprite.x + Math.sign(this.velx)*4,
                 this.sprite.y + this.fh
             );
+            this.timer -= dt;
+            if (this.timer <= 0) {
+                this.removeSelf();
+                return;
+            }
 
             if (tile.solid)
             {

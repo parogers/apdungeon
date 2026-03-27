@@ -95,7 +95,7 @@ export var ANIM = {
 
     BAT_FLYING: {
         resource: RES.ENEMIES,
-        frames: ['enemy_bat_south_1', 'enemy_bat_south_2'],
+        frames: ['enemy-bat-fly1', 'enemy-bat-fly2'],
         fps: 4,
     },
 

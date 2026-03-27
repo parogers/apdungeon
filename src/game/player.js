@@ -97,6 +97,7 @@ class GameControlsFSM {
         this.state = STATE_IDLE;
         this.target = null;
         this.moveTo = null;
+        this.autoAttack = false;
     }
 
     get weaponSlot() {
@@ -113,7 +114,26 @@ class GameControlsFSM {
 
     update(dt)
     {
+        if (this.controls.primary.pressed) {
+            this.autoAttack = !this.autoAttack;
+            if (!this.autoAttack) {
+                this.state = STATE_IDLE;
+                this.player.velx = 0;
+                this.player.vely = 0;
+            }
+        }
         if (this.state === STATE_IDLE) {
+            if (this.autoAttack) {
+                const things = this.level.things.filter(thing => !!thing.health && !thing.dead && thing.handleHit && thing !== this).sort((t1, t2) => {
+                    const d1 = this.player.getDistanceTo(t1);
+                    const d2 = this.player.getDistanceTo(t2);
+                    return d1-d2;
+                });
+                if (things.length) {
+                    this.target = things[0];
+                    this.state = STATE_ATTACKING;
+                }
+            }
             if (this.controls.mouse.pressed) {
                 const { x, y } = this.level.getMousePos();
                 const hit = this.level.getThingAt(x, y, (thing) =>
@@ -197,8 +217,10 @@ export class Player extends Thing
         this.baseSpeed = 0;
         this.velx = 0;
         this.vely = 0;
+        this.velh = 0;
         this.accelx = 0;
         this.accely = 0;
+        this.accelh = 0;
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
@@ -405,8 +427,17 @@ export class Player extends Thing
             this.handleCollisionCallback
         );
 
-        this.fx = this.x;
-        this.fy = this.y;
+        if (this.controls.space.pressed && this.fh === 0) {
+            this.velh = 50;
+        }
+        if (this.velh) {
+            this.fh += this.velh*dt;
+            this.velh -= 300*dt;
+            if (this.fh <= 0) {
+                this.fh = 0;
+                this.velh = 0;
+            }
+        }
         if (Math.abs(this.velx) < 0.1) this.velx = 0;
         if (Math.abs(this.vely) < 0.1) this.vely = 0;
         if (this.velx || this.vely) {

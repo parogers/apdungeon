@@ -299,12 +299,13 @@ export class Level
 
     getThingAt(x, y, filterFunc) {
         const thing = this.things.find(thing => {
+            const bounds = thing.sprite.getLocalBounds();
             return (
                 (!filterFunc || filterFunc(thing)) &&
-                x >= thing.x - thing.width/2 &&
-                x <= thing.x + thing.width/2 &&
-                y >= thing.y - thing.height/2 &&
-                y <= thing.y + thing.height/2
+                x >= thing.sprite.x + bounds.minX &&
+                x <= thing.sprite.x + bounds.maxX &&
+                y >= thing.sprite.y + bounds.minY &&
+                y <= thing.sprite.y + bounds.maxY
             );
         });
         return thing ?? null;

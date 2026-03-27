@@ -33,17 +33,17 @@ export class Thing
 {
     constructor(resources)
     {
+        this._position = new PIXI.Point();
         this.resources = resources;
         // The top-level container that holds all pieces of the sprite
         this.sprite = new PIXI.Container();
         // Position of the hit box relative to the sprite position
         this.hitbox = new Hitbox(0, 0, 4, 4);
         this.level = null;
-        this._y = 0;
-        this._h = 0;
         this._zpos = null;
         this.level = null;
         this.frame = 0;
+        this._h = 0;
     }
 
     get width() {
@@ -55,29 +55,30 @@ export class Thing
     }
 
     get x() {
-        return this.sprite.x;
+        return this._position.x;
     }
 
     get y() {
-        return this.sprite.y;
+        return this._position.y;
+    }
+
+    get h() {
+        return this._h;
     }
 
     get position() {
-        return this.sprite.position;
+        return this._position;
     }
 
     set x(value) {
         this.sprite.x = value;
+        this._position.x = value;
     }
 
     set y(value) {
-        this._h = 0;
-        this._y = value;
         this.sprite.y = value;
-        this.sprite.zIndex = this._zpos ?? value;
-        if (isNaN(this.sprite.zIndex)) {
-            throw Error(`sprite has NaN zIndex, value=${value}`);
-        }
+        this._position.y = value;
+        this.updateSpritePos()
     }
 
     get zpos() {
@@ -94,13 +95,13 @@ export class Thing
 
     // The horizontal position of the thing (equal to the sprite position)
     get fx() {
-        return this.sprite.x;
+        return this.x;
     }
 
     // The vertical/depth position of the thing. Note this is different
     // than the sprite y-pos if the sprite isn't sitting on the floor.
     get fy() {
-        return this._y;
+        return this.y;
     }
 
     // How far the thing is off the ground (positive values go up the screen
@@ -110,24 +111,20 @@ export class Thing
     }
 
     set fx(value) {
-        this.sprite.x = value;
+        this.x = value;
     }
 
     // Set the y-pos of this thing (on the floor)
     set fy(value)
     {
-        this._y = value;
-        this.sprite.zIndex = this._zpos ?? value;
-        // This is confusing - the sprite y-pos increases going down
-        // the screen while the height off the floor decreases
-        this.sprite.y = this._y - this._h;
+        this.y = value;
     }
 
     // Set the height off the floor for this sprite
     set fh(value)
     {
         this._h = value;
-        this.sprite.y = this._y - this._h;
+        this.updateSpritePos();
     }
 
     set facing(dir)
@@ -160,6 +157,21 @@ export class Thing
 
     getTileUnder() {
         return this.level?.getTileAt(this.fx, this.fy)
+    }
+
+    getDirectionTo(other) {
+        return other.position.subtract(this.position);
+    }
+
+    getDistanceTo(other) {
+        return this.getDirectionTo(other).magnitude();
+    }
+
+    updateSpritePos() {
+        // This is confusing - the sprite y-pos increases going down
+        // the screen while the height off the floor decreases
+        this.sprite.y = this._position.y - this._h;
+        this.sprite.zIndex = this._zpos ?? this._position.y;
     }
 }
 
