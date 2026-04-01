@@ -158,7 +158,7 @@ class GameControlsFSM {
                 const vel = dist.normalize().multiplyScalar(this.player.maxSpeed);
                 this.player.velx = vel.x;
                 this.player.vely = vel.y;
-            } else {
+            } else if (!this.controls.mouse.held) {
                 this.state = STATE_IDLE;
                 this.player.velx = 0;
                 this.player.vely = 0;
