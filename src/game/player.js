@@ -379,10 +379,6 @@ export class Player extends Thing
             this.weaponSlot = null;
             this.updatePlayerAppearance();
             this.spriteChar.tint = NO_TINT;
-            // Bring the player corpse to the front (so it's rendered very
-            // clearly overtop any other junk in the scene)
-            this.level.stage.removeChild(this.sprite);
-            this.level.stage.addChild(this.sprite);
             this.dead = true;
             return;
         }

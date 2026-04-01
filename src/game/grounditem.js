@@ -23,15 +23,13 @@ import { Resources, RES } from './res';
 import { Utils } from './utils';
 import { Thing, Hitbox } from './thing';
 
-const ITEM_GRAVITY = 300;
-
 /**************/
 /* GroundItem */
 /**************/
 
 export class GroundItem extends Thing
 {
-    constructor(item, x, y)
+    constructor(item, x, y, h)
     {
         super();
         let img = Resources.shared.getFrame(item.image);
@@ -39,6 +37,7 @@ export class GroundItem extends Thing
         this.sprite.anchor.set(0.5, 0.6);
         this.x = x ?? 0;
         this.y = y ?? 0;
+        this.fh = h ?? 0;
         this.item = item;
         this.velx = 0;
         this.vely = 0;
@@ -88,7 +87,7 @@ export class GroundItem extends Thing
                 this.velh *= -this.bouncy;
                 this.fh = 0;
             } else {
-                this.velh -= ITEM_GRAVITY*dt;
+                this.velh -= this.level.gravity*dt;
             }
         }
         this.fx += this.velx*dt;

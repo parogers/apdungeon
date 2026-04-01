@@ -25,6 +25,10 @@ import { Render } from './render';
 import { GroundItem } from './grounditem';
 import { StackedGrid } from '@parogers/pixijs-easygrid';
 
+
+const DEFAULT_GRAVITY = 150;
+
+
 /*****************/
 /* LevelDarkness */
 /*****************/
@@ -91,6 +95,7 @@ export class Level
         this.PLAYING = 0;
         this.FINISHED = 1;
 
+        this.gravity = DEFAULT_GRAVITY;
         this.player = null;
         this.state = this.PLAYING;
         // The background sprite (TiledBackground)

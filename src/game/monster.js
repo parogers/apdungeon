@@ -22,7 +22,7 @@ export class Monster extends Creature {
         this.touchDamage = 1;
         this.bodySprite = new PIXI.Sprite()
         this.sprite.addChild(this.bodySprite);
-        this.bodySprite.anchor.set(0.5, 1);
+        // this.bodySprite.anchor.set(0.5, 1);
         this.knockedTimer = 0;
         this.knocked = 0;
         this.attackFrame = null;
@@ -43,6 +43,7 @@ export class Monster extends Creature {
         }
         this.fx += this.velx*dt;
         this.fy += this.vely*dt;
+        this.fh += this.velh*dt;
     }
 
     handleHit(souceThing, dmg) {
@@ -112,8 +113,9 @@ export class Monster extends Creature {
                 item,
                 this.x,
                 this.y,
+                this.fh
             );
-            gnd.velh = Utils.randint(50, 100);
+            gnd.velh = Utils.randint(50, 75);
             gnd.velx = dx;
             gnd.vely = dy;
             this.level.addThing(gnd);

@@ -19,7 +19,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { ANIM, RES } from './res';
+import { Resources, ANIM, RES } from './res';
 import { Utils } from './utils';
 import { Animation, Thing, Hitbox, Creature } from './thing';
 import { Monster } from './monster';
@@ -28,69 +28,110 @@ import { Item } from './item';
 import { Audio } from './audio';
 import { DeathAnimation } from './snake';
 
-const STATE_FLYING = 0;
-const STATE_DEAD = 1;
+const STATE_IDLE = 0;
+const STATE_START_ATTACK = 1;
+const STATE_ATTACKING = 2;
 
 export class Bat extends Monster
 {
     constructor()
     {
         super();
-        this.state = STATE_FLYING;
+        this.state = STATE_IDLE;
         this.health = 1;
         this.moveAnim = new Animation(ANIM.BAT_FLYING);
         this.bodySprite = new PIXI.Sprite();
-        this.bodySprite.anchor.set(0.5, 0.5);
         this.sprite.addChild(this.bodySprite);
-        this.sprite.scale.set(-1, 1);
         this.hitbox = new Hitbox(0, 0, 3, 3);
         this.shadow = new Shadow(this, Shadow.MEDIUM);
+        this.velh = 0;
+        this.bodySprite.anchor = this.moveAnim.anchors[0];
+        this.flyTimer = 0;
+        this.targetH = 10;
+        this.fh = 0;
+        this.climbing = true;
     }
 
     update(dt)
     {
-        this.velx = 0;
-        this.vely = 0;
-        this.fh = 8;
-        super.update(dt);
-        if (this.state === STATE_DEAD) {
+        if (this.dead) {
+            this.velx = 0;
+            this.vely = 0;
+            if (this.fh > 0) {
+                this.fh += this.velh*dt;
+                this.velh -= this.level.gravity*dt;
+                if (this.fh < 0) {
+                    this.fh = 0;
+                }
+            }
+            this.shadow.update();
             return;
         }
-        this.shadow.update();
-        this.bodySprite.texture = this.moveAnim.update(dt);
-    }
+        if (this.state === STATE_IDLE) {
+            function clamp(value, minValue, maxValue) {
+                const clamped = Math.min(
+                    Math.max(
+                        Math.abs(value),
+                        minValue
+                    ),
+                    maxValue
+                );
+                return Math.sign(value)*clamped;
+            }
+            this.flyTimer += dt;
+            this.velx = 15*Math.cos(this.flyTimer);
+            this.vely = 7*Math.cos(this.flyTimer/2);
 
-    handleHit(srcx, srcy, dmg)
-    {
-        if (this.state === STATE_DEAD) {
-            return false;
-        }
+            this.targetH = 12 + 4*Math.sin(this.flyTimer);
+            const w = Math.min(1, 2*dt);
+            this.fh = (1-w)*this.fh + w*this.targetH;
 
-        this.health -= 1;
-        if (this.health <= 0)
-        {
-            Audio.playSound(RES.DEAD_SND);
-            this.state = STATE_DEAD;
-            /*// Drop a reward
-            this.level.handleTreasureDrop(
-                this.getDropTable(),
-                this.sprite.x,
-                this.sprite.y
-            );*/
-            this.level.player.handleMonsterKilled(this);
-            this.level.addThing(new DeathAnimation(this));
+            super.update(dt);
+            this.shadow.update();
+            this.bodySprite.texture = this.moveAnim.update(dt);
+            this.timer -= dt;
+            if (this.getDistanceTo(this.level.player) < 32 && this.timer <= 0 && this.fh >= this.targetH) {
+                this.state = STATE_START_ATTACK;
+                this.timer = 1;
+            }
+        } else if (this.state === STATE_START_ATTACK) {
+            this.bodySprite.texture = this.moveAnim.update(dt);
+            this.velx *= 0.95;
+            this.vely *= 0.95;
+            super.update(dt);
+            this.timer -= dt;
+            if (this.timer <= 0) {
+                this.state = STATE_ATTACKING;
+                const dir = this.level.player.position.subtract(this.position);
+                const diveSpeed = 100;
+                const vel = dir.normalize().multiplyScalar(diveSpeed);
+                this.velx = vel.x;
+                this.vely = vel.y;
+                this.velh = -(this.fh-2)/(dir.magnitude()/diveSpeed);
+            }
+        } else if (this.state === STATE_ATTACKING) {
+            super.update(dt);
+            this.shadow.update();
+            if (this.fh < 2) {
+                this.velh = 0;
+                this.timer = 2;
+                this.state = STATE_IDLE;
+            }
         }
-        else
-        {
-            Audio.playSound(RES.SNAKE_HURT_SND);
-        }
-        return true;
     }
 
     handlePlayerCollision(player)
     {
-        if (!this.dead) {
+        if (!this.dead && this.state === STATE_ATTACKING) {
             player.takeDamage(1, this);
         }
+    }
+
+    getDropTable()
+    {
+        return [
+            [[Item.Table.COIN, Item.Table.COIN], 1],
+            [[Item.Table.COIN], 1],
+        ];
     }
 };

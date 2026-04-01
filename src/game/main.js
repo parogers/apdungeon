@@ -74,7 +74,7 @@ export class Game
         if (!this.gamestate) {
             return;
         }
-        const dt = PIXI.Ticker.shared.elapsedMS/1000;
+        const dt = Math.min(PIXI.Ticker.shared.elapsedMS/1000, 1/60.0);
         this.gamestate.update(dt);
         GameControls.update(dt);
         this.gamestate.render();

@@ -158,7 +158,8 @@ export class BowWeaponSlot extends WeaponSlot
         const sourceY = this.player.y + this.sprite.y;
         const dx = target.x - sourceX;
         const dy = target.y - sourceY;
-        const mag = Math.sqrt(dx*dx + dy*dy);
+        const dh = target.fh - this.player.fh;
+        const mag = Math.sqrt(dx*dx + dy*dy + dh*dh);
 
         const arrow = new Arrow(
             this.player,
@@ -168,6 +169,7 @@ export class BowWeaponSlot extends WeaponSlot
             // this.player.baseSpeed + this.player.facing*100, 0,
             150*dx/mag,
             150*dy/mag,
+            150*dh/mag,
             0, // Math.abs(this.sprite.y)
         );
         this.player.level.addThing(arrow);
@@ -184,7 +186,7 @@ export class BowWeaponSlot extends WeaponSlot
 
 export class Arrow extends Thing
 {
-    constructor(owner, target, x, y, velx, vely, h)
+    constructor(owner, target, x, y, velx, vely, velh, h)
     {
         super();
         this.target = target;
@@ -192,16 +194,14 @@ export class Arrow extends Thing
         this.arrowSprite = new PIXI.Sprite(
             Resources.shared.getFrame('weapon-arrow')
         );
-        // this.arrowSprite.scale.x = Math.sign(velx);
-        // this.arrowSprite.scale.y = 1;
         this.sprite.addChild(this.arrowSprite);
-        this.sprite.rotation = Math.atan2(vely, velx);
+        this.sprite.rotation = Math.atan2(vely - velh, velx);
         this.fx = x;
         this.fy = y;
         this.fh = h;
         this.velx = velx;
         this.vely = vely;
-        this.velh = 0;
+        this.velh = velh;
         this.state = ARROW_FLIGHT;
         this.timer = 4;
         this.hitbox = new Hitbox(0, 0, 8, 4);
@@ -215,6 +215,7 @@ export class Arrow extends Thing
         {
             this.fx += this.velx*dt;
             this.fy += this.vely*dt;
+            this.fh += this.velh*dt;
             // Check if the arrow hits a wall
             const tile = level.getTileAt(
                 this.sprite.x + Math.sign(this.velx)*4,

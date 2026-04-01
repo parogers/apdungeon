@@ -129,7 +129,7 @@ export class Thing
 
     set facing(dir)
     {
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*Math.sign(dir);
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x)*(Math.sign(dir) || 1);
     }
 
     get facing() {
@@ -213,10 +213,17 @@ export class Animation
             this.looping = (
                 animResource.looping !== undefined ? animResource.looping : true
             );
+            this.anchors = animResource.frames.map(
+                name => Resources.shared.getAnchor(name)
+            );
         } else {
             this.frames = animResource;
             this.fps = 5;
             this.looping = true;
+            this.anchor = {
+                x: 0.5,
+                y: 0.5,
+            };
         }
         this.playing = true;
         this.frame = 0;

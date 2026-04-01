@@ -54,19 +54,19 @@ function getChunk(name)
 export function generateLevel(levelNum)
 {
     const level = new Level();
-    for (let n = 0; n < 250; n++)
-    {
-        const klass = Utils.randomChoice([
-            // Snake,
-            Bat,
-            Scorpion,
-            // SkelWarrior,
-        ]);
-        const monster = new klass();
-        monster.x = randint(50, level.width-50);
-        monster.y = randint(50, level.height-50);
-        level.addThing(monster);
-    }
+    // for (let n = 0; n < 250; n++)
+    // {
+    //     const klass = Utils.randomChoice([
+    //         // Snake,
+    //         Bat,
+    //         Scorpion,
+    //         // SkelWarrior,
+    //     ]);
+    //     const monster = new klass();
+    //     monster.x = randint(50, level.width-50);
+    //     monster.y = randint(50, level.height-50);
+    //     level.addThing(monster);
+    // }
 
     // for (let n = 0; n < 50; n++) {
     //     const x = Utils.randint(0, level.width);

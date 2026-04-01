@@ -96,7 +96,7 @@ export var ANIM = {
     BAT_FLYING: {
         resource: RES.ENEMIES,
         frames: ['enemy-bat-fly1', 'enemy-bat-fly2'],
-        fps: 4,
+        fps: 8,
     },
 
     GATE_OPENING: {
@@ -154,6 +154,17 @@ export class Resources {
 
     constructor(private bundle: any) {
         this.texturesByName = getTexturesByName(bundle);
+    }
+
+    getAnchor(name: string) {
+        for (let res of Object.values(RES)) {
+            if (res.endsWith('.json')) {
+                if (this.bundle[res].data.frames[name]) {
+                    return this.bundle[res].data.frames[name].anchor;
+                }
+            }
+        }
+        return null;
     }
 
     getFrame(name: string) {
