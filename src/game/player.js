@@ -221,10 +221,11 @@ export class Player extends Thing
         this.accelx = 0;
         this.accely = 0;
         this.accelh = 0;
+        this.onGround = true;
         // Player health in half hearts. This should always be a multiple of two
         this.maxHealth = 8;
         this.health = this.maxHealth;
-        this.maxSpeed = 50; // pixels/second
+        this.maxSpeed = 30; // pixels/second
         // Inventory stuff
         this.numCoins = 0;
         this.numArrows = 0;
@@ -239,6 +240,7 @@ export class Player extends Thing
         //     {count: ZZZ, img: ZZZ}
         this.kills = {};
         this.facingSouth = true;
+        // this.sprite.addChild(new PIXI.Graphics().rect(-0.5, -0.5, 1, 1).fill({ color: 0 }))
 
         // Define the hitbox
         this.hitbox = new Hitbox(0, -2, 2, 2);
@@ -290,6 +292,8 @@ export class Player extends Thing
         this.upgradeSword(Item.Table.SMALL_SWORD);
         this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
+
+        // this.sprite.filters = new PIXI.BlurFilter({ strength: 5 });
 
         // const mask = new PIXI.Graphics().rect(
         //     -this.width/2,
@@ -360,18 +364,6 @@ export class Player extends Thing
             }
         }
 
-        // Handle dying state animation
-        // if (this.dying) {
-        //     this.frame += 2.5*dt;
-        //     if (this.frame > this.dyingFrames.length-1) {
-        //         this.frame = this.dyingFrames.length-1;
-        //         this.dead = true;
-        //     }
-        //     let frame = this.dyingFrames[(this.frame)|0];
-        //     this.spriteChar.texture = frame;
-        //     return;
-        // }
-
         // Check if the player has just died
         if (this.health <= 0) {
             this.dying = true;
@@ -387,6 +379,15 @@ export class Player extends Thing
         if (this.controls.swap.pressed) {
             this.swapWeapons();
         }
+        // if (this.controls.getX() || this.controls.getY()) {
+        //     this.velx = this.controls.getX()*25;
+        //     this.vely = this.controls.getY()*25;
+        //     const tile = this.level.grid.getTileInfoAt(this.x, this.y);
+        //     console.log(tile);
+        // } else {
+        //     this.velx = 0;
+        //     this.vely = 0;
+        // }
 
         if (this.knockedTimer > 0) {
             this.knockedTimer -= dt;
@@ -412,6 +413,11 @@ export class Player extends Thing
         }
         this.weaponSlot.facingSouth = this.facingSouth;
 
+        const ground = this.level.getHeightAt(this.x, this.y);
+        if (this.onGround) {
+            this.fh = ground;
+        }
+
         // Update the equipped weapon
         if (this.weaponSlot && this.weaponSlot.update) {
             this.weaponSlot.update(dt);
@@ -423,15 +429,17 @@ export class Player extends Thing
             this.handleCollisionCallback
         );
 
-        if (this.controls.space.pressed && this.fh === 0) {
+        if (this.controls.space.pressed && this.fh === ground) {
             this.velh = 50;
+            this.onGround = false;
         }
         if (this.velh) {
             this.fh += this.velh*dt;
             this.velh -= 300*dt;
-            if (this.fh <= 0) {
-                this.fh = 0;
+            if (this.fh <= ground) {
+                this.fh = ground;
                 this.velh = 0;
+                this.onGround = true;
             }
         }
         if (Math.abs(this.velx) < 0.1) this.velx = 0;

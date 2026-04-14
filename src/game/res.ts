@@ -47,6 +47,7 @@ export var RES = {
     CHEST_SND: 'media/effects/chest_open.wav',
     TILES_DIRT: 'tiles-dirt.json',
     TILES_GRASS: 'tiles-grass.json',
+    TILES_MOUNTAIN: 'tiles-mountain.json',
 };
 
 

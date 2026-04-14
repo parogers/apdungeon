@@ -32,7 +32,7 @@ export class Shadow
     {
         this.thing = thing;
         this.shadowSprite = new PIXI.Sprite(
-            Resources.shared.getFrame(size)
+            Resources.shared.getFrame(size ?? Shadow.MEDIUM)
         );
         this.shadowSprite.anchor.set(0.5, 0.5);
         this.thing.sprite.addChildAt(this.shadowSprite, 0);
@@ -48,8 +48,13 @@ export class Shadow
 
     update(dt)
     {
-        // Make sure the shadow stays on the floor when we jump
-        this.shadowSprite.y = this.thing.fh;
+        // Make sure the shadow sticks to the ground
+        const ground = this.thing.level.getHeightAt(this.thing.x, this.thing.y);
+        if (this.thing.fh > ground) {
+            this.shadowSprite.y = this.thing.fh - ground;
+        } else {
+            this.shadowSprite.y = 0;
+        }
         // Have the shadow increase size slightly when the player is
         // further away from the floor.
         this.shadowSprite.scale.set(
@@ -103,7 +108,7 @@ export class Splash
     {
         const tile = this.thing.level.grid.getSubTileInfoAt(this.thing.x, this.thing.y);
 
-        if (tile && tile === 'water' && this.thing.fh === 0)
+        if (tile && tile === 'water' && this.thing.onGround) // && this.thing.fh === 0)
         {
             if (!this.visible && this.thing.isOnCamera && this.playSound) {
                 Audio.playSound(RES.SPLASH_SND, 0.5);

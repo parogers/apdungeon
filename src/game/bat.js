@@ -40,8 +40,6 @@ export class Bat extends Monster
         this.state = STATE_IDLE;
         this.health = 1;
         this.moveAnim = new Animation(ANIM.BAT_FLYING);
-        this.bodySprite = new PIXI.Sprite();
-        this.sprite.addChild(this.bodySprite);
         this.hitbox = new Hitbox(0, 0, 3, 3);
         this.shadow = new Shadow(this, Shadow.MEDIUM);
         this.velh = 0;
@@ -50,6 +48,7 @@ export class Bat extends Monster
         this.targetH = 10;
         this.fh = 0;
         this.climbing = true;
+        this.onGround = false;
     }
 
     update(dt)

@@ -4,6 +4,7 @@ import { ANIM, RES, Resources } from './res';
 import { Animation } from './thing';
 import { Item } from './item';
 import { Monster } from './monster';
+import { Shadow } from './effects';
 
 
 const STATE = {
@@ -29,16 +30,20 @@ export class Scorpion extends Monster
         this.meleeDamage = 1;
         this.moveAnim = new Animation(ANIM.SCORPION_WALK);
         this.idleAnim = new Animation(ANIM.SCORPION_IDLE);
+        this.bodySprite.anchor.set(0.5, 1);
         this.attackFrame = Resources.shared.getFrame('enemy-scorpion-attack');
         this.state = STATE.IDLE;
         this.meleeAttackRange = 4;
         this.target = null;
+        this.shadow = new Shadow(this);
     }
 
     update(dt) {
         if (this.dead) {
             return;
         }
+        // this.bodySprite.texture = this.moveAnim.update(dt);
+        // return;
         if (this.stunned) {
             this.state = STATE.FOLLOWING;
             super.update(dt);
@@ -86,6 +91,7 @@ export class Scorpion extends Monster
                 this.timer = 1;
             }
         }
+        this.shadow.update();
         super.update(dt);
     }
 

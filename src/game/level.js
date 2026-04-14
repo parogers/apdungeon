@@ -23,7 +23,7 @@ import { Resources, RES, TILE_HEIGHT } from './res';
 import { Utils } from './utils';
 import { Render } from './render';
 import { GroundItem } from './grounditem';
-import { StackedGrid } from '@parogers/pixijs-easygrid';
+import { StackedGrid, getHitMapFromTileSheet } from '@parogers/pixijs-easygrid';
 
 
 const DEFAULT_GRAVITY = 150;
@@ -115,35 +115,40 @@ export class Level
 
         const dirtSheet = Resources.shared.find(RES.TILES_DIRT);
         const grassSheet = Resources.shared.find(RES.TILES_GRASS);
+        const mountainSheet = Resources.shared.find(RES.TILES_MOUNTAIN);
         const terrain = new Array(50).fill(0).map(() => {
             return new Array(100).fill(0).map(() => Utils.randomChoice([true, true, false]));
         });
+        const mountainTerrain = terrain.map(row => {
+            return row.map(value => value && Utils.randomChoice([true, false, false]));
+        });
         const stacked = new StackedGrid({
             bottomTileInfo: 'water',
+            bottomLayerHeight: 0,
             autoUpdate: false, // we'll use our own ticker
             // debugGridColor: 0x505050,
             // debugDualGridColor: 0,
+            // debugDualGridSubTileColor: 0xa0a0a0,
             layers: [
                 {
                     tileInfo: 'dirt',
                     spritesheet: dirtSheet,
                     terrain: terrain,
+                    height: 1,
                 },
                 {
                     tileInfo: 'grass',
                     spritesheet: grassSheet,
                     terrain: terrain,
+                    height: 1,
                 },
-                // {
-                //     tileInfo: 'mountain',
-                //     spritesheet: mountainSheet,
-                //     terrain: mountainTerrain,
-                // },
-                // {
-                //     tileInfo: 'tree',
-                //     spritesheet: treeSheet,
-                //     terrain: treesTerrain,
-                // },
+                {
+                    tileInfo: 'mountain',
+                    spritesheet: mountainSheet,
+                    terrain: mountainTerrain,
+                    height: 2,
+                    hitMap: getHitMapFromTileSheet(Render.getRenderer(), mountainSheet),
+                },
             ],
         });
         this.stage.addChild(stacked);
@@ -155,7 +160,7 @@ export class Level
     }
 
     get groundStage() {
-        return this.grid.getLayer('grass').foreground;
+        return this.grid.foreground;
     }
 
     get tileWidth() {
@@ -359,6 +364,10 @@ export class Level
         return {
             type: cell?.tileInfo,
         };
+    }
+
+    getHeightAt(x, y) {
+        return this.grid.getHeightAt(x, y);
     }
 
     isThingVisible(thing) {

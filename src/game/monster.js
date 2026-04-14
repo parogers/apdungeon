@@ -19,13 +19,14 @@ export class Monster extends Creature {
         this.timer = 0;
         this.velx = 0;
         this.vely = 0;
+        this.velh = 0;
         this.touchDamage = 1;
         this.bodySprite = new PIXI.Sprite()
         this.sprite.addChild(this.bodySprite);
-        // this.bodySprite.anchor.set(0.5, 1);
         this.knockedTimer = 0;
         this.knocked = 0;
         this.attackFrame = null;
+        this.onGround = true;
         this.hitbox = new PIXI.Rectangle(0, 0, 4, 4);
     }
 
@@ -44,6 +45,9 @@ export class Monster extends Creature {
         this.fx += this.velx*dt;
         this.fy += this.vely*dt;
         this.fh += this.velh*dt;
+        if (this.onGround) {
+            this.fh = this.level.getHeightAt(this.x, this.y);
+        }
     }
 
     handleHit(souceThing, dmg) {

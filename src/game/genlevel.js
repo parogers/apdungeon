@@ -84,7 +84,7 @@ export function generateLevel(levelNum)
     //     level.addThing(item);
     // }
 
-    const mon = new Bat();
+    const mon = new Scorpion();
     mon.x = 60;
     mon.y = 60;
     level.addThing(mon);
