@@ -25,7 +25,7 @@ export var RES = {
     GROUND_ITEMS: 'media/sprites/ground-items.json',
     UI: 'media/rogue-like-8x8/UI.json',
     // DRAGON: 'media/rogue-like-8x8/Dragon.json',
-    MAP_OBJS: 'media/rogue-like-8x8/MapObjects.json',
+    MAP_OBJS: 'media/sprites/map-objects.json',
     PLAYER: 'media/sprites/player.json',
     ENEMIES: 'media/sprites/enemies.json',
 
