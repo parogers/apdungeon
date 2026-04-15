@@ -41,7 +41,7 @@ export class Bat extends Monster
         this.health = 1;
         this.moveAnim = new Animation(ANIM.BAT_FLYING);
         this.hitbox = new Hitbox(0, 0, 3, 3);
-        this.shadow = new Shadow(this, Shadow.MEDIUM);
+        this.shadow = new Shadow(this, Shadow.SMALL);
         this.velh = 0;
         this.bodySprite.anchor = this.moveAnim.anchors[0];
         this.flyTimer = 0;

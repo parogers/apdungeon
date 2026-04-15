@@ -22,20 +22,58 @@ import * as PIXI from 'pixi.js';
 import { Utils } from './utils';
 import { Resources, RES } from './res';
 import { Audio } from './audio';
+import { Render } from './render';
+
+
+function shadowRenderer()
+{
+    let lastRenderer = null;
+    let cache = {};
+    function render(width) {
+        const renderer = Render.getRenderer();
+        if (renderer !== lastRenderer) {
+            // Soft reloads (eg during dev) can result in a new renderer, and
+            // cache entries that can only be used by the old one.
+            cache = {};
+            lastRenderer = renderer;
+        }
+        if (cache[width]) {
+            return cache[width];
+        }
+        const texture = PIXI.RenderTexture.create({ width: width, height: 3 });
+        const graphics = new PIXI.Graphics()
+            .rect(1, 0, width-2, 3)
+            .rect(0, 1, 1, 1)
+            .rect(width-1, 1, 1, 1)
+            .fill({ color: 0x000000, alpha: 0.4 })
+        ;
+        renderer.render(graphics, { renderTexture: texture });
+        cache[width] = texture;
+        return texture;
+    }
+    return render;
+}
+
+const renderShadow = shadowRenderer();
+
 
 // Adds a basic shadow to a thing. The shadow sprite always sticks to
 // the floor and changes size slightly based on how far the thing
 // moves vertically.
 export class Shadow
 {
+    static SMALL = 5;
+    static MEDIUM = 7;
+    static LARGE = 9;
+
     constructor(thing, size)
     {
         this.thing = thing;
-        this.shadowSprite = new PIXI.Sprite(
-            Resources.shared.getFrame(size ?? Shadow.MEDIUM)
-        );
+        this.shadowSprite = new PIXI.Sprite();
         this.shadowSprite.anchor.set(0.5, 0.5);
         this.thing.sprite.addChildAt(this.shadowSprite, 0);
+        this.size = size ?? Shadow.MEDIUM;
+        this.rendered = false;
     }
 
     get visible() {
@@ -48,6 +86,10 @@ export class Shadow
 
     update(dt)
     {
+        if (!this.rendered) {
+            this.shadowSprite.texture = renderShadow(this.size);
+            this.rendered = true;
+        }
         // Make sure the shadow sticks to the ground
         const ground = this.thing.level.getHeightAt(this.thing.x, this.thing.y);
         if (this.thing.fh > ground) {
@@ -59,7 +101,7 @@ export class Shadow
         // further away from the floor.
         this.shadowSprite.scale.set(
             1 + this.thing.fh / 50.0,
-            1 + this.thing.fh / 30.0
+            1 + this.thing.fh / 60.0
         );
     }
 
@@ -67,12 +109,6 @@ export class Shadow
         this.thing.sprite.removeChild(this.shadowSprite);
     }
 }
-
-Shadow.SMALL = 'shadow_sm';
-Shadow.MEDIUM = 'shadow_md';
-Shadow.LARGE = 'shadow_lg';
-Shadow.THIN = 'shadow_thin';
-Shadow.GOBLIN = 'shadow_goblin';
 
 
 // Adds 'splashy water' to the base of a thing when they enter water
