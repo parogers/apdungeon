@@ -292,17 +292,7 @@ export class Player extends Thing
         this.upgradeSword(Item.Table.SMALL_SWORD);
         this.upgradeBow(Item.Table.SMALL_BOW);
         this.numArrows = 99;
-
         // this.sprite.filters = new PIXI.BlurFilter({ strength: 5 });
-
-        // const mask = new PIXI.Graphics().rect(
-        //     -this.width/2,
-        //     -this.height,
-        //     this.width,
-        //     this.height*0.75
-        // ).fill();
-        // this.spriteChar.mask = mask;
-        // this.spriteChar.addChild(mask);
     }
 
     get width() {

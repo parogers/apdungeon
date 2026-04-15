@@ -23,6 +23,7 @@ import { Utils } from './utils';
 import { Resources, RES } from './res';
 import { Audio } from './audio';
 import { Render } from './render';
+import { Level } from './level';
 
 
 function shadowRenderer()
@@ -123,9 +124,15 @@ export class Splash
         this.waterSprite = new PIXI.Sprite();
         this.waterSprite.anchor.set(0.5, 0.5);
         this.waterSprite.visible = false;
-        this.waterSprite.texture = Resources.shared.getFrame('treading_water');
-        this.waterSprite.y = ypos;
-        this.thing.sprite.addChild(this.waterSprite);
+        this.waterSprite.texture = Resources.shared.getFrame('treading-water');
+        this.waterSprite.zIndex = Level.BACKGROUND_POS;
+
+        this.mask = new PIXI.Graphics().rect(
+            -this.thing.width/2,
+            -this.thing.height,
+            this.thing.width,
+            this.thing.height*0.75
+        ).fill();
     }
 
     get visible() {
@@ -143,16 +150,22 @@ export class Splash
     update(dt)
     {
         const tile = this.thing.level.grid.getSubTileInfoAt(this.thing.x, this.thing.y);
-
-        if (tile && tile === 'water' && this.thing.onGround) // && this.thing.fh === 0)
+        if (tile && tile === 'water' && this.thing.onGround)
         {
             if (!this.visible && this.thing.isOnCamera && this.playSound) {
+                this.thing.level.groundStage.addChild(this.waterSprite);
                 Audio.playSound(RES.SPLASH_SND, 0.5);
+                this.thing.spriteChar.mask = this.mask;
+                this.thing.spriteChar.addChild(this.mask);
             }
+            this.waterSprite.x = this.thing.x;
+            this.waterSprite.y = this.thing.y-1;
             this.visible = true;
         }
         else
         {
+            this.thing.spriteChar.mask = null;
+            this.thing.spriteChar.removeChild(this.mask);
             this.visible = false;
         }
 
