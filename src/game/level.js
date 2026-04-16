@@ -124,7 +124,7 @@ export class Level
         });
         const stacked = new StackedGrid({
             bottomTileInfo: 'water',
-            bottomLayerHeight: -1,
+            bottomLayerHeight: 0,
             autoUpdate: false, // we'll use our own ticker
             // debugGridColor: 0x505050,
             // debugDualGridColor: 0,

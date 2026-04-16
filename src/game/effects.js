@@ -117,21 +117,23 @@ export class Splash
 {
     constructor(thing, ypos, playSound)
     {
+        const waterTexture = 'treading-water';
         this.thing = thing;
         this.playSound = playSound;
         this.enabled = true;
         this.timer = 0;
         this.waterSprite = new PIXI.Sprite();
-        this.waterSprite.anchor.set(0.5, 0.5);
+        this.waterSprite.anchor = Resources.shared.getAnchor(waterTexture);
         this.waterSprite.visible = false;
-        this.waterSprite.texture = Resources.shared.getFrame('treading-water');
+        this.waterSprite.texture = Resources.shared.getFrame(waterTexture);
         this.waterSprite.zIndex = Level.BACKGROUND_POS;
+        this.submersionDepth = 0.25;
 
         this.mask = new PIXI.Graphics().rect(
             -this.thing.width/2,
             -this.thing.height,
             this.thing.width,
-            this.thing.height*0.75
+            this.thing.height*(1 - this.submersionDepth)
         ).fill();
     }
 
@@ -159,7 +161,7 @@ export class Splash
                 this.thing.spriteChar.addChild(this.mask);
             }
             this.waterSprite.x = this.thing.x;
-            this.waterSprite.y = this.thing.y-1;
+            this.waterSprite.y = this.thing.y - this.thing.fh - this.thing.height*this.submersionDepth;
             this.visible = true;
         }
         else
