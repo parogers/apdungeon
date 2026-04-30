@@ -45,9 +45,9 @@ export var RES = {
     POWERUP3_SND: 'media/effects/powerup3.wav',
     POWERUP4_SND: 'media/effects/powerup4.wav',
     CHEST_SND: 'media/effects/chest_open.wav',
-    TILES_DIRT: 'tiles-dirt.json',
-    TILES_GRASS: 'tiles-grass.json',
-    TILES_MOUNTAIN: 'tiles-mountain.json',
+    TILES_DIRT: 'tiles/tiles-dirt.json',
+    TILES_GRASS: 'tiles/tiles-grass.json',
+    TILES_MOUNTAIN: 'tiles/tiles-mountain.json',
 };
 
 

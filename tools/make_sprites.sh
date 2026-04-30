@@ -2,8 +2,10 @@
 
 SPRIGHT=/opt/spright/bin/spright
 
-$SPRIGHT -i rawdata/spright/ground-items.conf
-$SPRIGHT -i rawdata/spright/player.conf
-$SPRIGHT -i rawdata/spright/enemies.conf
-$SPRIGHT -i rawdata/spright/weapons.conf
-$SPRIGHT -i rawdata/spright/map-objects.conf
+for SRC in rawdata/spright/*.conf; do
+    $SPRIGHT -i $SRC
+done
+
+for SRC in rawdata/tiles/*.conf; do
+    $SPRIGHT -i $SRC -p ./public/tiles
+done
