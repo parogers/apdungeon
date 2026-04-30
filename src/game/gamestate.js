@@ -48,17 +48,17 @@ export class GameState
         this.state = this.SHOW_TITLE_SCREEN;
         this.screen = null;
 
-        window.addEventListener('resize', () => {
-            let div = Render.getContainer();
-            let width = window.innerWidth-5;
-            let height = window.innerHeight-5;
-            div.style.width = width;
-            div.style.height = height;
-            Render.getRenderer().resize(width, height);
-            if (this.screen && this.screen.handleResize) {
-                this.screen.handleResize();
-            }
-        });
+        // window.addEventListener('resize', () => {
+        //     let div = Render.getContainer();
+        //     let width = window.innerWidth-5;
+        //     let height = window.innerHeight-5;
+        //     div.style.width = width;
+        //     div.style.height = height;
+        //     Render.getRenderer().resize(width, height);
+        //     if (this.screen && this.screen.handleResize) {
+        //         this.screen.handleResize();
+        //     }
+        // });
     }
 
     /* Called every render frame to update the overall game state, transition
@@ -122,11 +122,11 @@ export class GameState
         }
     }
 
-    handleResize()
-    {
-        Render.resize();
-        if (this.screen && this.screen.handleResize) {
-            this.screen.handleResize();
-        }
-    }
+    // handleResize()
+    // {
+    //     Render.resize();
+    //     if (this.screen && this.screen.handleResize) {
+    //         this.screen.handleResize();
+    //     }
+    // }
 }

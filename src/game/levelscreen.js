@@ -29,6 +29,9 @@ import { Utils } from './utils';
 import { GameControls } from './controls';
 import { Audio } from './audio';
 
+import { Resources, RES } from './res';
+import { StackedGrid } from '@parogers/pixijs-easygrid';
+
 class TouchControls
 {
     constructor() {
@@ -103,7 +106,7 @@ export class LevelScreen
             // Generate a new level and player character
             this.controls = GameControls.getControls();
             this.player = new Player(this.controls);
-            this.player.x = 50;
+            this.player.x = 75;
             this.player.y = 50;
             this.levelNum = 0;
             // Auto-generate the first level
@@ -192,13 +195,13 @@ export class LevelScreen
 
     handleResize()
     {
-        if (this.level) {
-            let scale = Math.min(
-                Render.getRenderer().width / this.level.viewport.width,
-                Render.getRenderer().height / this.level.viewport.height
-            );
-            this.stage.scale.set(scale);
-        }
+        // if (this.level) {
+        //     let scale = Math.min(
+        //         Render.getRenderer().width / this.level.viewport.width,
+        //         Render.getRenderer().height / this.level.viewport.height
+        //     );
+        //     this.stage.scale.set(scale);
+        // }
     }
 
     static getViewSize() {

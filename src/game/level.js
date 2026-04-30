@@ -155,7 +155,6 @@ export class Level
         this.grid = stacked;
         this.grid.viewport.width = Level.CAMERA_WIDTH;
         this.grid.viewport.height = Level.CAMERA_HEIGHT;
-
         this.groundStage.sortableChildren = true;
     }
 

@@ -29,8 +29,11 @@ import { GameState } from './gamestate';
 import { Utils } from './utils';
 import { GestureManager } from './gesture';
 import { Resources } from './res';
+import { Level } from './level';
 
 import { ChunkTemplate, Tileset } from './bg';
+
+import { scaleToViewport } from '@parogers/pixijs-easygrid';
 
 // See: https://github.com/pixijs/sound/issues/252
 PIXI.extensions.add(soundAsset)
@@ -58,15 +61,29 @@ export class Game
     }
 
     async configure() {
+        PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
+        this.app = new PIXI.Application();
+        await this.app.init({
+            resizeTo: window,
+        });
+        this.stage = this.app.stage;
+        this.element.appendChild(this.app.canvas);
+        Render.renderer = this.app.renderer;
+        // Render.container = this.element;
         const { width, height } = LevelScreen.getViewSize();
         await Render.configure(this.element, width, height);
         GameControls.configure();
+        this.resize();
     }
 
     resize() {
-        if (this.gamestate) {
-            this.gamestate.handleResize();
-        }
+        scaleToViewport(
+            this.app,
+            {
+                width: Level.CAMERA_WIDTH,
+                height: Level.CAMERA_HEIGHT,
+            },
+        );
     }
 
     gameloop()
@@ -76,16 +93,15 @@ export class Game
         }
         const dt = Math.min(PIXI.Ticker.shared.elapsedMS/1000, 1/60.0);
         this.gamestate.update(dt);
+        this.app.stage.removeChildren();
+        this.app.stage.addChild(this.gamestate.screen.stage);
         GameControls.update(dt);
-        this.gamestate.render();
     }
 
     async start()
     {
         await Resources.load();
         this.gamestate = new GameState();
-        this.stage = new PIXI.Container();
-        this.stage.children = [];
 
         this.gameloopCaller = () => {
             this.gameloop()

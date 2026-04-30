@@ -295,13 +295,13 @@ export class GameUI
         this.container = new PIXI.Container();
         this.healthUI = new HealthUI(this);
         this.inventoryUI = new InventoryUI(this);
-        this.bg = new PIXI.Sprite(Resources.shared.getFrame('black'));
+        // this.bg = new PIXI.Sprite(Resources.shared.getFrame('black'));
         this.audioButton = new Button([
             ['on', 'audio-on'],
             ['off', 'audio-off']
         ]);
 
-        this.container.addChild(this.bg);
+        // this.container.addChild(this.bg);
         this.container.addChild(this.healthUI.sprite);
         this.container.addChild(this.inventoryUI.sprite);
         this.container.addChild(this.audioButton.sprite);
@@ -321,7 +321,7 @@ export class GameUI
             this.container = null;
             this.healthUI = null;
             this.inventoryUI = null;
-            this.bg = null;
+            // this.bg = null;
             this.audioButton = null;
             if (GameControls.getControls().hasTouch) {
                 this.viewElement.removeEventListener(
@@ -383,8 +383,8 @@ export class GameUI
         this.audioButton.sprite.position.set(
             width-this.audioButton.sprite.width-1, 1);
         this.healthUI.sprite.position.set(86, 2);
-        this.bg.scale.set(
-            width/this.bg.texture.width,
-            height/this.bg.texture.height);
+        // this.bg.scale.set(
+        //     width/this.bg.texture.width,
+        //     height/this.bg.texture.height);
     }
 }

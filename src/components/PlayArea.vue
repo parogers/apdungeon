@@ -11,12 +11,12 @@ let refreshFPS = 0;
 
 function resizeCallback()
 {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    // const width = window.innerWidth;
+    // const height = window.innerHeight;
     const div = playArea.value;
     if (div) {
-        div.style.width = width + "px";
-        div.style.height = height + "px";
+        // div.style.width = width + "px";
+        // div.style.height = height + "px";
         game.resize();
     }
 }
@@ -36,7 +36,7 @@ onMounted(async () => {
         await game.configure();
         game.start();
         window.addEventListener("resize", () => resizeCallback());
-        setTimeout(() => resizeCallback(), 500);
+        // setTimeout(() => resizeCallback(), 500);
         PIXI.Ticker.shared.add(tick);
     }
 });

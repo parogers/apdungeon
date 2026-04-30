@@ -52,14 +52,14 @@ export class Render {
         const { width, height } = getMaxFit(div, aspect);
 
         PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
-        Render.renderer = await PIXI.autoDetectRenderer({
-            width: width || 1,
-            height: height || 1,
-            //antialias: true,
-            // Required to prevent flickering in Chrome on Android (others too?)
-            preserveDrawingBuffer: true,
-            //clearBeforeRender: true
-        });
+        // Render.renderer = await PIXI.autoDetectRenderer({
+        //     width: width || 1,
+        //     height: height || 1,
+        //     //antialias: true,
+        //     // Required to prevent flickering in Chrome on Android (others too?)
+        //     preserveDrawingBuffer: true,
+        //     //clearBeforeRender: true
+        // });
         Render.viewWidth = viewWidth;
         Render.viewHeight = viewHeight;
 
@@ -83,7 +83,7 @@ export class Render {
             Render.container,
             Render.aspectRatio
         );
-        Render.renderer.resize(width, height);
+        // Render.renderer.resize(width, height);
     }
 
     static mouseToViewPos(x, y) {
