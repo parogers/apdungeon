@@ -28,9 +28,12 @@ import { Level } from './level';
 import { Utils } from './utils';
 import { GameControls } from './controls';
 import { Audio } from './audio';
+import { Game } from './main';
 
 import { Resources, RES } from './res';
 import { StackedGrid } from '@parogers/pixijs-easygrid';
+
+import { scaleToViewport } from '@parogers/pixijs-easygrid';
 
 class TouchControls
 {
@@ -195,13 +198,14 @@ export class LevelScreen
 
     handleResize()
     {
-        // if (this.level) {
-        //     let scale = Math.min(
-        //         Render.getRenderer().width / this.level.viewport.width,
-        //         Render.getRenderer().height / this.level.viewport.height
-        //     );
-        //     this.stage.scale.set(scale);
-        // }
+        scaleToViewport(
+            this.stage,
+            {
+                width: Level.CAMERA_WIDTH,
+                height: Level.CAMERA_HEIGHT,
+            },
+            Render.renderer,
+        );
     }
 
     static getViewSize() {

@@ -33,7 +33,6 @@ import { Level } from './level';
 
 import { ChunkTemplate, Tileset } from './bg';
 
-import { scaleToViewport } from '@parogers/pixijs-easygrid';
 
 // See: https://github.com/pixijs/sound/issues/252
 PIXI.extensions.add(soundAsset)
@@ -66,6 +65,9 @@ export class Game
         await this.app.init({
             resizeTo: window,
         });
+        this.app.renderer.on('resize', () => {
+            this.handleResize();
+        });
         this.stage = this.app.stage;
         this.element.appendChild(this.app.canvas);
         Render.renderer = this.app.renderer;
@@ -73,17 +75,12 @@ export class Game
         const { width, height } = LevelScreen.getViewSize();
         await Render.configure(this.element, width, height);
         GameControls.configure();
-        this.resize();
     }
 
-    resize() {
-        scaleToViewport(
-            this.app,
-            {
-                width: Level.CAMERA_WIDTH,
-                height: Level.CAMERA_HEIGHT,
-            },
-        );
+    handleResize() {
+        if (this.gamestate) {
+            this.gamestate.handleResize();
+        }
     }
 
     gameloop()
@@ -93,8 +90,10 @@ export class Game
         }
         const dt = Math.min(PIXI.Ticker.shared.elapsedMS/1000, 1/60.0);
         this.gamestate.update(dt);
-        this.app.stage.removeChildren();
-        this.app.stage.addChild(this.gamestate.screen.stage);
+        if (this.gamestate.hasScreenChanged) {
+            this.app.stage.removeChildren();
+            this.app.stage.addChild(this.gamestate.screen.stage);
+        }
         GameControls.update(dt);
     }
 
@@ -110,6 +109,7 @@ export class Game
     }
 
     async destroy() {
+        this.app.destroy();
         if (this.gameloopCaller) {
             PIXI.Ticker.shared.remove(this.gameloopCaller);
             this.gameloopCaller = null;

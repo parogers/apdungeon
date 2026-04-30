@@ -9,20 +9,7 @@ let tickerFunc = null;
 const fps = ref(0);
 let refreshFPS = 0;
 
-function resizeCallback()
-{
-    // const width = window.innerWidth;
-    // const height = window.innerHeight;
-    const div = playArea.value;
-    if (div) {
-        // div.style.width = width + "px";
-        // div.style.height = height + "px";
-        game.resize();
-    }
-}
-
 function tick(ticker) {
-    // console.log(ticker);
     refreshFPS -= ticker.elapsedMS/1000.0;
     if (refreshFPS <= 0) {
         fps.value = ticker.FPS|0;
@@ -35,8 +22,6 @@ onMounted(async () => {
         game = new Game(playArea.value);
         await game.configure();
         game.start();
-        window.addEventListener("resize", () => resizeCallback());
-        // setTimeout(() => resizeCallback(), 500);
         PIXI.Ticker.shared.add(tick);
     }
 });
