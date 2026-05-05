@@ -48,6 +48,7 @@ export var RES = {
     TILES_DIRT: 'tiles/tiles-dirt.json',
     TILES_GRASS: 'tiles/tiles-grass.json',
     TILES_MOUNTAIN: 'tiles/tiles-mountain.json',
+    TILES_COBBLESTONE: 'tiles/tiles-cobblestone.json',
 };
 
 

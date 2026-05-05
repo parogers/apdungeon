@@ -116,12 +116,38 @@ export class Level
         const dirtSheet = Resources.shared.find(RES.TILES_DIRT);
         const grassSheet = Resources.shared.find(RES.TILES_GRASS);
         const mountainSheet = Resources.shared.find(RES.TILES_MOUNTAIN);
+        const cobbleSheet = Resources.shared.find(RES.TILES_COBBLESTONE);
         const terrain = new Array(50).fill(0).map(() => {
-            return new Array(100).fill(0).map(() => Utils.randomChoice([true, true, false]));
+            return new Array(100).fill(0).map(() => Utils.randomChoice([true, true, true, true, false]));
         });
         const mountainTerrain = terrain.map(row => {
-            return row.map(value => value && Utils.randomChoice([true, false, false]));
+            return row.map(value => value && Utils.randomChoice([true, false, false, false]));
         });
+        const roads = new Array(50).fill(0).map(() => {
+            return new Array(100).fill(0);
+        });
+        const rows = terrain.length;
+        const cols = terrain[0].length;
+        for (let n = 0; n < 5; n++) {
+            let col = n === 0 ? 3 : Utils.randint(0, cols-1);
+            let row = n === 0 ? 3 : Utils.randint(0, rows-1);
+            let deltaRow = 1;
+            let deltaCol = 0;
+            for (let m = 0; m < 100; m++) {
+                if (terrain[row + deltaRow]?.[col + deltaCol] && !roads[row + deltaRow]?.[col + deltaCol]) {
+                    roads[row][col] = true;
+                    col += deltaCol;
+                    row += deltaRow;
+                } else {
+                    [deltaRow, deltaCol] = Utils.randomChoice([
+                        [-1, 0],
+                        [1, 0],
+                        [0, -1],
+                        [0, 1],
+                    ]);
+                }
+            }
+        }
         const stacked = new StackedGrid({
             bottomTileInfo: 'water',
             bottomLayerHeight: 0,
@@ -143,12 +169,18 @@ export class Level
                     height: 1,
                 },
                 {
-                    tileInfo: 'mountain',
-                    spritesheet: mountainSheet,
-                    terrain: mountainTerrain,
-                    height: 2,
-                    hitMap: getHitMapFromTileSheet(Render.getRenderer(), mountainSheet),
+                    tileInfo: 'cobble',
+                    spritesheet: cobbleSheet,
+                    terrain: roads,
+                    height: 1,
                 },
+                // {
+                //     tileInfo: 'mountain',
+                //     spritesheet: mountainSheet,
+                //     terrain: mountainTerrain,
+                //     height: 2,
+                //     hitMap: getHitMapFromTileSheet(Render.getRenderer(), mountainSheet),
+                // },
             ],
         });
         this.stage.addChild(stacked);
