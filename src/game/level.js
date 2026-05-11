@@ -18,6 +18,7 @@
  */
 
 import * as PIXI from 'pixi.js';
+import { Noise } from 'noisejs';
 
 import { Resources, RES, TILE_HEIGHT } from './res';
 import { Utils } from './utils';
@@ -113,28 +114,47 @@ export class Level
         this.smoothTracking = true;
         this.exitDoor = null;
 
+        function makeGrid(rows, cols, value=true) {
+            return new Array(rows).fill(0).map(() => new Array(cols).fill(value));
+        }
+        function fillCircle(grid, row, col, radius, value) {
+            for (let r = row-radius; r <= row+radius; r++) {
+                for (let c = col-radius; c <= col+radius; c++) {
+                    const dist = Math.sqrt((c-col)**2 + (r-row)**2);
+                    if (Math.round(dist) <= radius && r >= 0 && r < grid.length && c >= 0 && c < grid[0].length) {
+                        grid[r][c] = value;
+                    }
+                }
+            }
+        }
+
+        const noise = new Noise(0);
+        const rows = 50;
+        const cols = 50;
         const dirtSheet = Resources.shared.find(RES.TILES_DIRT);
         const grassSheet = Resources.shared.find(RES.TILES_GRASS);
         const mountainSheet = Resources.shared.find(RES.TILES_MOUNTAIN);
         const cobbleSheet = Resources.shared.find(RES.TILES_COBBLESTONE);
-        const terrain = new Array(50).fill(0).map(() => {
-            return new Array(100).fill(0).map(() => Utils.randomChoice([true, true, true, true, false]));
-        });
-        const mountainTerrain = terrain.map(row => {
-            return row.map(value => value && Utils.randomChoice([true, false, false, false]));
-        });
-        const roads = new Array(50).fill(0).map(() => {
-            return new Array(100).fill(0);
-        });
-        const rows = terrain.length;
-        const cols = terrain[0].length;
+        const terrain = makeGrid(rows, cols, true).map((rowData, row) => rowData.map((colData, col) => {
+            return noise.simplex2(row/15, col/15) >= -0.3;
+        }));
+        const mountainTerrain = makeGrid(rows, cols, true).map((rowData, row) => rowData.map((colData, col) => {
+            return noise.simplex2(row/15, col/15) >= 0.5;
+        }));
+
+        const roads = makeGrid(rows, cols, false);
         for (let n = 0; n < 5; n++) {
             let col = n === 0 ? 3 : Utils.randint(0, cols-1);
             let row = n === 0 ? 3 : Utils.randint(0, rows-1);
             let deltaRow = 1;
             let deltaCol = 0;
-            for (let m = 0; m < 100; m++) {
-                if (terrain[row + deltaRow]?.[col + deltaCol] && !roads[row + deltaRow]?.[col + deltaCol]) {
+            for (let m = 0; m < 50; m++) {
+                if (
+                    terrain[row + deltaRow]?.[col + deltaCol] &&
+                    !roads[row + deltaRow]?.[col + deltaCol] &&
+                    !mountainTerrain[row + deltaRow]?.[col + deltaCol] &&
+                    Utils.randint(0, 8)
+                ) {
                     roads[row][col] = true;
                     col += deltaCol;
                     row += deltaRow;
@@ -174,13 +194,13 @@ export class Level
                     terrain: roads,
                     height: 1,
                 },
-                // {
-                //     tileInfo: 'mountain',
-                //     spritesheet: mountainSheet,
-                //     terrain: mountainTerrain,
-                //     height: 2,
-                //     hitMap: getHitMapFromTileSheet(Render.getRenderer(), mountainSheet),
-                // },
+                {
+                    tileInfo: 'mountain',
+                    spritesheet: mountainSheet,
+                    terrain: mountainTerrain,
+                    height: 2,
+                    hitMap: getHitMapFromTileSheet(Render.getRenderer(), mountainSheet),
+                },
             ],
         });
         this.stage.addChild(stacked);
