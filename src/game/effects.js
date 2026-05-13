@@ -30,7 +30,7 @@ function shadowRenderer()
 {
     let lastRenderer = null;
     let cache = {};
-    function render(width) {
+    function render(width, spread) {
         const renderer = Render.getRenderer();
         if (renderer !== lastRenderer) {
             // Soft reloads (eg during dev) can result in a new renderer, and
@@ -41,13 +41,15 @@ function shadowRenderer()
         if (cache[width]) {
             return cache[width];
         }
-        const texture = PIXI.RenderTexture.create({ width: width, height: 3 });
-        const graphics = new PIXI.Graphics()
-            .rect(1, 0, width-2, 3)
-            .rect(0, 1, 1, 1)
-            .rect(width-1, 1, 1, 1)
-            .fill({ color: 0x000000, alpha: 0.4 })
-        ;
+        const height = 1 + spread*2;
+        const texture = PIXI.RenderTexture.create({ width: width, height: height });
+        let graphics = new PIXI.Graphics().rect(0, spread, width, 1);
+        for (let n = 1; n <= spread; n++) {
+            const offset = 2*n-1;
+            graphics = graphics.rect(offset, spread + n, width-2*offset, 1);
+            graphics = graphics.rect(offset, spread - n, width-2*offset, 1);
+        }
+        graphics = graphics.fill({ color: 0x000000, alpha: 0.4 });
         renderer.render(graphics, { renderTexture: texture });
         cache[width] = texture;
         return texture;
@@ -67,13 +69,14 @@ export class Shadow
     static MEDIUM = 7;
     static LARGE = 9;
 
-    constructor(thing, size)
+    constructor(thing, size, spread=1)
     {
         this.thing = thing;
         this.shadowSprite = new PIXI.Sprite();
         this.shadowSprite.anchor.set(0.5, 0.5);
         this.thing.sprite.addChildAt(this.shadowSprite, 0);
         this.size = size ?? Shadow.MEDIUM;
+        this.spread = spread;
         this.rendered = false;
     }
 
@@ -88,7 +91,7 @@ export class Shadow
     update(dt)
     {
         if (!this.rendered) {
-            this.shadowSprite.texture = renderShadow(this.size);
+            this.shadowSprite.texture = renderShadow(this.size, this.spread);
             this.rendered = true;
         }
         // Make sure the shadow sticks to the ground

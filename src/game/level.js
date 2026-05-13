@@ -21,6 +21,8 @@ import * as PIXI from 'pixi.js';
 import { Noise } from 'noisejs';
 
 import { Resources, RES, TILE_HEIGHT } from './res';
+import { Thing } from './thing';
+import { Shadow } from './effects';
 import { Utils } from './utils';
 import { Render } from './render';
 import { GroundItem } from './grounditem';
@@ -84,6 +86,25 @@ export class LevelDarkness
     }
 }
 
+
+class Tree extends Thing {
+    constructor() {
+        super();
+        const image = Utils.randomChoice(['tree1', 'tree2']);
+        this.treeSprite = new PIXI.Sprite(
+            Resources.shared.getFrame(image)
+        );
+        this.treeSprite.anchor = Resources.shared.getAnchor(image);
+        this.sprite.addChild(this.treeSprite);
+        this.shadow = new Shadow(this, 13, 3);
+    }
+
+    update(dt) {
+        this.shadow.update(dt);
+    }
+}
+
+
 /*********/
 /* Level */
 /*********/
@@ -128,7 +149,14 @@ export class Level
             }
         }
 
-        const noise = new Noise(0);
+        function makeNoise(seed, scale=1) {
+            const noise = new Noise(seed);
+            function getValue(row, col) {
+                return noise.simplex2(row/scale, col/scale);
+            }
+            return getValue;
+        }
+        const noise = makeNoise(0, 15);
         const rows = 50;
         const cols = 50;
         const dirtSheet = Resources.shared.find(RES.TILES_DIRT);
@@ -136,11 +164,37 @@ export class Level
         const mountainSheet = Resources.shared.find(RES.TILES_MOUNTAIN);
         const cobbleSheet = Resources.shared.find(RES.TILES_COBBLESTONE);
         const terrain = makeGrid(rows, cols, true).map((rowData, row) => rowData.map((colData, col) => {
-            return noise.simplex2(row/15, col/15) >= -0.3;
+            return noise(row, col) >= -0.3;
         }));
         const mountainTerrain = makeGrid(rows, cols, true).map((rowData, row) => rowData.map((colData, col) => {
-            return noise.simplex2(row/15, col/15) >= 0.5;
+            return noise(row, col) >= 0.5;
         }));
+        function floodFill(terrain, startRow, startCol, value) {
+            const queue = [[startRow, startCol]];
+            let n = 0;
+            while (queue.length && n++ < 1000) {
+                const [row, col] = queue.pop();
+                terrain[row][col] = value;
+                for (let dRow = -1; dRow <= 1; dRow++) {
+                    for (let dCol = -1; dCol <= 1; dCol++) {
+                        const nextCol = col + dCol;
+                        const nextRow = row + dRow;
+                        if (terrain[nextRow]?.[nextCol] ?? value !== value) {
+                            queue.push([nextRow, nextCol]);
+                        }
+                    }
+                }
+            }
+        }
+        for (let n = 0; n < 50; n++) {
+            const row = Utils.randint(0, rows-1);
+            const col = Utils.randint(0, cols-1);
+            if (mountainTerrain[row][col]) {
+                console.log('removing mountain...')
+                floodFill(mountainTerrain, row, col, false);
+                break;
+            }
+        }
 
         const roads = makeGrid(rows, cols, false);
         for (let n = 0; n < 5; n++) {
@@ -208,6 +262,20 @@ export class Level
         this.grid.viewport.width = Level.CAMERA_WIDTH;
         this.grid.viewport.height = Level.CAMERA_HEIGHT;
         this.groundStage.sortableChildren = true;
+
+        const noise2 = makeNoise(1, 15);
+        for (let row = 1; row < rows-1; row++) {
+            for (let col = 1; col < cols-1; col++) {
+                const value = noise(row, col);
+                const value2 = noise2(row, col);
+                if (value2 >= -0.4 && value >= -0.1 && value < 0.3 && Utils.randint(1, 6) <= 6 && !roads[row][col]) {
+                    const tree = new Tree();
+                    tree.x = (col+0.5)*this.grid.tileSize.width + Utils.randint(-10, 10);
+                    tree.y = (row+0.5)*this.grid.tileSize.height + Utils.randint(-10, 10);
+                    this.addThing(tree);
+                }
+            }
+        }
     }
 
     get groundStage() {
@@ -433,5 +501,5 @@ Level.ON_FLOOR_POS = 2;
 Level.FRONT_POS = 10000;
 Level.ROW_DEPTH = 5;
 
-Level.CAMERA_WIDTH = 100;
-Level.CAMERA_HEIGHT = 60;
+Level.CAMERA_WIDTH = 140;
+Level.CAMERA_HEIGHT = 100;

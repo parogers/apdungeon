@@ -1,0 +1,60 @@
+{"frames": { 
+"tree1":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 32
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 32
+  },
+  "frame": {
+    "x": 1,
+    "y": 1,
+    "w": 16,
+    "h": 32
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.9375
+  }
+},
+"tree2":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 32
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 0,
+    "w": 16,
+    "h": 32
+  },
+  "frame": {
+    "x": 18,
+    "y": 1,
+    "w": 16,
+    "h": 32
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.9375
+  }
+}
+},
+"meta": {
+  "app": "https://github.com/houmain/spright",
+  "format": "RGBA8888",
+  "image": "trees.png",
+  "size": { "w": 35, "h": 34 },
+  "scale": 1.0
+}
+}

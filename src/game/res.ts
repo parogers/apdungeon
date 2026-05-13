@@ -28,6 +28,7 @@ export var RES = {
     MAP_OBJS: 'media/sprites/map-objects.json',
     PLAYER: 'media/sprites/player.json',
     ENEMIES: 'media/sprites/enemies.json',
+    TREES: 'media/sprites/trees.json',
 
     GAME_MUSIC: 'media/music/A Journey Awaits2-lowfi.ogg',
     ATTACK_SWORD_SND: 'media/effects/attack_sword2.wav',
